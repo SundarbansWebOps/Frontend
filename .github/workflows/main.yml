@@ -41,5 +41,5 @@ jobs:
         github-comment: true
         github-deployment: false
         args: --confirm
-  run: |
-    echo "y" | vercel
+        run: |
+          echo "y" | vercel
