@@ -37,5 +37,6 @@ jobs:
       uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        CI: true
         github-comment: true
         github-deployment: false
