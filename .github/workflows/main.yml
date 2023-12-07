@@ -31,6 +31,6 @@ jobs:
 
     steps:
     - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v21
+      uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
