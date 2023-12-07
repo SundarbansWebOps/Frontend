@@ -40,3 +40,4 @@ jobs:
         CI: true
         github-comment: true
         github-deployment: false
+        args: --yes
