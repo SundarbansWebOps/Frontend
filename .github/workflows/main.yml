@@ -30,7 +30,12 @@ jobs:
     needs: build
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
     - name: Deploy to Vercel
       uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        github-comment: true
+        github-deployment: false
