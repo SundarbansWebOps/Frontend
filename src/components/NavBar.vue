@@ -2,7 +2,7 @@
     <section class="bg-white dark:bg-black">
         <nav x-data="{ isOpen: false }" class="container px-6 py-4 mx-auto lg:flex lg:justify-between lg:items-center">
             <div class="flex items-center text-2xl font-bold dark:text-white flex justify-between"><a href="#"
-                    class="flex my-auto gap-2"><img class="w-auto h-8 sm:h-10 my-auto" src="/sundarbans2.png" alt="">
+                    class="flex my-auto gap-2"><img class="w-auto h-8 sm:h-10 my-auto" src="../assets/sundarbans2.png" alt="">
                     Sundarbans </a><!-- Mobile menu button -->
                 <div class="flex lg:hidden"><button x-cloak="" type="button"
                     class="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none focus:text-gray-600 dark:focus:text-gray-400"
