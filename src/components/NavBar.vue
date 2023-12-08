@@ -8,18 +8,18 @@
             </a>
             <!-- Mobile menu button -->
             <div class="flex lg:hidden" >
-                <button v-on:click="open = !open" class="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none focus:text-gray-600 dark:focus:text-gray-400">
-                    <svg v-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <button v-on:click="isopen = !isopen" class="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none focus:text-gray-600 dark:focus:text-gray-400">
+                    <svg v-show="!isopen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
-                    <svg v-show="open" class=" w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg v-show="isopen" class=" w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
        
-            <!-- Mobile Menu open: "block", Menu closed: "hidden" -->
-            <div :class="{ 'block': open, 'hidden': !open }" class=" lg:flex lg:items-center">
+            <!-- Mobile Menu isopen: "block", Menu closed: "hidden" -->
+            <div :class="{ 'block': isopen, 'hidden': !isopen }" class=" lg:flex lg:items-center">
                 <div class=" container flex flex-col space-y-4  lg:mt-0 lg:flex-row lg:-px-8 lg:space-y-0">
                     <router-link to="/" class="text-gray-700 transition-colors duration-300 transform lg:mx-8 dark:text-gray-200 dark:hover:text-blue-400 hover:text-blue-500">Home</router-link>
                     <router-link to="/events" class="text-gray-700 transition-colors duration-300 transform lg:mx-8 dark:text-gray-200 dark:hover:text-blue-400 hover:text-blue-500">Events</router-link>
@@ -54,7 +54,7 @@
 export default{
     data(){
         return{
-            open:false
+            isopen:false
         }
     },
     name : 'NavBar'
