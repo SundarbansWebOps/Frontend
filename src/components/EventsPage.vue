@@ -91,9 +91,7 @@
                     </h1>
 
                     <p class="max-w-lg mx-auto mt-4 text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure veritatis sint autem nesciunt,
-                        laudantium
-                        quia tempore delect
+                        Coming Soon: Mark Your Calendar!
                     </p>
                 </div>
 
@@ -225,7 +223,7 @@
                 </h1>
 
                 <p class="mt-4 text-center text-gray-500 dark:text-gray-300">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nostrum quam voluptatibus
+                    Explore our most recent events, keeping you in the loop with the latest happenings and exciting activities within our community.
                 </p>
 
 

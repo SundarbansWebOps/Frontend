@@ -5,10 +5,8 @@
         <section class="bg-white dark:bg-black">          
             <div class="container px-6 py-16 mx-auto text-center">
                 <div class="max-w-lg mx-auto">
-                    <h1 class="text-3xl font-semibold text-gray-800 dark:text-[#eab308] lg:text-4xl">Sundarbans House, one
-                        of the best performing hub </h1>
-                    <p class="mt-6 text-gray-500 dark:text-gray-300">Welcome to the official website of Sundarbans House,
-                        one of the best performing hub of the BS degree program at IIT Madras</p>
+                    <h1 class="text-3xl font-semibold text-gray-800 dark:text-[#eab308] lg:text-4xl">Welcome to Sundarbans House, IIT Madras! </h1>
+                    <p class="mt-6 text-gray-500 dark:text-gray-300">Providing a dynamic, inclusive environment for academic growth! Our vibrant community includes diverse clubs, engaging events, and a dedicated house council for peer support, driving positive change and holistic student development.</p>
                     <button
                         class="px-5 py-2 mt-6 text-sm font-medium leading-5 text-center text-black capitalize dark:bg-white bg-blue-600 rounded-lg hover:bg-blue-500 lg:mx-0 lg:w-auto focus:outline-none">
                         Explore House
@@ -38,9 +36,7 @@
                     </h1>
 
                     <p class="max-w-lg mx-auto mt-4 text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure veritatis sint autem nesciunt,
-                        laudantium
-                        quia tempore delect
+                        Coming Soon: Mark Your Calendar!
                     </p>
                 </div>
 
@@ -97,9 +93,7 @@
                     </h1>
 
                     <p class="max-w-lg mx-auto mt-4 text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure veritatis sint autem nesciunt,
-                        laudantium
-                        quia tempore delect
+                        A curated collection of videos for your enrichment!
                     </p>
                 </div>
 
@@ -169,7 +163,7 @@
                 </h1>
 
                 <p class="mt-4 text-center text-gray-500 dark:text-gray-300">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nostrum quam voluptatibus
+                    Explore our most recent events, keeping you in the loop with the latest happenings and exciting activities within our community.
                 </p>
 
 
@@ -217,8 +211,7 @@
                     Sundarbans Webops Team</h1>
 
                 <p class="max-w-2xl mx-auto my-6 text-center text-gray-500 dark:text-gray-300">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo incidunt ex placeat modi magni quia error
-                    alias, adipisci rem similique, at omnis eligendi optio eos harum.
+                    Meet the Team Behind Your Online Experience.
                 </p>
 
                 <div class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4">
@@ -432,9 +425,7 @@
                 </h1>
 
                 <p class="max-w-lg mx-auto mt-4 text-gray-500">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure veritatis sint autem nesciunt,
-                    laudantium
-                    quia tempore delect
+                    Guiding the Way, Ensuring Smooth Operations!
                 </p>
             </div>
             <div class="container px-5 py-10 mx-auto">
