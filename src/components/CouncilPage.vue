@@ -1004,14 +1004,18 @@
 
 </body>
 
+<FooterBar></FooterBar>
+
 </template>
 
 <script>
 import NavBar from './NavBar.vue'
+import FooterBar from './FooterBar.vue';
 export default{
     name : 'CouncilPage',
     components : {
-        NavBar
+        NavBar,
+        FooterBar
     }
 }
 </script>

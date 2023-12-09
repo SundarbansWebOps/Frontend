@@ -540,14 +540,17 @@
 
 
     </body>
+<FooterBar></FooterBar>
 </template>
 
 <script>
 import NavBar from './NavBar.vue';
+import FooterBar from './FooterBar.vue';
 export default {
     name: 'HomePage',
     components:{
-        NavBar
+        NavBar,
+        FooterBar
     }
 }
 </script>
