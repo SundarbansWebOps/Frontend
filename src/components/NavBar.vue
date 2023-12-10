@@ -55,8 +55,8 @@
             </router-link>
           </div>
           <div class="mt-4 lg:mt-0 lg:ml-8">
-            <a
-              href="#"
+            <router-link
+              to="/google"
               class="flex items-center justify-center px-2 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               <div class="px-1 py-1">
@@ -74,7 +74,7 @@
                             d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.015 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z"
                             fill="#1976D2"></path>
                     </svg></div><span class="w-5/6 px-1 py-2 font-bold text-center">Sign In</span>
-            </a>
+                  </router-link>
           </div>
         </div>
       </nav>
