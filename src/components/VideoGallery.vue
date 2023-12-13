@@ -40,123 +40,25 @@
 
                 </div>
 
-                <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2">
+                <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2" v-for="(video, index) in videos.slice(0, 2)" :key="index">
                     <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
                         style="padding-top: 56.25%">
                         <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                            src="https://www.youtube.com/embed/6N-PfwyjsIQ?si=9TZ9-A541tzlhkCU" allowfullscreen></iframe>
-                    </div>
-
-                    <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                        style="padding-top: 56.25%">
-                        <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                            src="https://www.youtube.com/embed/RLBxlaK_aU4?si=NF0U6NkSsvkvSNHZ" allowfullscreen></iframe>
+                        :src="video.video_url" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
 
             <div class="container px-5 py-10 mx-auto">
                 <div class="flex flex-wrap -m-4">
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
+                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full" v-for="video in videos.slice(2)" :key="video.id">
                         <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
                             style="padding-top: 56.25%">
                             <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/TvkTrLJonbw?si=4k-pqv4Sm3IxT1J3"
-                                allowfullscreen></iframe>
+                            :src="video.video_url"
+                                allowfullscreen>
+                            </iframe>
 
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/kEsry2TSVKU?si=AvUDyr9nmcz3wMjv"
-                                allowfullscreen></iframe>
-
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/QW4T_FQzi2I?si=AozEo2ZoQhIfZHas"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/rZdih019rz4?si=Bi5QHuM6YXaO0uTX"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/CjrkFsttQg4?si=8XT1ewH1ruANcTO7"
-                                allowfullscreen></iframe>
-
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/SJMnKak4cfc?si=JUK299ytKNqJbuFK"
-                                allowfullscreen></iframe>
-
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/_zen9nEBQHU?si=XDeVY5V-yuLo9mVA"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/G-3sYegnj8A?si=3ZvlkTwxcwr0tRq7"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/YGnkgpawqho?si=TsVrky1ITcf47VuY"
-                                allowfullscreen></iframe>
-
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/eWzDPTpJ31E?si=7Ti-Pp36Xz6KDDkX"
-                                allowfullscreen></iframe>
-
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/XpezmSKoR28?si=UCrgV8AxSXqSEz5g"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
-                    <div class="p-4 md:w-1/2 lg:w-1/3 w-full">
-                        <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
-                            style="padding-top: 56.25%">
-                            <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                                src="https://www.youtube.com/embed/GCwvQCNZxOw?si=2XFO6Igf8yn8By6s"
-                                allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>
@@ -170,11 +72,33 @@
 </template>
 
 <script>
+import axios from 'axios';
 import NavBar from './NavBar.vue';
+
 export default {
     name: 'VideoGallery',
     components: {
         NavBar
+    },
+    data() {
+        return {
+            videos: [],
+        };
+    },
+    async mounted() {
+        try {
+            const url = 'http://35.78.186.233/videos';
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            const result = await axios.get(url, config);
+            this.videos = result.data.videos;
+            console.log(this.videos);
+        } catch (error) {
+            console.error('Error fetching videos:', error);
+        }
     }
 }
 </script>
