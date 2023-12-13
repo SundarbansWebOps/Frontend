@@ -208,7 +208,7 @@
         <section class="bg-white dark:bg-black">
             <div class="container px-6 py-10 mx-auto">
                 <h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white">
-                    Sundarbans Webops Team</h1>
+                    Sundarbans WebOps Team</h1>
 
                 <p class="max-w-2xl mx-auto my-6 text-center text-gray-500 dark:text-gray-300">
                     Meet the Team Behind Your Online Experience.
@@ -218,15 +218,13 @@
                     <div
                         class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
                         <img class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
-                            alt="">
+                            src="https://lh3.googleusercontent.com/drive-viewer/AK7aPaCQlTuahPMWboAJnY5_lUo1qP4btc4krP6jC_fRR1Z-dS7y_5YsP_Uwwe37boeYAiP1jFm-7GTRw6DIZS4hwkHLbA0n3Q=s2560"
+                            alt="Ravi Kumawat">
 
                         <h1
-                            class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
-                            arthur melo</h1>
+                            class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">Ravi Kumawat</h1>
 
-                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">design
-                            director</p>
+                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">Full Stack Engineer</p>
 
                         <div class="flex mt-3 -mx-2">
                             <a href="#"
@@ -267,14 +265,13 @@
                     <div
                         class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
                         <img class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                            src="https://images.unsplash.com/photo-1531590878845-12627191e687?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
-                            alt="">
+                            src="https://lh3.googleusercontent.com/drive-viewer/AK7aPaDYpJhR2Pf9l0-Dl6kwO-7Z-vOxPhCRzT6lZoPr5w1dAUK2KTaWU4PCurRV_GEunwX-FFsqv0xgzSekqzaTgFGlDn84=s1600"
+                            alt="Pratyaksh Singh">
 
                         <h1
-                            class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
-                            Amelia. Anderson</h1>
+                            class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">Pratyaksh Singh</h1>
 
-                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">Lead Developer
+                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">Frontend Engineer
                         </p>
 
                         <div class="flex mt-3 -mx-2">
@@ -316,14 +313,14 @@
                     <div
                         class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
                         <img class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                            src="https://images.unsplash.com/photo-1488508872907-592763824245?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-                            alt="">
+                            src="https://lh3.googleusercontent.com/drive-viewer/AK7aPaAJepwMfB5XwFMLMnovYjc52sm5SyQ0GiLe24eKh--WobRpGWitYkCTnZ3qh1uonR77OwNZmIpa2qa9VyEuAv5YsJXW=s2560"
+                            alt="Mahendra Khara">
 
                         <h1
                             class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
-                            Olivia Wathan</h1>
+                            Mahendra Khara</h1>
 
-                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">Lead designer
+                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">Backend Engineer
                         </p>
 
                         <div class="flex mt-3 -mx-2">
@@ -365,15 +362,14 @@
                     <div
                         class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
                         <img class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                            src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+                            src="https://lh3.googleusercontent.com/drive-viewer/AK7aPaC-Fg0LKhKLzQh12pwvBM8hsqvoJYZWi9WOGYfdYfK73hbKJI1Z0M15wxwsVP6sgNVmuHsmjRXhPtY8uJs5MKo0u4XWUQ=s1600"
                             alt="">
 
                         <h1
                             class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
-                            John Doe</h1>
+                            Prajjwal Yadav</h1>
 
-                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">Full stack
-                            developer</p>
+                        <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300">Frontend Engineer</p>
 
                         <div class="flex mt-3 -mx-2">
                             <a href="#"
@@ -547,7 +543,7 @@ import NavBar from './NavBar.vue';
 export default {
     name: 'HomePage',
     components:{
-        NavBar
+        NavBar, 
     }
 }
 </script>
