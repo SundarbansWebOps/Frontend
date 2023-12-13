@@ -40,8 +40,8 @@
 
                 </div>
 
-                <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2" v-for="(video, index) in videos.slice(0, 2)" :key="index">
-                    <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
+                <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2">
+                    <div class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden" v-for="(video, index) in videos.slice(0, 2)" :key="index"
                         style="padding-top: 56.25%">
                         <iframe class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
                         :src="video.video_url" allowfullscreen></iframe>
