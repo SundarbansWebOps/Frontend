@@ -112,7 +112,7 @@
             client_id:
               "1043737632690-hogp7qi303vimd5tflakfhvduodkfjjh.apps.googleusercontent.com",
             scope: "email profile openid",
-            redirect_uri: "http://localhost:4000/auth/callback",
+            redirect_uri: "https://sundarbans-website.vercel.app/",
             callback: response => {
               if (response.code) {
                 this.sendCodeToBackend(response.code);
@@ -166,7 +166,6 @@
               emailUrl: this.userDetails.picture  // Assuming 'picture' is the URL
             });
             console.log('POST request response:', response.data);
-            alert(response.data.error);
           } else {
             // User email does not match the required domain, reject login
             console.error('Login rejected: Invalid email domain.');
