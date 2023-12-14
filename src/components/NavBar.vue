@@ -54,41 +54,158 @@
               Council
             </router-link>
           </div>
-          <div class="mt-4 lg:mt-0 lg:ml-8">
-            <router-link
-              to="/google"
-              class="flex items-center justify-center px-2 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-            >
-              <div class="px-1 py-1">
-                <svg class="w-6 h-6" viewBox="0 0 40 40">
-                        <path
-                            d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z"
-                            fill="#FFC107"></path>
-                        <path
-                            d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z"
-                            fill="#FF3D00"></path>
-                        <path
-                            d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z"
-                            fill="#4CAF50"></path>
-                        <path
-                            d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.015 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z"
-                            fill="#1976D2"></path>
-                    </svg></div><span class="w-5/6 px-1 py-2 font-bold text-center">Sign In</span>
-                  </router-link>
-          </div>
+          
+  <!-- If user is logged in, show user picture and name -->
+<div class="mt-4 lg:mt-0 lg:ml-8" v-if="userDetails">
+  <div class="flex items-center">
+    <img class="w-8 h-8 rounded-full" :src="userDetails.picture" alt="User Picture">
+    <span class="ml-2">{{ userDetails.name }}</span>
+    <button style="background-color: rgb(145, 4, 4); color:aliceblue;border-radius: 5px; margin: 3px; padding: 4px;" @click="signOut">Sign Out</button>
+  </div>
+</div>
+<!-- If user is not logged in, show sign-in button -->
+<div class="mt-4 lg:mt-0 lg:ml-8" v-else>
+  <button
+    @click="login"
+    class="flex items-center justify-center px-2 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+  >
+    <div class="px-1 py-1">
+      <svg class="w-6 h-6" viewBox="0 0 40 40">
+              <path
+                  d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z"
+                  fill="#FFC107"></path>
+              <path
+                  d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z"
+                  fill="#FF3D00"></path>
+              <path
+                  d="M20 36.6667C24.305 36.6667 28.2167 35.0192 31.1742 32.34L26.0159 27.975C24.3425 29.2425 22.2625 30 20 30C15.665 30 11.9842 27.2359 10.5975 23.3784L5.16254 27.5659C7.92087 32.9634 13.5225 36.6667 20 36.6667Z"
+                  fill="#4CAF50"></path>
+              <path
+                  d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.015 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z"
+                  fill="#1976D2"></path>
+          </svg>
+    </div>
+    <span class="w-5/6 px-1 py-2 font-bold text-center">Sign In</span>
+  </button>
+</div>
         </div>
       </nav>
     </div>
   </template>
   
   <script>
+  import { googleSdkLoaded } from "vue3-google-login";
+  import axios from 'axios';
   export default {
     data() {
       return {
         isOpen: false,
+        userDetails: null,
       };
     },
     name: 'NavBar',
+    methods: {
+    login() {
+      googleSdkLoaded(google => {
+        google.accounts.oauth2
+          .initCodeClient({
+            client_id:
+              "1043737632690-hogp7qi303vimd5tflakfhvduodkfjjh.apps.googleusercontent.com",
+            scope: "email profile openid",
+            redirect_uri: "http://localhost:4000/auth/callback",
+            callback: response => {
+              if (response.code) {
+                this.sendCodeToBackend(response.code);
+              }
+            }
+          })
+          .requestCode();
+      });
+    },
+    async sendCodeToBackend(code) {
+      try {
+        const response = await axios.post(
+          "https://oauth2.googleapis.com/token",
+          {
+            code,
+            client_id:
+              "1043737632690-hogp7qi303vimd5tflakfhvduodkfjjh.apps.googleusercontent.com",
+            client_secret: "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",
+            redirect_uri: "postmessage",
+            grant_type: "authorization_code"
+          }
+        );
+
+        const accessToken = response.data.access_token;
+
+        // Fetch user details using the access token
+        const userResponse = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        );
+
+        if (userResponse && userResponse.data) {
+          const userEmail = userResponse.data.email || '';
+
+          // Verify user email before approving login
+          if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
+            // Set the userDetails data property to the userResponse object
+            this.userDetails = userResponse.data;
+
+            // Save user details to local storage
+            localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
+
+            // Send user details to the specified URL using a POST request
+            const response = await axios.post('http://35.78.186.233/login/', {
+              email: this.userDetails.email,
+              name: this.userDetails.name,
+              emailUrl: this.userDetails.picture  // Assuming 'picture' is the URL
+            });
+            console.log('POST request response:', response.data);
+            alert(response.data.error);
+          } else {
+            // User email does not match the required domain, reject login
+            console.error('Login rejected: Invalid email domain.');
+            alert("Please Login using Your IIT Madras Student Google Account.");
+          }
+        } else {
+          // Handle the case where userResponse or userResponse.data is undefined
+          console.error("Failed to fetch user details.");
+        }
+      } catch (error) {
+        console.error("Token exchange failed:", error.response.data);
+      }
+    },
+    signOut() {
+      // Clear local storage
+      localStorage.removeItem('userDetails');
+
+      // Set userDetails to null
+      this.userDetails = null;
+
+      // Reload the page
+      location.reload();
+    }
+  },
+  mounted() {
+    // Check if userDetails is present in local storage
+    const storedUserDetails = localStorage.getItem('userDetails');
+
+    if (storedUserDetails) {
+      // Parse the stored JSON string to get the userDetails object
+      const userDetails = JSON.parse(storedUserDetails);
+
+      // Update the component state
+      this.userDetails = userDetails;
+    }
+  },
   };
   </script>
   
+
+
+
