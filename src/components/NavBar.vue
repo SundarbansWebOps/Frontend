@@ -123,85 +123,42 @@
       });
     },
     async sendCodeToBackend(code) {
-      try {
-        const response = await axios.post(
-          "https://oauth2.googleapis.com/token",
-          {
-            code,
-            client_id:
-              "1043737632690-hogp7qi303vimd5tflakfhvduodkfjjh.apps.googleusercontent.com",
-            client_secret: "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",
-            redirect_uri: "postmessage",
-            grant_type: "authorization_code"
-          }
-        );
-
-        const accessToken = response.data.access_token;
-
-        // Fetch user details using the access token
-        const userResponse = await axios.get(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            }
-          }
-        );
-
-        if (userResponse && userResponse.data) {
-          const userEmail = userResponse.data.email || '';
-
-          // Verify user email before approving login
-          if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
-            // Set the userDetails data property to the userResponse object
-            this.userDetails = userResponse.data;
-
-            // Save user details to local storage
-            localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
-
-            // Send user details to the specified URL using a POST request
-            const response = await axios.post('http://35.78.186.233/login/', {
-              email: this.userDetails.email,
-              name: this.userDetails.name,
-              emailUrl: this.userDetails.picture  // Assuming 'picture' is the URL
+      const response = await axios.post('http://35.78.186.233/login', {
+              'gcode' : code
             });
             console.log('POST request response:', response.data);
+            if(response.data.success == false){
+              alert(response.data.error)
+            }
+            else {
+              console.log(response.data)
+              if (response && response.data) {
+          const userEmail = response.data.user_data.email || '';
+          if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
+            this.userDetails = response.data.user_data;
+            localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
           } else {
-            // User email does not match the required domain, reject login
             console.error('Login rejected: Invalid email domain.');
             alert("Please Login using Your IIT Madras Student Google Account.");
           }
         } else {
-          // Handle the case where userResponse or userResponse.data is undefined
           console.error("Failed to fetch user details.");
         }
-      } catch (error) {
-        console.error("Token exchange failed:", error.response.data);
       }
     },
     signOut() {
-      // Clear local storage
       localStorage.removeItem('userDetails');
-
-      // Set userDetails to null
       this.userDetails = null;
-
-      // Reload the page
       location.reload();
-    }
   },
   mounted() {
-    // Check if userDetails is present in local storage
     const storedUserDetails = localStorage.getItem('userDetails');
-
     if (storedUserDetails) {
-      // Parse the stored JSON string to get the userDetails object
       const userDetails = JSON.parse(storedUserDetails);
-
-      // Update the component state
       this.userDetails = userDetails;
     }
-  },
+  }
+}
   };
   </script>
   
