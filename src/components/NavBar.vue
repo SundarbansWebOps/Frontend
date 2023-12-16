@@ -123,16 +123,19 @@
       });
     },
     async sendCodeToBackend(code) {
-      const response = await axios.post('http://35.78.186.233/login', {
-              'gcode' : code
-            });
-            console.log('POST request response:', response.data);
-            if(response.data.success == false){
-              alert(response.data.error)
-            }
-            else {
-              console.log(response.data)
-              if (response && response.data) {
+    try {
+      const response = await axios.post(`${this.$globalData.backendUrl}/login`, {
+        'gcode': code
+      });
+
+      console.log('POST request response:', response.data);
+
+      if (response.data.success === false) {
+        alert(response.data.error);
+      } else {
+        console.log(response.data);
+
+        if (response && response.data) {
           const userEmail = response.data.user_data.email || '';
           if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
             this.userDetails = response.data.user_data;
@@ -145,7 +148,11 @@
           console.error("Failed to fetch user details.");
         }
       }
-    },
+    } catch (error) {
+      console.error('Error sending code to backend:', error);
+      alert('Backend Server Error');
+    }
+  },
     signOut() {
       localStorage.removeItem('userDetails');
       this.userDetails = null;
