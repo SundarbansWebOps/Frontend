@@ -3,6 +3,8 @@ import AboutPage from './components/AboutPage.vue'
 import VideoGallery from './components/VideoGallery.vue'
 import EventsPage from './components/EventsPage.vue'
 import CouncilPage from './components/CouncilPage.vue'
+import UserPage from './components/UserPage.vue'
+
 
 
 
@@ -38,6 +40,11 @@ const routes = [
         name: 'CouncilPage',
         component: CouncilPage,
         path: '/council'
+    },
+    {
+        name: 'UserPage',
+        component: UserPage,
+        path: '/user'
     },
 ];
 

@@ -59,7 +59,7 @@
 <div class="mt-4 lg:mt-0 lg:ml-8" v-if="userDetails">
   <div class="flex items-center">
     <img class="w-8 h-8 rounded-full" :src="userDetails.picture" alt="User Picture">
-    <span class="ml-2 text-black dark:text-white">{{ userDetails.name }}</span>
+    <span class="ml-2 text-black dark:text-white"><router-link to="user">{{ userDetails.name }}</router-link></span>
     <button style="background-color: rgb(145, 4, 4); color:aliceblue;border-radius: 5px; margin: 3px; padding: 4px;" @click="signOut">Sign Out</button>
   </div>
 </div>
