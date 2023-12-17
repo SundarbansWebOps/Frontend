@@ -124,7 +124,7 @@
     },
     async sendCodeToBackend(code) {
     try {
-      const response = await axios.post(`${this.$globalData.backendUrl}/login`, {
+      const response = await axios.post(`${this.$globalData.backendUrl}/login/`, {
         'gcode': code
       });
 
