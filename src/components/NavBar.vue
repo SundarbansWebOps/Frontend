@@ -128,12 +128,12 @@
         'gcode': code
       });
 
-      console.log('POST request response:', response.data);
+      // console.log('POST request response:', response.data);
 
       if (response.data.success === false) {
         alert(response.data.error);
       } else {
-        console.log(response.data);
+        // console.log(response.data);
 
         if (response && response.data) {
           const userEmail = response.data.user_data.email || '';
@@ -143,7 +143,7 @@
             localStorage.setItem('user-role', "User");
             location.reload();
           } else {
-            console.error('Login rejected: Invalid email domain.');
+            // console.error('Login rejected: Invalid email domain.');
             alert("Please Login using Your IIT Madras Student Google Account.");
           }
         } else {
@@ -151,7 +151,7 @@
         }
       }
     } catch (error) {
-      console.error('Error sending code to backend:', error);
+      // console.error('Error sending code to backend:', error);
       alert('Backend Server Error');
     }
   },
@@ -160,13 +160,14 @@
       this.userDetails = null;
       location.reload();
   },
+  
 },
   mounted() {
     const storedUserDetails = localStorage.getItem('userDetails');
     if (storedUserDetails) {
       const userDetails = JSON.parse(storedUserDetails);
       this.userDetails = userDetails;
-      console.log("golbal : ", this.$globalData.userDetails )
+      // console.log("golbal : ", this.$globalData.userDetails )
     }
   }
 };
