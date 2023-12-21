@@ -7,10 +7,10 @@
                 <div class="max-w-lg mx-auto">
                     <h1 class="text-3xl font-semibold text-gray-800 dark:text-[#eab308] lg:text-4xl">Welcome to Sundarbans House, IIT Madras! </h1>
                     <p class="mt-6 text-gray-500 dark:text-gray-300">Providing a dynamic, inclusive environment for academic growth! Our vibrant community includes diverse clubs, engaging events, and a dedicated house council for peer support, driving positive change and holistic student development.</p>
-                    <button
+                    <router-link to="iitmbs_friends_photo_competition"><button
                         class="px-5 py-2 mt-6 text-sm font-medium leading-5 text-center text-black capitalize dark:bg-white bg-blue-600 rounded-lg hover:bg-blue-500 lg:mx-0 lg:w-auto focus:outline-none">
-                        Explore House
-                    </button>
+                        Participate in IITM BS Friends Photo Competition
+                    </button></router-link>
                     <!-- <p class="mt-3 text-sm text-gray-400 ">No credit card required</p> -->
                 </div>
 
