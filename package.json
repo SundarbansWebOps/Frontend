@@ -14,10 +14,12 @@
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
     "vue": "^3.2.13",
+    "vue-analytics": "^5.22.1",
     "vue-google-oauth2": "^1.5.10",
     "vue-google-signin-button": "^1.0.4",
     "vue-router": "^4.2.5",
-    "vue3-google-login": "^2.0.25"
+    "vue3-google-login": "^2.0.25",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

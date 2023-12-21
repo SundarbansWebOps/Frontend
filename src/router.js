@@ -4,6 +4,7 @@ import VideoGallery from './components/VideoGallery.vue'
 import EventsPage from './components/EventsPage.vue'
 import CouncilPage from './components/CouncilPage.vue'
 import UserPage from './components/UserPage.vue'
+import PhotoCompetition from './components/PhotoCompetition.vue'
 
 
 
@@ -45,6 +46,11 @@ const routes = [
         name: 'UserPage',
         component: UserPage,
         path: '/user'
+    },
+    {
+        name: 'PhotoCompetition',
+        component: PhotoCompetition,
+        path: '/iitmbs_friends_photo_competition'
     },
 ];
 

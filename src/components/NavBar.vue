@@ -140,6 +140,8 @@
           if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
             this.userDetails = response.data.user_data;
             localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
+            localStorage.setItem('user-role', "User");
+            location.reload();
           } else {
             console.error('Login rejected: Invalid email domain.');
             alert("Please Login using Your IIT Madras Student Google Account.");
@@ -164,6 +166,7 @@
     if (storedUserDetails) {
       const userDetails = JSON.parse(storedUserDetails);
       this.userDetails = userDetails;
+      console.log("golbal : ", this.$globalData.userDetails )
     }
   }
 };
