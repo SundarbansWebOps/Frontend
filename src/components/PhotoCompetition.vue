@@ -30,6 +30,11 @@
                 </div>
             </div>
             <!-- Jumbotron -->
+
+            <div style="text-align: center; margin-top: 8px;">
+    <a style="color: red;" href="https://docs.google.com/document/d/e/2PACX-1vQ4K61fi6huEDpogHoAT1oztlZyjqOD9ZhZHiVDPwuycboEYSBk02zniWPq1iGJjlC3SsomULivo9tn/pub" target="_blank"><h1><u>Competition Rule Book</u></h1></a>
+</div>
+
         </section>
         <!-- Section: Design Block -->
 
@@ -142,7 +147,7 @@
 
             <div class="w-full px-6 py-8 md:px-8 lg:w-1/2">
                 <div class="flex justify-center mx-auto">
-                    <img class="w-auto h-8 sm:h-10" src="/sundarbans2.png" alt="">
+                    <img class="w-auto h-8 sm:h-10" src="../assets/sundarbans2.png" alt="">
                 </div>
 
                 <p class="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">
@@ -173,6 +178,7 @@
 
             </div>
         </div>
+
 
 
 
