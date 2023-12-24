@@ -131,7 +131,11 @@
 
                 <div class="flex justify-center mt-6">
                     <button
-                        class="px-8 py-3 leading-5 text-black font-semibold transition-colors duration-200 transform bg-yellow-500 rounded-sm hover:bg-yellow-700 focus:outline-none">Submit</button>
+    class="px-8 py-3 leading-5 text-black font-semibold transition-colors duration-200 transform bg-yellow-500 rounded-sm hover:bg-yellow-700 focus:outline-none"
+    :disabled="loading"  
+    @click="submitEntry">
+    {{ loading ? 'Submitting...' : 'Submit' }}
+  </button>
                 </div>
             </form>
         </section>
@@ -249,6 +253,7 @@ export default {
     data() {
         return {
             userDetails: null,
+            loading: false,
             entryFormData: {
                 name: "",
                 email: "",
@@ -325,6 +330,7 @@ export default {
             // You can also perform additional checks or validations here if needed
         },
         submitEntry() {
+            this.loading = true; 
     const submission_url = `${this.$globalData.backendUrl}/specialevent/`;
     console.log(submission_url);
 
@@ -342,6 +348,7 @@ export default {
     // For example, you can use Axios to make a POST request
     axios.post(submission_url, formData)
         .then(response => {
+            this.loading = false;
             console.log('Form submission successful:', response.data);
             if (response.status){
                 alert(response.data.message)
@@ -351,6 +358,8 @@ export default {
         .catch(error => {
             console.error('Form submission error:', error);
             // Handle errors or display a user-friendly message
+        }).finally(() => {
+          this.loading = false;
         });
 },
 
