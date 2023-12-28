@@ -44,66 +44,50 @@
           >
             Upcoming Events
           </h1>
-
           <p class="max-w-lg mx-auto mt-4 text-gray-500">
             Coming Soon: Mark Your Calendar!
           </p>
         </div>
 
         <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2">
-          <div>
+          <div v-for="event in upcomingEvents" :key="event.slug">
             <img
               class="relative z-10 object-cover w-full rounded-md h-96"
-              src="https://images.unsplash.com/photo-1644018335954-ab54c83e007f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-              alt=""
+              :src="prependBackendLink(event.image)"
+              alt="Event Image"
             />
-
             <div
               class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black"
             >
               <a
-                href="#"
+                :href="event.form_url"
                 class="font-semibold text-gray-800 hover:underline dark:text-white md:text-xl"
               >
-                All the features you want to know
+                {{ event.title }}
               </a>
-
               <p
                 class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
               >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure
-                veritatis sint autem nesciunt, laudantium quia tempore delect
+              {{ truncateDescription(event.desc) }}
               </p>
-
-              <p class="mt-3 text-sm text-[#eab308]">21 October 2019</p>
-            </div>
-          </div>
-
-          <div>
-            <img
-              class="relative z-10 object-cover w-full rounded-md h-96"
-              src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-              alt=""
-            />
-
-            <div
-              class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black"
-            >
-              <a
-                href="#"
-                class="font-semibold text-gray-800 hover:underline dark:text-white md:text-xl"
-              >
-                How to use sticky note for problem solving
-              </a>
-
+              <p class="mt-3 text-sm text-[#eab308]">
+                {{ event.timestamp }} 
+              </p>
               <p
                 class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
               >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure
-                veritatis sint autem nesciunt, laudantium quia tempore delect
+                Deadline: {{ event.deadline }}
               </p>
-
-              <p class="mt-3 text-sm text-[#eab308]">20 October 2019</p>
+              <!-- <p
+                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
+              >
+                Status: {{ event.status }}
+              </p> -->
+              <!-- <p
+                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
+              >
+                Video: {{ event.video }}
+              </p> -->
             </div>
           </div>
         </div>
@@ -221,58 +205,43 @@
         <div
           class="grid grid-cols-1 gap-8 mt-8 xl:mt-12 xl:gap-12 md:grid-cols-2 xl:grid-cols-3"
         >
-          <div>
+          <div v-for="event in latestEvents" :key="event.slug">
             <img
-              class="object-cover w-full rounded-lg h-96"
-              src="https://images.unsplash.com/photo-1621111848501-8d3634f82336?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1565&q=80"
-              alt=""
+              class="relative z-10 object-cover w-full rounded-md h-96"
+              :src="prependBackendLink(event.image)"
+              alt="Event Image"
             />
-            <h2
-              class="mt-4 text-xl font-semibold text-gray-800 capitalize dark:text-white"
+            <div
+              class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black"
             >
-              Best website collections
-            </h2>
-            <p
-              class="mt-2 text-md tracking-wider text-blue-500 uppercase dark:text-[#eab308]"
-            >
-              21 October 2023
-            </p>
-          </div>
-
-          <div>
-            <img
-              class="object-cover w-full rounded-lg h-96"
-              src="https://images.unsplash.com/photo-1621609764180-2ca554a9d6f2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
-              alt=""
-            />
-            <h2
-              class="mt-4 text-xl font-semibold text-gray-800 capitalize dark:text-white"
-            >
-              Block of Ui kit collections
-            </h2>
-            <p
-              class="mt-2 text-md tracking-wider text-blue-500 uppercase dark:text-[#eab308]"
-            >
-              12 October 2023
-            </p>
-          </div>
-
-          <div>
-            <img
-              class="object-cover w-full rounded-lg h-96"
-              src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-              alt=""
-            />
-            <h2
-              class="mt-4 text-xl font-semibold text-gray-800 capitalize dark:text-white"
-            >
-              Ton’s of mobile mockup
-            </h2>
-            <p
-              class="mt-2 text-md tracking-wider text-blue-500 uppercase dark:text-[#eab308]"
-            >
-              23 October 2023
-            </p>
+              <a
+                :href="event.form_url"
+                class="font-semibold text-gray-800 hover:underline dark:text-white md:text-xl"
+              >
+                {{ event.title }}
+              </a>
+              <!-- <p
+                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
+              >
+                {{ event.desc }}
+              </p> -->
+              <p class="mt-3 text-sm text-[#eab308]">{{ event.timestamp }}</p>
+              <!-- <p
+                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
+              >
+                Deadline: {{ event.deadline }}
+              </p> -->
+              <!-- <p
+                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
+              >
+                Status: {{ event.status }}
+              </p>
+              <p
+                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
+              >
+                Video: {{ event.video }}
+              </p> -->
+            </div>
           </div>
         </div>
       </div>
@@ -708,22 +677,56 @@ export default {
   data() {
     return {
       admins: [], // Data will be fetched dynamically
+      latestEvents: [],
+      upcomingEvents: [],
     };
   },
   mounted() {
-    // Use arrow function to ensure correct 'this' context
-    const fetchData = async () => {
+    // Fetch admin data and events when the component is mounted
+    this.fetchAdmins();
+    this.fetchEvents();
+  },
+  methods: {
+    async fetchAdmins() {
       try {
         const response = await fetch("https://sundarbans.camlio.shop/council");
         const data = await response.json();
-        this.admins = data.admins; // Use only the "admins" part of the response
+        this.admins = data.admins;
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching admin data:", error);
       }
-    };
-
-    // Call the function to fetch and populate data
-    fetchData();
+    },
+    async fetchEvents() {
+      try {
+        const response = await fetch("https://sundarbans.camlio.shop/events", { mode: "cors" });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("API Response:", data); // Log the entire response
+        // Separate events into latest and upcoming
+        this.latestEvents = data.latest_events || [];
+        this.upcomingEvents = data.uocoming_events || [];
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    },
+    prependBackendLink(url) {
+      // Replace with your actual backend link
+      const backendLink = "https://sundarbans.camlio.shop";
+      // Check if the URL already starts with 'http' or '/'
+      return url && url.startsWith("/") ? backendLink + url : url;
+    },
+    truncateDescription(description) {
+      const maxLength = 100;
+      if (description.length <= maxLength) {
+        return description;
+      } else {
+        // Truncate to 100 characters and add "..." at the end
+        return description.substring(0, maxLength) + "...";
+      }
+    },
   },
 };
 </script>
+
