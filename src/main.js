@@ -1,8 +1,25 @@
 import 'tailwindcss/tailwind.css';
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
 
 
 
-createApp(App).use(router).mount('#app');
+var userDetail = null;
+const storedUserDetails = localStorage.getItem('userDetails');
+    if (storedUserDetails) {
+      userDetail = JSON.parse(storedUserDetails);
+    }
+const globalData = {
+  backendUrl: "https://sundarbans.camlio.shop",
+  // backendUrl: "http://127.0.0.1:8000",
+  userDetails : userDetail
+};
+
+const app = createApp(App);
+
+app.config.globalProperties.$globalData = globalData;
+
+
+app.use(router);
+app.mount('#app');

@@ -59,7 +59,7 @@
 <div class="mt-4 lg:mt-0 lg:ml-8" v-if="userDetails">
   <div class="flex items-center">
     <img class="w-8 h-8 rounded-full" :src="userDetails.picture" alt="User Picture">
-    <span class="ml-2">{{ userDetails.name }}</span>
+    <span class="ml-2 text-black dark:text-white"><router-link to="user">{{ userDetails.name }}</router-link></span>
     <button style="background-color: rgb(145, 4, 4); color:aliceblue;border-radius: 5px; margin: 3px; padding: 4px;" @click="signOut">Sign Out</button>
   </div>
 </div>
@@ -123,43 +123,54 @@
       });
     },
     async sendCodeToBackend(code) {
-      const response = await axios.post('http://35.78.186.233/login', {
-              'gcode' : code
-            });
-            console.log('POST request response:', response.data);
-            if(response.data.success == false){
-              alert(response.data.error)
-            }
-            else {
-              console.log(response.data)
-              if (response && response.data) {
+    try {
+      const response = await axios.post(`${this.$globalData.backendUrl}/login/`, {
+        'gcode': code
+      });
+
+      // console.log('POST request response:', response.data);
+
+      if (response.data.success === false) {
+        alert(response.data.error);
+      } else {
+        // console.log(response.data);
+
+        if (response && response.data) {
           const userEmail = response.data.user_data.email || '';
           if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
             this.userDetails = response.data.user_data;
             localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
+            localStorage.setItem('user-role', "User");
+            location.reload();
           } else {
-            console.error('Login rejected: Invalid email domain.');
+            // console.error('Login rejected: Invalid email domain.');
             alert("Please Login using Your IIT Madras Student Google Account.");
           }
         } else {
           console.error("Failed to fetch user details.");
         }
       }
-    },
+    } catch (error) {
+      // console.error('Error sending code to backend:', error);
+      alert('Backend Server Error');
+    }
+  },
     signOut() {
       localStorage.removeItem('userDetails');
       this.userDetails = null;
       location.reload();
   },
+  
+},
   mounted() {
     const storedUserDetails = localStorage.getItem('userDetails');
     if (storedUserDetails) {
       const userDetails = JSON.parse(storedUserDetails);
       this.userDetails = userDetails;
+      // console.log("golbal : ", this.$globalData.userDetails )
     }
   }
-}
-  };
+};
   </script>
   
 

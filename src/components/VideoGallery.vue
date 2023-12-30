@@ -1,7 +1,7 @@
 <template>
     <NavBar></NavBar>
 
-    <body class=" dark:bg-black">
+    <div class=" dark:bg-black">
         <!-- Section: Design Block -->
         <section class="mb-10 md:mb-30">
             <!-- Jumbotron -->
@@ -68,7 +68,7 @@
 
         </section>
 
-    </body>
+    </div>
 </template>
 
 <script>
@@ -87,7 +87,9 @@ export default {
     },
     async mounted() {
         try {
-            const url = 'http://35.78.186.233/videos';
+            // const url = `${this.backendUrl}/videos`;
+            // const url = 'https://sundarbans.camlio.shop/videos'
+            const url = `${this.$globalData.backendUrl}/videos`;
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
