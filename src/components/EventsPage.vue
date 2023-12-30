@@ -189,7 +189,7 @@
               <p
                 class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
               >
-                {{ event.desc }}
+                {{ truncateDescription(event.desc) }}
               </p>
               <p class="mt-3 text-sm text-[#eab308]">
                 {{ event.timestamp }} 
@@ -318,6 +318,15 @@ export default {
       const backendLink = "https://sundarbans.camlio.shop";
       // Check if the URL already starts with 'http' or '/'
       return url && url.startsWith("/") ? backendLink + url : url;
+    },
+    truncateDescription(description) {
+      const maxLength = 100;
+      if (description.length <= maxLength) {
+        return description;
+      } else {
+        // Truncate to 100 characters and add "..." at the end
+        return description.substring(0, maxLength) + "...";
+      }
     },
   },
 };
