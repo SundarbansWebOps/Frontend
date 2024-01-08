@@ -97,10 +97,11 @@
           Active House Council
         </h1>
 
-        <div
-          class=""
-        >
-          <div class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4" id="adminsContainer">
+        <div class="">
+          <div
+            class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4"
+            id="adminsContainer"
+          >
             <div
               v-for="group_leaders in group_leaders"
               :key="group_leaders.name"
@@ -121,7 +122,7 @@
               <p
                 class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300"
               >
-                {{ group_leaders.role + " - " + group_leaders.GroupId}}
+                {{ group_leaders.role + " - " + group_leaders.GroupId }}
               </p>
             </div>
           </div>
@@ -145,22 +146,23 @@
         </p>
 
         <div
-        v-for="webops in webops"
-              :key="webops.name" class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4"
+          class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4"
         >
           <div
+            v-for="webops in webops"
+            :key="webops.name"
             class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
           >
             <img
-                class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                :src="webops.image_url"
-                alt="avatar"
-              />
+              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
+              :src="webops.image_url"
+              alt="avatar"
+            />
 
             <h1
               class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white"
             >
-            {{ webops.name }}
+              {{ webops.name }}
             </h1>
 
             <!-- <p
@@ -222,7 +224,6 @@
               </a>
             </div> -->
           </div>
-
         </div>
       </div>
     </section>
@@ -239,9 +240,9 @@ export default {
   },
   data() {
     return {
-      admins: [], 
+      admins: [],
       group_leaders: [],
-      webops: []
+      webops: [],
     };
   },
   mounted() {
