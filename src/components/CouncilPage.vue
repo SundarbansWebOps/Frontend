@@ -36,7 +36,7 @@
     </section>
     <!-- Section: Design Block -->
 
-    <!-- admins -->
+    <!-- upper house council -->
     <section class="text-gray-400 py-10 dark:bg-black body-font">
       <div class="text-center">
         <h1
@@ -88,6 +88,7 @@
       </div>
     </section>
 
+    <!-- active house council -->
     <section class="bg-white dark:bg-black">
       <div class="container px-6 py-10 mx-auto">
         <h1
