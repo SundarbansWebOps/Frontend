@@ -16,12 +16,12 @@
             dedicated house council for peer support, driving positive change
             and holistic student development.
           </p>
-          <router-link to="iitmbs_friends_photo_competition"
+          <a href="https://forms.gle/7pwqYUXWLS7pLpfo8"
             ><button
               class="px-5 py-2 mt-6 text-sm font-medium leading-5 text-center text-black capitalize dark:bg-white bg-blue-600 rounded-lg hover:bg-blue-500 lg:mx-0 lg:w-auto focus:outline-none"
             >
-              Participate in IITM BS Friends Photo Competition
-            </button></router-link
+              Participate in Sangeet Sangam
+            </button></a
           >
           <!-- <p class="mt-3 text-sm text-gray-400 ">No credit card required</p> -->
         </div>
@@ -248,7 +248,7 @@
     </section>
 
     <!-- admins -->
-    <section class="text-gray-400 py-10 dark:bg-black body-font">
+    <!-- <section class="text-gray-400 py-10 dark:bg-black body-font">
       <div class="text-center">
         <h1
           class="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white"
@@ -290,9 +290,9 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
     <!-- webops team -->
-    <section class="bg-white dark:bg-black">
+    <!-- <section class="bg-white dark:bg-black">
       <div class="container px-6 py-10 mx-auto">
         <h1
           class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white"
@@ -610,10 +610,10 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- login with google -->
-    <div
+    <!-- <div
       class="flex w-full max-w-sm mx-auto overflow-hidden py-10 rounded-lg dark:bg-black lg:max-w-4xl dark:bg-black"
     >
       <div
@@ -662,7 +662,7 @@
           >
         </a>
       </div>
-    </div>
+    </div> -->
   </body>
 </template>
 
