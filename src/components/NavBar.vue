@@ -28,7 +28,7 @@
           :class="{ 'block': isOpen, 'hidden': !isOpen }"
           class="lg:flex lg:items-center"
         >
-          <div class="flex flex-col space-y-4 lg:mt-0 lg:flex-row lg:-mx-8 lg:space-y-0">
+          <div class="mt-4 flex flex-col space-y-4 lg:mt-0 lg:flex-row lg:-mx-8 lg:space-y-0">
             <router-link
               to="/"
               class="text-gray-700 transition-colors duration-300 transform lg:mx-8 dark:text-gray-200 dark:hover:text-blue-400 hover:text-blue-500"
