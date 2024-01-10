@@ -42,6 +42,12 @@
               Events
             </router-link>
             <router-link
+              to="/clubs"
+              class="text-gray-700 transition-colors duration-300 transform lg:mx-8 dark:text-gray-200 dark:hover:text-blue-400 hover:text-blue-500"
+            >
+              Clubs
+            </router-link>
+            <router-link
               to="/gallery"
               class="text-gray-700 transition-colors duration-300 transform lg:mx-8 dark:text-gray-200 dark:hover:text-blue-400 hover:text-blue-500"
             >
@@ -59,7 +65,7 @@
 <div class="mt-4 lg:mt-0 lg:ml-8" v-if="userDetails">
   <div class="flex items-center">
     <img class="w-8 h-8 rounded-full" :src="userDetails.picture" alt="User Picture">
-    <span class="ml-2 text-black dark:text-white md:hidden font-semibold"><router-link to="user">{{ userDetails.name }}</router-link></span>
+    <span class="ml-2 text-black dark:text-white font-semibold"><router-link to="user">{{ userDetails.name }}</router-link></span>
     <button style="background-color: rgb(145, 4, 4); color:aliceblue;border-radius: 5px; margin: 3px; padding: 4px;" @click="signOut">Sign Out</button>
   </div>
 </div>
@@ -137,10 +143,12 @@
 
         if (response && response.data) {
           const userEmail = response.data.user_data.email || '';
+          const authtoken = response.data.token;
           if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
             this.userDetails = response.data.user_data;
             localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
             localStorage.setItem('user-role', "User");
+            localStorage.setItem('Token', authtoken);
             location.reload();
           } else {
             // console.error('Login rejected: Invalid email domain.');
@@ -157,6 +165,7 @@
   },
     signOut() {
       localStorage.removeItem('userDetails');
+      localStorage.removeItem('Token');
       this.userDetails = null;
       location.reload();
   },

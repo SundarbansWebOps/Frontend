@@ -1,5 +1,5 @@
 import HomePage from './components/HomePage.vue'
-import AboutPage from './components/AboutPage.vue'
+import ClubPage from './components/ClubPage.vue'
 import VideoGallery from './components/VideoGallery.vue'
 import EventsPage from './components/EventsPage.vue'
 import CouncilPage from './components/CouncilPage.vue'
@@ -23,9 +23,9 @@ const routes = [
         path: '/'
     },
     {
-        name: 'AboutPage',
-        component: AboutPage,
-        path: '/about'
+        name: 'ClubPage',
+        component: ClubPage,
+        path: '/clubs'
     },
     {
         name: 'VideoGallery',

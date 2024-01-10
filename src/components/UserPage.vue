@@ -100,23 +100,52 @@
 
 
 <script>
-import NavBar from './NavBar.vue'
-export default{
-    name : 'UserPage',
-    components : {
-        NavBar
-    },
-    data() {
-      return {
-        userDetails: null,
-      };
-    },
-    mounted(){
-        const storedUserDetails = localStorage.getItem('userDetails');
+import axios from 'axios';
+import NavBar from './NavBar.vue';
+
+export default {
+  name: 'UserPage',
+  components: {
+    NavBar
+  },
+  data() {
+    return {
+      userDetails: null,
+    };
+  },
+  async mounted() {
+    const storedUserDetails = localStorage.getItem('userDetails');
+
     if (storedUserDetails) {
       const userDetails = JSON.parse(storedUserDetails);
       this.userDetails = userDetails;
+
+      let token = localStorage.getItem('Auth-Token');
+      let tokenValue = JSON.parse(token || null);
+      let authValue = 'Bearer ' + tokenValue;
+
+      try {
+        const url = `${this.$globalData.backendUrl}/getuser/`;
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': authValue, // Use 'Authorization' header for token
+          },
+          data:{
+            'token' : tokenValue
+          }
+        };
+
+        // Use axios.get instead of axios.post for fetching user details
+        const result = await axios.post(url, config);
+        
+        // Assuming result.data contains the user details from the backend
+        console.log(result.data);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
     }
-    }
-}
+  },
+};
 </script>
+
