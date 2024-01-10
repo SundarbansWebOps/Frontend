@@ -26,10 +26,9 @@
           data-te-carousel-active data-te-carousel-item style="backface-visibility: hidden">
           <img src="../assets/Paradox.jpg" class="block w-full" alt="..." />
           <div class="absolute inset-x-[15%] bottom-5 hidden py-5 text-center text-white md:block">
-            <h5 class="text-xl">Marsaab Nachte Huve</h5>
+            <h5 class="text-xl">Experience IITM BS</h5>
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure
-              veritatis sint autem nesciunt.
+              Image Credits : Paradox , IIT Madras
             </p>
           </div>
         </div>
