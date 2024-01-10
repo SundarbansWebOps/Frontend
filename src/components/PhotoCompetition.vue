@@ -32,8 +32,12 @@
             <!-- Jumbotron -->
 
             <div style="text-align: center; margin-top: 8px;">
-    <a style="color: red;" href="https://docs.google.com/document/d/e/2PACX-1vQ4K61fi6huEDpogHoAT1oztlZyjqOD9ZhZHiVDPwuycboEYSBk02zniWPq1iGJjlC3SsomULivo9tn/pub" target="_blank"><h1><u>Competition Rule Book</u></h1></a>
-</div>
+                <a style="color: red;"
+                    href="https://docs.google.com/document/d/e/2PACX-1vQ4K61fi6huEDpogHoAT1oztlZyjqOD9ZhZHiVDPwuycboEYSBk02zniWPq1iGJjlC3SsomULivo9tn/pub"
+                    target="_blank">
+                    <h1><u>Competition Rule Book</u></h1>
+                </a>
+            </div>
 
         </section>
         <!-- Section: Design Block -->
@@ -131,11 +135,10 @@
 
                 <div class="flex justify-center mt-6">
                     <button
-    class="px-8 py-3 leading-5 text-black font-semibold transition-colors duration-200 transform bg-yellow-500 rounded-sm hover:bg-yellow-700 focus:outline-none"
-    :disabled="loading"  
-    @click="submitEntry">
-    {{ loading ? 'Submitting...' : 'Submit' }}
-  </button>
+                        class="px-8 py-3 leading-5 text-black font-semibold transition-colors duration-200 transform bg-yellow-500 rounded-sm hover:bg-yellow-700 focus:outline-none"
+                        :disabled="loading" @click="submitEntry">
+                        {{ loading ? 'Submitting...' : 'Submit' }}
+                    </button>
                 </div>
             </form>
         </section>
@@ -330,38 +333,38 @@ export default {
             // You can also perform additional checks or validations here if needed
         },
         submitEntry() {
-            this.loading = true; 
-    const submission_url = `${this.$globalData.backendUrl}/specialevent/`;
-    console.log(submission_url);
+            this.loading = true;
+            const submission_url = `${this.$globalData.backendUrl}/specialevent/`;
+            console.log(submission_url);
 
-    // Create a FormData object to send files and other data
-    const formData = new FormData();
-    formData.append('name', this.entryFormData.name);
-    formData.append('email', this.entryFormData.email);
-    formData.append('phone', this.entryFormData.phone);
-    formData.append('city', this.entryFormData.city);
-    formData.append('house', this.entryFormData.house);
-    formData.append('instagram', this.entryFormData.instagramHandle); // Update to match the backend field
-    formData.append('image', this.entryFormData.image);
+            // Create a FormData object to send files and other data
+            const formData = new FormData();
+            formData.append('name', this.entryFormData.name);
+            formData.append('email', this.entryFormData.email);
+            formData.append('phone', this.entryFormData.phone);
+            formData.append('city', this.entryFormData.city);
+            formData.append('house', this.entryFormData.house);
+            formData.append('instagram', this.entryFormData.instagramHandle); // Update to match the backend field
+            formData.append('image', this.entryFormData.image);
 
-    // Now you can perform the logic to submit the form data to your backend
-    // For example, you can use Axios to make a POST request
-    axios.post(submission_url, formData)
-        .then(response => {
-            this.loading = false;
-            console.log('Form submission successful:', response.data);
-            if (response.status){
-                alert(response.data.message)
-            }
-            // Add any additional logic you need after successful submission
-        })
-        .catch(error => {
-            console.error('Form submission error:', error);
-            // Handle errors or display a user-friendly message
-        }).finally(() => {
-          this.loading = false;
-        });
-},
+            // Now you can perform the logic to submit the form data to your backend
+            // For example, you can use Axios to make a POST request
+            axios.post(submission_url, formData)
+                .then(response => {
+                    this.loading = false;
+                    console.log('Form submission successful:', response.data);
+                    if (response.status) {
+                        alert(response.data.message)
+                    }
+                    // Add any additional logic you need after successful submission
+                })
+                .catch(error => {
+                    console.error('Form submission error:', error);
+                    // Handle errors or display a user-friendly message
+                }).finally(() => {
+                    this.loading = false;
+                });
+        },
 
     },
     mounted() {
