@@ -130,7 +130,7 @@ export default {
                 console.error('Network error :  ', error);
             }
         } else {
-            console.alert("Please Sign In ")
+            alert("Please Sign In ")
         }
     },
 
