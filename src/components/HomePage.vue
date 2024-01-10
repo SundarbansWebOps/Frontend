@@ -18,7 +18,7 @@
           <router-link v-if="upcomingEvents && upcomingEvents.length > 0"
             :to="'/event/' + (upcomingEvents[0].slug || '')">
             <button
-              class="px-5 py-2 mt-6 text-sm font-medium leading-5 text-center text-white capitalize dark:bg-white bg-black rounded-lg hover:bg-blue-500 lg:mx-0 lg:w-auto focus:outline-none">
+              class="px-5 py-2 mt-6 text-sm font-medium leading-5 text-center text-white dark:text-black capitalize dark:bg-white bg-black rounded-lg hover:bg-blue-500 lg:mx-0 lg:w-auto focus:outline-none">
               Participate in {{ upcomingEvents[0].title }}
             </button>
           </router-link>
