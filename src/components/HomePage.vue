@@ -227,10 +227,9 @@ export default {
       upcomingEvents: [],
     };
   },
-  mounted() {
+  async mounted() {
     // Fetch admin data and events when the component is mounted
-    this.fetchAdmins();
-    this.fetchEvents();
+    await Promise.all([this.fetchAdmins(), this.fetchEvents()]);
   },
   methods: {
     async fetchAdmins() {
@@ -252,7 +251,7 @@ export default {
         console.log("API Response:", data); // Log the entire response
         // Separate events into latest and upcoming
         this.latestEvents = data.latest_events || [];
-        this.upcomingEvents = data.uocoming_events || [];
+        this.upcomingEvents = data.upcoming_events || [];
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -265,14 +264,12 @@ export default {
     },
     truncateDescription(description) {
       const maxLength = 100;
-      if (description.length <= maxLength) {
-        return description;
-      } else {
-        // Truncate to 100 characters and add "..." at the end
-        return description.substring(0, maxLength) + "...";
-      }
+      return description.length <= maxLength
+        ? description
+        : description.substring(0, maxLength) + "...";
     },
   },
 };
 </script>
+
 

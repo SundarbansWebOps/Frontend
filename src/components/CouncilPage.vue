@@ -230,41 +230,39 @@
 </template>
 
 <script>
-import NavBar from "./NavBar.vue";
+import axios from 'axios';
+import NavBar from './NavBar.vue';
 
 export default {
-  name: "CouncilPage",
+  name: 'CouncilPage',
   components: {
     NavBar,
   },
   data() {
     return {
       admins: [
-        { name: "Admin1", image_url: "url1" },
-        { name: "Admin2", image_url: "url2" },
+        { name: 'Admin1', image_url: 'url1' },
+        { name: 'Admin2', image_url: 'url2' },
       ],
       group_leaders: [],
       webops: [],
       graphics: [],
     };
   },
-  mounted() {
-    // Use arrow function to ensure correct 'this' context
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://sundarbans.camlio.shop/council");
-        const data = await response.json();
-        this.admins = data.admins; // Use only the "admins" part of the response
-        this.group_leaders = data.group_leaders; // Use only the "group_leaders" part of the response
-        this.webops = data.webops;
-        this.graphics = data.others;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  async mounted() {
+    try {
+      const response = await axios.get('https://sundarbans.camlio.shop/council');
+      const data = response.data;
 
-    // Call the function to fetch and populate data
-    fetchData();
+      // Use only the specified parts of the response
+      this.admins = data.admins;
+      this.group_leaders = data.group_leaders;
+      this.webops = data.webops;
+      this.graphics = data.others;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   },
 };
 </script>
+
