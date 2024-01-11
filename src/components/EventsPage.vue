@@ -195,16 +195,6 @@
                 <p class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm">
                   Deadline: {{ event.deadline }}
                 </p>
-                <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Status: {{ event.status }}
-              </p> -->
-                <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Video: {{ event.video }}
-              </p> -->
               </div>
             </router-link>
           </div>
@@ -241,29 +231,9 @@
               >
                 {{ event.title }}
               </a>
-              <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                {{ event.desc }}
-              </p> -->
               <p class="mt-3 text-sm text-[#eab308]">
                 {{ event.timestamp }}
               </p>
-              <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Deadline: {{ event.deadline }}
-              </p> -->
-              <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Status: {{ event.status }}
-              </p>
-              <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Video: {{ event.video }}
-              </p> -->
             </div>
           </div>
         </div>
