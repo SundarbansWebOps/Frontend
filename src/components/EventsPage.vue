@@ -195,16 +195,6 @@
                 <p class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm">
                   Deadline: {{ event.deadline }}
                 </p>
-                <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Status: {{ event.status }}
-              </p> -->
-                <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Video: {{ event.video }}
-              </p> -->
               </div>
             </router-link>
           </div>
@@ -241,29 +231,9 @@
               >
                 {{ event.title }}
               </a>
-              <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                {{ event.desc }}
-              </p> -->
               <p class="mt-3 text-sm text-[#eab308]">
                 {{ event.timestamp }}
               </p>
-              <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Deadline: {{ event.deadline }}
-              </p> -->
-              <!-- <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Status: {{ event.status }}
-              </p>
-              <p
-                class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm"
-              >
-                Video: {{ event.video }}
-              </p> -->
             </div>
           </div>
         </div>
@@ -272,10 +242,16 @@
   </body>
 </template>
 <script>
-import NavBar from "./NavBar.vue";
+import axios from 'axios';
+import NavBar from './NavBar.vue';
+
+const api = axios.create({
+  baseURL: 'https://sundarbans.camlio.shop',
+  // You can add more axios configurations here if needed
+});
 
 export default {
-  name: "EventsPage",
+  name: 'EventsPage',
   components: {
     NavBar,
   },
@@ -285,45 +261,33 @@ export default {
       upcomingEvents: [],
     };
   },
-  mounted() {
+  async mounted() {
     // Fetch events when the component is mounted
-    this.fetchEvents();
+    await this.fetchEvents();
   },
   methods: {
-    fetchEvents() {
-      // Replace with your actual API endpoint
-      fetch("https://sundarbans.camlio.shop/events", { mode: "cors" })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("API Response:", data); // Log the entire response
-          // Separate events into latest and upcoming
-          this.latestEvents = data.latest_events || [];
-          this.upcomingEvents = data.uocoming_events || [];
-        })
-        .catch((error) => {
-          console.error("Error fetching events:", error);
-        });
+    async fetchEvents() {
+      try {
+        const response = await api.get('/events');
+        console.log('API Response:', response.data);
+        // Separate events into latest and upcoming
+        this.latestEvents = response.data.latest_events || [];
+        this.upcomingEvents = response.data.upcoming_events || [];
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
     },
     prependBackendLink(url) {
-      // Replace with your actual backend link
-      const backendLink = "https://sundarbans.camlio.shop";
-      // Check if the URL already starts with 'http' or '/'
-      return url && url.startsWith("/") ? backendLink + url : url;
+      // Check if the URL already starts with '/'
+      return url && url.startsWith('/') ? api.defaults.baseURL + url : url;
     },
     truncateDescription(description) {
       const maxLength = 100;
-      if (description.length <= maxLength) {
-        return description;
-      } else {
-        // Truncate to 100 characters and add "..." at the end
-        return description.substring(0, maxLength) + "...";
-      }
+      return description.length <= maxLength
+        ? description
+        : description.substring(0, maxLength) + '...';
     },
   },
 };
 </script>
+
