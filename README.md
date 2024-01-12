@@ -1,24 +1,65 @@
-# frontend
+# Sundarbans House IIT M Web Application ✨
 
-## Project setup
-```
-npm install
-```
+Welcome to the frontend repository of the Sundarbans House IITM's web application! Here, you can stay updated with the latest news, events, and general details about the house representatives, clubs, and your personal group. To access the features, simply sign in with your official IITM student email and let the magic happen!
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+![Sundarbans House](https://github.com/SundarbansWebOps/Frontend/blob/main/src/assets/docs/image1.png)
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Table of Contents
 
-### Lints and fixes files
-```
-npm run lint
-```
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Contributing & TechStack](#contributing-and-techstack)
+- [Reporting Issues](#reporting-issues)
+- [License](#license)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Getting Started
+
+### Step 1: Sign In
+Sign in with your official student email ending with '@ds.study.iitm.ac.in'.
+
+### Step 2: Explore Your Group
+Click on your profile name to find your group number, along with the group leaders' contact information and the WhatsApp group invite link for your group.
+
+![Sundarbans House](https://github.com/SundarbansWebOps/Frontend/blob/main/src/assets/docs/image2.png)
+
+### Step 3: Explore
+Relax and explore other sections!
+
+## Usage
+
+- **Events:** Find upcoming and latest events by clicking on the 'Events' link in the navbar.
+- **Clubs:** Explore clubs of the Sundarbans House along with their relevant details by clicking on 'Clubs'.
+- **Gallery:** Watch the latest videos from the Sundarbans YouTube channel in the 'Gallery' section.
+- **Council:** Get to know the Upper House Council Representatives, Active House Council, WebOps Team, Graphics Team, etc. at 'Council'.
+
+## Contributing and TechStack
+
+The Current TechStack is:
+
+[![Stack](https://skillicons.dev/icons?i=vue,js,tailwind,django)](https://skillicons.dev)
+
+
+You can contribute to this project by:
+
+- Adding new features
+- Improving the UI/UX
+- Fixing bugs
+- Enhancing/writing unit tests
+- Working on documentation
+
+Please create an issue before starting any work. Once you get approval on your issue, create a new branch and submit your changes in a PR. Ensure all tests are passed and wait for the PR to get reviewed by the WebOps team.
+
+For a detailed contributing guide, refer to [How to Contribute](https://github.com/SundarbansWebOps/Frontend/blob/main/CONTRIBUTING.md).
+
+## Reporting Issues
+
+You can report any issues that you find within the app by 'Creating a New Issue' in the Issues tab or by mailing the Sundarbans Web Admin at [sundarbans-webad@ds.study.iitm.ac.in](mailto:sundarbans-webad@ds.study.iitm.ac.in)
+
+## License
+
+This is an open-source project licensed under the [GPL-3.0 license](https://github.com//blob/main/LICENSE).
+
+## Don't Forget to Star ⭐ the Repository! 
+
+And feel free to contribute and make our web application even more amazing!!!
