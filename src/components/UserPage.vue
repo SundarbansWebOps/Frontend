@@ -104,6 +104,22 @@
             </button>
           </a>
         </div>
+
+        <div
+          v-if="GroupUrl2 && GroupUrl2.length > 0"
+          class="mt-6"
+        >
+          <a
+            :href="GroupUrl2"
+            target="_blank"
+          >
+            <button
+              class="w-full px-6 py-3 text-sm font-medium tracking-wide text-black capitalize transition-colors duration-300 transform bg-gray-200 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
+            >
+              Common Group
+            </button>
+          </a>
+        </div>
       </div>
 
 
@@ -142,6 +158,7 @@ export default {
             userDetails: null,
             GroupId: null,
             GroupUrl: null,
+            GroupUrl2: null,
             GLmail: null,
         };
     },
@@ -172,6 +189,7 @@ export default {
                 if (result.data.success) {
                     this.GroupId = result.data.GroupId;
                     this.GroupUrl = result.data.link;
+                    this.GroupUrl2 = result.data.link2;
                     this.GLmail = result.data.gl_email;
                 }
             } catch (error) {
