@@ -55,7 +55,7 @@
                 >
                   <img
                     class="object-cover w-full h-56"
-                    :src="admins[0].image_url"
+                    :src="prependBackendLink(admins[0].image)"
                     alt="avatar"
                   >
                   <div class="py-5 text-center">
@@ -81,7 +81,7 @@
                 >
                   <img
                     class="object-cover w-full h-56"
-                    :src="admins[1].image_url"
+                    :src="prependBackendLink(admins[1].image)"
                     alt="avatar"
                   >
                   <div class="py-5 text-center">
@@ -126,7 +126,7 @@
             >
               <img
                 class="object-cover w-full h-56"
-                :src="g_l.image_url"
+                :src="prependBackendLink(g_l.image)"
                 alt="avatar"
               >
 
@@ -172,7 +172,7 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-              :src="wops.image_url"
+              :src="prependBackendLink(wops.image)"
               alt="avatar"
             >
 
@@ -200,7 +200,7 @@
         <p
           class="max-w-2xl mx-auto my-6 text-center text-gray-500 dark:text-gray-300"
         >
-          Meet the Team Behind All the Social Media Posts, Event Poters Design.
+          Meet the Team Behind All the Social Media Posts, Event Posters Design.
         </p>
 
         <div
@@ -213,7 +213,7 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-              :src="designer.image_url"
+              :src="prependBackendLink(designer.image)"
               alt="avatar"
             >
 
@@ -249,9 +249,14 @@ export default {
       graphics: [],
     };
   },
+  methods:{
+    prependBackendLink(url) {
+      return `${this.$globalData.backendUrl}` + url;
+    },
+  },
   async mounted() {
     try {
-      const response = await axios.get('https://sundarbans.camlio.shop/council');
+      const response = await axios.get(`${this.$globalData.backendUrl}/council`);
       const data = response.data;
 
       // Use only the specified parts of the response
