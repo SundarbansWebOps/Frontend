@@ -247,16 +247,18 @@ export default {
       group_leaders: [],
       webops: [],
       graphics: [],
+      api_url : '',
     };
   },
   methods:{
     prependBackendLink(url) {
-      return `${this.$globalData.backendUrl}` + url;
+      return this.api_url + url;
     },
   },
   async mounted() {
     try {
-      const response = await axios.get(`${this.$globalData.backendUrl}/council`);
+      this.api_url = this.$globalData.backendUrl;
+      const response = await axios.get(`${this.api_url}/council`);
       const data = response.data;
 
       // Use only the specified parts of the response
