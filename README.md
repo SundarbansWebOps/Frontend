@@ -2,7 +2,7 @@
 
 Welcome to the frontend repository of the Sundarbans House IITM's web application! Here, you can stay updated with the latest news, events, and general details about the house representatives, clubs, and your personal group. To access the features, simply sign in with your official IITM student email and let the magic happen!
 
-![Sundarbans House](https://github.com/SundarbansWebOps/Frontend/blob/main/src/assets/docs/image1.png)
+![Sundarbans House](https://github.com/SundarbansWebOps/Frontend/blob/main/src/assets/docs/image3.png)
 
 ## Table of Contents
 
