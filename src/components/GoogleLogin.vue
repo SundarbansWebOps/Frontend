@@ -97,7 +97,7 @@ export default {
 
                     if (response && response.data) {
                         const userEmail = response.data.user_data.email || '';
-                        if (userEmail.endsWith('@ds.study.iitm.ac.in')) {
+                        if (userEmail.endsWith('iitm.ac.in')) {
                             this.userDetails = response.data.user_data;
                             localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
                             localStorage.setItem('user-role', "User");
