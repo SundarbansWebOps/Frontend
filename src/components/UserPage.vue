@@ -89,6 +89,8 @@
             GLmail[0] }}
           </span>
         </div>
+        
+        <div v-if="Phone2">
         <div
           v-if="GroupUrl && GroupUrl.length > 0"
           class="mt-6"
@@ -120,6 +122,23 @@
             </button>
           </a>
         </div>
+      </div>
+        
+        <div v-else>
+          <h6 style="color: red;">Update Number to Access Group Links</h6>
+        <div class="mt-4">
+                <div class="flex justify-between">
+                    <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="loggingPassword">Whatsapp Number</label>
+                </div>
+
+                <input id="loggingPassword" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-black dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="number" v-model="Phone">
+            </div>
+            <div class="mt-6">
+                <button class="w-full px-6 py-3 text-sm font-medium tracking-wide text-black capitalize transition-colors duration-300 transform bg-gray-200 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50" @click="updateuser">
+                    Update Number
+                </button>
+            </div>
+          </div>
       </div>
 
 
@@ -160,8 +179,33 @@ export default {
             GroupUrl: null,
             GroupUrl2: null,
             GLmail: null,
+            Phone : null,
+            Phone2 : null,
         };
     },
+    methods : {
+      updateuser(){
+        let token = localStorage.getItem('Token');
+        console.log(this.Phone)
+        this.Phone2 = this.Phone
+        try {
+                const url = `${this.$globalData.backendUrl}/getuser/`;
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+                const data = {
+                    'token': token
+                };
+
+
+
+            } catch (error) {
+                console.error('Error updating user details:', error);
+            }
+    },
+  },
     async mounted() {
         const storedUserDetails = localStorage.getItem('userDetails');
 
@@ -197,6 +241,6 @@ export default {
             }
         }
     },
-};
+  };
 </script>
 
