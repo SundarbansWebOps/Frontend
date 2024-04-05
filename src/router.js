@@ -6,6 +6,7 @@ import CouncilPage from './components/CouncilPage.vue'
 import UserPage from './components/UserPage.vue'
 import PhotoCompetition from './components/PhotoCompetition.vue'
 import EventSlug from './components/EventSlug.vue'
+import PrivacyPolicy from './components/PrivacyPolicy.vue'
 
 
 
@@ -52,10 +53,16 @@ const routes = [
         name: 'PhotoCompetition',
         component: PhotoCompetition,
         path: '/iitmbs_friends_photo_competition'
-    },{
+    },
+    {
         name: 'EventSlug',
         component: EventSlug,
         path: '/event/:slug'
+    },
+    {
+        name: 'PrivacyPolicy',
+        component: PrivacyPolicy,
+        path: '/privacy-policy'
     },
 ];
 
