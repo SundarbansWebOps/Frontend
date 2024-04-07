@@ -60,7 +60,7 @@
         <div class="mt-4">
           <span v-if="GLmail && GLmail.length > 0"
             class="block mb-2 text-sm font-medium text-gray-600 text-center dark:text-gray-200">GL Email : {{
-    GLmail[0] }}
+              GLmail[0] }}
           </span>
         </div>
 
@@ -84,7 +84,7 @@
           </div>
         </div>
 
-        <div v-else>
+        <div v-if="Phone === null">
           <h6 style="color: red;">Update Number to Access Group Links</h6>
           <div class="mt-4">
             <div class="flex justify-between">
@@ -94,13 +94,14 @@
 
             <input id="loggingPassword"
               class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-black dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
-             v-model="Phone" type="text" pattern="[6789][0-9]{9}">
+              v-model="Phone2" type="text" pattern="[6789][0-9]{9}">
           </div>
           <div class="mt-6">
             <button
               class="w-full px-6 py-3 text-sm font-medium tracking-wide text-black capitalize transition-colors duration-300 transform bg-gray-200 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
-              @click="updateuser">
-              Update Number
+              @click="updateuser" :disabled="updating">
+              <span v-if="!updating">Update Number</span>
+              <span v-else>Updating...</span> <!-- Display blinkingDots here -->
             </button>
           </div>
         </div>
@@ -141,12 +142,18 @@ export default {
       GroupUrl: null,
       GroupUrl2: null,
       GLmail: null,
-      Phone: null,
+      Phone: "",
+      Phone2: null,
+      updating: false,
     };
   },
   methods: {
     async updateuser() {
-      if (this.Phone) {
+      // Set updating to true when the update process begins
+      this.updating = true;
+      // Trim the input and check if it's not empty
+      const trimmedPhone = this.Phone2.trim();
+      if (trimmedPhone) {
         let token = localStorage.getItem('Token');
         try {
           const url = `${this.$globalData.backendUrl}/updateuser/`;
@@ -157,22 +164,23 @@ export default {
           };
           const data = {
             'token': token,
-            'phone' : this.Phone
+            'phone': trimmedPhone, // Use the trimmed value
           };
           const result = await axios.post(url, data, config);
           if (result.data.success == true) {
-            alert("Whatsapp Number Updated Successfully.")
+            alert("Whatsapp Number Updated Successfully.");
             location.reload();
           }
-          
-
-
-
         } catch (error) {
           console.error('Error updating user details:', error);
         }
+      } else {
+        // Display an error message or handle the empty input case
+        alert("Please enter a valid WhatsApp number.");
       }
+      this.updating = false;
     },
+
   },
   async mounted() {
     const storedUserDetails = localStorage.getItem('userDetails');
@@ -203,6 +211,13 @@ export default {
           this.GroupUrl = result.data.link;
           this.GroupUrl2 = result.data.link2;
           this.GLmail = result.data.gl_email;
+          this.Phone = result.data.phone;
+          if (this.Phone === null) {
+            alert("Please Update your whatsapp number to access whatsapp group links.")
+          }
+        }
+        else {
+          alert("Data not found.")
         }
       } catch (error) {
         console.error('Error fetching user details:', error);
