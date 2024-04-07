@@ -12,7 +12,7 @@ const storedUserDetails = localStorage.getItem('userDetails');
     }
 const globalData = {
   backendUrl: "https://sundarbans.camlio.shop",
-  // backendUrl: "http://127.0.0.1:8000", (for development use)
+  // backendUrl: "http://127.0.0.1:8000", // (for development use)
   userDetails : userDetail
 };
 

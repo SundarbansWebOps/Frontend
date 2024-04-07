@@ -145,10 +145,13 @@ export default {
                 console.log(result.data.success);
                 this.access = result.data.success;
                 this.club_list = result.data.club_list;
-                console.log(this.club_list)
-                console.log(result)
+                if (this.access === false){
+                  alert("Access Denied.")
+                
+                }
             } catch (error) {
                 console.error('Network error :  ', error);
+                alert("Access Denied.")
             }
         } else {
             alert("Please Sign In ")
