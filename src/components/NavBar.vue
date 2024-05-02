@@ -108,7 +108,7 @@
             >
             <span class="ml-2 text-black dark:text-white font-semibold"><router-link to="user">{{ userDetails.name }}</router-link></span>
             <button
-              style="background-color: rgb(145, 4, 4); color:aliceblue;border-radius: 5px; margin: 3px; padding: 4px;"
+              style="background-color: rgb(145, 4, 4); color:aliceblue;border-radius: 5px; margin: 3px; padding: 5.5px;"
               @click="signOut"
             >
               Sign Out
