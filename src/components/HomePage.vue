@@ -253,7 +253,7 @@ export default {
   methods: {
     async fetchAdmins() {
       try {
-        const response = await fetch("https://sundarbans.camlio.shop/council");
+        const response = await axios.get("https://sundarbans.camlio.shop/council");
         const data = await response.json();
         this.admins = data.admins;
       } catch (error) {
@@ -262,7 +262,7 @@ export default {
     },
     async fetchEvents() {
       try {
-        const response = await fetch("https://sundarbans.camlio.shop/events", {
+        const response = await axios.get("https://sundarbans.camlio.shop/events", {
           mode: "cors",
         });
         if (!response.ok) {
