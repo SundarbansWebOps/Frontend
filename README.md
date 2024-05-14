@@ -16,7 +16,7 @@ Welcome to the frontend repository of the Sundarbans House IITM's web applicatio
 ## Getting Started
 
 ### Step 1: Sign In
-Sign in with your official student email ending with '@ds.study.iitm.ac.in'.
+Sign in with your official student gmail account ending with 'iitm.ac.in'.
 
 ### Step 2: Explore Your Group
 Click on your profile name to find your group number, along with the group leaders' contact information and the WhatsApp group invite link for your group.
