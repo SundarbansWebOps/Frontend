@@ -93,6 +93,12 @@
           >
             Council
           </router-link>
+          <router-link
+            to="/notes"
+            class="text-gray-700 transition-colors duration-300 transform lg:mx-8 dark:text-gray-200 dark:hover:text-blue-400 hover:text-blue-500"
+          >
+            Notes
+          </router-link>
         </div>
           
         <!-- If user is logged in, show user picture and name -->

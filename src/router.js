@@ -7,6 +7,7 @@ import UserPage from './components/UserPage.vue'
 import PhotoCompetition from './components/PhotoCompetition.vue'
 import EventSlug from './components/EventSlug.vue'
 import PrivacyPolicy from './components/PrivacyPolicy.vue'
+import NotesPage from'./components/NotesPage.vue'
 
 
 
@@ -48,6 +49,11 @@ const routes = [
         name: 'UserPage',
         component: UserPage,
         path: '/user'
+    },
+    {
+        name: 'NotesPage',
+        component: NotesPage,
+        path: '/notes'
     },
     {
         name: 'PhotoCompetition',
