@@ -3,7 +3,7 @@
 
   <body class=" dark:bg-black">
     <section v-if="event" class="mb-10 md:mb-30"
-      :style="{ backgroundImage: 'url(' + 'https://sundarbans.camlio.shop' + event.image + ')' }">
+      :style="{ backgroundImage: 'url(' + `${this.$globalData.backendUrl}` + event.image + ')' }">
       <!-- Jumbotron -->
       <div class="relative overflow-hidden bg-cover bg-no-repeat" style="background-position: 50%; height: 500px;">
         <div class="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden  bg-black-10 bg-fixed">
