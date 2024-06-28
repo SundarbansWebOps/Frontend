@@ -173,30 +173,30 @@
             v-for="event in upcomingEvents"
             :key="event.slug"
           >
-            <router-link :to="'/event/'+ event.slug">
-              <img
-                class="relative z-10 object-cover w-full rounded-md h-96"
-                :src="prependBackendLink(event.image)"
-                alt="Event Image"
-              >
-              <div class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black">
-                <a
-                  :href="event.form_url"
-                  class="font-semibold text-gray-800 hover:underline dark:text-white md:text-xl"
-                >
-                  {{ event.title }}
-                </a>
-                <p class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm">
-                  {{ truncateDescription(event.desc) }}
-                </p>
-                <p class="mt-3 text-sm text-[#eab308]">
-                  {{ event.timestamp }}
-                </p>
-                <p class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm">
-                  Deadline: {{ event.deadline }}
-                </p>
-              </div>
-            </router-link>
+          <router-link :to="'/event/'+ event.slug" class="block relative">
+  <img
+    class="relative z-10 object-cover w-full rounded-md h-96"
+    :src="prependBackendLink(event.image)"
+    alt="Event Image"
+  >
+  <div class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black">
+    <span
+      class="font-semibold text-gray-800 hover:underline dark:text-white md:text-xl"
+    >
+      {{ event.title }}
+    </span>
+    <p class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm">
+      {{ truncateDescription(event.desc) }}
+    </p>
+    <p class="mt-3 text-sm text-[#eab308]">
+      {{ event.timestamp }}
+    </p>
+    <p class="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm">
+      Deadline: {{ event.deadline }}
+    </p>
+  </div>
+</router-link>
+
           </div>
         </div>
       </div>
