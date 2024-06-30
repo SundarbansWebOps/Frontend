@@ -1,7 +1,7 @@
 <template>
     <NavBar></NavBar>
 
-<iframe id="searchFrame" name="searchFrame" src="https://theopennotes.in/" frameborder="0"></iframe>
+<iframe id="searchFrame" name="searchFrame" src="https://theopennotes.in/course/63fd9e3c553314fb9fc19524" frameborder="0"></iframe>
 
 <header>
   <h1>Sundarbans x TheOpenNotes </h1>
