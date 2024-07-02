@@ -77,7 +77,7 @@
     display: inline-block;
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: blue;
+    background-color: rgb(1, 1, 14);
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -85,7 +85,7 @@
   }
   
   .join-button:hover {
-    background-color: darkblue;
+    background-color: rgb(23, 23, 27);
   }
   
   .loading {

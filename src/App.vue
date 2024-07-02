@@ -24,4 +24,7 @@ export default {
 </script>
 
 <style>
+#app{
+  flex-grow: 1;
+}
 </style>
