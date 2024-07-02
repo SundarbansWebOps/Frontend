@@ -17,7 +17,7 @@
             dedicated house council for peer support, driving positive change
             and holistic student development.
           </p>
-          <router-link
+          <!-- <router-link
             v-if="upcomingEvents && upcomingEvents.length > 0"
             :to="'/event/' + (upcomingEvents[0].slug || '')"
           >
@@ -33,6 +33,13 @@
             @click="$router.push('/user')"
           >
             Find Your Group
+          </button>
+          <br> -->
+          <button
+            class="px-5 py-2 mt-6 text-sm font-medium leading-5 text-center text-white dark:text-black capitalize dark:bg-white bg-black rounded-lg hover:bg-blue-500 lg:mx-0 lg:w-auto focus:outline-none"
+            @click="$router.push('/study-groups')"
+          >
+            Join Study Groups
           </button>
         </div>
 
