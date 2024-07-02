@@ -6,7 +6,7 @@
         <div v-for="(link, community) in studyGroups" :key="community" class="box">
           <div class="content">
             <h3>{{ community }}</h3>
-            <a :href="link" target="_blank" class="join-button">Join</a>
+            <a :href="link" target="_blank" class="join-button">Join Groups</a>
           </div>
         </div>
       </div>
@@ -76,7 +76,7 @@
   .join-button {
     display: inline-block;
     margin-top: 10px;
-    padding: 10px 20px;
+    padding: 10px 15px;
     background-color: rgb(1, 1, 14);
     color: white;
     text-decoration: none;
