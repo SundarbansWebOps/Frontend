@@ -6,7 +6,9 @@
         <div v-for="(link, community) in studyGroups" :key="community" class="box">
           <div class="content">
             <h3>{{ community }}</h3>
+            <div>
             <a :href="link" target="_blank" class="join-button">Join Groups</a>
+        </div>
           </div>
         </div>
       </div>

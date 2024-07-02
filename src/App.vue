@@ -24,7 +24,13 @@ export default {
 </script>
 
 <style>
-#app{
-  flex-grow: 1;
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 85vh;
+}
+
+.flex-grow {
+  flex: 1;
 }
 </style>
