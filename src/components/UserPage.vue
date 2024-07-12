@@ -78,7 +78,7 @@
             <a :href="GroupUrl2" target="_blank">
               <button
                 class="w-full px-6 py-3 text-sm font-medium tracking-wide text-black capitalize transition-colors duration-300 transform bg-gray-200 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
-                Common Group
+                Sundarbans Official Group
               </button>
             </a>
           </div>
