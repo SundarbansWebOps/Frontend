@@ -11,7 +11,7 @@ const storedUserDetails = localStorage.getItem('userDetails');
       userDetail = JSON.parse(storedUserDetails);
     }
 const globalData = {
-  backendUrl: "https://sundarbans.camlio.shop",
+  backendUrl: "https://backend.sundarbans.iitmbs.org",
   // backendUrl: "http://127.0.0.1:8000", // (for development use)
   userDetails : userDetail
 };
