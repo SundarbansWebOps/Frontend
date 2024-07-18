@@ -21,7 +21,7 @@
               <h1
                 class="mt-2 mb-16 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl"
               >
-                House Council & Gymkhana
+                Sundarbans House Council
                 <br><span class="text-[#eab308]">2023-24</span>
               </h1>
             </div>
