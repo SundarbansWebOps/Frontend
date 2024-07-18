@@ -226,6 +226,46 @@
         </div>
       </div>
     </section>
+    <section
+      v-if="prteam"
+      class="bg-white dark:bg-black"
+    >
+      <div class="container px-6 py-10 mx-auto">
+        <h1
+          class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white"
+        >
+          Sundarbans PR & Marketing Team
+        </h1>
+
+        <p
+          class="max-w-2xl mx-auto my-6 text-center text-gray-500 dark:text-gray-300"
+        >
+          Meet the Team Behind our Marketing & Public Relations.
+        </p>
+
+        <div
+          class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4"
+        >
+          <div
+            v-for="pr in prteam"
+            :key="pr.name"
+            class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
+          >
+            <img
+              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
+              :src="prependBackendLink(pr.image)"
+              alt="avatar"
+            >
+
+            <h1
+              class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white"
+            >
+              {{ pr.name }}
+            </h1>
+          </div>
+        </div>
+      </div>
+    </section>
   </body>
 </template>
 
@@ -247,6 +287,7 @@ export default {
       group_leaders: [],
       webops: [],
       graphics: [],
+      prteam: [],
       api_url : '',
     };
   },
@@ -266,6 +307,7 @@ export default {
       this.group_leaders = data.group_leaders;
       this.webops = data.webops;
       this.graphics = data.others;
+      this.prteam = data.prteam;
     } catch (error) {
       console.error('Error fetching data:', error);
     }
