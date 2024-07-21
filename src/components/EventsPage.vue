@@ -162,7 +162,7 @@ import axios from 'axios';
 import NavBar from './NavBar.vue';
 
 const api = axios.create({
-  baseURL: this.$globalData.backendUrl,
+  baseURL: 'https://backend-sundarbans.iitmbs.org',
   // You can add more axios configurations here if needed
 });
 
