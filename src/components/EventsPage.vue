@@ -162,7 +162,7 @@ import axios from 'axios';
 import NavBar from './NavBar.vue';
 
 const api = axios.create({
-  baseURL: 'https://sundarbans.camlio.shop',
+  baseURL: this.$globalData.backendUrl,
   // You can add more axios configurations here if needed
 });
 
