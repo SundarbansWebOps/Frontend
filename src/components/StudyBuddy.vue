@@ -50,35 +50,42 @@ export default {
   methods: {
     showInstagramAlert() {
       alert("This feature will be rolled out soon. Stay tuned.");
+    },
+    fetchUserData() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          this.latitude = position.coords.latitude;
+          this.longitude = position.coords.longitude;
+          this.loading = true;
+
+          try {
+            const url = `${this.$globalData.backendUrl}/studybuddy/`;
+            const response = await axios.post(url, {
+              token2: this.token2,
+              latitude: this.latitude,
+              longitude: this.longitude
+            });
+
+            this.users = response.data;
+          } catch (error) {
+            alert(error.response?.data?.error || 'An error occurred');
+          } finally {
+            this.loading = false;
+          }
+        }, (error) => {
+          alert('Geolocation not supported or permission denied');
+        });
+      } else {
+        alert('Geolocation is not supported by this browser.');
+      }
     }
   },
-  async mounted() {
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
-        this.loading = true;
-
-        try {
-          const url = `${this.$globalData.backendUrl}/studybuddy/`;
-          const response = await axios.post(url, {
-            token2: this.token2,
-            latitude: this.latitude,
-            longitude: this.longitude
-          });
-
-          this.users = response.data;
-        } catch (error) {
-          alert(error.response?.data?.error || 'An error occurred');
-        } finally {
-          this.loading = false;
-        }
-      }, (error) => {
-        alert('Geolocation not supported or permission denied');
-      });
-    } else {
-      alert('Geolocation is not supported by this browser.');
+  mounted() {
+    if (this.token2) {
+      this.fetchUserData();
+    }
+    else{
+        alert("Login with IITM Google Account & Give Location Access")
     }
   }
 };
