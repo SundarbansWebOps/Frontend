@@ -93,7 +93,7 @@ export default {
                 if (response.data.success === false) {
                     alert(response.data.error);
                 } else {
-                    // console.log(response.data);
+                    console.log(response.data);
 
                     if (response && response.data) {
                         const userEmail = response.data.user_data.email || '';
@@ -102,6 +102,8 @@ export default {
                             localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
                             localStorage.setItem('user-role', "User");
                             localStorage.setItem('Token', response.data.token);
+                            localStorage.setItem('Token2', response.data.token2);
+                            console.log(response.data)
                             location.reload();
                         } else {
                             // console.error('Login rejected: Invalid email domain.');

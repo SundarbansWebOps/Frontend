@@ -99,6 +99,12 @@
           >
             Notes
           </router-link>
+          <router-link
+            to="/studybuddy"
+            class="text-gray-700 transition-colors duration-300 transform lg:mx-8 dark:text-gray-200 dark:hover:text-blue-400 hover:text-blue-500"
+          >
+            StudyBuddy
+          </router-link>
         </div>
           
         <!-- If user is logged in, show user picture and name -->
@@ -214,11 +220,13 @@
         if (response && response.data) {
           const userEmail = response.data.user_data.email || '';
           const authtoken = response.data.token;
+          const authtoken2 = response.data.token2;
           if (userEmail.endsWith('iitm.ac.in')) {
             this.userDetails = response.data.user_data;
             localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
             localStorage.setItem('user-role', "User");
             localStorage.setItem('Token', authtoken);
+            localStorage.setItem('Token2', authtoken2);
             location.reload();
           } else {
             // console.error('Login rejected: Invalid email domain.');
@@ -236,6 +244,8 @@
     signOut() {
       localStorage.removeItem('userDetails');
       localStorage.removeItem('Token');
+      localStorage.removeItem('Token2');
+      localStorage.removeItem('user-role');
       this.userDetails = null;
       location.reload();
   },

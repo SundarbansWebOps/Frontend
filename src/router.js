@@ -9,6 +9,7 @@ import EventSlug from './components/EventSlug.vue'
 import PrivacyPolicy from './components/PrivacyPolicy.vue'
 import NotesPage from './components/NotesPage.vue'
 import StudyGroups from './components/StudyGroups.vue'
+import StudyBuddy from './components/StudyBuddy.vue'
 
 
 
@@ -60,6 +61,11 @@ const routes = [
         name: 'StudyGroups',
         component: StudyGroups,
         path: '/study-groups'
+    },
+    {
+        name: 'StudyBuddy',
+        component: StudyBuddy,
+        path: '/studybuddy'
     },
     {
         name: 'PhotoCompetition',
