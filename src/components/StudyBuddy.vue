@@ -1,6 +1,9 @@
 <template>
   <NavBar></NavBar>
   <div class="container">
+    <div class="intro-text">
+      Meet Your Nearby Study Buddies
+    </div>
     <div v-if="!token2" class="login-prompt">
       <GoogleLogin></GoogleLogin>
     </div>
@@ -84,9 +87,6 @@ export default {
     if (this.token2) {
       this.fetchUserData();
     }
-    else{
-        alert("Login with IITM Google Account & Give Location Access")
-    }
   }
 };
 </script>
@@ -98,6 +98,13 @@ export default {
   max-width: 800px;
   font-family: 'Arial', sans-serif;
   color: #333;
+}
+
+.intro-text {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .login-prompt {
@@ -139,6 +146,7 @@ export default {
 .user {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Ensure elements are spaced evenly */
   border-bottom: 1px solid #ddd;
   padding: 10px 0;
 }
@@ -167,7 +175,10 @@ export default {
 }
 
 .user-instagram {
-  margin-left: auto;
+  display: flex;
+  align-items: center; /* Center the Instagram logo vertically */
+  justify-content: center; /* Center the Instagram logo horizontally */
+  margin-left: 15px;
   cursor: pointer;
 }
 
@@ -196,11 +207,14 @@ export default {
     padding: 10px;
   }
   .user {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row; /* Ensure row direction on mobile */
+    align-items: center;
+  }
+  .user-info {
+    flex: 1; /* Allow user info to take available space */
   }
   .user-instagram {
-    margin: 10px 0 0;
+    margin-left: auto; /* Align Instagram logo to the right */
   }
 }
 </style>
