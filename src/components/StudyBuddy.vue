@@ -26,7 +26,15 @@
         </div>
         <p v-if="!users.length" class="no-users">No nearby users found.</p>
       </div>
+      <div v-if="showPopup" class="popup-overlay">
+      <div class="popup-content">
+        <p>I confirm that my location data, or its derivatives may be shared with fellow students to ensure proper functionality of the application.</p>
+        <button @click="agreeLocationSharing">I Agree</button>
+      </div>
     </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -48,11 +56,16 @@ export default {
       longitude: null,
       users: [],
       loading: false,
+      showPopup: true,
     };
   },
   methods: {
     showInstagramAlert() {
-      alert("This feature will be rolled out soon. Stay tuned.");
+      alert("This feature will be rolled on 27 July. Stay tuned.");
+    },
+    agreeLocationSharing() {
+      this.showPopup = false;
+      this.fetchUserData();
     },
     fetchUserData() {
       if (navigator.geolocation) {
@@ -76,7 +89,7 @@ export default {
             this.loading = false;
           }
         }, (error) => {
-          alert('Please turn on your location');
+          alert('Geolocation not supported or permission denied');
         });
       } else {
         alert('Geolocation is not supported by this browser.');
@@ -85,7 +98,7 @@ export default {
   },
   mounted() {
     if (this.token2) {
-      this.fetchUserData();
+      this.showPopup = true;
     }
   }
 };
@@ -123,7 +136,7 @@ export default {
 
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #22a6b3;
+  border-left-color: #910404;
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -191,6 +204,44 @@ export default {
   text-align: center;
   margin-top: 20px;
   color: #888;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+}
+
+.popup-content p {
+  margin-bottom: 20px;
+}
+
+.popup-content button {
+  background: #910404;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background: #910400;
 }
 
 @media (max-width: 768px) {
