@@ -76,7 +76,7 @@ export default {
             this.loading = false;
           }
         }, (error) => {
-          alert('Geolocation not supported or permission denied');
+          alert('Please turn on your location');
         });
       } else {
         alert('Geolocation is not supported by this browser.');
