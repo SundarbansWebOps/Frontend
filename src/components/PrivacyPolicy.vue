@@ -10,6 +10,7 @@
         <li>Group Number: We collect group numbers provided by IIT Madras BS Degree for organizational purposes.</li>
         <li>Name: We collect user names provided by IIT Madras BS Degree for identification purposes.</li>
         <li>Google Sign-In: We use Google Sign-In to authenticate users and fetch user names and photos from Google. This is solely for the purpose of verifying the identity of the user accessing the page.</li>
+        <li>Location Coordinates : We capture location coordinates only for those users who want to see their neighbours.</li>
       </ul>
   
       <h2>Use of Information:</h2>
@@ -23,7 +24,7 @@
       </ul>
   
       <h2>Data Security:</h2>
-      <p>We have implemented appropriate security measures to protect your information from unauthorized access, misuse, or alteration. Your information is stored securely and accessible only to authorized personnel.</p>
+      <p>We have implemented appropriate security measures to protect your information from unauthorized access, misuse, or alteration. Your information is stored securely and accessible only to authorized personnel. Our Backend Server & Frontend Server is hosted on a server provided by IITM BS Degree Team (POD Webops). Our Backend Code is private & all the secret credentilas are secure. Users data is safe.</p>
   
       <h2>User Rights:</h2>
       <ul>
