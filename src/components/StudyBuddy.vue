@@ -243,6 +243,10 @@ export default {
         .then((response) => {
           alert("Your data has been deleted successfully permanently. your profile won't be visible to others anyomre.");
           this.showDeletePopupVisible = false;
+          localStorage.removeItem("Token2");
+          localStorage.removeItem("Token");
+          localStorage.removeItem("user-role");
+          localStorage.removeItem("userDetails");
           router.push("/");
         })
         .catch((error) => {
