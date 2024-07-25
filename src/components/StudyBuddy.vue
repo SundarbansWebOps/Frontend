@@ -56,7 +56,7 @@
                 </template>
                 <!-- Fallback for missing links -->
                 <template v-if="!(user.social_url && (user.social_url.includes('instagram') || user.social_url.includes('linkedin') || user.social_url.includes('snapchat')))">
-                  <img :src="getRandomLogo()" alt="Update Social Media" class="instagram-logo" @click="LinkNotAvailable" />
+                  <img src="../assets/notfound.png" alt="Update Social Media" class="instagram-logo" @click="LinkNotAvailable" />
                 </template>
               </template>
               <template v-else>
