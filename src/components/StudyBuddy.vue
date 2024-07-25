@@ -193,11 +193,11 @@ export default {
             }
           },
           (error) => {
-            alert("Geolocation not supported or permission denied");
+            alert("Please Turn on Location Services to use this feature.");
           }
         );
       } else {
-        alert("Geolocation is not supported by this browser.");
+        alert("Location access is not given.");
       }
     },
     showDeletePopup() {
