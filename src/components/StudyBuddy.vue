@@ -55,19 +55,15 @@
                   </a>
                 </template>
                 <!-- Fallback for missing links -->
-                <template
-                  v-if="!(user.social_url && (user.social_url.includes('instagram') || user.social_url.includes('linkedin') || user.social_url.includes('snapchat')))">
-                  <img src="../assets/insta.png" alt="Update Social Media" class="instagram-logo"
-                    @click="LinkNotAvailable" />
+                <template v-if="!(user.social_url && (user.social_url.includes('instagram') || user.social_url.includes('linkedin') || user.social_url.includes('snapchat')))">
+                  <img :src="getRandomLogo()" alt="Update Social Media" class="instagram-logo" @click="LinkNotAvailable" />
                 </template>
               </template>
               <template v-else>
                 <!-- Fallback if social_media_profile_status is false -->
-                <img src="../assets/insta.png" alt="Update Social Media" class="instagram-logo"
-                  @click="showInstagramAlert" />
+                <img :src="getRandomLogo()" alt="Update Social Media" class="instagram-logo" @click="showInstagramAlert" />
               </template>
             </div>
-
           </div>
           <p v-if="!users.length" class="no-users">No nearby users found.</p>
         </div>
@@ -116,7 +112,6 @@ import axios from "axios";
 import NavBar from "./NavBar.vue";
 import GoogleLogin from "./GoogleLogin.vue";
 import router from "@/router";
-import { useLink } from "vue-router";
 
 export default {
   name: "StudyBuddy",
@@ -137,6 +132,11 @@ export default {
       selectedSocialMedia: "",
       socialMediaUrl: "",
       social_media_profile_status: false,
+      logos: [
+        require('../assets/insta.png'),  // Use require to resolve path
+        require('../assets/linkedin.png'),
+        require('../assets/snap.png'),
+      ],
     };
   },
   computed: {
@@ -145,7 +145,7 @@ export default {
         case "instagram":
           return "https://www.instagram.com/your-username";
         case "linkedin":
-          return "https://wwww.linkedin.com/in/your-username";
+          return "https://www.linkedin.com/in/your-username";
         case "snapchat":
           return "https://www.snapchat.com/add/your-username";
         default:
@@ -155,7 +155,7 @@ export default {
   },
   methods: {
     LinkNotAvailable() {
-      alert("This user haven't updated their social media profile yet.");
+      alert("This user hasn't updated their social media profile yet.");
     },
     showInstagramAlert() {
       alert("You can access fellow student's social media profile only if you have updated your social media profile.");
@@ -182,9 +182,9 @@ export default {
 
               this.users = response.data.users;
               this.social_media_profile_status = response.data.social_media_link_status;
-              console.log(this.users)
+              console.log(this.users);
               console.log("Users fetched successfully");
-              console.log(response.data)
+              console.log(response.data);
 
             } catch (error) {
               alert(error.response?.data?.error || "An error occurred");
@@ -210,7 +210,6 @@ export default {
       this.showUpdatePopupVisible = true;
       // alert("This feature will be rolled out soon. Stay tuned.");
     },
-
     updateSocialMedia() {
       axios
         .post(`${this.$globalData.backendUrl}/updatebuddy/`, {
@@ -230,35 +229,24 @@ export default {
     deleteUserData() {
       axios
         .post(`${this.$globalData.backendUrl}/deletebuddy/`, {
-          token2: this.token2
+          token2: this.token2,
         })
         .then((response) => {
-          if (response.status == 200) {
-            localStorage.removeItem("Token2");
-            localStorage.removeItem("Token");
-            localStorage.removeItem("userDetails");
-            localStorage.removeItem("user-role");
-            alert("Your data has been deleted successfully. Now your profile will not visible to others.");
-            this.showDeletePopupVisible = false;
-            console.log(response.data);
-            router.push("/");
-          }
-          else {
-            alert("Something went wrong. Please try again later.");
-          }
+          alert("Your data has been deleted successfully.");
+          this.showDeletePopupVisible = false;
+          router.push("/login");
         })
         .catch((error) => {
           alert("An error occurred");
         });
     },
-    refreshPage() {
-      window.location.reload();
+    getRandomLogo() {
+      const randomIndex = Math.floor(Math.random() * this.logos.length);
+      return this.logos[randomIndex];
     },
   },
   mounted() {
-    if (this.token2) {
-      this.showPopup = true;
-    }
+    this.fetchUserData();
   },
 };
 </script>
