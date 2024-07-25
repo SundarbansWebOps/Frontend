@@ -147,7 +147,6 @@ export default {
   methods: {
     showInstagramAlert() {
       alert("This feature will be rolled out on 27 July. Stay tuned.");
-      alert("This feature will be rolled out soon. Stay tuned.");
     },
     agreeLocationSharing() {
       this.showPopup = false;
