@@ -4,27 +4,15 @@
   <div class="container">
     <div class="intro-text">Meet Your Nearby Study Buddies</div>
     <div v-if="token2" class="button-container">
-      <button
-        class="icon-button"
-        @click="showUpdatePopup"
-        title="Update Social Media"
-      >
-        <img
-          src="../assets/update.svg"
-          alt="Update Social Media"
-          class="icon"
-        />
+      <button class="icon-button" @click="showUpdatePopup" title="Update Social Media">
+        <img src="../assets/update.svg" alt="Update Social Media" class="icon" />
         <span class="button-text">Update Profile</span>
       </button>
       <button class="icon-button" @click="refreshPage" title="Refresh">
         <img src="../assets/refresh.svg" alt="Refresh" class="icon" />
         <span class="button-text">Refresh</span>
       </button>
-      <button
-        class="icon-button"
-        @click="showDeletePopup"
-        title="Delete My Data"
-      >
+      <button class="icon-button" @click="showDeletePopup" title="Delete My Data">
         <img src="../assets/delete.svg" alt="Delete My Data" class="icon" />
         <span class="button-text">Delete My Data</span>
       </button>
@@ -39,65 +27,84 @@
       <div v-else>
         <div v-if="users.length" class="user-list">
           <div class="user" v-for="user in users" :key="user.name">
-            <img
-              :src="user.photo_url"
-              :alt="`${user.name}'s photo`"
-              class="user-photo"
-            />
+            <img :src="user.photo_url" :alt="`${user.name}'s photo`" class="user-photo" />
             <div class="user-info">
               <div class="user-name">{{ user.name }}</div>
               <div class="user-distance">
                 {{ user.distance.toFixed(2) }} km away from you.
               </div>
             </div>
-            <div class="user-instagram" @click="showInstagramAlert">
-              <img
-                src="../assets/insta.png"
-                alt="Instagram logo"
-                class="instagram-logo"
-              />
+            <div class="user-social-media">
+              <template v-if="social_media_profile_status">
+                <!-- Instagram -->
+                <template v-if="user.social_url && user.social_url.includes('instagram')">
+                  <a :href="user.social_url" target="_blank">
+                    <img src="../assets/insta.png" alt="Instagram" class="instagram-logo" />
+                  </a>
+                </template>
+                <!-- LinkedIn -->
+                <template v-if="user.social_url && user.social_url.includes('linkedin')">
+                  <a :href="user.social_url" target="_blank">
+                    <img src="../assets/linkedin.png" alt="LinkedIn" class="instagram-logo" />
+                  </a>
+                </template>
+                <!-- Snapchat -->
+                <template v-if="user.social_url && user.social_url.includes('snapchat')">
+                  <a :href="user.social_url" target="_blank">
+                    <img src="../assets/snap.png" alt="Snapchat" class="instagram-logo" />
+                  </a>
+                </template>
+                <!-- Fallback for missing links -->
+                <template
+                  v-if="!(user.social_url && (user.social_url.includes('instagram') || user.social_url.includes('linkedin') || user.social_url.includes('snapchat')))">
+                  <img src="../assets/insta.png" alt="Update Social Media" class="instagram-logo"
+                    @click="LinkNotAvailable" />
+                </template>
+              </template>
+              <template v-else>
+                <!-- Fallback if social_media_profile_status is false -->
+                <img src="../assets/insta.png" alt="Update Social Media" class="instagram-logo"
+                  @click="showInstagramAlert" />
+              </template>
             </div>
+
           </div>
+          <p v-if="!users.length" class="no-users">No nearby users found.</p>
         </div>
-        <p v-if="!users.length" class="no-users">No nearby users found.</p>
       </div>
-    </div>
 
-    <div v-if="showPopup" class="popup-overlay">
-      <div class="popup-content">
-        <p>
-          I confirm that my location data, or its derivatives may be shared with
-          fellow students to ensure proper functionality of the application.
-        </p>
-        <button @click="agreeLocationSharing">I Agree</button>
+      <div v-if="showPopup" class="popup-overlay">
+        <div class="popup-content">
+          <p>
+            I confirm that my location data, or its derivatives may be shared with
+            fellow students to ensure proper functionality of the application.
+          </p>
+          <button @click="agreeLocationSharing">I Agree</button>
+        </div>
       </div>
-    </div>
 
-    <div v-if="showDeletePopupVisible" class="popup-overlay">
-      <div class="popup-content">
-        <p>Are you sure you want to permanently delete your data?</p>
-        <button @click="deleteUserData">Yes</button>
-        <button @click="hideDeletePopup">No</button>
+      <div v-if="showDeletePopupVisible" class="popup-overlay">
+        <div class="popup-content">
+          <p>Are you sure you want to permanently delete your data?</p>
+          <button @click="deleteUserData">Yes</button>
+          <button @click="hideDeletePopup">No</button>
+        </div>
       </div>
-    </div>
 
-    <div v-if="showUpdatePopupVisible" class="popup-overlay">
-      <div class="popup-content">
-        <label for="socialMedia">Select Social Media:</label>
-        <select v-model="selectedSocialMedia" id="socialMedia">
-          <option value="instagram">Instagram</option>
-          <option value="snapchat">Snapchat</option>
-          <option value="linkedin">LinkedIn</option>
-        </select>
-        <input
-          v-model="socialMediaUrl"
-          :placeholder="socialMediaPlaceholder"
-          style="margin-top: 4px"
-          type="text"
-        />
-        <div>
-          <button @click="updateSocialMedia">Update</button>
-          <button @click="showUpdatePopupVisible = false">Cancel</button>
+      <div v-if="showUpdatePopupVisible" class="popup-overlay">
+        <div class="popup-content">
+          <label for="socialMedia">Select Social Media:</label>
+          <select v-model="selectedSocialMedia" id="socialMedia">
+            <option value="instagram">Instagram</option>
+            <option value="snapchat">Snapchat</option>
+            <option value="linkedin">LinkedIn</option>
+          </select>
+          <input v-model="socialMediaUrl" :placeholder="socialMediaPlaceholder" style="margin-top: 4px" type="text" />
+          <div>
+            <button @click="updateSocialMedia">Update</button>
+            <button @click="showUpdatePopupVisible = false">Cancel</button>
+          </div>
+          <p>Required Url format : {{ socialMediaPlaceholder }}</p>
         </div>
       </div>
     </div>
@@ -109,6 +116,7 @@ import axios from "axios";
 import NavBar from "./NavBar.vue";
 import GoogleLogin from "./GoogleLogin.vue";
 import router from "@/router";
+import { useLink } from "vue-router";
 
 export default {
   name: "StudyBuddy",
@@ -128,25 +136,29 @@ export default {
       showUpdatePopupVisible: false,
       selectedSocialMedia: "",
       socialMediaUrl: "",
+      social_media_profile_status: false,
     };
   },
   computed: {
     socialMediaPlaceholder() {
       switch (this.selectedSocialMedia) {
         case "instagram":
-          return "instagram.com/your-username";
+          return "https://www.instagram.com/your-username";
         case "linkedin":
-          return "linkedin.com/in/your-username";
+          return "https://wwww.linkedin.com/in/your-username";
         case "snapchat":
-          return "snapchat.com/your-username";
+          return "https://www.snapchat.com/add/your-username";
         default:
           return "Enter profile URL";
       }
     }
   },
   methods: {
+    LinkNotAvailable() {
+      alert("This user haven't updated their social media profile yet.");
+    },
     showInstagramAlert() {
-      alert("This feature will be rolled out on 27 July. Stay tuned.");
+      alert("You can access fellow student's social media profile only if you have updated your social media profile.");
     },
     agreeLocationSharing() {
       this.showPopup = false;
@@ -168,7 +180,12 @@ export default {
                 longitude: this.longitude,
               });
 
-              this.users = response.data;
+              this.users = response.data.users;
+              this.social_media_profile_status = response.data.social_media_link_status;
+              console.log(this.users)
+              console.log("Users fetched successfully");
+              console.log(response.data)
+
             } catch (error) {
               alert(error.response?.data?.error || "An error occurred");
             } finally {
@@ -190,27 +207,21 @@ export default {
       this.showDeletePopupVisible = false;
     },
     showUpdatePopup() {
-      // this.showUpdatePopupVisible = true;
-      alert("This feature will be rolled out soon. Stay tuned.");
+      this.showUpdatePopupVisible = true;
+      // alert("This feature will be rolled out soon. Stay tuned.");
     },
+
     updateSocialMedia() {
-      if (!this.selectedSocialMedia || !this.socialMediaUrl) {
-        alert("Please select a social media platform and enter the URL.");
-        return;
-      }
-
-      const updateData = {
-        socialMedia: this.selectedSocialMedia,
-        url: this.socialMediaUrl,
-        token2: this.token2,
-      };
-
       axios
-        .put(`${this.$globalData.backendUrl}/studybuddy/`, updateData)
+        .post(`${this.$globalData.backendUrl}/updatebuddy/`, {
+          token2: this.token2,
+          link: this.socialMediaUrl,
+        })
         .then((response) => {
           alert("Social media profile updated successfully.");
           this.showUpdatePopupVisible = false;
           console.log(response.data);
+          window.location.reload();
         })
         .catch((error) => {
           alert("An error occurred");
@@ -222,17 +233,17 @@ export default {
           token2: this.token2
         })
         .then((response) => {
-          if (response.status==200){
-          localStorage.removeItem("Token2");
-          localStorage.removeItem("Token");
-          localStorage.removeItem("userDetails");
-          localStorage.removeItem("user-role");
-          alert("Your data has been deleted successfully. Now your profile will not visible to others.");
-          this.showDeletePopupVisible = false;
-          console.log(response.data);
-          router.push("/");
+          if (response.status == 200) {
+            localStorage.removeItem("Token2");
+            localStorage.removeItem("Token");
+            localStorage.removeItem("userDetails");
+            localStorage.removeItem("user-role");
+            alert("Your data has been deleted successfully. Now your profile will not visible to others.");
+            this.showDeletePopupVisible = false;
+            console.log(response.data);
+            router.push("/");
           }
-          else{
+          else {
             alert("Something went wrong. Please try again later.");
           }
         })
