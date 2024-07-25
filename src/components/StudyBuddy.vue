@@ -72,10 +72,14 @@
       <div v-if="showPopup" class="popup-overlay">
         <div class="popup-content">
           <p>
-            I confirm that my location data, or its derivatives may be shared with
+            I confirm that my location data will be captured & its derivatives, may be shared with
             fellow students to ensure proper functionality of the application.
           </p>
-          <button @click="agreeLocationSharing">I Agree</button>
+          <div>
+            <button @click="agreeLocationSharing">I Agree</button>
+            <button @click="cancelLocationSharing">I Disagree</button>
+          </div>
+          <div><a href="https://sundarbans.iitmbs.org/privacy-policy#studybuddy-feature" target="_blank" style="color: blue;">Privacy Policy</a></div>
         </div>
       </div>
 
@@ -100,7 +104,7 @@
             <button @click="updateSocialMedia">Update</button>
             <button @click="showUpdatePopupVisible = false">Cancel</button>
           </div>
-          <p>Required Url format : {{ socialMediaPlaceholder }}</p>
+          <p>Required Url format: {{ socialMediaPlaceholder }}</p>
         </div>
       </div>
     </div>
@@ -164,6 +168,10 @@ export default {
     agreeLocationSharing() {
       this.showPopup = false;
       this.fetchUserData();
+    },
+    cancelLocationSharing() {
+      alert("We haven't collected your location data. Now, You'll be redirected to our home page.");
+      router.push("/");
     },
     fetchUserData() {
       if (navigator.geolocation) {
@@ -233,9 +241,9 @@ export default {
           token2: this.token2,
         })
         .then((response) => {
-          alert("Your data has been deleted successfully.");
+          alert("Your data has been deleted successfully permanently. your profile won't be visible to others anyomre.");
           this.showDeletePopupVisible = false;
-          router.push("/login");
+          router.push("/");
         })
         .catch((error) => {
           alert("An error occurred");
@@ -247,10 +255,11 @@ export default {
     },
   },
   mounted() {
-    this.fetchUserData();
+    // this.fetchUserData();
   },
 };
 </script>
+
 
 <style scoped>
 .container {
