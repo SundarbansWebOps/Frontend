@@ -223,8 +223,11 @@ export default {
         })
         .then((response) => {
           if (response.status==200){
-          alert("Your data has been deleted successfully.");
           localStorage.removeItem("Token2");
+          localStorage.removeItem("Token");
+          localStorage.removeItem("userDetails");
+          localStorage.removeItem("user-role");
+          alert("Your data has been deleted successfully.");
           this.showDeletePopupVisible = false;
           console.log(response.data);
           router.push("/");
