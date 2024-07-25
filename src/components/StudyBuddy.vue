@@ -159,6 +159,7 @@ export default {
     },
     showInstagramAlert() {
       alert("You can access fellow student's social media profile only if you have updated your social media profile.");
+      this.showUpdatePopupVisible = true;
     },
     agreeLocationSharing() {
       this.showPopup = false;
@@ -182,9 +183,9 @@ export default {
 
               this.users = response.data.users;
               this.social_media_profile_status = response.data.social_media_link_status;
-              console.log(this.users);
-              console.log("Users fetched successfully");
-              console.log(response.data);
+              // console.log(this.users);
+              // console.log("Users fetched successfully");
+              // console.log(response.data);
 
             } catch (error) {
               alert(error.response?.data?.error || "An error occurred");
@@ -219,7 +220,7 @@ export default {
         .then((response) => {
           alert("Social media profile updated successfully.");
           this.showUpdatePopupVisible = false;
-          console.log(response.data);
+          // console.log(response.data);
           window.location.reload();
         })
         .catch((error) => {
@@ -272,7 +273,7 @@ export default {
   padding: 10px;
   margin: 0 10px;
   cursor: pointer;
-  border-radius: 10%;
+  border-radius: 5px;
   transition: background-color 0.3s;
 }
 
@@ -283,6 +284,8 @@ export default {
 .icon {
   width: 24px;
   height: 24px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .button-text {
