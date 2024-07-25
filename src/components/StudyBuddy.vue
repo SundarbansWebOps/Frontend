@@ -227,7 +227,7 @@ export default {
           localStorage.removeItem("Token");
           localStorage.removeItem("userDetails");
           localStorage.removeItem("user-role");
-          alert("Your data has been deleted successfully.");
+          alert("Your data has been deleted successfully. Now your profile will not visible to others.");
           this.showDeletePopupVisible = false;
           console.log(response.data);
           router.push("/");
