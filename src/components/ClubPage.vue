@@ -42,7 +42,7 @@
 
                     <th
                       scope="col"
-                      class="relative py-3.5 px-4"
+                      class="relative py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                     >
                       <span class="sr-only">Link to Join</span>
                     </th>
