@@ -11,6 +11,7 @@ import NotesPage from './components/NotesPage.vue'
 import StudyGroups from './components/StudyGroups.vue'
 import StudyBuddy from './components/StudyBuddy.vue'
 import ChatBot from './components/ChatBot.vue'
+import NotFound from './components/NotFound.vue'
 
 
 
@@ -87,7 +88,11 @@ const routes = [
         name: 'ChatBot',
         component: ChatBot,
         path: '/chatbot'
-    }
+    },
+    { 
+        path: '/:catchAll(.*)', 
+      component: NotFound
+     },
 ];
 
 const router = createRouter({
