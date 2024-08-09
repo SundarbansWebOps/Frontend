@@ -10,6 +10,7 @@ import PrivacyPolicy from './components/PrivacyPolicy.vue'
 import NotesPage from './components/NotesPage.vue'
 import StudyGroups from './components/StudyGroups.vue'
 import StudyBuddy from './components/StudyBuddy.vue'
+import ChatBot from './components/ChatBot.vue'
 
 
 
@@ -82,6 +83,11 @@ const routes = [
         component: PrivacyPolicy,
         path: '/privacy-policy'
     },
+    {
+        name: 'ChatBot',
+        component: ChatBot,
+        path: '/chatbot'
+    }
 ];
 
 const router = createRouter({
