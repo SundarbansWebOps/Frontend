@@ -2,7 +2,8 @@
   <NavBar></NavBar>
 
   <div class="container">
-    <div class="intro-text">Meet Your Nearby Study Buddies</div>
+    <div class="intro-text">Meet Your Nearby Study Buddies <p style="font-size: xx-small; margin-bottom: 5px;">This is a student run platform and it is not endorsed by the IITM BS degree program in any way.<br> Students can join the platform on their personal discretion.</p></div>
+    
     <div v-if="token2" class="button-container">
       <button class="icon-button" @click="showUpdatePopup" title="Update Social Media">
         <img src="../assets/update.svg" alt="Update Social Media" class="icon" />
@@ -108,6 +109,8 @@
         </div>
       </div>
     </div>
+    <div class="intro-text"> 
+      <p style="font-size: xx-small; margin-top: 20px; margin-bottom: 5px">Made with ❤️ Sundarbans House Council 2023-24</p></div>
   </div>
 </template>
 
