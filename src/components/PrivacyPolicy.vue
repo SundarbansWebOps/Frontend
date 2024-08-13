@@ -5,8 +5,8 @@
       <h1>Privacy Policy for Sundarbans House</h1>
       <p>
         Welcome to sundarbans.iitmbs.org, the student activities website for Sundarbans
-        House, IIT Madras BS Degree. This Privacy Policy outlines how we collect,
-        use, and protect your personal information.
+        House, IIT Madras BS Degree. This Privacy Policy outlines how personal
+        information is collected, used, and protected.
       </p>
 
       <div class="button-container">
@@ -29,16 +29,15 @@
             <li>
               <strong>WhatsApp Number (optional):</strong> Collected only from Sundarbans House members
               to verify their request to join the WhatsApp group of their allotted group. Members update their
-              number to access the group links, and we store it for group joining request approval.
+              number to access the group links, and it is stored for group joining request approval.
             </li>
             <li>
-              <strong>Location Coordinates (optional):</strong> Collected with your
-              permission for the StudyBuddy feature to calculate and display distances
-              to nearby users. We use a mathematical formula to calculate approximate distances.
-              Your exact location coordinates are not shared with anyone.
+              <strong>Location Coordinates (optional):</strong> Collected with permission for the StudyBuddy feature to calculate and display distances
+              to nearby users. A mathematical formula is used to calculate approximate distances.
+              Exact location coordinates are not shared with anyone.
             </li>
             <li>
-              <strong>Social Media URLs (optional):</strong> Information you can update
+              <strong>Social Media URLs (optional):</strong> Information that can be updated
               to share with others in the StudyBuddy feature.
             </li>
           </ul>
@@ -47,32 +46,32 @@
         <section id="use-of-information">
           <h2>Use of Information</h2>
           <ul>
-            <li>Authenticate users and grant access to the profile page and relevant features.</li>
-            <li>Display your allotted group and WhatsApp group link on your profile.</li>
+            <li>Users are authenticated, and access is granted to the profile page and relevant features.</li>
+            <li>The allotted group and WhatsApp group link are displayed on the profile.</li>
             <li>
-              Calculate and display the approximate distance to nearby users in the StudyBuddy
+              The approximate distance to nearby users is calculated and displayed in the StudyBuddy
               feature (only approximate distance is shared).
             </li>
-            <li>Verify your WhatsApp number for joining the allotted group.</li>
-            <li>Display your social media URLs (if provided) to other users in the StudyBuddy feature.</li>
+            <li>WhatsApp numbers are verified for joining the allotted group.</li>
+            <li>Social media URLs (if provided) are displayed to other users in the StudyBuddy feature.</li>
           </ul>
         </section>
 
         <section id="data-storage-and-security">
           <h2>Data Storage and Security</h2>
           <p>
-            We implement appropriate security measures to protect your information
-            from unauthorized access, misuse, or alteration. Your information is
-            stored securely and is accessible only to authorized personnel. We do not
-            use any third-party services for storing your data.
+            Appropriate security measures are implemented to protect information
+            from unauthorized access, misuse, or alteration. Information is
+            stored securely and is accessible only to authorized personnel. No
+            third-party services are used for storing data.
           </p>
         </section>
 
         <section id="data-sharing">
           <h2>Data Sharing</h2>
           <p>
-            We do not sell, trade, or otherwise transfer your personal information to
-            outside parties. Your location coordinates are not shared with anyone.
+            Personal information is not sold, traded, or otherwise transferred to
+            outside parties. Location coordinates are not shared with anyone.
             Only the approximate relative distance to the nearest 20 users is visible
             to them.
           </p>
@@ -81,8 +80,8 @@
         <section id="user-rights">
           <h2>User Rights</h2>
           <ul>
-            <li>You have the right to access, update, or delete your personal information at any time.</li>
-            <li>You can withdraw your consent for the collection and use of your information at any time.</li>
+            <li>Users have the right to access, update, or delete their personal information at any time.</li>
+            <li>Consent for the collection and use of information can be withdrawn at any time.</li>
           </ul>
         </section>
 
@@ -101,37 +100,41 @@
           <h3>Profile Page</h3>
           <p>
             The profile page is accessible only to Sundarbans House members after
-            Google Sign-In. It displays your allotted group and the WhatsApp group link.
-            Your email address, name, and profile image are fetched from Google. You can
-            update your WhatsApp number for group verification purposes.
+            Google Sign-In. It displays the allotted group and the WhatsApp group link.
+            Email address, name, and profile image are fetched from Google. The WhatsApp number can be
+            updated for group verification purposes.
           </p>
         </section>
 
         <section id="studybuddy-feature">
           <h3>StudyBuddy Feature</h3>
           <p>
-            The StudyBuddy feature helps you find nearby students. It collects your email,
-            name, and profile image through Google Sign-In, and your location coordinates
-            with your permission. We use these coordinates to calculate and display the
-            nearest 20 students. Other users can see your name, profile image, and
-            approximate distance from them. You can update your social media profile and
-            view others' social media links. You can delete your data at any time.
+            <b>Disclaimer: This is a student-run platform and it is not endorsed by the IITM BS degree program in any way. Students can join the platform at their personal discretion.</b>
           </p>
+          <p>
+            The StudyBuddy feature helps find nearby students. It collects the email,
+            name, and profile image through Google Sign-In, and location coordinates
+            with permission. These coordinates are used to calculate and display the
+            nearest 20 students. Other users can see the name, profile image, and
+            approximate distance from them. Social media profiles can be updated and
+            others' social media links can be viewed. Data can be deleted at any time.
+          </p>
+          <p>Note: Calculated approximate distances may be inaccurate.</p>
         </section>
 
         <section id="policy-updates">
           <h2>Policy Updates</h2>
           <p>
             This Privacy Policy is subject to change. Any updates will be reflected on
-            this page. We encourage you to review this policy periodically.
+            this page. It is encouraged to review this policy periodically.
           </p>
         </section>
 
         <section id="contact-us">
           <h2>Contact Us</h2>
           <p>
-            If you have any questions or concerns about this Privacy Policy or your
-            privacy, please contact us at:
+            For any questions or concerns about this Privacy Policy or privacy,
+            please contact us at:
             <a href="mailto:sundarbans-webad@ds.study.iitm.ac.in">sundarbans-webad@ds.study.iitm.ac.in</a>.
           </p>
         </section>
