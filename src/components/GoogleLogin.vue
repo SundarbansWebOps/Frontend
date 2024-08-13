@@ -1,9 +1,13 @@
 <template>
   <div class=" dark:bg-black">
     <div class="flex w-full max-w-sm mx-auto overflow-hidden py-10 rounded-lg  dark:bg-black lg:max-w-4xl dark:bg-black">
-      <div
+      <!-- <div
         class="hidden bg-cover lg:block lg:w-1/2"
         style="background-image: url('https://icandsr.iitm.ac.in/assets/img/IITMadras.jpg');"
+      /> -->
+      <div
+        class="hidden bg-cover lg:block lg:w-1/2"
+        style="background-image: url('../assets/sundarbans2.png');"
       />
 
       <div class="w-full px-6 py-8 md:px-8 lg:w-1/2">
