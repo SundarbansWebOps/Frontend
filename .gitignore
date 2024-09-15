@@ -23,3 +23,5 @@ pnpm-debug.log*
 *.sw?
 
 .vercel
+
+public/test2.html
