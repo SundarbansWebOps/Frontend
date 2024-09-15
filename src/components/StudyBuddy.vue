@@ -110,7 +110,7 @@
       </div>
     </div>
     <div class="intro-text"> 
-      <p style="font-size: xx-small; margin-top: 20px; margin-bottom: 5px">Made with ❤️ by Sundarbans WebOps Team </p></div>
+      <p style="font-size: xx-small; margin-top: 20px; margin-bottom: 5px">Made with ❤️ by Sundarbans House Council 2023-24 </p></div>
   </div>
 </template>
 
