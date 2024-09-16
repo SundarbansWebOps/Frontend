@@ -35,8 +35,8 @@ export default {
 .spinner {
   width: 50px;
   height: 50px;
-  border: 6px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #49a3da;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #910404;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   top: calc(50% - 25px);
