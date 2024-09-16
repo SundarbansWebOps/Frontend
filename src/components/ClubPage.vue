@@ -1,7 +1,7 @@
 <template>
   <NavBar />
 
-  <body class=" dark:bg-black">
+  <body class="dark:bg-black flex-grow">
     <section
       v-if="access"
       class="container px-4 mx-auto"
