@@ -12,8 +12,8 @@ import StudyGroups from './components/StudyGroups.vue'
 import StudyBuddy from './components/StudyBuddy.vue'
 import ChatBot from './components/ChatBot.vue'
 import NotFound from './components/NotFound.vue'
-
-
+import GLDashboard from './components/GLDashboard.vue'
+import SDSDashboard from './components/SDSDashboard.vue'
 
 
 
@@ -93,6 +93,14 @@ const routes = [
         path: '/:catchAll(.*)', 
       component: NotFound
      },
+     {
+        path: '/GLDashboard', 
+        component: GLDashboard
+     },
+     {
+        path: '/SDSDashboard', 
+        component: SDSDashboard
+     }
 ];
 
 const router = createRouter({
