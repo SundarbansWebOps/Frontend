@@ -2,18 +2,31 @@
   <NavBar></NavBar>
 
   <div class="container">
-    <div class="intro-text">Meet Your Nearby Study Buddies <p style="font-size: xx-small; margin-bottom: 5px;">This is a student run platform and it is not endorsed by the IITM BS degree program in any way.<br> Students can join the platform on their personal discretion.</p></div>
     
+    <div class="intro-text">Meet Your Nearby Study Buddies <p>This is a student run platform and it is not endorsed  by the  IITM BS degree program in any way. Students can join the platform on their personal discretion.</p></div>
+
     <div v-if="token2" class="button-container">
-      <button class="icon-button" @click="showUpdatePopup" title="Update Social Media">
-        <img src="../assets/update.svg" alt="Update Social Media" class="icon" />
+      <button
+        class="icon-button"
+        @click="showUpdatePopup"
+        title="Update Social Media"
+      >
+        <img
+          src="../assets/update.svg"
+          alt="Update Social Media"
+          class="icon"
+        />
         <span class="button-text">Update Profile</span>
       </button>
       <button class="icon-button" @click="refreshPage" title="Refresh">
         <img src="../assets/refresh.svg" alt="Refresh" class="icon" />
         <span class="button-text">Refresh</span>
       </button>
-      <button class="icon-button" @click="showDeletePopup" title="Delete My Data">
+      <button
+        class="icon-button"
+        @click="showDeletePopup"
+        title="Delete My Data"
+      >
         <img src="../assets/delete.svg" alt="Delete My Data" class="icon" />
         <span class="button-text">Delete My Data</span>
       </button>
@@ -28,7 +41,11 @@
       <div v-else>
         <div v-if="users.length" class="user-list">
           <div class="user" v-for="user in users" :key="user.name">
-            <img :src="user.photo_url" :alt="`${user.name}'s photo`" class="user-photo" />
+            <img
+              :src="user.photo_url"
+              :alt="`${user.name}'s photo`"
+              class="user-photo"
+            />
             <div class="user-info">
               <div class="user-name">{{ user.name }}</div>
               <div class="user-distance">
@@ -38,31 +55,70 @@
             <div class="user-social-media">
               <template v-if="social_media_profile_status">
                 <!-- Instagram -->
-                <template v-if="user.social_url && user.social_url.includes('instagram')">
+                <template
+                  v-if="
+                    user.social_url && user.social_url.includes('instagram')
+                  "
+                >
                   <a :href="user.social_url" target="_blank">
-                    <img src="../assets/insta.png" alt="Instagram" class="instagram-logo" />
+                    <img
+                      src="../assets/insta.png"
+                      alt="Instagram"
+                      class="instagram-logo"
+                    />
                   </a>
                 </template>
                 <!-- LinkedIn -->
-                <template v-if="user.social_url && user.social_url.includes('linkedin')">
+                <template
+                  v-if="user.social_url && user.social_url.includes('linkedin')"
+                >
                   <a :href="user.social_url" target="_blank">
-                    <img src="../assets/linkedin.png" alt="LinkedIn" class="instagram-logo" />
+                    <img
+                      src="../assets/linkedin.png"
+                      alt="LinkedIn"
+                      class="instagram-logo"
+                    />
                   </a>
                 </template>
                 <!-- Snapchat -->
-                <template v-if="user.social_url && user.social_url.includes('snapchat')">
+                <template
+                  v-if="user.social_url && user.social_url.includes('snapchat')"
+                >
                   <a :href="user.social_url" target="_blank">
-                    <img src="../assets/snap.png" alt="Snapchat" class="instagram-logo" />
+                    <img
+                      src="../assets/snap.png"
+                      alt="Snapchat"
+                      class="instagram-logo"
+                    />
                   </a>
                 </template>
                 <!-- Fallback for missing links -->
-                <template v-if="!(user.social_url && (user.social_url.includes('instagram') || user.social_url.includes('linkedin') || user.social_url.includes('snapchat')))">
-                  <img src="../assets/notfound.png" alt="Update Social Media" class="instagram-logo" @click="LinkNotAvailable" />
+                <template
+                  v-if="
+                    !(
+                      user.social_url &&
+                      (user.social_url.includes('instagram') ||
+                        user.social_url.includes('linkedin') ||
+                        user.social_url.includes('snapchat'))
+                    )
+                  "
+                >
+                  <img
+                    src="../assets/notfound.png"
+                    alt="Update Social Media"
+                    class="instagram-logo"
+                    @click="LinkNotAvailable"
+                  />
                 </template>
               </template>
               <template v-else>
                 <!-- Fallback if social_media_profile_status is false -->
-                <img :src="getRandomLogo()" alt="Update Social Media" class="instagram-logo" @click="showInstagramAlert" />
+                <img
+                  :src="getRandomLogo()"
+                  alt="Update Social Media"
+                  class="instagram-logo"
+                  @click="showInstagramAlert"
+                />
               </template>
             </div>
           </div>
@@ -73,14 +129,22 @@
       <div v-if="showPopup" class="popup-overlay">
         <div class="popup-content">
           <p>
-            I confirm that my location data will be captured & its derivatives, may be shared with
-            fellow students to ensure proper functionality of the application.
+            I confirm that my location data will be captured & its derivatives,
+            may be shared with fellow students to ensure proper functionality of
+            the application.
           </p>
           <div>
             <button @click="agreeLocationSharing">I Agree</button>
             <button @click="cancelLocationSharing">I Disagree</button>
           </div>
-          <div><a href="https://sundarbans.iitmbs.org/privacy-policy#studybuddy-feature" target="_blank" style="color: blue;">Privacy Policy</a></div>
+          <div>
+            <a
+              href="https://sundarbans.iitmbs.org/privacy-policy#studybuddy-feature"
+              target="_blank"
+              style="color: blue"
+              >Privacy Policy</a
+            >
+          </div>
         </div>
       </div>
 
@@ -100,7 +164,12 @@
             <option value="snapchat">Snapchat</option>
             <option value="linkedin">LinkedIn</option>
           </select>
-          <input v-model="socialMediaUrl" :placeholder="socialMediaPlaceholder" style="margin-top: 4px" type="text" />
+          <input
+            v-model="socialMediaUrl"
+            :placeholder="socialMediaPlaceholder"
+            style="margin-top: 4px"
+            type="text"
+          />
           <div>
             <button @click="updateSocialMedia">Update</button>
             <button @click="showUpdatePopupVisible = false">Cancel</button>
@@ -109,8 +178,11 @@
         </div>
       </div>
     </div>
-    <div class="intro-text"> 
-      <p style="font-size: xx-small; margin-top: 20px; margin-bottom: 5px">Made with ❤️ by Sundarbans House Council 2023-24 </p></div>
+    <div class="intro-text">
+      <p style="font-size: xx-small; margin-top: 20px; margin-bottom: 5px">
+        Made with ❤️ by Sundarbans House Council 2023-24
+      </p>
+    </div>
   </div>
 </template>
 
@@ -140,9 +212,9 @@ export default {
       socialMediaUrl: "",
       social_media_profile_status: false,
       logos: [
-        require('../assets/insta.png'),  // Use require to resolve path
-        require('../assets/linkedin.png'),
-        require('../assets/snap.png'),
+        require("../assets/insta.png"), // Use require to resolve path
+        require("../assets/linkedin.png"),
+        require("../assets/snap.png"),
       ],
     };
   },
@@ -158,14 +230,16 @@ export default {
         default:
           return "Enter profile URL";
       }
-    }
+    },
   },
   methods: {
     LinkNotAvailable() {
       alert("This user hasn't updated their social media profile yet.");
     },
     showInstagramAlert() {
-      alert("You can access fellow student's social media profile only if you have updated your social media profile.");
+      alert(
+        "You can access fellow student's social media profile only if you have updated your social media profile."
+      );
       this.showUpdatePopupVisible = true;
     },
     agreeLocationSharing() {
@@ -173,7 +247,9 @@ export default {
       this.fetchUserData();
     },
     cancelLocationSharing() {
-      alert("We haven't collected your location data. Now, You'll be redirected to our home page.");
+      alert(
+        "We haven't collected your location data. Now, You'll be redirected to our home page."
+      );
       router.push("/");
     },
     fetchUserData() {
@@ -193,11 +269,11 @@ export default {
               });
 
               this.users = response.data.users;
-              this.social_media_profile_status = response.data.social_media_link_status;
+              this.social_media_profile_status =
+                response.data.social_media_link_status;
               // console.log(this.users);
               // console.log("Users fetched successfully");
               // console.log(response.data);
-
             } catch (error) {
               alert(error.response?.data?.error || "An error occurred");
             } finally {
@@ -244,7 +320,9 @@ export default {
           token2: this.token2,
         })
         .then((response) => {
-          alert("Your data has been deleted successfully permanently. your profile won't be visible to others anyomre.");
+          alert(
+            "Your data has been deleted successfully permanently. your profile won't be visible to others anyomre."
+          );
           this.showDeletePopupVisible = false;
           localStorage.removeItem("Token2");
           localStorage.removeItem("Token");
@@ -266,7 +344,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .container {
@@ -321,6 +398,14 @@ export default {
   font-size: 1.5em;
   font-weight: bold;
   margin-bottom: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.intro-text p {
+  text-wrap: balance;
+  font-size: xx-small;
+  margin-bottom: 5px;
 }
 
 .login-prompt {
