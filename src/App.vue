@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import './index.css'
 
 export default {
   name: 'App',
@@ -24,13 +25,4 @@ export default {
 </script>
 
 <style>
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 85vh;
-}
-
-.flex-grow {
-  flex: 1;
-}
 </style>
