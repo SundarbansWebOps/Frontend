@@ -12,7 +12,7 @@
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
     "core-js": "^3.8.3",
-    "marked": "^14.0.0",
+    "marked": "^14.1.2",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
     "vue": "^3.2.13",
