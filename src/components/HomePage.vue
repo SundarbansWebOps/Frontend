@@ -121,22 +121,16 @@
             class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
             style="padding-top: 56.25%"
           >
-            <iframe
-              class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-              src="https://www.youtube.com/embed/6N-PfwyjsIQ?si=9TZ9-A541tzlhkCU"
-              allowfullscreen
-            />
+          <YoutubeVid videoId="6N-PfwyjsIQ" />
+            
           </div>
 
           <div
             class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
             style="padding-top: 56.25%"
           >
-            <iframe
-              class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-              src="https://www.youtube.com/embed/RLBxlaK_aU4?si=NF0U6NkSsvkvSNHZ"
-              allowfullscreen
-            />
+          <YoutubeVid videoId="RLBxlaK_aU4" />
+            
           </div>
         </div>
       </div>
@@ -148,11 +142,8 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-              <iframe
-                class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                src="https://www.youtube.com/embed/TvkTrLJonbw?si=4k-pqv4Sm3IxT1J3"
-                allowfullscreen
-              />
+            <YoutubeVid videoId="TvkTrLJonbw" />
+              
             </div>
           </div>
           <div class="p-4 md:w-1/2 lg:w-1/4 w-full">
@@ -160,11 +151,8 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-              <iframe
-                class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                src="https://www.youtube.com/embed/kEsry2TSVKU?si=AvUDyr9nmcz3wMjv"
-                allowfullscreen
-              />
+            <YoutubeVid videoId="kEsry2TSVKU" />
+              
             </div>
           </div>
           <div class="p-4 md:w-1/2 lg:w-1/4 w-full">
@@ -172,11 +160,8 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-              <iframe
-                class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                src="https://www.youtube.com/embed/QW4T_FQzi2I?si=AozEo2ZoQhIfZHas"
-                allowfullscreen
-              />
+            <YoutubeVid videoId="QW4T_FQzi2I" />
+              
             </div>
           </div>
           <div class="p-4 md:w-1/2 lg:w-1/4 w-full">
@@ -184,11 +169,8 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-              <iframe
-                class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                src="https://www.youtube.com/embed/rZdih019rz4?si=Bi5QHuM6YXaO0uTX"
-                allowfullscreen
-              />
+            <YoutubeVid videoId="rZdih019rz4" />
+              
             </div>
           </div>
         </div>
@@ -209,42 +191,38 @@
           latest happenings and exciting activities within our community.
         </p>
 
-        <div
-          class="grid grid-cols-1 gap-8 mt-8 xl:mt-12 xl:gap-12 md:grid-cols-2 xl:grid-cols-3"
-        >
+        <div class="dark:text-white grid grid-cols-1 gap-8 mt-8 xl:mt-12 xl:gap-12 md:grid-cols-2 xl:grid-cols-3">
           <div v-for="event in latestEvents" :key="event.slug">
-            <img
-              class="relative z-10 object-cover w-full rounded-md h-96"
-              :src="prependBackendLink(event.image)"
-              alt="Event Image"
-            />
-            <div
-              class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black"
-            >
-              <a
-                :href="event.form_url"
-                class="font-semibold text-gray-800 hover:underline dark:text-white md:text-xl"
-              >
+            <router-link :to="'/event/' + event.slug" class="block relative">
+              <img class="relative z-10 object-cover w-full rounded-md h-96" :src="prependBackendLink(event.image)"
+                alt="Event Image">
+              <div class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black">
+
                 {{ event.title }}
-              </a>
-              <p class="mt-3 text-sm text-[#eab308]">
-                {{ event.timestamp }}
-              </p>
-            </div>
+                <p class="mt-3 text-sm text-[#eab308]">
+                  {{ event.timestamp }}
+                </p>
+              </div>
+            </router-link>
           </div>
-        </div>
       </div>
+    </div>
     </section>
   </body>
 </template>
 
 <script>
 import NavBar from "./NavBar.vue";
-
+import YoutubeVid from "./YoutubeVid.vue";
+import axios from 'axios'
+const api = axios.create({
+  baseURL: "https://backend-sundarbans.iitmbs.org",
+});
 export default {
   name: "HomePage",
   components: {
     NavBar,
+    YoutubeVid,
   },
   data() {
     return {
@@ -255,30 +233,21 @@ export default {
   },
   async mounted() {
     // Fetch admin data and events when the component is mounted
-    await Promise.all([this.fetchAdmins(), this.fetchEvents()]);
+    await Promise.all([this.fetchEvents()]);
   },
   methods: {
-    async fetchAdmins() {
-      try {
-        const response = await axios.get("https://sundarbans.camlio.shop/council");
-        const data = await response.json();
-        this.admins = data.admins;
-      } catch (error) {
-        console.error("Error fetching admin data:", error);
-      }
-    },
     async fetchEvents() {
       try {
-        const response = await axios.get("https://sundarbans.camlio.shop/events", {
+        const response = await api.get("/events", {
           mode: "cors",
         });
-        if (!response.ok) {
+        if (response.status!=200) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const data = await response.json();
+        const data = response.data
         console.log("API Response:", data); // Log the entire response
         // Separate events into latest and upcoming
-        this.latestEvents = data.latest_events || [];
+        this.latestEvents = (data.latest_events || []).slice(0, 3);
         this.upcomingEvents = data.upcoming_events || [];
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -286,9 +255,10 @@ export default {
     },
     prependBackendLink(url) {
       // Replace with your actual backend link
-      const backendLink = "https://sundarbans.camlio.shop";
+      //const backendLink = "https://sundarbans.camlio.shop";
       // Check if the URL already starts with 'http' or '/'
-      return url && url.startsWith("/") ? backendLink + url : url;
+      //return url && url.startsWith("/") ? backendLink + url : url;
+      return url && url.startsWith('/') ? api.defaults.baseURL + url : url;
     },
     truncateDescription(description) {
       const maxLength = 100;

@@ -20,11 +20,11 @@
         </div>
 
         <p class="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">
-          Welcome back! , Sign in with your IITM Google Account to access this page.
+          Welcome back! Sign in with your IITM Google Account to access this page.
         </p>
 
         <button
-          class="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+          class="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 mx-auto"
           @click="login"
         >
           <div class="px-4 py-2">

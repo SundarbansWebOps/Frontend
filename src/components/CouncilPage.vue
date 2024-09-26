@@ -3,7 +3,7 @@
 
   <body class="dark:bg-black">
     <!-- Section: Design Block -->
-    <section class="mb-40">
+    <section class="mb-20">
       <!-- Jumbotron -->
       <div
         class="relative overflow-hidden bg-cover bg-no-repeat"
@@ -19,7 +19,7 @@
           <div class="flex h-full items-center justify-center">
             <div class="px-6 text-center text-white md:px-12">
               <h1
-                class="mt-2 mb-16 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl"
+                class="mt-8 mb-5 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl"
               >
                 Sundarbans House Council
                 <br><span class="text-[#eab308]">2023-24</span>
@@ -34,7 +34,7 @@
 
     <!-- upper house council -->
     <section class="text-gray-400 py-10 dark:bg-black body-font">
-      <div class="text-center">
+      <div class="text-center mt-1 mb-6">
         <h1
           class="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white"
         >
@@ -106,7 +106,7 @@
     </section>
 
     <!-- active house council -->
-    <section class="bg-white dark:bg-black">
+    <section class=" mt-20 mb-5 bg-white dark:bg-black">
       <div class="container px-6 py-10 mx-auto">
         <h1
           class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white"
@@ -148,7 +148,7 @@
     </section>
 
     <!-- webops team -->
-    <section class="bg-white dark:bg-black">
+    <section class=" mt-10 mb-20 bg-white dark:bg-black">
       <div class="container px-6 py-10 mx-auto">
         <h1
           class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white"
@@ -188,9 +188,10 @@
 
     <section
       v-if="graphics"
-      class="bg-white dark:bg-black"
+      class="bg-white dark:bg-black  mt-10 mb-20 pt-20 pb-20"
+
     >
-      <div class="container px-6 py-10 mx-auto">
+      <div class="container px-6 py-10 mx-auto ">
         <h1
           class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white"
         >
@@ -228,7 +229,7 @@
     </section>
     <section
       v-if="prteam"
-      class="bg-white dark:bg-black"
+      class="bg-white dark:bg-black mb-20"
     >
       <div class="container px-6 py-10 mx-auto">
         <h1

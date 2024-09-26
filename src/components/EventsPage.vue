@@ -1,7 +1,7 @@
 <template>
   <NavBar />
 
-  <body class="dark:bg-black">
+  <body class="dark:bg-black dark:text-white">
     <!-- caraousal -->
     <div id="carouselExampleCaptions" class="relative" data-te-carousel-init data-te-ride="carousel">
       <!--Carousel indicators-->
