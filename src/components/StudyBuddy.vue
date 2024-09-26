@@ -40,12 +40,9 @@
       </div>
       <div v-else>
         <div v-if="users.length" class="user-list">
-          <div class="user" v-for="user in users" :key="user.name">
-            <img
-              :src="user.photo_url"
-              :alt="`${user.name}'s photo`"
-              class="user-photo"
-            />
+          <div class="user" v-for="user in pusers" :key="user.name"> <!-- looping over users fetched -->
+            <img :src="user.photo_url" :alt="`${user.name}'s photo`" class="user-photo" />
+
             <div class="user-info">
               <div class="user-name">{{ user.name }}</div>
               <div class="user-distance">
@@ -122,6 +119,7 @@
               </template>
             </div>
           </div>
+          <button v-if="hasNext" @click="paginate" style="width: 100%; background-color: red; text-align: center; color: white;">View more</button>
           <p v-if="!users.length" class="no-users">No nearby users found.</p>
         </div>
       </div>
@@ -203,7 +201,7 @@ export default {
       token2: localStorage.getItem("Token2"),
       latitude: null,
       longitude: null,
-      users: [],
+      users: [], pusers: [], curIndex: 0, hasNext: true,
       loading: false,
       showPopup: true,
       showDeletePopupVisible: false,
@@ -268,9 +266,38 @@ export default {
                 longitude: this.longitude,
               });
 
+
+              // // check response file
+              // console.log(response.data);
+              // // Step 1: Convert the response data (object) to a JSON string
+              // const jsonStr = JSON.stringify(response.data, null, 2); // Pretty JSON with indentation
+
+              // // Step 2: Create a Blob with the JSON string
+              // const blob = new Blob([jsonStr], { type: 'text/plain' });
+
+              // // Step 3: Create a temporary link element
+              // const link = document.createElement('a');
+              // link.href = window.URL.createObjectURL(blob);
+
+              // // Step 4: Set the download attribute with the desired file name
+              // link.download = 'response-data.txt';
+
+              // // Step 5: Append the link to the body (required to trigger download)
+              // document.body.appendChild(link);
+
+              // // Step 6: Programmatically click the link to trigger the download
+              // link.click();
+
+              // // Step 7: Remove the link from the document
+              // document.body.removeChild(link);
+              // // check response file
+
+              this.users = response.data.users; this.paginate();
+              this.social_media_profile_status = response.data.social_media_link_status;
               this.users = response.data.users;
               this.social_media_profile_status =
                 response.data.social_media_link_status;
+
               // console.log(this.users);
               // console.log("Users fetched successfully");
               // console.log(response.data);
@@ -286,6 +313,16 @@ export default {
         );
       } else {
         alert("Location access is not given.");
+      }
+    },
+    paginate() {
+      if (this.curIndex < this.users.length) {
+        let nextUsers = this.users.slice(this.curIndex, this.curIndex + 10);
+        console.log(this.users)
+        this.pusers = this.pusers.concat(nextUsers);
+        this.curIndex += 10;
+      } else {
+        this.hasNext = false;
       }
     },
     showDeletePopup() {
