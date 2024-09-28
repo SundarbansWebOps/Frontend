@@ -14,7 +14,7 @@ import ChatBot from './components/ChatBot.vue'
 import NotFound from './components/NotFound.vue'
 import GLDashboard from './components/GLDashboard.vue'
 import SDSDashboard from './components/SDSDashboard.vue'
-
+import Council2425 from './components/Council2425.vue'
 
 
 
@@ -47,7 +47,7 @@ const routes = [
     {
         name: 'CouncilPage',
         component: CouncilPage,
-        path: '/council'
+        path: '/council2324'
     },
     {
         name: 'UserPage',
@@ -100,6 +100,10 @@ const routes = [
      {
         path: '/SDSDashboard', 
         component: SDSDashboard
+     },
+     {
+        path: '/council',
+        component : Council2425
      }
 ];
 
