@@ -66,7 +66,7 @@
               </template>
             </div>
           </div>
-          <button v-if="hasNext" @click="paginate" style="width: 100%; background-color: red; text-align: center; color: white;">View more</button>
+          <button v-if="hasNext" @click="paginate" style="width: 100%; background-color: #910404; text-align: center; color: white;">View more</button>
           <p v-if="!users.length" class="no-users">No nearby users found.</p>
         </div>
       </div>
