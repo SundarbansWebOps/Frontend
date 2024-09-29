@@ -48,11 +48,8 @@
             class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
             style="padding-top: 56.25%"
           >
-            <iframe
-              class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-              :src="video.video_url"
-              allowfullscreen
-            />
+          <YoutubeVid :videoId="video.video_url" />
+           
           </div>
         </div>
       </div>
@@ -68,11 +65,8 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-              <iframe
-                class="embed-responsive-item absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                :src="video.video_url"
-                allowfullscreen
-              />
+            <YoutubeVid :videoId="video.video_url" />
+              
             </div>
           </div>
         </div>
@@ -84,11 +78,12 @@
 <script>
 import axios from 'axios';
 import NavBar from './NavBar.vue';
-
+import YoutubeVid from './YoutubeVid.vue';
 export default {
     name: 'VideoGallery',
     components: {
-        NavBar
+        NavBar,
+        YoutubeVid,
     },
     data() {
         return {
@@ -106,6 +101,12 @@ export default {
                 }
             };
             const result = await axios.get(url, config);
+            
+            //parse the video_url to get the video id
+            for (let vid of result.data.videos) {
+                vid.video_url = vid.video_url.split("/")[4].split("?")[0]
+            }
+            
             this.videos = result.data.videos;
             console.log(this.videos);
         } catch (error) {
