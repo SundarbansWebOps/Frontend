@@ -100,6 +100,18 @@ const routes = [
      {
         path: '/SDSDashboard', 
         component: SDSDashboard
+     },
+     {
+        path: '/grp',
+        component: () => import('./components/GRP.vue')
+     },
+     {
+        path: '/grp/:id',
+        component: () => import('./components/GRPDetails.vue')
+     },
+     {
+        path: '/grp_admin',
+        component: () => import('./components/GRPAdmin.vue')
      }
 ];
 
