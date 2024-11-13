@@ -14,7 +14,7 @@ import ChatBot from './components/ChatBot.vue'
 import NotFound from './components/NotFound.vue'
 import GLDashboard from './components/GLDashboard.vue'
 import SDSDashboard from './components/SDSDashboard.vue'
-
+import Council2425 from './components/Council2425.vue'
 
 
 
@@ -47,7 +47,7 @@ const routes = [
     {
         name: 'CouncilPage',
         component: CouncilPage,
-        path: '/council'
+        path: '/council2324'
     },
     {
         name: 'UserPage',
@@ -89,30 +89,36 @@ const routes = [
         component: ChatBot,
         path: '/chatbot'
     },
-    { 
-        path: '/:catchAll(.*)', 
-      component: NotFound
-     },
-     {
-        path: '/GLDashboard', 
+    {
+        path: '/:catchAll(.*)',
+        component: NotFound
+    },
+    {
+        path: '/GLDashboard',
         component: GLDashboard
-     },
-     {
-        path: '/SDSDashboard', 
+    },
+    {
+        path: '/SDSDashboard',
         component: SDSDashboard
-     },
-     {
+    },
+    {
+        // <<<<<<< HEAD
+        path: '/council',
+        component: Council2425
+        // =======
+    }, {
         path: '/grp',
         component: () => import('./components/GRP.vue')
-     },
-     {
+    },
+    {
         path: '/grp/:id',
         component: () => import('./components/GRPDetails.vue')
-     },
-     {
+    },
+    {
         path: '/grp_admin',
         component: () => import('./components/GRPAdmin.vue')
-     }
+        // >>>>>>> 9de5ecfbbb19c47a61ca4677fc0757b6ae60a458
+    }
 ];
 
 const router = createRouter({
