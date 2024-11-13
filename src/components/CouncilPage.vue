@@ -300,7 +300,7 @@ export default {
   async mounted() {
     try {
       this.api_url = this.$globalData.backendUrl;
-      const response = await axios.get(`${this.api_url}/council`);
+      const response = await axios.get(`${this.api_url}/council?year=2023`);
       const data = response.data;
 
       // Use only the specified parts of the response
