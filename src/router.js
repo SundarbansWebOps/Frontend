@@ -115,7 +115,6 @@ const routes = [
     {
         path: '/grp_admin',
         component: () => import('./components/GRPAdmin.vue')
-        // >>>>>>> 9de5ecfbbb19c47a61ca4677fc0757b6ae60a458
     }
 ];
 
