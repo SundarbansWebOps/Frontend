@@ -102,10 +102,8 @@ const routes = [
         component: SDSDashboard
     },
     {
-        // <<<<<<< HEAD
         path: '/council',
         component: Council2425
-        // =======
     }, {
         path: '/grp',
         component: () => import('./components/GRP.vue')
