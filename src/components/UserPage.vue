@@ -49,7 +49,7 @@
                         </g>
                     </svg> -->
           </div>
-          <span class="px-2 pb-3 font-bold text-center"> Group Number : {{ GroupId }}</span>
+          <span class="px-2 pb-3 font-bold text-center"> Region : {{ GroupId }}</span>
         </div>
 
         <div class="flex items-center justify-between mt-4">
@@ -59,8 +59,10 @@
 
         <div class="mt-4">
           <span v-if="GLmail && GLmail.length > 0"
-            class="block mb-2 text-sm font-medium text-gray-600 text-center dark:text-gray-200">GL Email : {{
-              GLmail[0] }}
+            class="block mb-2 text-sm font-medium text-gray-600 text-center dark:text-gray-200">
+            <li v-for="(email, index) in GLmail" :key="index">
+              RC Email: {{ email }}
+            </li>
           </span>
         </div>
 
