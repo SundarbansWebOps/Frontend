@@ -193,7 +193,7 @@
             client_id:
               "1043737632690-hogp7qi303vimd5tflakfhvduodkfjjh.apps.googleusercontent.com",
             scope: "email profile openid",
-            redirect_uri: "https://sundarbans-website.vercel.app/",
+            redirect_uri: "https://sundarbans.iitmbs.org/",
             callback: response => {
               if (response.code) {
                 this.sendCodeToBackend(response.code);
