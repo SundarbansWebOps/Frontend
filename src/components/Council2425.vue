@@ -36,7 +36,7 @@
       <div class="container px-5 py-10 mx-auto">
         <div class="flex flex-wrap -m-4">
           <div class="container px-5 py-10 mx-auto">
-            <div id="adminsContainer" class="flex flex-wrap -m-4">
+            <div id="adminsContainer" class="flex flex-wrap -m-4 upperCouncil">
               <!-- First Admin -->
               <div class="p-4 mx-auto md:w-1/4">
                 <div
@@ -193,7 +193,13 @@
     </section>
   </body>
 </template>
-
+<style scoped>
+.upperCouncil {
+  img {
+    border-radius: 0%;
+  }
+}
+</style>
 <script>
 import axios from 'axios';
 import NavBar from './NavBar.vue';
@@ -230,6 +236,9 @@ export default {
   },
   methods: {
     prependBackendLink(url) {
+      if (url == "/media/profile-icon-design-free-vector.jpg") {
+        return 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png'
+      }
       return this.api_url + url;
     },
   },

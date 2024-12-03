@@ -105,7 +105,8 @@ export default {
             complaint: {},
             messages: [],
             newMessage: '',
-            self: JSON.parse(localStorage.getItem('userDetails'))["email"]
+            self: JSON.parse(localStorage.getItem('userDetails'))["email"],
+            backendUrl: this.$globalData.backendUrl,
         };
     },
     components: {
@@ -118,7 +119,7 @@ export default {
     methods: {
         async fetchComplaintDetails() {
             try {
-                const response = await axios.post(`${this.$globalData.backendUrl}/fetch_grievance_details/`, {
+                const response = await axios.post(`${this.backendUrl}/fetch_grievance_details/`, {
                     "token2": localStorage.getItem('Token2'),
                     "gid": this.$route.params.id
                 }, { headers: { 'Content-Type': 'application/json' } });
@@ -126,11 +127,12 @@ export default {
                 this.messages = response.data.messages
             } catch (error) {
                 console.error('Error fetching complaint details:', error);
+                alert("Error")
             }
         },
         async sendMessage() {
             try {
-                const response = await axios.post(`${this.$globalData.backendUrl}/add_message_grievance/`, {
+                const response = await axios.post(`${this.backendUrl}/add_message_grievance/`, {
                     "token2": localStorage.getItem('Token2'),
                     "gid": this.$route.params.id,
                     "message": this.newMessage
@@ -139,11 +141,12 @@ export default {
                 this.newMessage = '';
             } catch (error) {
                 console.error('Error sending message:', error);
+                alert("Error")
             }
         },
         async closeComplaint() {
             try {
-                await axios.post(`${this.$globalData.backendUrl}/update_grievance_status/`, {
+                await axios.post(`${this.backendUrl}/update_grievance_status/`, {
                     "token2": localStorage.getItem('Token2'),
                     "gid": this.$route.params.id,
                     "status": "Resolved"
@@ -156,6 +159,7 @@ export default {
 
             } catch (error) {
                 console.error('Error closing complaint:', error);
+                alert("Error")
             }
         }
     }
