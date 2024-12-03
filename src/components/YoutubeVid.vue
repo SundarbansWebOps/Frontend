@@ -1,7 +1,7 @@
 <template>
   <template v-if="!loaded">
 
-    <img class="absolute inset-0 bottom-0 left-0 right-0 top-0 h-full w-full"
+    <img class="absolute inset-0 bottom-0 left-0 right-0 top-0 h-full w-full rounded-none"
       :src="`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`" alt="Youtube video thumbnail"
       style="z-index:1" title="Please wait for the YT Player to load" />
 

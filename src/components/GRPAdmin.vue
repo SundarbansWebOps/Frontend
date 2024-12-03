@@ -52,6 +52,7 @@ export default {
     data() {
         return {
             complaints: [],
+            backendUrl: this.$globalData.backendUrl,
 
         };
     },
@@ -60,19 +61,20 @@ export default {
         async fetchComplaints() {
             // Fetch complaints from the API
             try {
-                const response = await axios.post(`${this.$globalData.backendUrl}/fetch_all_grievances/`, {
+                const response = await axios.post(`${this.backendUrl}/fetch_all_grievances/`, {
                     "token2": localStorage.getItem('Token2'),
                     "status": "Open"
                 }, { headers: { 'Content-Type': 'application/json' } });
                 this.complaints = response.data;
             } catch (error) {
                 console.error('Error fetching complaints:', error);
+                alert("Doesn't look like you have access to this page. If you are an admin, add your email to your backend account.")
             }
         },
         async closeComplaint(complaintId) {
             // Close the complaint with the given ID
             try {
-                const response = await axios.post(`${this.$globalData.backendUrl}/update_grievance_status/`, {
+                const response = await axios.post(`${this.backendUrl}/update_grievance_status/`, {
                     "token2": localStorage.getItem('Token2'),
                     "gid": complaintId,
                     "status": "Resolved"
