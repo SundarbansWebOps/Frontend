@@ -120,6 +120,7 @@ export default {
             } catch (error) {
                 // console.error('Error sending code to backend:', error);
                 alert('Backend Server Error');
+              console.log(error);
             }
         },
     }
