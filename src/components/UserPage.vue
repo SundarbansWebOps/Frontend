@@ -86,7 +86,7 @@
           </div>
         </div>
 
-        <div v-if="Phone === null">
+        <div>
           <h6 style="color: red;">Update Number to Access Group Links</h6>
           <div class="mt-4">
             <div class="flex justify-between">
