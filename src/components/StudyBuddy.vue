@@ -177,9 +177,9 @@
       </div>
     </div>
     <div class="intro-text">
-      <p style="font-size: xx-small; margin-top: 20px; margin-bottom: 5px">
+      <a href="https://sundarbans.iitmbs.org/council2324"><p style="font-size: xx-small; margin-top: 20px; margin-bottom: 5px">
         Made with ❤️ by Sundarbans House Council 2023-24
-      </p>
+      </p></a>
     </div>
   </div>
 </template>
