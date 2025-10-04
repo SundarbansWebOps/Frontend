@@ -31,6 +31,7 @@
                   <img
                     class="object-cover w-72 h-56 mx-auto"
                     :src="prependBackendLink(admins[0].image)"
+                    :style="mannuImageStyle"
                     alt="avatar"
                   >
                   <div class="py-5 text-center">
@@ -65,6 +66,7 @@
                   <img
                     class="object-cover w-72 h-56 mx-auto"
                     :src="prependBackendLink(admins[1].image)"
+                    :style="imageStyleFor(admins[1])"
                     alt="avatar"
                   >
                   <div class="py-5 text-center">
@@ -118,6 +120,7 @@
               <img
                 class="object-cover w-32 h-32 rounded-full"
                 :src="prependBackendLink(g_l.image)"
+                :style="imageStyleFor(g_l)"
                 alt="avatar"
               >
 
@@ -168,7 +171,8 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-              :src="prependBackendLink(wops.image)"
+                :src="prependBackendLink(wops.image)"
+                :style="imageStyleFor(wops)"
               alt="avatar"
             >
 
@@ -221,7 +225,8 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-              :src="prependBackendLink(gr.image)"
+                :src="prependBackendLink(gr.image)"
+                :style="imageStyleFor(gr)"
               alt="avatar"
             >
 
@@ -259,7 +264,8 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-              :src="prependBackendLink(pr.image)"
+                :src="prependBackendLink(pr.image)"
+                :style="imageStyleFor(pr)"
               alt="avatar"
             >
 
@@ -286,13 +292,31 @@ export default {
   data() {
     return {
       // Hardcoded realistic council data based on the backend structure
+      // style for Mannu's image only (adjust objectPosition to crop/align)
+      mannuImageStyle: {
+        objectFit: 'cover',
+        objectPosition: '80% 40%'
+      },
+      // per-person image style overrides keyed by uid
+      imageStyles: {
+        // keep Mannu's existing style available by uid
+        '1': {
+          objectFit: 'cover',
+          objectPosition: '80% 40%'
+        },
+        // Aditya default center (you can tweak)
+        '2': {
+          objectFit: 'cover',
+          objectPosition: '50% 20%'
+        }
+      },
       admins: [
         {
           uid: 1,
           name: 'Mannu Yadav',
           email: 'sundarbans-sec@study.iitm.ac.in',
           phone: '9120589552',
-          image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png',
+          image: require('@/assets/ppl/mannu.jpeg'),
           role: 'Secretary',
           linkedin: 'https://linkedin.com/in/MannuYadav',
           instagram: '',
@@ -304,7 +328,7 @@ export default {
           name: 'Aditya Vaidhya',
           email: 'sundarbans-ds@study.iitm.ac.in',
           phone: '9307348415',
-          image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png',
+          image: require('@/assets/ppl/aditya.jpeg'),
           role: 'Deputy Secretary',
           linkedin: 'https://linkedin.com/in/aditya-vaidhya',
           instagram: '',
@@ -314,18 +338,18 @@ export default {
       ],
       group_leaders: [
         { uid: 5, name: 'Rushabh Kapse', role: 'Mumbai RC', email: '23f3002876@ds.study.iitm.ac.in', phone: '9158107516', location: 'Mumbai', linkedin: '', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
-        { uid: 6, name: 'Chandan Shaw', role: 'Kolkata RC', email: '24f3100195@es.study.iitm.ac.in', phone: '7003925642', location: 'Kolkata', linkedin: '', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
-        { uid: 7, name: 'Kartik Singh', role: 'Lucknow RC', email: '24f3001853@ds.study.iitm.ac.in', phone: '8810899044', location: 'Lucknow', linkedin: '', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
-        { uid: 8, name: 'Aakash Rawal', role: 'Chandigrah RC', email: '24f2003705@ds.study.iitm.ac.in', phone: '8114417334', location: 'Chandigrah', linkedin: 'Aakash_Linkdin', instagram: 'Aakash_Insta', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
-        { uid: 9, name: 'Nivash Kumar', role: 'Patna RC', email: '23f3003523@ds.study.iitm.ac.in', phone: '9631364617', location: 'Patna', linkedin: 'https://www.linkedin.com/in/nivash-kumar-896a80173', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png', birthday: '23th May (Amavasya)' },
-        { uid: 10, name: 'Divya Prakash', role: 'Delhi RC', email: '24f3004288@ds.study.iitm.ac.in', phone: '9935539521', location: 'Delhi', linkedin: '', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
-        { uid: 11, name: 'Laksh Wadhawan', role: 'Delhi RC', email: '24f3003957@ds.study.iitm.ac.in', phone: '8920210731', location: 'Delhi', linkedin: 'https://www.linkedin.com/in/laksh-w-5911791b3/', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
-        { uid: 12, name: 'Dishi Gupta', role: 'Hyderabad RC', email: '25f2004620@ds.study.iitm.ac.in', phone: '9392160798', location: 'Hyderabad', linkedin: 'https://www.linkedin.com/in/dishi-gupta-984ba0376', instagram: 'https://www.instagram.com/bitti_the_cat?igsh=MWZoejBxYnZhZDZ4bA==', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' }
+        { uid: 6, name: 'Chandan Shaw', role: 'Kolkata RC', email: '24f3100195@es.study.iitm.ac.in', phone: '7003925642', location: 'Kolkata', linkedin: '', instagram: '', image: require('@/assets/ppl/chandan.webp') },
+        { uid: 7, name: 'Kartik Singh', role: 'Lucknow RC', email: '24f3001853@ds.study.iitm.ac.in', phone: '8810899044', location: 'Lucknow', linkedin: '', instagram: '', image: require('@/assets/ppl/kartik.webp') },
+        { uid: 8, name: 'Aakash Rawal', role: 'Chandigrah RC', email: '24f2003705@ds.study.iitm.ac.in', phone: '8114417334', location: 'Chandigrah', linkedin: 'Aakash_Linkdin', instagram: 'Aakash_Insta', image: require('@/assets/ppl/aakash.webp') },
+        { uid: 9, name: 'Nivash Kumar', role: 'Patna RC', email: '23f3003523@ds.study.iitm.ac.in', phone: '9631364617', location: 'Patna', linkedin: 'https://www.linkedin.com/in/nivash-kumar-896a80173', instagram: '', image: require('@/assets/ppl/nivash.jpeg'), birthday: '23th May (Amavasya)' },
+        { uid: 10, name: 'Divya Prakash', role: 'Delhi RC', email: '24f3004288@ds.study.iitm.ac.in', phone: '9935539521', location: 'Delhi', linkedin: '', instagram: '', image: require('@/assets/ppl/divy.jpeg') },
+        { uid: 11, name: 'Laksh Wadhawan', role: 'Delhi RC', email: '24f3003957@ds.study.iitm.ac.in', phone: '8920210731', location: 'Delhi', linkedin: 'https://www.linkedin.com/in/laksh-w-5911791b3/', instagram: '', image: require('@/assets/ppl/laksh.webp') },
+        { uid: 12, name: 'Dishi Gupta', role: 'Hyderabad RC', email: '25f2004620@ds.study.iitm.ac.in', phone: '9392160798', location: 'Hyderabad', linkedin: 'https://www.linkedin.com/in/dishi-gupta-984ba0376', instagram: 'https://www.instagram.com/bitti_the_cat?igsh=MWZoejBxYnZhZDZ4bA==', image: require('@/assets/ppl/dishi.webp') }
       ],
       // webops team contains Anshi and Shoaib
       webops: [
         { uid: 3, name: 'Anshi Jain', role: 'Web ops team head', email: 'sundarbans-webad@ds.study.iitm.ac.in', phone: '8707643407', location: 'Lucknow', linkedin: 'https://www.linkedin.com/in/anshi-jain-5853361a8/', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
-        { uid: 4, name: 'SHOAIB SADIQ SALEHMOHAMED', role: 'Web ops team DEP head', email: 'sundarbans-webad@ds.study.iitm.ac.in', phone: '9502264416', location: 'Hyderabad', linkedin: 'https://www.linkedin.com/in/shoaib-ssm/', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' }
+        { uid: 4, name: 'SHOAIB SADIQ SALEHMOHAMED', role: 'Web ops team DEP head', email: 'sundarbans-webad@ds.study.iitm.ac.in', phone: '9502264416', location: 'Hyderabad', linkedin: 'https://www.linkedin.com/in/shoaib-ssm/', instagram: '', image: require('@/assets/ppl/shoaib.jpeg') }
       ],
       graphics: [],
       prteam: []
@@ -343,6 +367,14 @@ export default {
       if (!link) return '';
       if (link.startsWith('http://') || link.startsWith('https://')) return link;
       return 'https://' + link.replace(/^\s+|\s+$/g, '');
+    },
+    imageStyleFor(person) {
+      if (!person) return {};
+      const uid = person.uid != null ? String(person.uid) : null;
+      if (uid && this.imageStyles && this.imageStyles[uid]) return this.imageStyles[uid];
+      // fallback to old single mannuImageStyle for uid 1
+      if (person.uid === 1 && this.mannuImageStyle) return this.mannuImageStyle;
+      return {};
     },
   },
   mounted() {
