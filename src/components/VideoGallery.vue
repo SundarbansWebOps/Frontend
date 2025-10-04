@@ -77,7 +77,9 @@
 
 <script>
 import axios from 'axios';
-import NavBar from './NavBar.vue';
+// import NavBar from './NavBar.vue';
+import NavBar from './NavBarNoBackend.vue';
+
 import YoutubeVid from './YoutubeVid.vue';
 export default {
     name: 'VideoGallery',
