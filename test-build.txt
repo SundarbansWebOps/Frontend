@@ -1,0 +1,1047 @@
+
+> frontend@0.1.0 build
+> vue-cli-service build
+
+All browser targets in the browserslist configuration have supported ES module.
+Therefore we don't build two separate bundles for differential loading.
+
+
+ WARNING  Compiled with 4 warnings9:21:25 PM
+
+[eslint] 
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\ChatBot.vue
+    2:1   warning  Expected indentation of 2 spaces but found 4 spaces                               vue/html-indent
+    2:5   warning  Require self-closing on Vue.js custom components (<NavBar>)                       vue/html-self-closing
+    3:1   warning  Expected indentation of 2 spaces but found 4 spaces                               vue/html-indent
+    4:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+    5:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+    5:32  warning  'ref' should be on a new line                                                     vue/max-attributes-per-line
+    6:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+    6:9   warning  Require self-closing on HTML elements (<div>)                                     vue/html-self-closing
+    6:26  warning  'ref' should be on a new line                                                     vue/max-attributes-per-line
+    7:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+    8:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+    8:44  warning  Attribute "id" should go before "@submit.prevent"                                 vue/attributes-order
+    8:44  warning  'id' should be on a new line                                                      vue/max-attributes-per-line
+    9:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+    9:9   warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+   10:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   11:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   11:11  warning  Attribute "id" should go before "type"                                            vue/attributes-order
+   12:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   12:11  warning  Attribute "v-model" should go before "type"                                       vue/attributes-order
+   13:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   14:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   15:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   16:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   16:31  warning  Attribute "id" should go before "type"                                            vue/attributes-order
+   16:31  warning  'id' should be on a new line                                                      vue/max-attributes-per-line
+   16:49  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+   16:55  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+   17:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   17:31  warning  Attribute "id" should go before "type"                                            vue/attributes-order
+   17:31  warning  'id' should be on a new line                                                      vue/max-attributes-per-line
+   17:47  warning  '@click' should be on a new line                                                  vue/max-attributes-per-line
+   17:67  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+   17:71  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+   18:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   19:1   warning  Expected indentation of 2 spaces but found 4 spaces                               vue/html-indent
+   20:1   warning  Expected indentation of 0 spaces but found 2 spaces                               vue/html-indent
+   37:5   warning  The "components" property should be above the "data" property on line 28          vue/order-in-components
+  112:5   warning  The "mounted" property should be above the "methods" property on line 40          vue/order-in-components
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\Council2425.vue
+    8:12   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+    8:67   warning  'style' should be on a new line                                            vue/max-attributes-per-line
+   12:10   warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+   14:120  warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+   39:39   warning  'class' should be on a new line                                            vue/max-attributes-per-line
+  105:37   warning  'class' should be on a new line                                            vue/max-attributes-per-line
+  106:18   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+  106:47   warning  ':key' should be on a new line                                             vue/max-attributes-per-line
+  107:1    warning  Expected indentation of 17 spaces but found 14 spaces                      vue/html-indent
+  107:237  warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+  108:53   warning  ':src' should be on a new line                                             vue/max-attributes-per-line
+  108:90   warning  'alt' should be on a new line                                              vue/max-attributes-per-line
+  135:16   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+  135:39   warning  ':key' should be on a new line                                             vue/max-attributes-per-line
+  136:1    warning  Expected indentation of 15 spaces but found 12 spaces                      vue/html-indent
+  136:225  warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+  137:18   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+  137:83   warning  ':src' should be on a new line                                             vue/max-attributes-per-line
+  138:1    warning  Expected indentation of 17 spaces but found 14 spaces                      vue/html-indent
+  138:27   warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+  148:30   warning  'class' should be on a new line                                            vue/max-attributes-per-line
+  159:16   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+  159:45   warning  ':key' should be on a new line                                             vue/max-attributes-per-line
+  160:1    warning  Expected indentation of 15 spaces but found 12 spaces                      vue/html-indent
+  160:225  warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+  161:18   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+  162:1    warning  Expected indentation of 17 spaces but found 14 spaces                      vue/html-indent
+  162:57   warning  'alt' should be on a new line                                              vue/max-attributes-per-line
+  162:69   warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+  171:28   warning  'class' should be on a new line                                            vue/max-attributes-per-line
+  182:16   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+  182:37   warning  ':key' should be on a new line                                             vue/max-attributes-per-line
+  183:1    warning  Expected indentation of 15 spaces but found 12 spaces                      vue/html-indent
+  183:225  warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+  184:18   warning  Expected a linebreak before this attribute                                 vue/first-attribute-linebreak
+  184:83   warning  ':src' should be on a new line                                             vue/max-attributes-per-line
+  185:1    warning  Expected indentation of 17 spaces but found 14 spaces                      vue/html-indent
+  185:27   warning  Expected 1 line break before closing bracket, but no line breaks found     vue/html-closing-bracket-newline
+  203:1    warning  '<script>' should be above '<style scoped>' on line 196                    vue/component-tags-order
+  245:3    warning  The "mounted" property should be above the "methods" property on line 237  vue/order-in-components
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\CouncilPage.vue
+  191:62  warning  Expected 1 line break before closing bracket, but 2 line breaks found      vue/html-closing-bracket-newline
+  300:3   warning  The "mounted" property should be above the "methods" property on line 295  vue/order-in-components
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\CouncilPageNoBackend.vue
+   48:1    warning  Expected indentation of 20 spaces but found 22 spaces                          vue/html-indent
+   49:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   49:53   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   49:117  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   50:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   50:53   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   50:114  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   51:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   52:1    warning  Expected indentation of 24 spaces but found 26 spaces                          vue/html-indent
+   52:56   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+   52:83   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+   52:99   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+   52:114  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   53:1    warning  Expected indentation of 24 spaces but found 26 spaces                          vue/html-indent
+   53:57   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+   53:85   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+   53:101  warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+   53:116  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   54:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   55:1    warning  Expected indentation of 20 spaces but found 22 spaces                          vue/html-indent
+   82:1    warning  Expected indentation of 20 spaces but found 22 spaces                          vue/html-indent
+   83:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   83:53   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   83:117  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   84:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   84:53   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   84:114  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   85:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   86:1    warning  Expected indentation of 24 spaces but found 26 spaces                          vue/html-indent
+   86:56   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+   86:83   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+   86:99   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+   86:114  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   87:1    warning  Expected indentation of 24 spaces but found 26 spaces                          vue/html-indent
+   87:57   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+   87:85   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+   87:101  warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+   87:116  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   88:1    warning  Expected indentation of 22 spaces but found 24 spaces                          vue/html-indent
+   89:1    warning  Expected indentation of 20 spaces but found 22 spaces                          vue/html-indent
+  133:39   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  133:91   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  134:39   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  134:88   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  136:42   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+  136:78   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  136:94   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+  136:109  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  137:43   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+  137:80   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  137:96   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+  137:111  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  184:38   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  184:58   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  184:112  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  185:38   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  185:58   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  185:109  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  187:41   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+  187:78   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  187:94   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+  187:109  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  188:42   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+  188:80   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  188:96   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+  188:111  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  198:62   warning  Expected 1 line break before closing bracket, but 2 line breaks found          vue/html-closing-bracket-newline
+  348:3    warning  The "mounted" property should be above the "methods" property on line 334      vue/order-in-components
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\EventSlug.vue
+   5:14   warning  Expected a linebreak before this attribute                              vue/first-attribute-linebreak
+   5:27   warning  'class' should be on a new line                                         vue/max-attributes-per-line
+   6:1    warning  Expected indentation of 13 spaces but found 6 spaces                    vue/html-indent
+   6:46   warning  Unexpected usage of 'this'                                              vue/this-in-template
+   6:98   warning  Expected 1 line break before closing bracket, but no line breaks found  vue/html-closing-bracket-newline
+   8:67   warning  'style' should be on a new line                                         vue/max-attributes-per-line
+  25:21   warning  'class' should be on a new line                                         vue/max-attributes-per-line
+  28:12   warning  Expected a linebreak before this attribute                              vue/first-attribute-linebreak
+  28:67   warning  'style' should be on a new line                                         vue/max-attributes-per-line
+  31:28   warning  Expected 1 line break before closing bracket, but no line breaks found  vue/html-closing-bracket-newline
+  50:27   warning  'class' should be on a new line                                         vue/max-attributes-per-line
+  67:14   warning  Expected a linebreak before this attribute                              vue/first-attribute-linebreak
+  68:1    warning  Expected indentation of 13 spaces but found 12 spaces                   vue/html-indent
+  68:277  warning  Expected 1 line break before closing bracket, but no line breaks found  vue/html-closing-bracket-newline
+  78:61   warning  'autoplay' should be on a new line                                      vue/max-attributes-per-line
+  78:70   warning  'loop' should be on a new line                                          vue/max-attributes-per-line
+  78:75   warning  'controls' should be on a new line                                      vue/max-attributes-per-line
+  78:84   warning  'muted' should be on a new line                                         vue/max-attributes-per-line
+  79:69   warning  'type' should be on a new line                                          vue/max-attributes-per-line
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\EventsPage.vue
+    6:39   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+    6:56   warning  'data-te-carousel-init' should be on a new line                               vue/max-attributes-per-line
+    6:78   warning  'data-te-ride' should be on a new line                                        vue/max-attributes-per-line
+    8:12   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+    9:1    warning  Expected indentation of 11 spaces but found 8 spaces                          vue/html-indent
+    9:36   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   10:17   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   10:31   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   10:73   warning  'data-te-slide-to' should be on a new line                                    vue/max-attributes-per-line
+   10:94   warning  'data-te-carousel-active' should be on a new line                             vue/max-attributes-per-line
+   11:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   12:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   12:31   warning  'aria-label' should be on a new line                                          vue/max-attributes-per-line
+   12:51   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   13:17   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   13:31   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   13:73   warning  'data-te-slide-to' should be on a new line                                    vue/max-attributes-per-line
+   14:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   15:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   15:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   16:17   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   16:31   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   16:73   warning  'data-te-slide-to' should be on a new line                                    vue/max-attributes-per-line
+   17:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   18:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   18:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   26:35   warning  'data-te-carousel-item' should be on a new line                               vue/max-attributes-per-line
+   26:57   warning  'style' should be on a new line                                               vue/max-attributes-per-line
+   26:92   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   27:44   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   27:78   warning  'alt' should be on a new line                                                 vue/max-attributes-per-line
+   40:33   warning  'style' should be on a new line                                               vue/max-attributes-per-line
+   40:68   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   41:79   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   41:100  warning  'alt' should be on a new line                                                 vue/max-attributes-per-line
+   52:33   warning  'style' should be on a new line                                               vue/max-attributes-per-line
+   52:68   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   53:79   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   53:100  warning  'alt' should be on a new line                                                 vue/max-attributes-per-line
+   66:23   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   66:65   warning  'data-te-slide' should be on a new line                                       vue/max-attributes-per-line
+   66:85   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   68:16   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   68:51   warning  'fill' should be on a new line                                                vue/max-attributes-per-line
+   68:63   warning  'viewBox' should be on a new line                                             vue/max-attributes-per-line
+   68:83   warning  'stroke-width' should be on a new line                                        vue/max-attributes-per-line
+   69:1    warning  Expected indentation of 15 spaces but found 12 spaces                         vue/html-indent
+   69:35   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   69:50   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   70:42   warning  'stroke-linejoin' should be on a new line                                     vue/max-attributes-per-line
+   70:66   warning  'd' should be on a new line                                                   vue/max-attributes-per-line
+   74:120  warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   79:23   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   79:65   warning  'data-te-slide' should be on a new line                                       vue/max-attributes-per-line
+   79:85   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   81:16   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   81:51   warning  'fill' should be on a new line                                                vue/max-attributes-per-line
+   81:63   warning  'viewBox' should be on a new line                                             vue/max-attributes-per-line
+   81:83   warning  'stroke-width' should be on a new line                                        vue/max-attributes-per-line
+   82:1    warning  Expected indentation of 15 spaces but found 12 spaces                         vue/html-indent
+   82:35   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   82:50   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   83:42   warning  'stroke-linejoin' should be on a new line                                     vue/max-attributes-per-line
+   83:66   warning  'd' should be on a new line                                                   vue/max-attributes-per-line
+   87:120  warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  104:48   warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+  105:55   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  106:20   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+  106:78   warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+  107:1    warning  Expected indentation of 19 spaces but found 16 spaces                         vue/html-indent
+  107:34   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  122:27   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  142:46   warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+  143:55   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  144:20   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+  144:78   warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+  145:1    warning  Expected indentation of 19 spaces but found 16 spaces                         vue/html-indent
+  145:34   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  146:111  warning  Expected 1 line break after opening tag (`<div>`), but 2 line breaks found    vue/multiline-html-element-content-newline
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\EventsPageNoBackend.vue
+    6:39   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+    6:56   warning  'data-te-carousel-init' should be on a new line                               vue/max-attributes-per-line
+    6:78   warning  'data-te-ride' should be on a new line                                        vue/max-attributes-per-line
+    8:12   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+    9:1    warning  Expected indentation of 11 spaces but found 8 spaces                          vue/html-indent
+    9:36   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   10:17   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   10:31   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   10:73   warning  'data-te-slide-to' should be on a new line                                    vue/max-attributes-per-line
+   10:94   warning  'data-te-carousel-active' should be on a new line                             vue/max-attributes-per-line
+   11:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   12:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   12:31   warning  'aria-label' should be on a new line                                          vue/max-attributes-per-line
+   12:51   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   13:17   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   13:31   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   13:73   warning  'data-te-slide-to' should be on a new line                                    vue/max-attributes-per-line
+   14:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   15:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   15:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   16:17   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   16:31   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   16:73   warning  'data-te-slide-to' should be on a new line                                    vue/max-attributes-per-line
+   17:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   18:1    warning  Expected indentation of 16 spaces but found 10 spaces                         vue/html-indent
+   18:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   26:35   warning  'data-te-carousel-item' should be on a new line                               vue/max-attributes-per-line
+   26:57   warning  'style' should be on a new line                                               vue/max-attributes-per-line
+   26:92   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   27:44   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   27:78   warning  'alt' should be on a new line                                                 vue/max-attributes-per-line
+   40:33   warning  'style' should be on a new line                                               vue/max-attributes-per-line
+   40:68   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   41:44   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   41:65   warning  'alt' should be on a new line                                                 vue/max-attributes-per-line
+   52:33   warning  'style' should be on a new line                                               vue/max-attributes-per-line
+   52:68   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   53:44   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   53:65   warning  'alt' should be on a new line                                                 vue/max-attributes-per-line
+   66:23   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   66:65   warning  'data-te-slide' should be on a new line                                       vue/max-attributes-per-line
+   66:85   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   68:16   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   68:51   warning  'fill' should be on a new line                                                vue/max-attributes-per-line
+   68:63   warning  'viewBox' should be on a new line                                             vue/max-attributes-per-line
+   68:83   warning  'stroke-width' should be on a new line                                        vue/max-attributes-per-line
+   69:1    warning  Expected indentation of 15 spaces but found 12 spaces                         vue/html-indent
+   69:35   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   69:50   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   70:42   warning  'stroke-linejoin' should be on a new line                                     vue/max-attributes-per-line
+   70:66   warning  'd' should be on a new line                                                   vue/max-attributes-per-line
+   74:120  warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   79:23   warning  'data-te-target' should be on a new line                                      vue/max-attributes-per-line
+   79:65   warning  'data-te-slide' should be on a new line                                       vue/max-attributes-per-line
+   79:85   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   81:16   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   81:51   warning  'fill' should be on a new line                                                vue/max-attributes-per-line
+   81:63   warning  'viewBox' should be on a new line                                             vue/max-attributes-per-line
+   81:83   warning  'stroke-width' should be on a new line                                        vue/max-attributes-per-line
+   82:1    warning  Expected indentation of 15 spaces but found 12 spaces                         vue/html-indent
+   82:35   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   82:50   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   83:42   warning  'stroke-linejoin' should be on a new line                                     vue/max-attributes-per-line
+   83:66   warning  'd' should be on a new line                                                   vue/max-attributes-per-line
+   87:120  warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  104:48   warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+  106:41   warning  ':href' should be on a new line                                               vue/max-attributes-per-line
+  106:65   warning  'target' should be on a new line                                              vue/max-attributes-per-line
+  106:81   warning  'rel' should be on a new line                                                 vue/max-attributes-per-line
+  106:96   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  107:22   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+  107:80   warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+  108:1    warning  Expected indentation of 21 spaces but found 18 spaces                         vue/html-indent
+  108:36   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  124:35   warning  ':to' should be on a new line                                                 vue/max-attributes-per-line
+  124:64   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  125:22   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+  125:80   warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+  126:1    warning  Expected indentation of 21 spaces but found 18 spaces                         vue/html-indent
+  126:36   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  141:29   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  162:46   warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+  163:55   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  164:20   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+  164:78   warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+  165:1    warning  Expected indentation of 19 spaces but found 16 spaces                         vue/html-indent
+  165:34   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  166:111  warning  Expected 1 line break after opening tag (`<div>`), but 2 line breaks found    vue/multiline-html-element-content-newline
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\GLDashboard.vue
+   2:1   warning  Expected indentation of 2 spaces but found 4 spaces                               vue/html-indent
+   3:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   4:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   5:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   5:30  warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+   5:34  warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+   6:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   6:31  warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+   6:36  warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+   7:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   9:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  10:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  10:7   warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+  11:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  12:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  12:9   warning  Attribute "v-model" should go before "type"                                       vue/attributes-order
+  13:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  14:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  15:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  17:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  18:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  19:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  20:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  21:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  22:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  23:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  24:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  25:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  26:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  27:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  28:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  29:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  29:47  warning  ':key' should be on a new line                                                    vue/max-attributes-per-line
+  30:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  31:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  32:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  33:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  33:19  warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+  33:42  warning  'alt' should be on a new line                                                     vue/max-attributes-per-line
+  33:59  warning  'width' should be on a new line                                                   vue/max-attributes-per-line
+  34:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  35:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  36:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  37:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  38:1   warning  Expected indentation of 2 spaces but found 4 spaces                               vue/html-indent
+  39:1   warning  Expected indentation of 0 spaces but found 2 spaces                               vue/html-indent
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\HomePage.vue
+   47:11   warning  Disallow self-closing on HTML void elements (<img/>)                          vue/html-self-closing
+   70:48   warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+   71:13   warning  Disallow self-closing on HTML void elements (<img/>)                          vue/html-self-closing
+  124:1    warning  Expected indentation of 12 spaces but found 10 spaces                         vue/html-indent
+  124:23   warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  124:47   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  132:1    warning  Expected indentation of 12 spaces but found 10 spaces                         vue/html-indent
+  132:23   warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  132:47   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  145:1    warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  145:25   warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  145:49   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  154:1    warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  154:25   warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  154:49   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  163:1    warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  163:25   warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  163:49   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  172:1    warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  172:25   warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  172:49   warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  195:46   warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+  196:55   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  197:20   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+  197:78   warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+  198:1    warning  Expected indentation of 19 spaces but found 16 spaces                         vue/html-indent
+  198:34   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  199:111  warning  Expected 1 line break after opening tag (`<div>`), but 2 line breaks found    vue/multiline-html-element-content-newline
+  208:1    warning  Expected indentation of 8 spaces but found 6 spaces                           vue/html-indent
+  209:1    warning  Expected indentation of 6 spaces but found 4 spaces                           vue/html-indent
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\HomePageNoBackend.vue
+   29:11  warning  Disallow self-closing on HTML void elements (<img/>)                          vue/html-self-closing
+   52:48  warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+   53:13  warning  Disallow self-closing on HTML void elements (<img/>)                          vue/html-self-closing
+  106:1   warning  Expected indentation of 12 spaces but found 10 spaces                         vue/html-indent
+  106:23  warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  106:47  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  114:1   warning  Expected indentation of 12 spaces but found 10 spaces                         vue/html-indent
+  114:23  warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  114:47  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  127:1   warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  127:25  warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  127:49  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  136:1   warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  136:25  warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  136:49  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  145:1   warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  145:25  warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  145:49  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  154:1   warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  154:25  warning  Attribute 'videoId' must be hyphenated                                        vue/attribute-hyphenation
+  154:49  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  177:46  warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+  178:55  warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  179:20  warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+  179:78  warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+  180:1   warning  Expected indentation of 19 spaces but found 16 spaces                         vue/html-indent
+  180:34  warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  189:1   warning  Expected indentation of 8 spaces but found 6 spaces                           vue/html-indent
+  190:1   warning  Expected indentation of 6 spaces but found 4 spaces                           vue/html-indent
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\NavBar.vue
+  122:13   warning  Require self-closing on HTML elements (<i>)                                   vue/html-self-closing
+  122:117  warning  'title' should be on a new line                                               vue/max-attributes-per-line
+  122:134  warning  '@click' should be on a new line                                              vue/max-attributes-per-line
+  122:155  warning  Expected 1 line break before closing tag (`</div>`), but 3 line breaks found  vue/multiline-html-element-content-newline
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\NavBarNoBackend.vue
+  133:39   warning  'class' should be on a new line              vue/max-attributes-per-line
+  134:39   warning  'fill' should be on a new line               vue/max-attributes-per-line
+  134:51   warning  'stroke' should be on a new line             vue/max-attributes-per-line
+  134:73   warning  'viewBox' should be on a new line            vue/max-attributes-per-line
+  134:122  warning  'stroke-linejoin' should be on a new line    vue/max-attributes-per-line
+  134:146  warning  'stroke-width' should be on a new line       vue/max-attributes-per-line
+  134:163  warning  'd' should be on a new line                  vue/max-attributes-per-line
+  134:193  warning  Expected a space before '/>', but not found  vue/html-closing-bracket-spacing
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\NotFound.vue
+   2:1  warning  Expected indentation of 2 spaces but found 4 spaces                             vue/html-indent
+   2:5  warning  Require self-closing on Vue.js custom components (<NavBar>)                     vue/html-self-closing
+   3:1  warning  Expected indentation of 2 spaces but found 4 spaces                             vue/html-indent
+   4:1  warning  Expected indentation of 4 spaces but found 6 spaces                             vue/html-indent
+   5:1  warning  Expected indentation of 4 spaces but found 6 spaces                             vue/html-indent
+   6:1  warning  Expected indentation of 4 spaces but found 6 spaces                             vue/html-indent
+   7:1  warning  Expected indentation of 2 spaces but found 4 spaces                             vue/html-indent
+   8:1  warning  Expected indentation of 0 spaces but found 2 spaces                             vue/html-indent
+  19:5  warning  The "components" property should be above the "data" property on line 14        vue/order-in-components
+  37:5  warning  The "beforeUnmount" property should be above the "methods" property on line 25  vue/order-in-components
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\NotesPage.vue
+  9:5  warning  Require self-closing on HTML elements (<iframe>)  vue/html-self-closing
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\PrivacyPolicy.vue
+   3:5   warning  Require self-closing on Vue.js custom components (<NavBar>)                       vue/html-self-closing
+  13:40  warning  Attribute "class" should go before "@click"                                       vue/attributes-order
+  13:40  warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+  13:62  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  13:67  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  17:32  warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\SDSDashboard.vue
+    2:1   warning  Expected indentation of 2 spaces but found 4 spaces                               vue/html-indent
+    3:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+    4:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+    5:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+    5:32  warning  'v-model' should be on a new line                                                 vue/max-attributes-per-line
+    6:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+    6:38  warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+    6:51  warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+    7:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+    7:37  warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+    7:49  warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+    8:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+    8:32  warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+    8:38  warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+    9:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   11:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   12:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   13:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   13:30  warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+   13:34  warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+   14:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   14:31  warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+   14:36  warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+   15:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   17:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   18:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   18:7   warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+   19:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   20:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   20:9   warning  Attribute "v-model" should go before "type"                                       vue/attributes-order
+   21:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   22:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   23:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   25:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   26:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   27:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   28:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   29:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   29:56  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+   29:72  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+   30:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   31:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   32:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   33:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   34:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   35:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   36:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   37:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   38:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   39:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   40:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   41:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   42:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   43:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   43:67  warning  ':key' should be on a new line                                                    vue/max-attributes-per-line
+   44:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   45:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   46:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   47:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   47:21  warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   47:46  warning  'alt' should be on a new line                                                     vue/max-attributes-per-line
+   47:65  warning  'width' should be on a new line                                                   vue/max-attributes-per-line
+   48:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   49:1   warning  Expected indentation of 16 spaces but found 18 spaces                             vue/html-indent
+   49:72  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+   49:76  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+   50:1   warning  Expected indentation of 16 spaces but found 18 spaces                             vue/html-indent
+   50:71  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+   50:77  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+   51:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   52:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   53:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   54:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   55:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   56:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   58:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   59:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   60:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   61:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   62:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   63:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   64:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   65:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   66:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   67:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   68:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   69:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   70:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   71:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   72:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   73:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   74:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   74:59  warning  ':key' should be on a new line                                                    vue/max-attributes-per-line
+   75:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   76:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   77:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   78:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   78:21  warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   78:46  warning  'alt' should be on a new line                                                     vue/max-attributes-per-line
+   78:65  warning  'width' should be on a new line                                                   vue/max-attributes-per-line
+   79:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   80:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   81:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   82:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   83:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   85:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   86:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+   87:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   88:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   89:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   89:50  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+   89:59  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+   90:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   91:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+   92:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+   93:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+   94:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+   95:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   96:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   97:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   98:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+   99:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+  100:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  101:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  102:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  103:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  103:60  warning  ':key' should be on a new line                                                    vue/max-attributes-per-line
+  104:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+  105:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+  106:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+  107:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+  107:21  warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+  107:45  warning  'alt' should be on a new line                                                     vue/max-attributes-per-line
+  107:63  warning  'width' should be on a new line                                                   vue/max-attributes-per-line
+  108:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+  109:1   warning  Expected indentation of 16 spaces but found 18 spaces                             vue/html-indent
+  109:66  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  109:70  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  110:1   warning  Expected indentation of 16 spaces but found 18 spaces                             vue/html-indent
+  110:65  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  110:71  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  111:1   warning  Expected indentation of 14 spaces but found 16 spaces                             vue/html-indent
+  112:1   warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  113:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  114:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  115:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  116:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  118:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  119:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  119:33  warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+  120:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  121:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  122:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  123:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  124:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  124:13  warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+  124:44  warning  'required' should be on a new line                                                vue/max-attributes-per-line
+  126:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  127:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  127:13  warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+  127:33  warning  Attribute "v-model" should go before "type"                                       vue/attributes-order
+  127:33  warning  'v-model' should be on a new line                                                 vue/max-attributes-per-line
+  127:58  warning  'required' should be on a new line                                                vue/max-attributes-per-line
+  129:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  130:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  130:13  warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+  130:46  warning  'required' should be on a new line                                                vue/max-attributes-per-line
+  132:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  133:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  133:13  warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+  135:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  135:35  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  135:69  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  136:1   warning  Expected indentation of 10 spaces but found 12 spaces                             vue/html-indent
+  136:35  warning  '@click' should be on a new line                                                  vue/max-attributes-per-line
+  136:54  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  136:60  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  137:1   warning  Expected indentation of 8 spaces but found 10 spaces                              vue/html-indent
+  138:1   warning  Expected indentation of 6 spaces but found 8 spaces                               vue/html-indent
+  139:1   warning  Expected indentation of 4 spaces but found 6 spaces                               vue/html-indent
+  140:1   warning  Expected indentation of 2 spaces but found 4 spaces                               vue/html-indent
+  141:1   warning  Expected indentation of 0 spaces but found 2 spaces                               vue/html-indent
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\StudyBuddy.vue
+    2:3    warning  Require self-closing on Vue.js custom components (<NavBar>)                       vue/html-self-closing
+    4:26   warning  Expected 1 line break after opening tag (`<div>`), but 2 line breaks found        vue/multiline-html-element-content-newline
+    6:29   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found       vue/singleline-html-element-content-newline
+    6:225  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found     vue/singleline-html-element-content-newline
+    8:24   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+   12:9    warning  Attribute "title" should go before "@click"                                       vue/attributes-order
+   14:9    warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   21:35   warning  '@click' should be on a new line                                                  vue/max-attributes-per-line
+   21:56   warning  Attribute "title" should go before "@click"                                       vue/attributes-order
+   21:56   warning  'title' should be on a new line                                                   vue/max-attributes-per-line
+   22:9    warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   22:42   warning  'alt' should be on a new line                                                     vue/max-attributes-per-line
+   22:56   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+   28:9    warning  Attribute "title" should go before "@click"                                       vue/attributes-order
+   30:9    warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   30:41   warning  'alt' should be on a new line                                                     vue/max-attributes-per-line
+   30:62   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+   34:25   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+   35:7    warning  Require self-closing on Vue.js custom components (<GoogleLogin>)                  vue/html-self-closing
+   38:27   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+   39:9    warning  Require self-closing on HTML elements (<div>)                                     vue/html-self-closing
+   42:34   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+   43:29   warning  Attribute "v-for" should go before "class"                                        vue/attributes-order
+   43:29   warning  'v-for' should be on a new line                                                   vue/max-attributes-per-line
+   43:52   warning  Attribute ":key" should go before "class"                                         vue/attributes-order
+   43:52   warning  ':key' should be on a new line                                                    vue/max-attributes-per-line
+   43:69   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found       vue/multiline-html-element-content-newline
+   44:13   warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   44:40   warning  ':alt' should be on a new line                                                    vue/max-attributes-per-line
+   44:70   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+   47:38   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found       vue/singleline-html-element-content-newline
+   47:53   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found     vue/singleline-html-element-content-newline
+   60:46   warning  'target' should be on a new line                                                  vue/max-attributes-per-line
+   61:21   warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   72:46   warning  'target' should be on a new line                                                  vue/max-attributes-per-line
+   73:21   warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+   84:46   warning  'target' should be on a new line                                                  vue/max-attributes-per-line
+   85:21   warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+  103:19   warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+  113:17   warning  Disallow self-closing on HTML void elements (<img/>)                              vue/html-self-closing
+  122:34   warning  '@click' should be on a new line                                                  vue/max-attributes-per-line
+  122:52   warning  Attribute "style" should go before "@click"                                       vue/attributes-order
+  122:52   warning  'style' should be on a new line                                                   vue/max-attributes-per-line
+  122:134  warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  122:143  warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  123:35   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+  123:52   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found         vue/singleline-html-element-content-newline
+  123:74   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found       vue/singleline-html-element-content-newline
+  127:29   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+  135:51   warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  135:58   warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  136:52   warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  136:62   warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  143:1    warning  Expected indentation of 12 spaces but found 14 spaces                             vue/html-indent
+  143:33   warning  Expected no line breaks before closing bracket, but 1 line break found            vue/html-closing-bracket-newline
+  149:42   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+  152:43   warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  152:46   warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  153:44   warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  153:46   warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  157:42   warning  'class' should be on a new line                                                   vue/max-attributes-per-line
+  160:49   warning  Attribute "id" should go before "v-model"                                         vue/attributes-order
+  160:49   warning  'id' should be on a new line                                                      vue/max-attributes-per-line
+  161:39   warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+  161:48   warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+  162:38   warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+  162:46   warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+  163:38   warning  Expected 1 line break after opening tag (`<option>`), but no line breaks found    vue/singleline-html-element-content-newline
+  163:46   warning  Expected 1 line break before closing tag (`</option>`), but no line breaks found  vue/singleline-html-element-content-newline
+  165:11   warning  Disallow self-closing on HTML void elements (<input/>)                            vue/html-self-closing
+  172:48   warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  172:54   warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  173:61   warning  Expected 1 line break after opening tag (`<button>`), but no line breaks found    vue/singleline-html-element-content-newline
+  173:67   warning  Expected 1 line break before closing tag (`</button>`), but no line breaks found  vue/singleline-html-element-content-newline
+  379:3    warning  The "mounted" property should be above the "methods" property on line 233         vue/order-in-components
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\StudyGroups.vue
+   2:1   warning  Expected indentation of 2 spaces but found 4 spaces                            vue/html-indent
+   3:1   warning  Expected indentation of 4 spaces but found 6 spaces                            vue/html-indent
+   3:7   warning  Require self-closing on Vue.js custom components (<NavBar>)                    vue/html-self-closing
+   4:1   warning  Expected indentation of 4 spaces but found 6 spaces                            vue/html-indent
+   4:27  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   4:43  warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   4:53  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   5:1   warning  Expected indentation of 4 spaces but found 6 spaces                            vue/html-indent
+   5:19  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   6:1   warning  Expected indentation of 6 spaces but found 8 spaces                            vue/html-indent
+   6:55  warning  ':key' should be on a new line                                                 vue/max-attributes-per-line
+   6:72  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   7:1   warning  Expected indentation of 8 spaces but found 10 spaces                           vue/html-indent
+   8:1   warning  Expected indentation of 10 spaces but found 12 spaces                          vue/html-indent
+   9:1   warning  Expected indentation of 10 spaces but found 12 spaces                          vue/html-indent
+  10:29  warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  10:45  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  11:1   warning  Expected indentation of 10 spaces but found 8 spaces                           vue/html-indent
+  12:1   warning  Expected indentation of 8 spaces but found 10 spaces                           vue/html-indent
+  13:1   warning  Expected indentation of 6 spaces but found 8 spaces                            vue/html-indent
+  14:1   warning  Expected indentation of 4 spaces but found 6 spaces                            vue/html-indent
+  15:1   warning  Expected indentation of 2 spaces but found 4 spaces                            vue/html-indent
+  16:1   warning  Expected indentation of 0 spaces but found 2 spaces                            vue/html-indent
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\UserPage.vue
+    3:27   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+    6:46   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+    6:88   warning  'alt' should be on a new line                                                 vue/max-attributes-per-line
+   11:16   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   11:35   warning  ':src' should be on a new line                                                vue/max-attributes-per-line
+   11:62   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   12:1    warning  Expected indentation of 15 spaces but found 12 spaces                         vue/html-indent
+   12:50   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   15:31   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   21:34   warning  'viewBox' should be on a new line                                             vue/max-attributes-per-line
+   24:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   27:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   30:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   33:31   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   37:36   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   61:17   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   62:1    warning  Expected indentation of 16 spaces but found 12 spaces                         vue/html-indent
+   62:96   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   63:50   warning  ':key' should be on a new line                                                vue/max-attributes-per-line
+   70:55   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   71:36   warning  'target' should be on a new line                                              vue/max-attributes-per-line
+   73:251  warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   79:57   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+   80:34   warning  'target' should be on a new line                                              vue/max-attributes-per-line
+   82:251  warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   90:35   warning  Expected 1 line break after opening tag (`<h6>`), but no line breaks found    vue/singleline-html-element-content-newline
+   90:70   warning  Expected 1 line break before closing tag (`</h6>`), but no line breaks found  vue/singleline-html-element-content-newline
+   93:22   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   94:1    warning  Expected indentation of 21 spaces but found 16 spaces                         vue/html-indent
+   94:38   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+   97:20   warning  Expected a linebreak before this attribute                                    vue/first-attribute-linebreak
+   98:1    warning  Expected indentation of 19 spaces but found 14 spaces                         vue/html-indent
+   99:1    warning  Expected indentation of 19 spaces but found 14 spaces                         vue/html-indent
+   99:15   warning  Attribute "v-model" should go before "class"                                  vue/attributes-order
+   99:32   warning  'type' should be on a new line                                                vue/max-attributes-per-line
+   99:44   warning  'pattern' should be on a new line                                             vue/max-attributes-per-line
+   99:68   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  104:35   warning  Attribute ":disabled" should go before "@click"                               vue/attributes-order
+  104:35   warning  ':disabled' should be on a new line                                           vue/max-attributes-per-line
+  104:55   warning  Expected 1 line break before closing bracket, but no line breaks found        vue/html-closing-bracket-newline
+  123:15   warning  'class' should be on a new line                                               vue/max-attributes-per-line
+  187:3    warning  The "mounted" property should be above the "methods" property on line 152     vue/order-in-components
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\UserPageNoBackend.vue
+    7:75   warning  Expected 1 line break after opening tag (`<h1>`), but no line breaks found     vue/singleline-html-element-content-newline
+    7:89   warning  Expected 1 line break before closing tag (`</h1>`), but no line breaks found   vue/singleline-html-element-content-newline
+    8:61   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+    8:107  warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   15:39   warning  'fill' should be on a new line                                                 vue/max-attributes-per-line
+   15:51   warning  'stroke' should be on a new line                                               vue/max-attributes-per-line
+   15:73   warning  'viewBox' should be on a new line                                              vue/max-attributes-per-line
+   16:15   warning  Require self-closing on SVG elements (<path>)                                  vue/html-self-closing
+   16:44   warning  'stroke-linejoin' should be on a new line                                      vue/max-attributes-per-line
+   16:68   warning  'stroke-width' should be on a new line                                         vue/max-attributes-per-line
+   16:85   warning  'd' should be on a new line                                                    vue/max-attributes-per-line
+   19:48   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   19:88   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   20:39   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   20:172  warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   30:51   warning  'src' should be on a new line                                                  vue/max-attributes-per-line
+   30:128  warning  'alt' should be on a new line                                                  vue/max-attributes-per-line
+   32:81   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+   32:90   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+   33:61   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   33:75   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   45:82   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+   45:95   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+   56:82   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+   56:95   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+   58:32   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   61:32   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   64:32   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   73:93   warning  Expected 1 line break after opening tag (`<h2>`), but no line breaks found     vue/singleline-html-element-content-newline
+   73:115  warning  Expected 1 line break before closing tag (`</h2>`), but no line breaks found   vue/singleline-html-element-content-newline
+   75:39   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   76:56   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   76:58   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   77:68   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+   77:74   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+   78:48   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   78:82   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   81:38   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   82:57   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   82:60   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   83:69   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+   83:74   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+   84:49   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   84:80   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   87:40   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   88:58   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   88:60   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   89:70   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+   89:77   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+   90:50   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   90:74   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   93:40   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+   94:58   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+   94:61   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+   95:70   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+   95:77   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+   96:50   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   96:68   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+   99:38   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  100:58   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  100:60   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  101:70   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+  101:75   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+  102:50   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+  102:68   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+  106:56   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  106:58   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  107:68   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+  107:79   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+  108:48   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+  108:79   warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+  115:64   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+  115:96   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\VideoGallery.vue
+  51:1   warning  Expected indentation of 12 spaces but found 10 spaces                         vue/html-indent
+  51:23  warning  Attribute ':videoId' must be hyphenated                                       vue/attribute-hyphenation
+  51:52  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  68:1   warning  Expected indentation of 14 spaces but found 12 spaces                         vue/html-indent
+  68:25  warning  Attribute ':videoId' must be hyphenated                                       vue/attribute-hyphenation
+  68:54  warning  Expected 1 line break before closing tag (`</div>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\WhatsAppLinks.vue
+   7:45   warning  Expected 1 line break after opening tag (`<h2>`), but no line breaks found     vue/singleline-html-element-content-newline
+   7:76   warning  Expected 1 line break before closing tag (`</h2>`), but no line breaks found   vue/singleline-html-element-content-newline
+   8:66   warning  Expected 1 line break after opening tag (`<p>`), but no line breaks found      vue/singleline-html-element-content-newline
+   8:173  warning  Expected 1 line break before closing tag (`</p>`), but no line breaks found    vue/singleline-html-element-content-newline
+  13:40   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  13:60   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  14:67   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  14:94   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  17:39   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  17:55   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+  17:70   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  18:71   warning  Attribute "class" should go before "@click"                                    vue/attributes-order
+  18:71   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  19:55   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  19:76   warning  'fill' should be on a new line                                                 vue/max-attributes-per-line
+  19:88   warning  'viewBox' should be on a new line                                              vue/max-attributes-per-line
+  19:108  warning  'stroke' should be on a new line                                               vue/max-attributes-per-line
+  19:159  warning  'stroke-linejoin' should be on a new line                                      vue/max-attributes-per-line
+  19:183  warning  'stroke-width' should be on a new line                                         vue/max-attributes-per-line
+  19:200  warning  'd' should be on a new line                                                    vue/max-attributes-per-line
+  19:276  warning  Expected a space before '/>', but not found                                    vue/html-closing-bracket-spacing
+  26:48   warning  Expected 1 line break after opening tag (`<h3>`), but no line breaks found     vue/singleline-html-element-content-newline
+  26:63   warning  Expected 1 line break before closing tag (`</h3>`), but no line breaks found   vue/singleline-html-element-content-newline
+  28:41   warning  ':key' should be on a new line                                                 vue/max-attributes-per-line
+  28:58   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  30:42   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  30:59   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  31:69   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  31:93   warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  33:41   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  33:70   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  33:86   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+  33:101  warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  33:155  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  34:48   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  34:61   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  34:222  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+  39:37   warning  ':href' should be on a new line                                                vue/max-attributes-per-line
+  39:57   warning  'target' should be on a new line                                               vue/max-attributes-per-line
+  39:73   warning  'rel' should be on a new line                                                  vue/max-attributes-per-line
+  39:88   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  40:82   warning  Attribute "class" should go before "@click"                                    vue/attributes-order
+  40:82   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  41:57   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  41:78   warning  'fill' should be on a new line                                                 vue/max-attributes-per-line
+  41:90   warning  'viewBox' should be on a new line                                              vue/max-attributes-per-line
+  41:110  warning  'stroke' should be on a new line                                               vue/max-attributes-per-line
+  41:161  warning  'stroke-linejoin' should be on a new line                                      vue/max-attributes-per-line
+  41:185  warning  'stroke-width' should be on a new line                                         vue/max-attributes-per-line
+  41:202  warning  'd' should be on a new line                                                    vue/max-attributes-per-line
+  41:278  warning  Expected a space before '/>', but not found                                    vue/html-closing-bracket-spacing
+  48:28   warning  'class' should be on a new line                                                vue/max-attributes-per-line
+  48:84   warning  Expected 1 line break after opening tag (`<div>`), but no line breaks found    vue/singleline-html-element-content-newline
+  48:155  warning  Expected 1 line break before closing tag (`</div>`), but no line breaks found  vue/singleline-html-element-content-newline
+
+F:\IIT Madras\Clubs\Sundarbans\Frontend-sundarbans\src\components\YoutubeVid.vue
+   2:28  warning  Expected 1 line break after opening tag (`<template>`), but 2 line breaks found    vue/multiline-html-element-content-newline
+   4:5   warning  Disallow self-closing on HTML void elements (<img/>)                               vue/html-self-closing
+   4:10  warning  Expected a linebreak before this attribute                                         vue/first-attribute-linebreak
+   5:1   warning  Expected indentation of 9 spaces but found 6 spaces                                vue/html-indent
+   5:72  warning  'alt' should be on a new line                                                      vue/max-attributes-per-line
+   6:1   warning  Expected indentation of 9 spaces but found 6 spaces                                vue/html-indent
+   6:25  warning  'title' should be on a new line                                                    vue/max-attributes-per-line
+   6:70  warning  Expected 1 line break before closing bracket, but no line breaks found             vue/html-closing-bracket-newline
+   8:5   warning  Require self-closing on HTML elements (<div>)                                      vue/html-self-closing
+   8:35  warning  'style' should be on a new line                                                    vue/max-attributes-per-line
+   8:59  warning  Expected 1 line break before closing tag (`</template>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+  12:11  warning  Expected a linebreak before this attribute                                         vue/first-attribute-linebreak
+  12:94  warning  ':src' should be on a new line                                                     vue/max-attributes-per-line
+  13:1   warning  Expected indentation of 10 spaces but found 4 spaces                               vue/html-indent
+  13:24  warning  'allowfullscreen' should be on a new line                                          vue/max-attributes-per-line
+  13:40  warning  '@load' should be on a new line                                                    vue/max-attributes-per-line
+  13:59  warning  Expected 1 line break before closing bracket, but no line breaks found             vue/html-closing-bracket-newline
+  13:62  warning  Expected 1 line break before closing tag (`</template>`), but 2 line breaks found  vue/multiline-html-element-content-newline
+
+✖ 942 problems (0 errors, 942 warnings)
+  0 errors and 828 warnings potentially fixable with the `--fix` option.
+
+
+You may use special comments to disable some warnings.
+Use // eslint-disable-next-line to ignore the next line.
+Use /* eslint-disable */ to ignore all warnings in a file.
+ warning  
+
+asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
+This can impact web performance.
+Assets: 
+  img/2025-05-17_05-37-09_UTC.f56f5e99.jpg (317 KiB)
+  img/iitmphoto.95b2c71d.jpg (1.53 MiB)
+  img/sundarbans2.eeef9a59.png (465 KiB)
+  js/chunk-vendors.3ad461d2.js (277 KiB)
+  sundarbans2.png (465 KiB)
+
+ warning  
+
+entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
+Entrypoints:
+  app (508 KiB)
+      css/chunk-vendors.7e82ebea.css
+      js/chunk-vendors.3ad461d2.js
+      css/app.a8d13bb4.css
+      js/app.7eb29ca3.js
+
+
+ warning  
+
+webpack performance recommendations: 
+You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
+For more info visit https://webpack.js.org/guides/code-splitting/
+
+  File                                   Size              Gzipped
+
+  dist\js\chunk-vendors.3ad461d2.js      277.46 KiB        97.36 KiB
+  dist\js\app.7eb29ca3.js                162.93 KiB        42.82 KiB
+  dist\css\app.a8d13bb4.css              38.47 KiB         7.93 KiB
+  dist\css\chunk-vendors.7e82ebea.css    29.44 KiB         6.02 KiB
+
+  Images and other types of assets omitted.
+  Build at: 2025-10-04T15:51:25.589Z - Hash: c25d52d2073aa3ab - Time: 14158ms
+
+ DONE  Build complete. The dist directory is ready to be deployed.
+ INFO  Check out deployment instructions at https://cli.vuejs.org/guide/deployment.html
+       

@@ -1,0 +1,13 @@
+def learn_python(): return "Join Python Odyssey!" ✨🚀
+
+Calling all aspiring Pythonistas! Ready to level up your coding skills and build real-world applications? Join Python Odyssey—a 7-episode journey through Python fundamentals, OOP, and Flask web development. 🤩
+
+Whether you're a beginner or looking to sharpen your skills, this hands-on journey will help you master Python, OOP and Flask for web development. ✅
+
+Registration Link (in bio also 📌): https://forms.gle/mFXLW8b5fyqit4779
+
+Each session is built around practical coding, real-world challenges, and a leaderboard to keep things exciting. By the end, you'll not only understand Python—you’ll have a working project to show for it. 🧑🏻‍💻
+
+Learn. Code. Build. 🐍
+ 
+#Python #Flask #WebDevelopment #OOPs #PythonOdyssey #Programming #SundarbansHouse

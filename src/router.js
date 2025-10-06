@@ -3,11 +3,19 @@ import ClubPage from './components/ClubPage.vue'
 import VideoGallery from './components/VideoGallery.vue'
 import EventsPage from './components/EventsPage.vue'
 import CouncilPage from './components/CouncilPage.vue'
+
+// Temporary no-backend versions
+import HomePageNoBackend from './components/HomePageNoBackend.vue'
+import ClubPageNoBackend from './components/ClubPageNoBackend.vue'
+import EventsPageNoBackend from './components/EventsPageNoBackend.vue'
+import CouncilPageNoBackend from './components/CouncilPageNoBackend.vue'
+import UserPageNoBackend from './components/UserPageNoBackend.vue'
 import UserPage from './components/UserPage.vue'
 import PhotoCompetition from './components/PhotoCompetition.vue'
 import EventSlug from './components/EventSlug.vue'
 import PrivacyPolicy from './components/PrivacyPolicy.vue'
 import NotesPage from './components/NotesPage.vue'
+import WhatsAppLinks from './components/WhatsAppLinks.vue'
 import StudyGroups from './components/StudyGroups.vue'
 import StudyBuddy from './components/StudyBuddy.vue'
 import ChatBot from './components/ChatBot.vue'
@@ -26,13 +34,33 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         name: 'HomePage',
-        component: HomePage,
+        component: HomePageNoBackend,  // Public home uses no-backend demo
         path: '/'
     },
     {
+        name: 'HomePageTemp',
+        component: HomePageNoBackend,
+        path: '/temp'
+    },
+    {
+        name: 'HomePageOriginal',
+        component: HomePage,
+        path: '/home-original'  // Original with backend dependency
+    },
+    {
         name: 'ClubPage',
-        component: ClubPage,
+        component: ClubPageNoBackend,  // Public clubs uses no-backend demo
         path: '/clubs'
+    },
+    {
+        name: 'ClubPageTemp',
+        component: ClubPageNoBackend,
+        path: '/clubs-temp'
+    },
+    {
+        name: 'ClubPageOriginal',
+        component: ClubPage,
+        path: '/clubs-original'  // Original with backend dependency
     },
     {
         name: 'VideoGallery',
@@ -41,18 +69,33 @@ const routes = [
     },
     {
         name: 'EventsPage',
-        component: EventsPage,
+        component: EventsPageNoBackend,  // Public events uses no-backend demo
         path: '/events'
     },
     {
+        name: 'EventsPageTemp',
+        component: EventsPageNoBackend,
+        path: '/events-temp'
+    },
+    {
+        name: 'EventsPageOriginal',
+        component: EventsPage,
+        path: '/events-original'  // Original with backend dependency
+    },
+    {
         name: 'CouncilPage',
-        component: CouncilPage,
+        component: CouncilPageNoBackend, // Public council page uses no-backend demo
         path: '/council2324'
     },
     {
         name: 'UserPage',
-        component: UserPage,
+        component: UserPageNoBackend,  // Temporary: using no-backend version
         path: '/user'
+    },
+    {
+        name: 'UserPageOriginal',
+        component: UserPage,
+        path: '/user-original'  // Original with backend dependency
     },
     {
         name: 'NotesPage',
@@ -60,15 +103,23 @@ const routes = [
         path: '/notes'
     },
     {
+        name: 'WhatsAppLinks',
+        component: WhatsAppLinks,
+        path: '/whatsapp'
+    },
+    {
         name: 'StudyGroups',
         component: StudyGroups,
         path: '/study-groups'
     },
+    // TEMPORARILY DISABLED - BACKEND DEPENDENT ROUTES
+    /*
     {
         name: 'StudyBuddy',
         component: StudyBuddy,
         path: '/studybuddy'
     },
+    */
     {
         name: 'PhotoCompetition',
         component: PhotoCompetition,
@@ -103,8 +154,19 @@ const routes = [
     },
     {
         path: '/council',
-        component: Council2425
-    }, {
+        component: CouncilPageNoBackend  // Temporary: using no-backend version
+    },
+    {
+        path: '/council-temp',
+        component: CouncilPageNoBackend
+    },
+    {
+        path: '/council-original',
+        component: Council2425  // Original with backend dependency
+    },
+    // TEMPORARILY DISABLED - BACKEND DEPENDENT ROUTES
+    /*
+    {
         path: '/grp',
         component: () => import('./components/GRP.vue')
     },
@@ -116,6 +178,7 @@ const routes = [
         path: '/grp_admin',
         component: () => import('./components/GRPAdmin.vue')
     }
+    */
 ];
 
 const router = createRouter({
