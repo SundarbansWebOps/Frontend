@@ -7,93 +7,27 @@
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg bg-white dark:bg-gray-900 shadow-sm">
+              <!-- Original clubs table intentionally commented out while backend integration is pending. Re-enable later if needed. -->
+              <!--
               <table class="club-table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-800">
-                  <tr>
-                    <th
-                      scope="col"
-                      class="py-3.5 px-4 text-xs font-semibold uppercase tracking-wider text-left rtl:text-right text-gray-600 dark:text-gray-300"
-                    >
-                      <div class="flex items-center gap-x-3">
-                        <button class="flex items-center gap-x-2">
-                          <span>Club Name</span>
-                        </button>
-                      </div>
-                    </th>
-
-                    <th
-                      scope="col"
-                      class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-left rtl:text-right text-gray-600 dark:text-gray-300"
-                    >
-                      Club Head
-                    </th>
-
-                    <th
-                      scope="col"
-                      class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-left rtl:text-right text-gray-600 dark:text-gray-300"
-                    >
-                      Deputy Head
-                    </th>
-
-                    <th
-                      scope="col"
-                      class="relative py-3.5 px-4 text-xs font-semibold text-left rtl:text-right text-gray-600 dark:text-gray-300"
-                    >
-                      <span class="sr-only">Link to Join</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                  <tr
-                    v-for="club in clubList"
-                    :key="club.name"
-                    class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    <td class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                      <div class="inline-flex items-center gap-x-3">
-                        <span>{{ club.name }}</span>
-                      </div>
-                    </td>
-
-                    <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                      <div class="flex items-center gap-x-2">
-                        <div>
-                          <h2 class="text-sm font-medium text-gray-800 dark:text-white">
-                            {{ club.head }}
-                          </h2>
-                          <p class="text-xs font-normal text-gray-600 dark:text-gray-400">
-                            {{ club.head_email }}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                      <div class="flex items-center gap-x-2">
-                        <div>
-                          <h2 class="text-sm font-medium text-gray-800 dark:text-white">
-                            {{ club.deputy }}
-                          </h2>
-                          <p class="text-xs font-normal text-gray-600 dark:text-gray-400">
-                            {{ club.deputy_email }}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td class="px-4 py-4 text-sm whitespace-nowrap">
-                      <div class="flex items-center gap-x-6">
-                        <a
-                          :href="club.join_link"
-                          class="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors duration-150 focus:outline-none"
-                          target="_blank"
-                          rel="noopener"
-                        >Join</a>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
+                ...existing table markup...
               </table>
+              -->
+
+              <!-- Friendly placeholder while clubs page is getting a fresh face -->
+              <div class="p-12 text-center">
+                <div class="mx-auto max-w-xl">
+                  <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">We're giving this page a glow-up ✨</h1>
+                  <p class="text-gray-700 dark:text-gray-300 mb-6">Club directory is getting a fresh face — sleeker layout, better join flows, and shiny new links. Come back soon to see the new look!</p>
+                  <div class="inline-flex items-center gap-x-3">
+                    <span class="inline-block rounded-full bg-indigo-50 text-indigo-700 px-3 py-1 text-sm font-semibold">Under construction</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">(We're brewing something awesome)</span>
+                  </div>
+                  <div class="mt-8">
+                    <a href="/" class="inline-flex items-center gap-x-2 text-indigo-600 hover:text-indigo-500 dark:text-indigo-300">Return home</a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
