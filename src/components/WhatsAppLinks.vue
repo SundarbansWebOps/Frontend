@@ -4,48 +4,122 @@
 
     <section class="container mx-auto px-4 py-8">
       <div class="max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
-        <h2 class="text-2xl font-bold mb-4">Sundarbans House WhatsApp Links</h2>
-        <p class="text-sm mb-6 text-gray-600 dark:text-gray-300">Open the main Sundarbans house group, or choose a regional group below. Use "Copy" to copy the invite link.</p>
+        <h2 class="text-2xl font-bold mb-4">
+          Sundarbans House WhatsApp Links
+        </h2>
+        <p class="text-sm mb-6 text-gray-600 dark:text-gray-300">
+          Open the main Sundarbans house group, or choose a regional group below. Use "Copy" to copy the invite link.
+        </p>
 
         <!-- Main house group -->
         <div class="mb-6 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded px-4 py-4 flex items-center justify-between">
           <div>
-            <div class="font-semibold">{{ mainGroup.name }}</div>
-            <div class="text-xs text-gray-600 dark:text-gray-400">{{ mainGroup.description }}</div>
+            <div class="font-semibold">
+              {{ mainGroup.name }}
+            </div>
+            <div class="text-xs text-gray-600 dark:text-gray-400">
+              {{ mainGroup.description }}
+            </div>
           </div>
           <div class="flex items-center gap-3">
-            <a :href="mainGroup.link" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm">Open</a>
-            <button @click="copyLink(mainGroup.link, mainGroup.name)" class="inline-flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-6 8h6a2 2 0 002-2V6a2 2 0 00-2-2h-8l-4 4v10a2 2 0 002 2z"/></svg>
+            <a
+              :href="mainGroup.link"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm"
+            >Open</a>
+            <button
+              class="inline-flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm"
+              @click="copyLink(mainGroup.link, mainGroup.name)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 16h8M8 12h8m-6 8h6a2 2 0 002-2V6a2 2 0 00-2-2h-8l-4 4v10a2 2 0 002 2z"
+              /></svg>
               Copy
             </button>
           </div>
         </div>
 
         <!-- Regional groups -->
-        <h3 class="text-lg font-semibold mb-3">Regional Groups</h3>
+        <h3 class="text-lg font-semibold mb-3">
+          Regional Groups
+        </h3>
         <ul class="space-y-4">
-          <li v-for="region in regions" :key="region.id" class="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded px-4 py-3 gap-3">
+          <li
+            v-for="region in regions"
+            :key="region.id"
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded px-4 py-3 gap-3"
+          >
             <div>
-              <div class="font-semibold">{{ region.name }}</div>
-              <div class="text-xs text-gray-600 dark:text-gray-400">{{ region.description }}</div>
+              <div class="font-semibold">
+                {{ region.name }}
+              </div>
+              <div class="text-xs text-gray-600 dark:text-gray-400">
+                {{ region.description }}
+              </div>
               <div class="mt-2 text-xs text-gray-600 dark:text-gray-400">
-                <div v-if="region.form">Form: <a :href="region.form" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-300">Open form</a></div>
-                <div v-if="region.coordinator" class="mt-1">Coordinator: <span class="font-medium">{{ region.coordinator }}</span> <span v-if="region.phone">— <a :href="`tel:${region.phone}`">{{ region.phone }}</a></span></div>
+                <div v-if="region.form">
+                  Form: <a
+                    :href="region.form"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-blue-600 dark:text-blue-300"
+                  >Open form</a>
+                </div>
+                <div
+                  v-if="region.coordinator"
+                  class="mt-1"
+                >
+                  Coordinator: <span class="font-medium">{{ region.coordinator }}</span> <span v-if="region.phone">— <a :href="`tel:${region.phone}`">{{ region.phone }}</a></span>
+                </div>
               </div>
             </div>
 
             <div class="flex items-center gap-3">
-              <a v-if="region.form" :href="region.form" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm">Open</a>
-              <button @click="copyLink(region.form || region.link, region.name)" class="inline-flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-6 8h6a2 2 0 002-2V6a2 2 0 00-2-2h-8l-4 4v10a2 2 0 002 2z"/></svg>
+              <a
+                v-if="region.form"
+                :href="region.form"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm"
+              >Open</a>
+              <button
+                class="inline-flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm"
+                @click="copyLink(region.form || region.link, region.name)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 16h8M8 12h8m-6 8h6a2 2 0 002-2V6a2 2 0 00-2-2h-8l-4 4v10a2 2 0 002 2z"
+                /></svg>
                 Copy
               </button>
             </div>
           </li>
         </ul>
 
-        <div v-if="copied" class="mt-4 text-sm text-green-600 dark:text-green-300">Link copied to clipboard: <span class="font-medium">{{ copied }}</span></div>
+        <div
+          v-if="copied"
+          class="mt-4 text-sm text-green-600 dark:text-green-300"
+        >
+          Link copied to clipboard: <span class="font-medium">{{ copied }}</span>
+        </div>
       </div>
     </section>
   </div>

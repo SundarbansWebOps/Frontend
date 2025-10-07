@@ -1,42 +1,55 @@
 <template>
-    <div>
-      <!-- Dropdown to select search type (Name or Email) -->
-      <select v-model="searchType">
-        <option value="name">Name</option>
-        <option value="email">Email</option>
-      </select>
+  <div>
+    <!-- Dropdown to select search type (Name or Email) -->
+    <select v-model="searchType">
+      <option value="name">
+        Name
+      </option>
+      <option value="email">
+        Email
+      </option>
+    </select>
   
-      <!-- Search bar to filter table -->
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Search by selected option"
-        @input="debouncedSearch"
-      />
+    <!-- Search bar to filter table -->
+    <input
+      v-model="searchQuery"
+      type="text"
+      placeholder="Search by selected option"
+      @input="debouncedSearch"
+    >
   
-      <!-- Container to make the table vertically scrollable -->
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Mobile Number</th>
-              <th>Photo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in filteredUsers" :key="user.email">
-              <td>{{ user.name }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.mobile }}</td>
-              <td><img :src="user.photo" alt="User Photo" width="50" /></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Container to make the table vertically scrollable -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile Number</th>
+            <th>Photo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="user in filteredUsers"
+            :key="user.email"
+          >
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.mobile }}</td>
+            <td>
+              <img
+                :src="user.photo"
+                alt="User Photo"
+                width="50"
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   import _ from 'lodash'; // for debounce

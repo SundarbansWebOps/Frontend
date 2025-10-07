@@ -1,23 +1,43 @@
 <template>
-    <NavBar></NavBar>
-    <div id="chat-container-wrapper">
-      <h1>Sundarbans AI Chatbot</h1>
-      <div id="chat-container" ref="chatContainer">
-        <div id="output" ref="output"></div>
-      </div>
-      <form @submit.prevent="handleSubmit" id="inputForm">
-        <input
-          type="text"
-          id="textInput"
-          v-model="question"
-          placeholder="Enter your question"
-          required
-        />
-        <button type="submit" id="submitButton">Submit</button>
-        <button type="button" id="stopButton" @click="handleStop">Stop</button>
-      </form>
+  <NavBar />
+  <div id="chat-container-wrapper">
+    <h1>Sundarbans AI Chatbot</h1>
+    <div
+      id="chat-container"
+      ref="chatContainer"
+    >
+      <div
+        id="output"
+        ref="output"
+      />
     </div>
-  </template>
+    <form
+      id="inputForm"
+      @submit.prevent="handleSubmit"
+    >
+      <input
+        id="textInput"
+        v-model="question"
+        type="text"
+        placeholder="Enter your question"
+        required
+      >
+      <button
+        id="submitButton"
+        type="submit"
+      >
+        Submit
+      </button>
+      <button
+        id="stopButton"
+        type="button"
+        @click="handleStop"
+      >
+        Stop
+      </button>
+    </form>
+  </div>
+</template>
   
   <script>
   import { marked } from 'marked';
@@ -25,6 +45,9 @@
   
   export default {
     name: 'ChatBot',
+    components: {
+      NavBar
+    },
     data() {
       return {
         question: '',
@@ -34,8 +57,8 @@
         messageHistory: []
       };
     },
-    components: {
-      NavBar
+    mounted() {
+      // Optional: You can load any external scripts or setup initial states here
     },
     methods: {
       async handleSubmit() {
@@ -108,9 +131,6 @@
         document.getElementById('submitButton').style.display = 'inline'; 
         document.getElementById('stopButton').style.display = 'none'; 
       }
-    },
-    mounted() {
-      // Optional: You can load any external scripts or setup initial states here
     }
   };
   </script>

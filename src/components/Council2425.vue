@@ -5,13 +5,17 @@
     <!-- Section: Design Block -->
     <section class="mb-20">
       <!-- Jumbotron -->
-      <div class="relative overflow-hidden bg-cover bg-no-repeat" style="
+      <div
+        class="relative overflow-hidden bg-cover bg-no-repeat"
+        style="
           background-position: 50%;
           background-image: url('https://images.unsplash.com/photo-1556484687-30636164638b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
           height: 500px;
-        ">
+        "
+      >
         <div
-          class="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden bg-[hsla(0,0%,0%,0.75)] bg-fixed">
+          class="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden bg-[hsla(0,0%,0%,0.75)] bg-fixed"
+        >
           <div class="flex h-full items-center justify-center">
             <div class="px-6 text-center text-white md:px-12">
               <h1 class="mt-8 mb-5 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl">
@@ -36,7 +40,10 @@
       <div class="container px-5 py-10 mx-auto">
         <div class="flex flex-wrap -m-4">
           <div class="container px-5 py-10 mx-auto">
-            <div id="adminsContainer" class="flex flex-wrap -m-4 upperCouncil">
+            <div
+              id="adminsContainer"
+              class="flex flex-wrap -m-4 upperCouncil"
+            >
               <!-- First Admin -->
               <div class="p-4 mx-auto md:w-1/4">
                 <div
@@ -102,10 +109,20 @@
         </h1>
 
         <div class="">
-          <div id="adminsContainer" class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4">
-            <div v-for="g_l in group_leaders" :key="g_l.name"
-              class="flex-grow flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
-              <img class="object-cover w-full h-56" :src="prependBackendLink(g_l.image)" alt="avatar">
+          <div
+            id="adminsContainer"
+            class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4"
+          >
+            <div
+              v-for="g_l in group_leaders"
+              :key="g_l.name"
+              class="flex-grow flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
+            >
+              <img
+                class="object-cover w-full h-56"
+                :src="prependBackendLink(g_l.image)"
+                alt="avatar"
+              >
 
               <h1 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
                 {{ g_l.name }}
@@ -132,10 +149,16 @@
         </p>
 
         <div class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4">
-          <div v-for="wops in webops" :key="wops.name"
-            class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
-            <img class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300" :src="prependBackendLink(wops.image)"
-              alt="avatar">
+          <div
+            v-for="wops in webops"
+            :key="wops.name"
+            class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
+          >
+            <img
+              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
+              :src="prependBackendLink(wops.image)"
+              alt="avatar"
+            >
 
             <h1 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
               {{ wops.name }}
@@ -145,7 +168,10 @@
       </div>
     </section>
 
-    <section v-if="graphics" class="bg-white dark:bg-black  mt-10 mb-20 pt-20 pb-20">
+    <section
+      v-if="graphics"
+      class="bg-white dark:bg-black  mt-10 mb-20 pt-20 pb-20"
+    >
       <div class="container px-6 py-10 mx-auto ">
         <h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white">
           Sundarbans Graphics Team
@@ -156,10 +182,16 @@
         </p>
 
         <div class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4">
-          <div v-for="designer in graphics" :key="designer.name"
-            class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
-            <img class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-              :src="prependBackendLink(designer.image)" alt="avatar">
+          <div
+            v-for="designer in graphics"
+            :key="designer.name"
+            class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
+          >
+            <img
+              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
+              :src="prependBackendLink(designer.image)"
+              alt="avatar"
+            >
 
             <h1 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
               {{ designer.name }}
@@ -168,7 +200,10 @@
         </div>
       </div>
     </section>
-    <section v-if="prteam" class="bg-white dark:bg-black mb-20">
+    <section
+      v-if="prteam"
+      class="bg-white dark:bg-black mb-20"
+    >
       <div class="container px-6 py-10 mx-auto">
         <h1 class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white">
           Sundarbans PR & Marketing Team
@@ -179,10 +214,16 @@
         </p>
 
         <div class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4">
-          <div v-for="pr in prteam" :key="pr.name"
-            class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent">
-            <img class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300" :src="prependBackendLink(pr.image)"
-              alt="avatar">
+          <div
+            v-for="pr in prteam"
+            :key="pr.name"
+            class="flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
+          >
+            <img
+              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
+              :src="prependBackendLink(pr.image)"
+              alt="avatar"
+            >
 
             <h1 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white">
               {{ pr.name }}
@@ -193,13 +234,6 @@
     </section>
   </body>
 </template>
-<style scoped>
-.upperCouncil {
-  img {
-    border-radius: 0%;
-  }
-}
-</style>
 <script>
 import axios from 'axios';
 import NavBar from './NavBar.vue';
@@ -234,14 +268,6 @@ export default {
       api_url: '',
     };
   },
-  methods: {
-    prependBackendLink(url) {
-      if (url == "/media/profile-icon-design-free-vector.jpg") {
-        return 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png'
-      }
-      return this.api_url + url;
-    },
-  },
   async mounted() {
     try {
       this.api_url = this.$globalData.backendUrl;
@@ -275,6 +301,21 @@ export default {
       console.error('Error fetching data:', error);
     }
   },
+  methods: {
+    prependBackendLink(url) {
+      if (url == "/media/profile-icon-design-free-vector.jpg") {
+        return 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png'
+      }
+      return this.api_url + url;
+    },
+  },
 
 };
 </script>
+<style scoped>
+.upperCouncil {
+  img {
+    border-radius: 0%;
+  }
+}
+</style>

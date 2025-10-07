@@ -12,7 +12,7 @@
       src="https://theopennotes.in/course/63fd9e3c553314fb9fc19524"
       frameborder="0"
       title="OpenNotes"
-    ></iframe>
+    />
   </div>
 </template>
 

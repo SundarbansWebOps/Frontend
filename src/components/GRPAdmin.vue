@@ -1,40 +1,57 @@
 <template>
-    <NavBar />
-    <div class="container mx-auto p-4 bg-white dark:bg-black dark:text-white">
-
-        <div class="content mt-8">
-
-            <div class="complaints bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                <h2 class="text-xl font-semibold mb-4 dark:text-gray-100">Active Complaints</h2>
-                <ul>
-                    <li v-if="complaints.length == 0" class="text-gray-600 dark:text-gray-400">No complaints found.</li>
-                    <li v-for="complaint in complaints" :key="complaint.id"
-                        class="complaint-item flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-                        <div class="complaint-details">
-                            <h3 class="text-lg font-medium dark:text-gray-100">{{ complaint.title }}</h3>
-                            <p class="text-gray-600 dark:text-gray-400">Date Created: {{ new
-                                Date(complaint.timestamp).toLocaleDateString() }}</p>
-                            <p class="text-gray-600 dark:text-gray-400">Status: {{ complaint.status }}</p>
-                            <p class="text-gray-600 dark:text-gray-400">Priority: {{ complaint.priority }}</p>
-                        </div>
-                        <div>
-                            <router-link :to="'/grp/' + complaint.id">
-                                <button class="view-btn border border-gray-500 dark:border-gray-300 py-1 px-3 rounded">
-                                    View
-                                </button>
-                            </router-link>
-                            <button v-if="complaint.status == 'Open'"
-                                class="ml-2 view-btn border border-gray-500 dark:border-gray-300 py-1 px-3 rounded"
-                                @click="closeComplaint(complaint.id)">
-                                Close
-                            </button>
-                        </div>
-                    </li>
-                </ul>
+  <NavBar />
+  <div class="container mx-auto p-4 bg-white dark:bg-black dark:text-white">
+    <div class="content mt-8">
+      <div class="complaints bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4 dark:text-gray-100">
+          Active Complaints
+        </h2>
+        <ul>
+          <li
+            v-if="complaints.length == 0"
+            class="text-gray-600 dark:text-gray-400"
+          >
+            No complaints found.
+          </li>
+          <li
+            v-for="complaint in complaints"
+            :key="complaint.id"
+            class="complaint-item flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700"
+          >
+            <div class="complaint-details">
+              <h3 class="text-lg font-medium dark:text-gray-100">
+                {{ complaint.title }}
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400">
+                Date Created: {{ new
+                  Date(complaint.timestamp).toLocaleDateString() }}
+              </p>
+              <p class="text-gray-600 dark:text-gray-400">
+                Status: {{ complaint.status }}
+              </p>
+              <p class="text-gray-600 dark:text-gray-400">
+                Priority: {{ complaint.priority }}
+              </p>
             </div>
-        </div>
-
+            <div>
+              <router-link :to="'/grp/' + complaint.id">
+                <button class="view-btn border border-gray-500 dark:border-gray-300 py-1 px-3 rounded">
+                  View
+                </button>
+              </router-link>
+              <button
+                v-if="complaint.status == 'Open'"
+                class="ml-2 view-btn border border-gray-500 dark:border-gray-300 py-1 px-3 rounded"
+                @click="closeComplaint(complaint.id)"
+              >
+                Close
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -46,15 +63,15 @@ export default {
     components: {
         NavBar
     },
-    created() {
-        this.fetchComplaints();
-    },
     data() {
         return {
             complaints: [],
             backendUrl: this.$globalData.backendUrl,
 
         };
+    },
+    created() {
+        this.fetchComplaints();
     },
     methods: {
 

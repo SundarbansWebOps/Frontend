@@ -6,12 +6,7 @@
     <section class="mb-20">
       <!-- Jumbotron -->
       <div
-        class="relative overflow-hidden bg-cover bg-no-repeat"
-        style="
-          background-position: 50%;
-          background-image: url('https://images.unsplash.com/photo-1556484687-30636164638b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-          height: 500px;
-        "
+        class="relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1556484687-30636164638b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-no-repeat bg-[50%] h-[500px]"
       >
         <div
           class="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden bg-[hsla(0,0%,0%,0.75)] bg-fixed"
@@ -189,7 +184,6 @@
     <section
       v-if="graphics"
       class="bg-white dark:bg-black  mt-10 mb-20 pt-20 pb-20"
-
     >
       <div class="container px-6 py-10 mx-auto ">
         <h1
@@ -292,11 +286,6 @@ export default {
       api_url : '',
     };
   },
-  methods:{
-    prependBackendLink(url) {
-      return this.api_url + url;
-    },
-  },
   async mounted() {
     try {
       this.api_url = this.$globalData.backendUrl;
@@ -312,6 +301,11 @@ export default {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  },
+  methods:{
+    prependBackendLink(url) {
+      return this.api_url + url;
+    },
   },
 };
 </script>
