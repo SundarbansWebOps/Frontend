@@ -130,8 +130,21 @@
         
         <!-- Provide quick access to house WhatsApp links when backend is offline -->
         <div class="mt-4 lg:mt-0 lg:ml-8">
-          <router-link to="/whatsapp" class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m6 16l3-3-3-3"/></svg>
+          <router-link
+            to="/whatsapp"
+            class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+          >
+            <svg
+              class="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 5h12M9 3v2m6 16l3-3-3-3"
+            /></svg>
             House WhatsApp Links
           </router-link>
         </div>

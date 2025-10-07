@@ -46,14 +46,30 @@
                     <span class="text-sm text-gray-700 dark:text-gray-200">
                       Secretary
                     </span>
-                      <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        <div v-if="admins[0].email"><a :href="`mailto:${admins[0].email}`">{{ admins[0].email }}</a></div>
-                        <div v-if="admins[0].phone"><a :href="`tel:${admins[0].phone}`">{{ admins[0].phone }}</a></div>
-                        <div class="flex gap-3 justify-center mt-1">
-                          <a v-if="admins[0].linkedin" :href="admins[0].linkedin" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm">LinkedIn</a>
-                          <a v-if="admins[0].instagram" :href="admins[0].instagram" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm">Insta</a>
-                        </div>
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <div v-if="admins[0].email">
+                        <a :href="`mailto:${admins[0].email}`">{{ admins[0].email }}</a>
                       </div>
+                      <div v-if="admins[0].phone">
+                        <a :href="`tel:${admins[0].phone}`">{{ admins[0].phone }}</a>
+                      </div>
+                      <div class="flex gap-3 justify-center mt-1">
+                        <a
+                          v-if="admins[0].linkedin"
+                          :href="admins[0].linkedin"
+                          target="_blank"
+                          rel="noopener"
+                          class="text-blue-600 dark:text-blue-400 text-sm"
+                        >LinkedIn</a>
+                        <a
+                          v-if="admins[0].instagram"
+                          :href="admins[0].instagram"
+                          target="_blank"
+                          rel="noopener"
+                          class="text-pink-600 dark:text-pink-400 text-sm"
+                        >Insta</a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -81,14 +97,30 @@
                     <span class="text-sm text-gray-700 dark:text-gray-200">
                       Deputy Secretary
                     </span>
-                      <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        <div v-if="admins[1].email"><a :href="`mailto:${admins[1].email}`">{{ admins[1].email }}</a></div>
-                        <div v-if="admins[1].phone"><a :href="`tel:${admins[1].phone}`">{{ admins[1].phone }}</a></div>
-                        <div class="flex gap-3 justify-center mt-1">
-                          <a v-if="admins[1].linkedin" :href="admins[1].linkedin" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm">LinkedIn</a>
-                          <a v-if="admins[1].instagram" :href="admins[1].instagram" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm">Insta</a>
-                        </div>
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <div v-if="admins[1].email">
+                        <a :href="`mailto:${admins[1].email}`">{{ admins[1].email }}</a>
                       </div>
+                      <div v-if="admins[1].phone">
+                        <a :href="`tel:${admins[1].phone}`">{{ admins[1].phone }}</a>
+                      </div>
+                      <div class="flex gap-3 justify-center mt-1">
+                        <a
+                          v-if="admins[1].linkedin"
+                          :href="admins[1].linkedin"
+                          target="_blank"
+                          rel="noopener"
+                          class="text-blue-600 dark:text-blue-400 text-sm"
+                        >LinkedIn</a>
+                        <a
+                          v-if="admins[1].instagram"
+                          :href="admins[1].instagram"
+                          target="_blank"
+                          rel="noopener"
+                          class="text-pink-600 dark:text-pink-400 text-sm"
+                        >Insta</a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -133,11 +165,27 @@
               </p>
 
               <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 text-center">
-                <div v-if="g_l.email"><a :href="`mailto:${g_l.email}`">{{ g_l.email }}</a></div>
-                <div v-if="g_l.phone"><a :href="`tel:${g_l.phone}`">{{ g_l.phone }}</a></div>
+                <div v-if="g_l.email">
+                  <a :href="`mailto:${g_l.email}`">{{ g_l.email }}</a>
+                </div>
+                <div v-if="g_l.phone">
+                  <a :href="`tel:${g_l.phone}`">{{ g_l.phone }}</a>
+                </div>
                 <div class="flex gap-3 justify-center mt-1">
-                  <a v-if="g_l.linkedin" :href="normalizeLink(g_l.linkedin)" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm">LinkedIn</a>
-                  <a v-if="g_l.instagram" :href="normalizeLink(g_l.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm">Insta</a>
+                  <a
+                    v-if="g_l.linkedin"
+                    :href="normalizeLink(g_l.linkedin)"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-blue-600 dark:text-blue-400 text-sm"
+                  >LinkedIn</a>
+                  <a
+                    v-if="g_l.instagram"
+                    :href="normalizeLink(g_l.instagram)"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-pink-600 dark:text-pink-400 text-sm"
+                  >Insta</a>
                 </div>
               </div>
             </div>
@@ -171,8 +219,8 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                :src="prependBackendLink(wops.image)"
-                :style="imageStyleFor(wops)"
+              :src="prependBackendLink(wops.image)"
+              :style="imageStyleFor(wops)"
               alt="avatar"
             >
 
@@ -185,11 +233,33 @@
             </p>
 
             <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 text-center w-full max-w-xs">
-              <div v-if="wops.email" class="break-words"><a :href="`mailto:${wops.email}`">{{ wops.email }}</a></div>
-              <div v-if="wops.phone" class="break-words"><a :href="`tel:${wops.phone}`">{{ wops.phone }}</a></div>
+              <div
+                v-if="wops.email"
+                class="break-words"
+              >
+                <a :href="`mailto:${wops.email}`">{{ wops.email }}</a>
+              </div>
+              <div
+                v-if="wops.phone"
+                class="break-words"
+              >
+                <a :href="`tel:${wops.phone}`">{{ wops.phone }}</a>
+              </div>
               <div class="flex gap-3 justify-center mt-1 flex-wrap">
-                <a v-if="wops.linkedin" :href="normalizeLink(wops.linkedin)" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm break-words">LinkedIn</a>
-                <a v-if="wops.instagram" :href="normalizeLink(wops.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm break-words">Insta</a>
+                <a
+                  v-if="wops.linkedin"
+                  :href="normalizeLink(wops.linkedin)"
+                  target="_blank"
+                  rel="noopener"
+                  class="text-blue-600 dark:text-blue-400 text-sm break-words"
+                >LinkedIn</a>
+                <a
+                  v-if="wops.instagram"
+                  :href="normalizeLink(wops.instagram)"
+                  target="_blank"
+                  rel="noopener"
+                  class="text-pink-600 dark:text-pink-400 text-sm break-words"
+                >Insta</a>
               </div>
             </div>
           </div>
@@ -200,7 +270,6 @@
     <section
       v-if="graphics"
       class="bg-white dark:bg-black  mt-10 mb-20 pt-20 pb-20"
-
     >
       <div class="container px-6 py-10 mx-auto ">
         <h1
@@ -225,8 +294,8 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                :src="prependBackendLink(gr.image)"
-                :style="imageStyleFor(gr)"
+              :src="prependBackendLink(gr.image)"
+              :style="imageStyleFor(gr)"
               alt="avatar"
             >
 
@@ -264,8 +333,8 @@
           >
             <img
               class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                :src="prependBackendLink(pr.image)"
-                :style="imageStyleFor(pr)"
+              :src="prependBackendLink(pr.image)"
+              :style="imageStyleFor(pr)"
               alt="avatar"
             >
 
@@ -355,6 +424,9 @@ export default {
       prteam: []
     };
   },
+  mounted() {
+    // No API calls in no-backend mode
+  },
   methods: {
     prependBackendLink(url) {
       // In no-backend mode, return placeholder image for missing images
@@ -376,9 +448,6 @@ export default {
       if (person.uid === 1 && this.mannuImageStyle) return this.mannuImageStyle;
       return {};
     },
-  },
-  mounted() {
-    // No API calls in no-backend mode
   },
 };
 </script>

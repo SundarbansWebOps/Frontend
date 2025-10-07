@@ -48,8 +48,7 @@
             class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
             style="padding-top: 56.25%"
           >
-          <YoutubeVid :videoId="video.video_url" />
-           
+            <YoutubeVid :video-id="video.video_url" />
           </div>
         </div>
       </div>
@@ -65,8 +64,7 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-            <YoutubeVid :videoId="video.video_url" />
-              
+              <YoutubeVid :video-id="video.video_url" />
             </div>
           </div>
         </div>

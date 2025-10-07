@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBar></NavBar>
+    <NavBar />
     <div class="container">
       <h1>Privacy Policy for Sundarbans House</h1>
       <p>
@@ -10,11 +10,19 @@
       </p>
 
       <div class="button-container">
-        <button @click="printDocument" class="action-button">Print</button>
+        <button
+          class="action-button"
+          @click="printDocument"
+        >
+          Print
+        </button>
         <a href="https://drive.google.com/u/0/uc?id=1vNx3MT7kfmVec7WAtKiuSjlTrazUc7-f&export=download"><button class="action-button">Download PDF</button></a>
       </div>
 
-      <div ref="policyContent" class="policy-content">
+      <div
+        ref="policyContent"
+        class="policy-content"
+      >
         <section id="information-collected">
           <h2>Information We Collect</h2>
           <ul>

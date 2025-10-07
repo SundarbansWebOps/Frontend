@@ -29,7 +29,7 @@
           <img
             class="object-cover w-full h-96 rounded-xl lg:w-4/5"
             src="../assets/iitmphoto.jpg"
-          />
+          >
         </div>
       </div>
     </section>
@@ -49,12 +49,15 @@
         </div>
 
         <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2">
-          <div v-for="event in upcomingEvents" :key="event.slug">
+          <div
+            v-for="event in upcomingEvents"
+            :key="event.slug"
+          >
             <img
               class="relative z-10 object-cover w-full rounded-md h-96"
               :src="event.image"
               alt="Event Image"
-            />
+            >
             <div
               class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black"
             >
@@ -103,16 +106,14 @@
             class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
             style="padding-top: 56.25%"
           >
-          <YoutubeVid videoId="6N-PfwyjsIQ" />
-            
+            <YoutubeVid video-id="6N-PfwyjsIQ" />
           </div>
 
           <div
             class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
             style="padding-top: 56.25%"
           >
-          <YoutubeVid videoId="RLBxlaK_aU4" />
-            
+            <YoutubeVid video-id="RLBxlaK_aU4" />
           </div>
         </div>
       </div>
@@ -124,8 +125,7 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-            <YoutubeVid videoId="TvkTrLJonbw" />
-              
+              <YoutubeVid video-id="TvkTrLJonbw" />
             </div>
           </div>
           <div class="p-4 md:w-1/2 lg:w-1/4 w-full">
@@ -133,8 +133,7 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-            <YoutubeVid videoId="kEsry2TSVKU" />
-              
+              <YoutubeVid video-id="kEsry2TSVKU" />
             </div>
           </div>
           <div class="p-4 md:w-1/2 lg:w-1/4 w-full">
@@ -142,8 +141,7 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-            <YoutubeVid videoId="QW4T_FQzi2I" />
-              
+              <YoutubeVid video-id="QW4T_FQzi2I" />
             </div>
           </div>
           <div class="p-4 md:w-1/2 lg:w-1/4 w-full">
@@ -151,8 +149,7 @@
               class="embed-responsive embed-responsive-16by9 relative w-full overflow-hidden"
               style="padding-top: 56.25%"
             >
-            <YoutubeVid videoId="rZdih019rz4" />
-              
+              <YoutubeVid video-id="rZdih019rz4" />
             </div>
           </div>
         </div>
@@ -174,10 +171,19 @@
         </p>
 
         <div class="dark:text-white grid grid-cols-1 gap-8 mt-8 xl:mt-12 xl:gap-12 md:grid-cols-2 xl:grid-cols-3">
-          <div v-for="event in latestEvents" :key="event.slug">
-            <router-link :to="'/event/' + event.slug" class="block relative">
-              <img class="relative z-10 object-cover w-full rounded-md h-96" :src="event.image"
-                alt="Event Image">
+          <div
+            v-for="event in latestEvents"
+            :key="event.slug"
+          >
+            <router-link
+              :to="'/event/' + event.slug"
+              class="block relative"
+            >
+              <img
+                class="relative z-10 object-cover w-full rounded-md h-96"
+                :src="event.image"
+                alt="Event Image"
+              >
               <div class="relative z-20 max-w-lg p-6 mx-auto -mt-20 bg-white rounded-md shadow dark:bg-black">
                 {{ event.title }}
                 <p class="mt-3 text-sm text-[#eab308]">
@@ -186,8 +192,8 @@
               </div>
             </router-link>
           </div>
+        </div>
       </div>
-    </div>
     </section>
   </body>
 </template>

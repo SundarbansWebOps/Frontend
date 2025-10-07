@@ -1,50 +1,86 @@
 <template>
-  <NavBar></NavBar>
+  <NavBar />
 
   <div class="container">
-    
-    <div class="intro-text">Meet Your Nearby Study Buddies <p>This is a student run platform and it is not endorsed  by the  IITM BS degree program in any way. Students can join the platform on their personal discretion.</p></div>
+    <div class="intro-text">
+      Meet Your Nearby Study Buddies <p>This is a student run platform and it is not endorsed  by the  IITM BS degree program in any way. Students can join the platform on their personal discretion.</p>
+    </div>
 
-    <div v-if="token2" class="button-container">
+    <div
+      v-if="token2"
+      class="button-container"
+    >
       <button
         class="icon-button"
-        @click="showUpdatePopup"
         title="Update Social Media"
+        @click="showUpdatePopup"
       >
         <img
           src="../assets/update.svg"
           alt="Update Social Media"
           class="icon"
-        />
+        >
         <span class="button-text">Update Profile</span>
       </button>
-      <button class="icon-button" @click="refreshPage" title="Refresh">
-        <img src="../assets/refresh.svg" alt="Refresh" class="icon" />
+      <button
+        class="icon-button"
+        title="Refresh"
+        @click="refreshPage"
+      >
+        <img
+          src="../assets/refresh.svg"
+          alt="Refresh"
+          class="icon"
+        >
         <span class="button-text">Refresh</span>
       </button>
       <button
         class="icon-button"
-        @click="showDeletePopup"
         title="Delete My Data"
+        @click="showDeletePopup"
       >
-        <img src="../assets/delete.svg" alt="Delete My Data" class="icon" />
+        <img
+          src="../assets/delete.svg"
+          alt="Delete My Data"
+          class="icon"
+        >
         <span class="button-text">Delete My Data</span>
       </button>
     </div>
-    <div v-if="!token2" class="login-prompt">
-      <GoogleLogin></GoogleLogin>
+    <div
+      v-if="!token2"
+      class="login-prompt"
+    >
+      <GoogleLogin />
     </div>
     <div v-else>
-      <div v-if="loading" class="loading-container">
-        <div class="spinner"></div>
+      <div
+        v-if="loading"
+        class="loading-container"
+      >
+        <div class="spinner" />
       </div>
       <div v-else>
-        <div v-if="users.length" class="user-list">
-          <div class="user" v-for="user in pusers" :key="user.name"> <!-- looping over users fetched -->
-            <img :src="user.photo_url" :alt="`${user.name}'s photo`" class="user-photo" />
+        <div
+          v-if="users.length"
+          class="user-list"
+        >
+          <div
+            v-for="user in pusers"
+            :key="user.name"
+            class="user"
+          >
+            <!-- looping over users fetched -->
+            <img
+              :src="user.photo_url"
+              :alt="`${user.name}'s photo`"
+              class="user-photo"
+            >
 
             <div class="user-info">
-              <div class="user-name">{{ user.name }}</div>
+              <div class="user-name">
+                {{ user.name }}
+              </div>
               <div class="user-distance">
                 {{ user.distance.toFixed(2) }} km away from you.
               </div>
@@ -57,36 +93,45 @@
                     user.social_url && user.social_url.includes('instagram')
                   "
                 >
-                  <a :href="user.social_url" target="_blank">
+                  <a
+                    :href="user.social_url"
+                    target="_blank"
+                  >
                     <img
                       src="../assets/insta.png"
                       alt="Instagram"
                       class="instagram-logo"
-                    />
+                    >
                   </a>
                 </template>
                 <!-- LinkedIn -->
                 <template
                   v-if="user.social_url && user.social_url.includes('linkedin')"
                 >
-                  <a :href="user.social_url" target="_blank">
+                  <a
+                    :href="user.social_url"
+                    target="_blank"
+                  >
                     <img
                       src="../assets/linkedin.png"
                       alt="LinkedIn"
                       class="instagram-logo"
-                    />
+                    >
                   </a>
                 </template>
                 <!-- Snapchat -->
                 <template
                   v-if="user.social_url && user.social_url.includes('snapchat')"
                 >
-                  <a :href="user.social_url" target="_blank">
+                  <a
+                    :href="user.social_url"
+                    target="_blank"
+                  >
                     <img
                       src="../assets/snap.png"
                       alt="Snapchat"
                       class="instagram-logo"
-                    />
+                    >
                   </a>
                 </template>
                 <!-- Fallback for missing links -->
@@ -105,7 +150,7 @@
                     alt="Update Social Media"
                     class="instagram-logo"
                     @click="LinkNotAvailable"
-                  />
+                  >
                 </template>
               </template>
               <template v-else>
@@ -115,16 +160,30 @@
                   alt="Update Social Media"
                   class="instagram-logo"
                   @click="showInstagramAlert"
-                />
+                >
               </template>
             </div>
           </div>
-          <button v-if="hasNext" @click="paginate" style="width: 100%; background-color: #910404; text-align: center; color: white;">View more</button>
-          <p v-if="!users.length" class="no-users">No nearby users found.</p>
+          <button
+            v-if="hasNext"
+            style="width: 100%; background-color: #910404; text-align: center; color: white;"
+            @click="paginate"
+          >
+            View more
+          </button>
+          <p
+            v-if="!users.length"
+            class="no-users"
+          >
+            No nearby users found.
+          </p>
         </div>
       </div>
 
-      <div v-if="showPopup" class="popup-overlay">
+      <div
+        v-if="showPopup"
+        class="popup-overlay"
+      >
         <div class="popup-content">
           <p>
             I confirm that my location data will be captured & its derivatives,
@@ -132,45 +191,71 @@
             the application.
           </p>
           <div>
-            <button @click="agreeLocationSharing">I Agree</button>
-            <button @click="cancelLocationSharing">I Disagree</button>
+            <button @click="agreeLocationSharing">
+              I Agree
+            </button>
+            <button @click="cancelLocationSharing">
+              I Disagree
+            </button>
           </div>
           <div>
             <a
               href="https://sundarbans.iitmbs.org/privacy-policy#studybuddy-feature"
               target="_blank"
               style="color: blue"
-              >Privacy Policy</a
-            >
+            >Privacy Policy</a>
           </div>
         </div>
       </div>
 
-      <div v-if="showDeletePopupVisible" class="popup-overlay">
+      <div
+        v-if="showDeletePopupVisible"
+        class="popup-overlay"
+      >
         <div class="popup-content">
           <p>Are you sure you want to permanently delete your data?</p>
-          <button @click="deleteUserData">Yes</button>
-          <button @click="hideDeletePopup">No</button>
+          <button @click="deleteUserData">
+            Yes
+          </button>
+          <button @click="hideDeletePopup">
+            No
+          </button>
         </div>
       </div>
 
-      <div v-if="showUpdatePopupVisible" class="popup-overlay">
+      <div
+        v-if="showUpdatePopupVisible"
+        class="popup-overlay"
+      >
         <div class="popup-content">
           <label for="socialMedia">Select Social Media:</label>
-          <select v-model="selectedSocialMedia" id="socialMedia">
-            <option value="instagram">Instagram</option>
-            <option value="snapchat">Snapchat</option>
-            <option value="linkedin">LinkedIn</option>
+          <select
+            id="socialMedia"
+            v-model="selectedSocialMedia"
+          >
+            <option value="instagram">
+              Instagram
+            </option>
+            <option value="snapchat">
+              Snapchat
+            </option>
+            <option value="linkedin">
+              LinkedIn
+            </option>
           </select>
           <input
             v-model="socialMediaUrl"
             :placeholder="socialMediaPlaceholder"
             style="margin-top: 4px"
             type="text"
-          />
+          >
           <div>
-            <button @click="updateSocialMedia">Update</button>
-            <button @click="showUpdatePopupVisible = false">Cancel</button>
+            <button @click="updateSocialMedia">
+              Update
+            </button>
+            <button @click="showUpdatePopupVisible = false">
+              Cancel
+            </button>
           </div>
           <p>Required Url format: {{ socialMediaPlaceholder }}</p>
         </div>
@@ -229,6 +314,9 @@ export default {
           return "Enter profile URL";
       }
     },
+  },
+  mounted() {
+    // this.fetchUserData();
   },
   methods: {
     LinkNotAvailable() {
@@ -375,9 +463,6 @@ export default {
       const randomIndex = Math.floor(Math.random() * this.logos.length);
       return this.logos[randomIndex];
     },
-  },
-  mounted() {
-    // this.fetchUserData();
   },
 };
 </script>

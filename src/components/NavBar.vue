@@ -119,9 +119,11 @@
               alt="User Picture"
             >
             <span class="ml-2 text-black dark:text-white font-semibold"><router-link to="user">{{ clippedName }}</router-link></span>
-            <i class="ml-4 bi bi-box-arrow-right text-black dark:text-white font-semibold text-2xl cursor-pointer	" title="Sign Out" @click="signOut"></i>
-           
-            
+            <i
+              class="ml-4 bi bi-box-arrow-right text-black dark:text-white font-semibold text-2xl cursor-pointer	"
+              title="Sign Out"
+              @click="signOut"
+            />
           </div>
         </div>
         <!-- If user is not logged in, show sign-in button -->

@@ -17,14 +17,21 @@
               <!-- Friendly placeholder while clubs page is getting a fresh face -->
               <div class="p-12 text-center">
                 <div class="mx-auto max-w-xl">
-                  <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">We're giving this page a glow-up ✨</h1>
-                  <p class="text-gray-700 dark:text-gray-300 mb-6">Club directory is getting a fresh face — sleeker layout, better join flows, and shiny new links. Come back soon to see the new look!</p>
+                  <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
+                    We're giving this page a glow-up ✨
+                  </h1>
+                  <p class="text-gray-700 dark:text-gray-300 mb-6">
+                    Club directory is getting a fresh face — sleeker layout, better join flows, and shiny new links. Come back soon to see the new look!
+                  </p>
                   <div class="inline-flex items-center gap-x-3">
                     <span class="inline-block rounded-full bg-indigo-50 text-indigo-700 px-3 py-1 text-sm font-semibold">Under construction</span>
                     <span class="text-sm text-gray-500 dark:text-gray-400">(We're brewing something awesome)</span>
                   </div>
                   <div class="mt-8">
-                    <a href="/" class="inline-flex items-center gap-x-2 text-indigo-600 hover:text-indigo-500 dark:text-indigo-300">Return home</a>
+                    <a
+                      href="/"
+                      class="inline-flex items-center gap-x-2 text-indigo-600 hover:text-indigo-500 dark:text-indigo-300"
+                    >Return home</a>
                   </div>
                 </div>
               </div>

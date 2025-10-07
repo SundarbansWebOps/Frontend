@@ -1,144 +1,216 @@
 <template>
-    <div>
-      <!-- Dropdown to select which table to search -->
-      <label for="tableSelect">Select Table:</label>
-      <select id="tableSelect" v-model="selectedTable">
-        <option value="groupLeaders">Group Leaders</option>
-        <option value="teamMembers">Team Members</option>
-        <option value="events">Events</option>
-      </select>
+  <div>
+    <!-- Dropdown to select which table to search -->
+    <label for="tableSelect">Select Table:</label>
+    <select
+      id="tableSelect"
+      v-model="selectedTable"
+    >
+      <option value="groupLeaders">
+        Group Leaders
+      </option>
+      <option value="teamMembers">
+        Team Members
+      </option>
+      <option value="events">
+        Events
+      </option>
+    </select>
   
-      <!-- Dropdown to select search type (Name or Email) -->
-      <select v-model="searchType">
-        <option value="name">Name</option>
-        <option value="email">Email</option>
-      </select>
+    <!-- Dropdown to select search type (Name or Email) -->
+    <select v-model="searchType">
+      <option value="name">
+        Name
+      </option>
+      <option value="email">
+        Email
+      </option>
+    </select>
   
-      <!-- Search bar to filter selected table -->
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Search by selected option"
-        @input="debouncedSearch"
-      />
+    <!-- Search bar to filter selected table -->
+    <input
+      v-model="searchQuery"
+      type="text"
+      placeholder="Search by selected option"
+      @input="debouncedSearch"
+    >
   
-      <!-- Conditionally Render Group Leaders Table -->
-      <div v-if="selectedTable === 'groupLeaders'">
-        <div class="table-header">
-          <h2>Group Leaders</h2>
-          <button @click="showAddForm('groupLeaders')">Add Group Leader</button>
-        </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Mobile Number</th>
-                <th>Photo</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(leader, index) in filteredGroupLeaders" :key="leader.email">
-                <td>{{ leader.name }}</td>
-                <td>{{ leader.email }}</td>
-                <td>{{ leader.mobile }}</td>
-                <td><img :src="leader.photo" alt="Leader Photo" width="50" /></td>
-                <td>
-                  <button @click="showEditForm('groupLeaders', index)">Edit</button>
-                  <button @click="removeEntry('groupLeaders', index)">Remove</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <!-- Conditionally Render Group Leaders Table -->
+    <div v-if="selectedTable === 'groupLeaders'">
+      <div class="table-header">
+        <h2>Group Leaders</h2>
+        <button @click="showAddForm('groupLeaders')">
+          Add Group Leader
+        </button>
       </div>
-  
-      <!-- Conditionally Render Team Members Table -->
-      <div v-if="selectedTable === 'teamMembers'">
-        <div class="table-header">
-          <h2>Team Members</h2>
-        </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Mobile Number</th>
-                <th>Photo</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(member) in filteredTeamMembers" :key="member.email">
-                <td>{{ member.name }}</td>
-                <td>{{ member.email }}</td>
-                <td>{{ member.mobile }}</td>
-                <td><img :src="member.photo" alt="Member Photo" width="50" /></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-  
-      <!-- Conditionally Render Events Table -->
-      <div v-if="selectedTable === 'events'">
-        <div class="table-header">
-          <h2>Events</h2>
-          <button @click="showAddForm('events')">Add Event</button>
-        </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Event Name</th>
-                <th>Email</th>
-                <th>Mobile Number</th>
-                <th>Photo</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(event, index) in filteredEvents" :key="event.email">
-                <td>{{ event.name }}</td>
-                <td>{{ event.email }}</td>
-                <td>{{ event.mobile }}</td>
-                <td><img :src="event.photo" alt="Event Photo" width="50" /></td>
-                <td>
-                  <button @click="showEditForm('events', index)">Edit</button>
-                  <button @click="removeEntry('events', index)">Remove</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-  
-      <!-- Add/Edit Form Modal -->
-      <div v-if="isFormVisible" class="form-modal">
-        <div class="form-content">
-          <h3>{{ isEditing ? 'Edit' : 'Add' }} {{ selectedTable === 'groupLeaders' ? 'Group Leader' : 'Event' }}</h3>
-          <form @submit.prevent="isEditing ? updateEntry() : createEntry()">
-            <label>Name:</label>
-            <input v-model="formData.name" required />
-  
-            <label>Email:</label>
-            <input type="email" v-model="formData.email" required />
-  
-            <label>Mobile Number:</label>
-            <input v-model="formData.mobile" required />
-  
-            <label>Photo URL:</label>
-            <input v-model="formData.photo" />
-  
-            <button type="submit">{{ isEditing ? 'Update' : 'Add' }}</button>
-            <button type="button" @click="closeForm">Cancel</button>
-          </form>
-        </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Mobile Number</th>
+              <th>Photo</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(leader, index) in filteredGroupLeaders"
+              :key="leader.email"
+            >
+              <td>{{ leader.name }}</td>
+              <td>{{ leader.email }}</td>
+              <td>{{ leader.mobile }}</td>
+              <td>
+                <img
+                  :src="leader.photo"
+                  alt="Leader Photo"
+                  width="50"
+                >
+              </td>
+              <td>
+                <button @click="showEditForm('groupLeaders', index)">
+                  Edit
+                </button>
+                <button @click="removeEntry('groupLeaders', index)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </template>
+  
+    <!-- Conditionally Render Team Members Table -->
+    <div v-if="selectedTable === 'teamMembers'">
+      <div class="table-header">
+        <h2>Team Members</h2>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Mobile Number</th>
+              <th>Photo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(member) in filteredTeamMembers"
+              :key="member.email"
+            >
+              <td>{{ member.name }}</td>
+              <td>{{ member.email }}</td>
+              <td>{{ member.mobile }}</td>
+              <td>
+                <img
+                  :src="member.photo"
+                  alt="Member Photo"
+                  width="50"
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Conditionally Render Events Table -->
+    <div v-if="selectedTable === 'events'">
+      <div class="table-header">
+        <h2>Events</h2>
+        <button @click="showAddForm('events')">
+          Add Event
+        </button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Event Name</th>
+              <th>Email</th>
+              <th>Mobile Number</th>
+              <th>Photo</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(event, index) in filteredEvents"
+              :key="event.email"
+            >
+              <td>{{ event.name }}</td>
+              <td>{{ event.email }}</td>
+              <td>{{ event.mobile }}</td>
+              <td>
+                <img
+                  :src="event.photo"
+                  alt="Event Photo"
+                  width="50"
+                >
+              </td>
+              <td>
+                <button @click="showEditForm('events', index)">
+                  Edit
+                </button>
+                <button @click="removeEntry('events', index)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Add/Edit Form Modal -->
+    <div
+      v-if="isFormVisible"
+      class="form-modal"
+    >
+      <div class="form-content">
+        <h3>{{ isEditing ? 'Edit' : 'Add' }} {{ selectedTable === 'groupLeaders' ? 'Group Leader' : 'Event' }}</h3>
+        <form @submit.prevent="isEditing ? updateEntry() : createEntry()">
+          <label>Name:</label>
+          <input
+            v-model="formData.name"
+            required
+          >
+  
+          <label>Email:</label>
+          <input
+            v-model="formData.email"
+            type="email"
+            required
+          >
+  
+          <label>Mobile Number:</label>
+          <input
+            v-model="formData.mobile"
+            required
+          >
+  
+          <label>Photo URL:</label>
+          <input v-model="formData.photo">
+  
+          <button type="submit">
+            {{ isEditing ? 'Update' : 'Add' }}
+          </button>
+          <button
+            type="button"
+            @click="closeForm"
+          >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
   
   <script>
   import _ from 'lodash'; // for debounce

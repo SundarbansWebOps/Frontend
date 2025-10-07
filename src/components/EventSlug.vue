@@ -2,10 +2,16 @@
   <NavBar />
 
   <body class=" dark:bg-black">
-    <section v-if="event" class="mb-10 md:mb-30"
-      :style="{ backgroundImage: 'url(' + `${this.$globalData.backendUrl}` + event.image + ')' }">
+    <section
+      v-if="event"
+      class="mb-10 md:mb-30"
+      :style="{ backgroundImage: 'url(' + `${$globalData.backendUrl}` + event.image + ')' }"
+    >
       <!-- Jumbotron -->
-      <div class="relative overflow-hidden bg-cover bg-no-repeat" style="background-position: 50%; height: 500px;">
+      <div
+        class="relative overflow-hidden bg-cover bg-no-repeat"
+        style="background-position: 50%; height: 500px;"
+      >
         <div class="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden  bg-black-10 bg-fixed">
           <div class="flex h-full items-center justify-center">
             <div class="px-6 text-center text-white md:px-12">
@@ -22,13 +28,19 @@
 
 
     <!-- Section: Design Block -->
-    <section v-else class="mb-10 md:mb-30">
+    <section
+      v-else
+      class="mb-10 md:mb-30"
+    >
       <!-- Jumbotron -->
 
-      <div class="relative overflow-hidden bg-cover bg-no-repeat" style="
+      <div
+        class="relative overflow-hidden bg-cover bg-no-repeat"
+        style="
             background-position: 50%;
             background-image: url('https://images.unsplash.com/photo-1679094837433-32484a621c74?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-            height: 500px;">
+            height: 500px;"
+      >
         <div class="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden  bg-black-10 bg-fixed">
           <div class="flex h-full items-center justify-center">
             <div class="px-6 text-center text-white md:px-12">
@@ -47,7 +59,10 @@
 
 
 
-    <section v-if="event" class="bg-white dark:bg-black">
+    <section
+      v-if="event"
+      class="bg-white dark:bg-black"
+    >
       <div class="container flex flex-col items-center px-4 py-12 mx-auto text-center">
         <h2 class="text-2xl font-bold tracking-tight text-gray-800 xl:text-3xl dark:text-white">
           Event title: {{ event.title }}
@@ -64,8 +79,10 @@
         </p>
 
         <div class="mt-6">
-          <a :href="event.form_url"
-            class="inline-flex items-center justify-center w-full px-4 py-2.5 mt-4 overflow-hidden text-sm text-white transition-colors duration-300 bg-blue-600 rounded-lg shadow sm:w-auto sm:mx-2 sm:mt-0 hover:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80">
+          <a
+            :href="event.form_url"
+            class="inline-flex items-center justify-center w-full px-4 py-2.5 mt-4 overflow-hidden text-sm text-white transition-colors duration-300 bg-blue-600 rounded-lg shadow sm:w-auto sm:mx-2 sm:mt-0 hover:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80"
+          >
             <span class="mx-2">
               Register Here
             </span>
@@ -75,8 +92,17 @@
     </section>
 
     <!-- check if video exists or not -->
-    <video class="w-full max-w-4xl mx-auto my-10 shadow-lg" autoplay loop controls muted>
-      <source src="https://tecdn.b-cdn.net/img/video/Sail-Away.mp4" type="video/mp4">
+    <video
+      class="w-full max-w-4xl mx-auto my-10 shadow-lg"
+      autoplay
+      loop
+      controls
+      muted
+    >
+      <source
+        src="https://tecdn.b-cdn.net/img/video/Sail-Away.mp4"
+        type="video/mp4"
+      >
     </video>
   </body>
 </template>
