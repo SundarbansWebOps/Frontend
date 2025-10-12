@@ -72,6 +72,7 @@ export default {
         { id: 'chd', name: 'Chandigarh Region', description: 'Chandigarh regional sign-up', form: 'https://forms.gle/roBd62dYk6829eYCA', coordinator: 'Aakash Rawal', phone: '+918114417334' },
         { id: 'hyd', name: 'Hyderabad Region', description: 'Hyderabad regional sign-up', form: 'https://forms.gle/d8QRQ5eXooDHL8Db6', coordinator: 'Dishi Gupta', phone: '+919392160798' },
         { id: 'lko', name: 'Lucknow Region', description: 'Lucknow regional sign-up', form: 'https://forms.gle/poriXvnwuENkmiKF8', coordinator: 'Kartik Singh', phone: '+918810899044' },
+        { id: 'kol', name: 'Kolkata Region', description: 'Kolkata regional sign-up', form: 'https://forms.gle/z6qnTg58cvjjNtxP6', coordinator: 'Chanan Shaw', phone: '+917003925642' },
         { id: 'pat', name: 'Patna Region', description: 'Patna regional sign-up', form: 'https://forms.gle/jK7W2USVNEj9ifi17', coordinator: 'Nivash Kumar', phone: '+919631364617' },
         { id: 'del', name: 'Delhi Region', description: 'Delhi regional sign-up', form: 'https://forms.gle/2gagK33ZhBzsqGz67', coordinator: 'Divy Prakash & Laksh Wadhawan', phone: '+919935539521 & +918920210731' }
       ]
