@@ -41,7 +41,6 @@
               </span>
               <div class="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 <div v-if="admin.email"><a :href="`mailto:${admin.email}`">{{ admin.email }}</a></div>
-                <div v-if="admin.phone"><a :href="`tel:${admin.phone}`">{{ admin.phone }}</a></div>
                 <div class="flex flex-wrap items-center justify-center gap-3 pt-1 text-sm">
                   <a v-if="admin.linkedin" :href="normalizeLink(admin.linkedin)" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400">LinkedIn</a>
                   <a v-if="admin.instagram" :href="normalizeLink(admin.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400">Insta</a>
@@ -91,7 +90,6 @@
 
             <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 text-center w-full max-w-xs">
               <div v-if="wops.email" class="break-words"><a :href="`mailto:${wops.email}`">{{ wops.email }}</a></div>
-              <div v-if="wops.phone" class="break-words"><a :href="`tel:${wops.phone}`">{{ wops.phone }}</a></div>
               <div class="flex gap-3 justify-center mt-1 flex-wrap">
                 <a v-if="wops.linkedin" :href="normalizeLink(wops.linkedin)" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm break-words">LinkedIn</a>
                 <a v-if="wops.instagram" :href="normalizeLink(wops.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm break-words">Insta</a>
