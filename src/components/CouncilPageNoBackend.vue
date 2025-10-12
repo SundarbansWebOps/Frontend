@@ -17,83 +17,87 @@
           Meet the dedicated team leading Sundarbans House Council.
         </p>
 
-        <div class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2">
-          <div class="container px-5 py-10 mx-auto">
-            <div
-              id="adminsContainer"
-              class="flex flex-wrap -m-4 justify-center"
+        <div
+          id="adminsContainer"
+          class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 mt-8 xl:mt-16"
+        >
+          <article
+            v-for="admin in admins"
+            :key="admin.uid"
+            class="team-card overflow-hidden rounded-2xl bg-white shadow-lg transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-gray-800"
+          >
+            <img
+              class="profile-card-image"
+              :src="prependBackendLink(admin.image)"
+              :style="imageStyleFor(admin)"
+              :alt="`${admin.name} portrait`"
             >
-              <!-- First Admin -->
-              <div class="p-4 mx-auto">
-                <div
-                  class="overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 mx-auto w-72"
-                >
-                  <img
-                    class="object-cover w-72 h-56 mx-auto"
-                    :src="prependBackendLink(admins[0].image)"
-                    :style="mannuImageStyle"
-                    alt="avatar"
-                  >
-                  <div class="py-5 text-center">
-                    <a
-                      href="#"
-                      class="block text-xl font-bold text-gray-800 dark:text-white"
-                      tabindex="0"
-                      role="link"
-                    >
-                      {{ admins[0].name }}
-                    </a>
-                    <span class="text-sm text-gray-700 dark:text-gray-200">
-                      Secretary
-                    </span>
-                      <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        <div v-if="admins[0].email"><a :href="`mailto:${admins[0].email}`">{{ admins[0].email }}</a></div>
-                        <div v-if="admins[0].phone"><a :href="`tel:${admins[0].phone}`">{{ admins[0].phone }}</a></div>
-                        <div class="flex gap-3 justify-center mt-1">
-                          <a v-if="admins[0].linkedin" :href="admins[0].linkedin" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm">LinkedIn</a>
-                          <a v-if="admins[0].instagram" :href="admins[0].instagram" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm">Insta</a>
-                        </div>
-                      </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Second Admin -->
-              <div class="p-4 mx-auto">
-                <div
-                  class="overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 mx-auto w-72"
-                >
-                  <img
-                    class="object-cover w-72 h-56 mx-auto"
-                    :src="prependBackendLink(admins[1].image)"
-                    :style="imageStyleFor(admins[1])"
-                    alt="avatar"
-                  >
-                  <div class="py-5 text-center">
-                    <a
-                      href="#"
-                      class="block text-xl font-bold text-gray-800 dark:text-white"
-                      tabindex="0"
-                      role="link"
-                    >
-                      {{ admins[1].name }}
-                    </a>
-                    <span class="text-sm text-gray-700 dark:text-gray-200">
-                      Deputy Secretary
-                    </span>
-                      <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        <div v-if="admins[1].email"><a :href="`mailto:${admins[1].email}`">{{ admins[1].email }}</a></div>
-                        <div v-if="admins[1].phone"><a :href="`tel:${admins[1].phone}`">{{ admins[1].phone }}</a></div>
-                        <div class="flex gap-3 justify-center mt-1">
-                          <a v-if="admins[1].linkedin" :href="admins[1].linkedin" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm">LinkedIn</a>
-                          <a v-if="admins[1].instagram" :href="admins[1].instagram" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm">Insta</a>
-                        </div>
-                      </div>
-                  </div>
+            <div class="py-6 px-6 sm:px-8">
+              <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
+                {{ admin.name }}
+              </h2>
+              <span v-if="admin.role" class="mt-1 block text-sm text-blue-700 dark:text-blue-300 uppercase tracking-wide">
+                {{ admin.role }}
+              </span>
+              <div class="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                <div v-if="admin.email"><a :href="`mailto:${admin.email}`">{{ admin.email }}</a></div>
+                <div v-if="admin.phone"><a :href="`tel:${admin.phone}`">{{ admin.phone }}</a></div>
+                <div class="flex flex-wrap items-center justify-center gap-3 pt-1 text-sm">
+                  <a v-if="admin.linkedin" :href="normalizeLink(admin.linkedin)" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400">LinkedIn</a>
+                  <a v-if="admin.instagram" :href="normalizeLink(admin.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400">Insta</a>
                 </div>
               </div>
             </div>
-          </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- webops team --> 
+    <section class="mt-10 mb-20 bg-white dark:bg-black place-items-center justify-center">
+      <div class="container px-6 py-10 mx-auto place-items-center justify-center">
+        <h1
+          class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white"
+        >
+          Sundarbans WebOps Team
+        </h1>
+
+        <p
+          class="max-w-2xl mx-auto my-6 text-center text-gray-500 dark:text-gray-300"
+        >
+          Meet the Team Behind Your Online Experience.
+        </p>
+
+        <div class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 mt-8 xl:mt-16">
+          <article
+            v-for="wops in webops"
+            :key="wops.name"
+            class="team-card group cursor-pointer border border-gray-200 p-6 sm:p-8 transition-colors duration-300 hover:border-transparent hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
+          >
+            <img
+              class="profile-photo ring-4 ring-gray-300 shadow-md"
+              :src="prependBackendLink(wops.image)"
+              :style="imageStyleFor(wops)"
+              alt="avatar"
+            >
+
+            <h1 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white text-center">
+              {{ wops.name }}
+            </h1>
+
+            <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300 text-center">
+              {{ wops.role }}
+            </p>
+
+            <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 text-center w-full max-w-xs">
+              <div v-if="wops.email" class="break-words"><a :href="`mailto:${wops.email}`">{{ wops.email }}</a></div>
+              <div v-if="wops.phone" class="break-words"><a :href="`tel:${wops.phone}`">{{ wops.phone }}</a></div>
+              <div class="flex gap-3 justify-center mt-1 flex-wrap">
+                <a v-if="wops.linkedin" :href="normalizeLink(wops.linkedin)" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm break-words">LinkedIn</a>
+                <a v-if="wops.instagram" :href="normalizeLink(wops.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm break-words">Insta</a>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -110,15 +114,15 @@
         <div class="">
           <div
             id="adminsContainer"
-            class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4 place-items-center justify-center"
+            class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 mt-8 xl:mt-16"
           >
-            <div
+            <article
               v-for="g_l in group_leaders"
               :key="g_l.name"
-              class="w-72 flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent mx-auto"
+              class="team-card group cursor-pointer border border-gray-200 p-6 sm:p-8 transition-colors duration-300 hover:border-transparent hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
             >
               <img
-                class="object-cover w-32 h-32 rounded-full"
+                class="profile-photo shadow-md"
                 :src="prependBackendLink(g_l.image)"
                 :style="imageStyleFor(g_l)"
                 alt="avatar"
@@ -140,58 +144,7 @@
                   <a v-if="g_l.instagram" :href="normalizeLink(g_l.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm">Insta</a>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- webops team --> 
-    <section class=" mt-10 mb-20 bg-white dark:bg-black place-items-center justify-center">
-      <div class="container px-6 py-10 mx-auto place-items-center justify-center">
-        <h1
-          class="text-2xl font-semibold text-center text-gray-800 capitalize lg:text-3xl dark:text-white"
-        >
-          Sundarbans WebOps Team
-        </h1>
-
-        <p
-          class="max-w-2xl mx-auto my-6 text-center text-gray-500 dark:text-gray-300"
-        >
-          Meet the Team Behind Your Online Experience.
-        </p>
-
-        <div
-          class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4 place-items-center justify-center"
-        >
-          <div
-            v-for="wops in webops"
-            :key="wops.name"
-            class="overflow-hidden w-72 flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent mx-auto place-items-center justify-center"
-          >
-            <img
-              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
-                :src="prependBackendLink(wops.image)"
-                :style="imageStyleFor(wops)"
-              alt="avatar"
-            >
-
-            <h1 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white group-hover:text-white text-center">
-              {{ wops.name }}
-            </h1>
-
-            <p class="mt-2 text-gray-500 capitalize dark:text-gray-300 group-hover:text-gray-300 text-center">
-              {{ wops.role }}
-            </p>
-
-            <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 text-center w-full max-w-xs">
-              <div v-if="wops.email" class="break-words"><a :href="`mailto:${wops.email}`">{{ wops.email }}</a></div>
-              <div v-if="wops.phone" class="break-words"><a :href="`tel:${wops.phone}`">{{ wops.phone }}</a></div>
-              <div class="flex gap-3 justify-center mt-1 flex-wrap">
-                <a v-if="wops.linkedin" :href="normalizeLink(wops.linkedin)" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 text-sm break-words">LinkedIn</a>
-                <a v-if="wops.instagram" :href="normalizeLink(wops.instagram)" target="_blank" rel="noopener" class="text-pink-600 dark:text-pink-400 text-sm break-words">Insta</a>
-              </div>
-            </div>
+            </article>
           </div>
         </div>
       </div>
@@ -215,16 +168,14 @@
           Meet the Team Behind All the Social Media Posts, Event Posters Design.
         </p>
 
-        <div
-          class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4 justify-center"
-        >
-          <div
+        <div class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 mt-8 xl:mt-16">
+          <article
             v-for="gr in graphics"
             :key="gr.name"
-            class="w-72 flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent mx-auto"
+            class="team-card group cursor-pointer border border-gray-200 p-6 sm:p-8 transition-colors duration-300 hover:border-transparent hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
           >
             <img
-              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
+              class="profile-photo ring-4 ring-gray-300 shadow-md"
                 :src="prependBackendLink(gr.image)"
                 :style="imageStyleFor(gr)"
               alt="avatar"
@@ -235,7 +186,7 @@
             >
               {{ gr.name }}
             </h1>
-          </div>
+          </article>
         </div>
       </div>
     </section>
@@ -254,16 +205,14 @@
           Meet the Team Behind All the Sundarbans PR Activities.
         </p>
 
-        <div
-          class="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 xl:grid-cols-4 justify-center"
-        >
-          <div
+        <div class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 mt-8 xl:mt-16">
+          <article
             v-for="pr in prteam"
             :key="pr.name"
-            class="w-72 flex flex-col items-center p-8 transition-colors duration-300 transform border cursor-pointer rounded-xl hover:border-transparent group hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent mx-auto"
+            class="team-card group cursor-pointer border border-gray-200 p-6 sm:p-8 transition-colors duration-300 hover:border-transparent hover:bg-blue-600 dark:border-gray-700 dark:hover:border-transparent"
           >
             <img
-              class="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300"
+              class="profile-photo ring-4 ring-gray-300 shadow-md"
                 :src="prependBackendLink(pr.image)"
                 :style="imageStyleFor(pr)"
               alt="avatar"
@@ -274,7 +223,7 @@
             >
               {{ pr.name }}
             </h1>
-          </div>
+          </article>
         </div>
       </div>
     </section>
@@ -384,5 +333,67 @@ export default {
 </script>
 
 <style>
-/* Keep original styling */
+.profile-card-image {
+  width: 100%;
+  max-width: 18rem;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 1.5rem;
+  box-shadow: 0 18px 40px -18px rgba(30, 64, 175, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card-image:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -25px rgba(30, 64, 175, 0.65);
+}
+
+.profile-photo {
+  width: 8rem;
+  height: 8rem;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 1.5rem;
+  background: #f8fafc;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.group:hover .profile-photo {
+  transform: scale(1.03);
+  box-shadow: 0 20px 50px -20px rgba(30, 64, 175, 0.55);
+}
+
+@media (max-width: 640px) {
+  .profile-photo {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+}
+
+@supports not (aspect-ratio: 1) {
+  .profile-card-image {
+    height: 18rem;
+  }
+}
+
+.team-grid {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  justify-content: center;
+  justify-items: center;
+  align-items: stretch;
+}
+
+.team-card {
+  width: 100%;
+  max-width: 18rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 </style>
