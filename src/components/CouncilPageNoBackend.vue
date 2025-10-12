@@ -286,7 +286,7 @@ export default {
         }
       ],
       group_leaders: [
-        { uid: 5, name: 'Rushabh Kapse', role: 'Mumbai RC', email: '23f3002876@ds.study.iitm.ac.in', phone: '9158107516', location: 'Mumbai', linkedin: '', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
+        { uid: 5, name: 'Rushabh Kapse', role: 'Mumbai RC', email: '23f3002876@ds.study.iitm.ac.in', phone: '9158107516', location: 'Mumbai', linkedin: '', instagram: '', image: require('@/assets/ppl/rushabh.jpg') },
         { uid: 6, name: 'Chandan Shaw', role: 'Kolkata RC', email: '24f3100195@es.study.iitm.ac.in', phone: '7003925642', location: 'Kolkata', linkedin: '', instagram: '', image: require('@/assets/ppl/chandan.webp') },
         { uid: 7, name: 'Kartik Singh', role: 'Lucknow RC', email: '24f3001853@ds.study.iitm.ac.in', phone: '8810899044', location: 'Lucknow', linkedin: '', instagram: '', image: require('@/assets/ppl/kartik.webp') },
         { uid: 8, name: 'Aakash Rawal', role: 'Chandigrah RC', email: '24f2003705@ds.study.iitm.ac.in', phone: '8114417334', location: 'Chandigrah', linkedin: 'Aakash_Linkdin', instagram: 'Aakash_Insta', image: require('@/assets/ppl/aakash.webp') },
@@ -297,7 +297,7 @@ export default {
       ],
       // webops team contains Anshi and Shoaib
       webops: [
-        { uid: 3, name: 'Anshi Jain', role: 'Web ops team head', email: 'sundarbans-webad@ds.study.iitm.ac.in', phone: '8707643407', location: 'Lucknow', linkedin: 'https://www.linkedin.com/in/anshi-jain-5853361a8/', instagram: '', image: 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png' },
+        { uid: 3, name: 'Anshi Jain', role: 'Web ops team head', email: 'sundarbans-webad@ds.study.iitm.ac.in', phone: '8707643407', location: 'Lucknow', linkedin: 'https://www.linkedin.com/in/anshi-jain-5853361a8/', instagram: '', image: require('@/assets/ppl/anshi.jpg') },
         { uid: 4, name: 'SHOAIB SADIQ SALEHMOHAMED', role: 'Web ops team DEP head', email: 'sundarbans-webad@ds.study.iitm.ac.in', phone: '9502264416', location: 'Hyderabad', linkedin: 'https://www.linkedin.com/in/shoaib-ssm/', instagram: '', image: require('@/assets/ppl/shoaib.jpeg') }
       ],
       graphics: [],
