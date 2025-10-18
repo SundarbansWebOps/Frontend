@@ -12,18 +12,20 @@ Welcome to the frontend repository of the Sundarbans House IITM's web applicatio
 - [Reporting Issues](#reporting-issues)
 - [License](#license)
 
-
 ## Getting Started
 
 ### Step 1: Sign In
+
 Sign in with your official student gmail account ending with 'iitm.ac.in'.
 
 ### Step 2: Explore Your Group
+
 Click on your profile name to find your group number, along with the group leaders' contact information and the WhatsApp group invite link for your group.
 
 ![Sundarbans House](https://github.com/SundarbansWebOps/Frontend/blob/main/src/assets/docs/image2.png)
 
 ### Step 3: Explore
+
 Relax and explore other sections!
 
 ## Usage
@@ -37,8 +39,39 @@ Relax and explore other sections!
 
 The Current TechStack is:
 
-[![Stack](https://skillicons.dev/icons?i=vue,js,tailwind,django)](https://skillicons.dev)
+[![Stack - VueJS, Javascript, TailwindCSS, Django](https://skillicons.dev/icons?i=vue,js,tailwind,django)](https://skillicons.dev)
 
+## 🛠️ Setup
+
+### 1. Install Dependencies
+
+Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.  
+Then, install the project dependencies:
+
+```bash
+npm install
+```
+
+### 2. Available Scripts
+
+The following npm scripts are available:
+
+| Command         | Description                                      |
+| --------------- | ------------------------------------------------ |
+| `npm run serve` | Compiles and hot-reloads the app for development |
+| `npm run build` | Compiles and minifies the app for production     |
+| `npm run test`  | Runs unit tests                                  |
+| `npm run lint`  | Lints and fixes files                            |
+
+### 3. Run the Development Server
+
+Start the local development server:
+
+```bash
+npm run serve
+```
+
+By default, the app will be available at [http://localhost:8080](http://localhost:8080)
 
 You can contribute to this project by:
 
@@ -60,6 +93,6 @@ You can report any issues that you find within the app by 'Creating a New Issue'
 
 This is an open-source project licensed under the [GPL-3.0 license](https://github.com//blob/main/LICENSE).
 
-## Don't Forget to Star ⭐ the Repository! 
+## Don't Forget to Star ⭐ the Repository!
 
 And feel free to contribute and make our web application even more amazing!!!
