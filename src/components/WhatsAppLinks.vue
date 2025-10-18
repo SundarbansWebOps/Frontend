@@ -74,7 +74,10 @@ export default {
         { id: 'lko', name: 'Lucknow Region', description: 'Lucknow regional sign-up', form: 'https://forms.gle/poriXvnwuENkmiKF8', coordinator: 'Kartik Singh', phone: '+918810899044' },
         { id: 'kol', name: 'Kolkata Region', description: 'Kolkata regional sign-up', form: 'https://forms.gle/z6qnTg58cvjjNtxP6', coordinator: 'Chanan Shaw', phone: '+917003925642' },
         { id: 'pat', name: 'Patna Region', description: 'Patna regional sign-up', form: 'https://forms.gle/jK7W2USVNEj9ifi17', coordinator: 'Nivash Kumar', phone: '+919631364617' },
-        { id: 'del', name: 'Delhi Region', description: 'Delhi regional sign-up', form: 'https://forms.gle/2gagK33ZhBzsqGz67', coordinator: 'Divy Prakash & Laksh Wadhawan', phone: '+919935539521 & +918920210731' }
+        { id: 'del', name: 'Delhi Region', description: 'Delhi regional sign-up', form: 'https://forms.gle/2gagK33ZhBzsqGz67', coordinator: 'Divy Prakash & Laksh Wadhawan', phone: '+919935539521 & +918920210731' },
+        { id: 'mum', name: 'Mumbai Region', description: 'Mumbai regional sign-up', form: 'https://shorturl.at/EfRDc', coordinator: 'Rushabh Kapse', phone: '+919158107516', email: '23f3002876@ds.study.iitm.ac.in' },
+        { id: 'che', name: 'Chennai Region', description: 'Chennai regional sign-up', form: 'https://forms.gle/uYzCs5WwngKm4zHH8', coordinator: '', phone: '' },
+        { id: 'blr', name: 'Bengaluru Region', description: 'Bengaluru regional sign-up', form: 'https://forms.gle/G2qfFnE4hRPj682B9', coordinator: '', phone: '' }
       ]
     };
   },
