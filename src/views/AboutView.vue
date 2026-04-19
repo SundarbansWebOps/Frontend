@@ -412,12 +412,21 @@
                 </div>
                 <!-- Avatar + Name row -->
                 <div style="display: flex; align-items: center; gap: 0.85rem">
-                  <img
-                    :src="member.image ? member.image : ''"
-                    :alt="member.name"
-                    style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid rgba(212,160,23,0.3); flex-shrink: 0; object-fit: cover; background: #2a2006;"
-                    @error="(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=2a2006&color=d4a017&size=80&bold=true&font-size=0.4`"
-                  />
+                  <div
+                    style="
+                      width: 52px; height: 52px; border-radius: 50%;
+                      border: 2px solid rgba(212,160,23,0.4);
+                      flex-shrink: 0;
+                      background: linear-gradient(135deg, #2a2006, #3d2e08);
+                      display: flex; align-items: center; justify-content: center;
+                      font-family: Cinzel, serif;
+                      font-weight: 700;
+                      font-size: 0.85rem;
+                      color: #d4a017;
+                      letter-spacing: 0.05em;
+                    ">
+                    {{ member.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }}
+                  </div>
                   <div
                     style="font-family: Cinzel, serif; font-weight: 700; font-size: 1rem; color: var(--text); line-height: 1.3;">
                     {{ member.name }}
@@ -425,6 +434,7 @@
                 </div>
                 <!-- Social icon buttons -->
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+                  <!-- Email: only show if available -->
                   <a
                     v-if="member.email"
                     :href="`mailto:${member.email}`"
@@ -444,6 +454,8 @@
                       <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                     </svg>
                   </a>
+
+                  <!-- LinkedIn: always shown, dimmed + tooltip if no data -->
                   <a
                     v-if="member.linkedin"
                     :href="member.linkedin"
@@ -464,6 +476,32 @@
                       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
                     </svg>
                   </a>
+                  <span
+                    v-else
+                    title="LinkedIn not available"
+                    style="
+                      display: flex; align-items: center; justify-content: center;
+                      width: 36px; height: 36px; border-radius: 8px;
+                      background: rgba(255,255,255,0.03);
+                      border: 1px solid rgba(255,255,255,0.08);
+                      color: rgba(255,255,255,0.2);
+                      cursor: default;
+                      position: relative;
+                    "
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
+                    </svg>
+                    <span style="
+                      position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+                      background: #1a1500; border: 1px solid rgba(212,160,23,0.2);
+                      color: rgba(255,255,255,0.5); font-size: 0.65rem; white-space: nowrap;
+                      padding: 0.2rem 0.5rem; border-radius: 4px; pointer-events: none;
+                      opacity: 0; transition: opacity 0.2s;
+                    " class="sc-tip">LinkedIn</span>
+                  </span>
+
+                  <!-- Instagram: always shown, dimmed + tooltip if no data -->
                   <a
                     v-if="member.instagram"
                     :href="`https://instagram.com/${member.instagram.replace('@','')}`"
@@ -484,6 +522,30 @@
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
                     </svg>
                   </a>
+                  <span
+                    v-else
+                    title="Instagram not available"
+                    style="
+                      display: flex; align-items: center; justify-content: center;
+                      width: 36px; height: 36px; border-radius: 8px;
+                      background: rgba(255,255,255,0.03);
+                      border: 1px solid rgba(255,255,255,0.08);
+                      color: rgba(255,255,255,0.2);
+                      cursor: default;
+                      position: relative;
+                    "
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                    <span style="
+                      position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+                      background: #1a1500; border: 1px solid rgba(212,160,23,0.2);
+                      color: rgba(255,255,255,0.5); font-size: 0.65rem; white-space: nowrap;
+                      padding: 0.2rem 0.5rem; border-radius: 4px; pointer-events: none;
+                      opacity: 0; transition: opacity 0.2s;
+                    " class="sc-tip">Instagram</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -648,7 +710,6 @@ const leadership = [
       {
         role: "Web Admin",
         name: "Samar Ahmad",
-        image: new URL('../assets/teams/Samar.jpeg', import.meta.url).href,
         email: "23f3001032@ds.study.iitm.ac.in",
         linkedin: "https://www.linkedin.com/in/samarahmad10",
         instagram: "@thesamarsoldier",
@@ -656,7 +717,6 @@ const leadership = [
       {
         role: "Secretary",
         name: "Mannu Yadav",
-        image: new URL('../assets/teams/mannu.jpg', import.meta.url).href,
         email: "23f3001972@ds.study.iitm.ac.in",
         linkedin: "https://www.linkedin.com/in/mannuyadav",
         instagram: "@mannu",
@@ -664,10 +724,9 @@ const leadership = [
       {
         role: "Deputy Secretary",
         name: "Aditya Vaidhya",
-        image: new URL('../assets/teams/aditya.jpeg', import.meta.url).href,
         email: "23f2000809@ds.study.iitm.ac.in",
         linkedin: "http://linkedin.com/in/aditya-vaidhya",
-        instagram: "@thesamarsoldier",
+        instagram: "@aditya",
       },
     ],
   },
@@ -677,26 +736,17 @@ const leadership = [
       {
         role: "Web Admin",
         name: "Jivraj",
-        image: new URL('../assets/teams/Jivraj.jpeg', import.meta.url).href,
         email: "23f3001032@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@thesamarsoldier",
       },
       {
         role: "Secretary",
         name: "Shreyansh Mall",
-        image: new URL('../assets/teams/Shreyansh.jpeg', import.meta.url).href,
         email: "23f1002638@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@thesamarsoldier",
       },
       {
         role: "Deputy Secretary",
         name: "Divya Chinmay",
-        image: new URL('../assets/teams/Divya.jpeg', import.meta.url).href,
         email: "23f1002974@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@thesamarsoldier",
       },
     ],
   },
@@ -706,27 +756,18 @@ const leadership = [
       {
         role: "Web Admin",
         name: "Ravi Kumawat",
-        image: new URL('../assets/teams/RaviKumawat.jpeg', import.meta.url).href,
         email: "21f1004119@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
         instagram: "@ravikumawat7716",
-        
       },
       {
         role: "Secretary",
         name: "Abhishek Ojha",
-        image: new URL('../assets/teams/Abhishek.jpeg', import.meta.url).href,
         email: "22f1001774@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@ravikumawat7716",
       },
       {
         role: "Deputy Secretary",
         name: "Ravi Kant",
-        image: new URL('../assets/teams/RaviKant.jpeg', import.meta.url).href,
         email: "21f3002792@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@ravikumawat7716",
       },
     ],
   },
@@ -736,18 +777,12 @@ const leadership = [
       {
         role: "Secretary",
         name: "Kunal Chaturvedi",
-        image: new URL('../assets/teams/Kunal.jpeg', import.meta.url).href,
         email: "21f1003533@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@ravikumawat7716",
       },
       {
         role: "Deputy Secretary",
         name: "Abhishek Ojha",
-        image: new URL('../assets/teams/Abhishek.jpeg', import.meta.url).href,
         email: "21f1003533@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@ravikumawat7716",
       },
     ],
   },
@@ -757,28 +792,25 @@ const leadership = [
       {
         role: "Web Admin",
         name: "Abhigyan Das",
-        image: new URL('../assets/teams/Abhigyan.jpeg', import.meta.url).href,
         email: "21f1003533@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@ravikumawat7716",
       },
       {
         role: "Secretary",
         name: "Anshuman",
-        image: new URL('../assets/teams/Anshuman.jpeg', import.meta.url).href,
         email: "21f1003533@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@ravikumawat7716",
       },
       {
         role: "Deputy Secretary",
         name: "Utkarsh Gaurav",
-        image: new URL('../assets/teams/Utkarsh.jpeg', import.meta.url).href,
         email: "21f1003533@ds.study.iitm.ac.in",
-        linkedin: "https://www.linkedin.com/in/samarahmad10",
-        instagram: "@ravikumawat7716",
       },
     ],
   },
 ];
 </script>
+<style scoped>
+/* Show tooltip on hover for dimmed social buttons */
+span:hover > .sc-tip {
+  opacity: 1 !important;
+}
+</style>
