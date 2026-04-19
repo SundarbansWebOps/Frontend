@@ -316,14 +316,7 @@
           </button>
         </div>
 
-        <div
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            max-width: 820px;
-            margin: 0 auto 3rem;
-          ">
+        <div class="db-scroll-box">
           <template v-if="filteredDoubts.length">
             <div class="db-card" v-for="d in filteredDoubts" :key="d.id">
               <span class="db-tag">{{ d.subject }}</span>
@@ -1456,6 +1449,29 @@ onMounted(async () => {
 .db-filter {
   padding: 0.4rem 1rem;
   font-size: 0.8rem;
+}
+
+.db-scroll-box {
+  max-width: 820px;
+  margin: 0 auto 3rem;
+  height: 560px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 160, 23, 0.3) transparent;
+}
+
+.db-scroll-box::-webkit-scrollbar {
+  width: 5px;
+}
+.db-scroll-box::-webkit-scrollbar-thumb {
+  background: rgba(212, 160, 23, 0.3);
+  border-radius: 99px;
 }
 
 .db-card {
