@@ -2,6 +2,14 @@
   <section class="section rs daily-notif-section">
     <div class="container">
 
+      <!-- Section Header -->
+      <div class="sec-hdr">
+        <div class="section-tag">What's Happening</div>
+        <h2 class="section-title-xl">
+          Daily <span class="tg">Updates</span>
+        </h2>
+      </div>
+
       <!-- Notification Card Rotator -->
       <div class="notif-stage" v-if="sorted.length">
 
@@ -197,7 +205,6 @@ function typeIcon(type) {
   background: rgba(13, 11, 8, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 2.5rem 0;
 }
 
 /* ─── Stage ────────────────────────────────────────────────── */
