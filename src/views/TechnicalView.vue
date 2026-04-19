@@ -21,18 +21,28 @@
 
         <div class="events-grid">
           <div v-for="event in upcomingEvents" :key="event.id" class="event-card">
-            <div class="event-date-badge">
-              <span class="event-day">{{ event.day }}</span>
-              <span class="event-month">{{ event.month }}</span>
+            <!-- Top image -->
+            <div class="event-img-wrap">
+              <img :src="event.image" :alt="event.title" class="event-img" />
             </div>
-            <div class="event-info">
+            <!-- Card body -->
+            <div class="event-body">
               <span class="event-type-tag">{{ event.type }}</span>
               <h3 class="event-title">{{ event.title }}</h3>
               <p class="event-desc">{{ event.description }}</p>
               <div class="event-meta">
+                <span>📅 {{ event.day }} {{ event.month }}</span>
                 <span>🕐 {{ event.time }}</span>
                 <span>📍 {{ event.venue }}</span>
               </div>
+              <a
+                :href="event.registerLink || '#'"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="register-btn"
+              >
+                Register Now
+              </a>
             </div>
           </div>
         </div>
@@ -83,16 +93,13 @@
 
         <div class="team-grid">
           <div v-for="member in team" :key="member.name" class="team-card">
-            <!-- Photo fills card -->
             <div class="team-photo-wrap">
               <img :src="member.photo" :alt="member.name" class="team-photo" />
-              <!-- Name + city overlay at bottom of photo -->
               <div class="team-overlay">
                 <h4 class="team-name">{{ member.name }}</h4>
                 <span class="team-city">📍 {{ member.city }}</span>
               </div>
             </div>
-            <!-- Below photo -->
             <div class="team-footer">
               <p class="team-course">{{ member.role }} · {{ member.track }}</p>
               <div class="team-socials">
@@ -138,6 +145,8 @@ const upcomingEvents = [
     month: "APR",
     time: "9:00 AM",
     venue: "Main Hall, Block A",
+    image: imgVibeCoding, // Replace with actual hackathon image when available
+    registerLink: "#",   // Replace with actual registration link
   },
   {
     id: 2,
@@ -149,6 +158,8 @@ const upcomingEvents = [
     month: "APR",
     time: "6:00 PM",
     venue: "Room 204, Tech Block",
+    image: imgStatAnalysis, // Replace with actual event image when available
+    registerLink: "#",      // Replace with actual registration link
   },
   {
     id: 3,
@@ -160,6 +171,8 @@ const upcomingEvents = [
     month: "MAY",
     time: "3:00 PM",
     venue: "Computer Lab 3, Block B",
+    image: imgCodingApt, // Replace with actual event image when available
+    registerLink: "#",   // Replace with actual registration link
   },
 ];
 
@@ -171,7 +184,7 @@ const pastEvents = [
     description: "Introduced members to modern software development by building a SaaS product from scratch with AI-assisted development.",
     date: "11 Nov 2025 | 9:30 PM",
     attendees: "50+",
-    image: imgVibeCoding
+    image: imgVibeCoding,
   },
   {
     id: 2,
@@ -180,7 +193,7 @@ const pastEvents = [
     description: "A logic-based challenge testing analytical thinking, debugging, and problem-solving through code snippets and output prediction.",
     date: "16 Nov 2025 | 8:30 PM",
     attendees: "50+",
-    image: imgCodingApt
+    image: imgCodingApt,
   },
   {
     id: 3,
@@ -189,7 +202,7 @@ const pastEvents = [
     description: "An inspiring session where members shared their personal experiences, challenges, and tech learning journeys in a supportive space.",
     date: "2 Dec 2025 | 8:00 PM",
     attendees: "50+",
-    image: imgOpenMicTech
+    image: imgOpenMicTech,
   },
   {
     id: 4,
@@ -198,7 +211,7 @@ const pastEvents = [
     description: "Participants worked with real-world survey data, using analytical tools to study trends, create charts, and draw logical conclusions.",
     date: "5-7 Dec 2025 | Online",
     attendees: "50+",
-    image: imgStatAnalysis
+    image: imgStatAnalysis,
   },
   {
     id: 5,
@@ -207,17 +220,17 @@ const pastEvents = [
     description: "An informative workshop introducing the basics of the dark web, the Tor network, cybersecurity risks, and ethical concerns.",
     date: "24 Mar 2025 | 7:00 PM",
     attendees: "50+",
-    image: imgDarkWeb
+    image: imgDarkWeb,
   },
   {
     id: 6,
     title: "Ubuntu Mastery Quiz",
     type: "Quiz",
-    description: "A competitive technical assessment conducted after the learning series to evaluate participants’ understanding of Linux fundamentals.",
+    description: "A competitive technical assessment conducted after the learning series to evaluate participants' understanding of Linux fundamentals.",
     date: "5 Mar 2026 | 8:30 PM",
     attendees: "50+",
-    image: imgUbuntuQuiz
-  }
+    image: imgUbuntuQuiz,
+  },
 ];
 
 const team = [
@@ -226,7 +239,6 @@ const team = [
     role: "Community Lead",
     track: "Full Stack",
     city: "Delhi",
-    bio: "Final year CS. Obsessed with distributed systems and bad coffee.",
     photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80&auto=format&fit=crop&fit=crop&crop=face",
     email: "mailto:arjun@sundarbans.in",
     linkedin: "#",
@@ -237,7 +249,6 @@ const team = [
     role: "AI/ML Head",
     track: "Machine Learning",
     city: "Bengaluru",
-    bio: "Building neural nets and mentoring anyone willing to learn PyTorch.",
     photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&auto=format&fit=crop&crop=face",
     email: "mailto:priya@sundarbans.in",
     linkedin: "#",
@@ -248,7 +259,6 @@ const team = [
     role: "Events Coordinator",
     track: "DevOps",
     city: "Mumbai",
-    bio: "If there's a hackathon happening, Rohit planned it.",
     photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80&auto=format&fit=crop&crop=face",
     email: "mailto:rohit@sundarbans.in",
     linkedin: "#",
@@ -259,7 +269,6 @@ const team = [
     role: "Dev Track Lead",
     track: "Frontend",
     city: "Chandigarh",
-    bio: "Full-stack developer. React by day, Rust by night.",
     photo: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=80&auto=format&fit=crop&crop=face",
     email: "mailto:sneha@sundarbans.in",
     linkedin: "#",
@@ -269,7 +278,7 @@ const team = [
 </script>
 
 <style scoped>
-/* Hacker theme accent colors: #10b981 (emerald) and #0ea5e9 (sky blue) */
+/* ── Hacker theme accent colors: #10b981 (emerald) / #0ea5e9 (sky blue) ── */
 
 .section-header {
   margin-bottom: 2.5rem;
@@ -306,85 +315,59 @@ const team = [
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.05);
 }
 
-/* Upcoming Events - Hacker Vibe */
+/* ─── Upcoming Events — Image 1 style (matches cultural/esports pages) ─── */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
 }
 
 .event-card {
-  position: relative;
-  display: flex;
-  gap: 1.2rem;
-  align-items: flex-start;
   background: rgba(11, 17, 15, 0.8);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 8px;
-  padding: 1.5rem;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.event-card::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, #10b981, #0ea5e9);
-  box-shadow: 0 0 8px #10b981;
-  opacity: 0.5;
-  transition: width 0.3s ease, opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
 }
 
 .event-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
   border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15), inset 0 0 15px rgba(14, 165, 233, 0.05);
-  background: rgba(15, 22, 18, 0.9);
+  box-shadow: 0 20px 50px rgba(16, 185, 129, 0.12), inset 0 0 15px rgba(14, 165, 233, 0.05);
 }
 
-.event-card:hover::before {
-  width: 5px;
-  opacity: 1;
+/* Image on top */
+.event-img-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.event-date-badge {
+.event-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.event-card:hover .event-img {
+  transform: scale(1.05);
+}
+
+/* Card body below image */
+.event-body {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 60px;
-  border-radius: 6px;
-  padding: 0.6rem;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34d399;
-  line-height: 1;
-  flex-shrink: 0;
-  text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+  flex: 1;
 }
-
-.event-day {
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-}
-
-.event-month {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-top: 4px;
-}
-
-.event-info { flex: 1; }
 
 .event-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
   color: #e0e0e0;
@@ -395,21 +378,47 @@ const team = [
 .event-desc {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.65);
-  margin: 0 0 0.8rem;
   line-height: 1.6;
-  font-family: inherit;
+  margin: 0 0 1.1rem;
+  flex: 1;
 }
 
+/* Date / time / venue row */
 .event-meta {
   display: flex;
-  gap: 1.2rem;
-  font-size: 0.85rem;
-  color: rgba(16, 185, 129, 0.8);
   flex-wrap: wrap;
+  gap: 0.8rem 1.2rem;
+  font-size: 0.82rem;
+  color: rgba(16, 185, 129, 0.85);
   font-weight: 600;
+  font-family: 'Courier New', Courier, monospace;
+  margin-bottom: 1.3rem;
 }
 
-/* Past Events */
+/* Register Now button — amber, consistent with site-wide CTA */
+.register-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.4rem;
+  border-radius: 6px;
+  background: #f59e0b;
+  color: #0a0f1e;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.2s;
+  width: fit-content;
+}
+
+.register-btn:hover {
+  background: #fbbf24;
+  transform: translateY(-1px);
+}
+
+/* ─── Past Events ─── */
 .past-events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -508,7 +517,7 @@ const team = [
   letter-spacing: 0.05em;
 }
 
-.past-event-body { 
+.past-event-body {
   padding: 1.5rem;
   flex: 1;
   display: flex;
@@ -536,7 +545,6 @@ const team = [
   line-height: 1.6;
   margin: 0 0 1rem;
   flex: 1;
-  font-family: inherit;
 }
 
 .past-event-stat {
@@ -548,7 +556,7 @@ const team = [
   border-top: 1px dashed rgba(16, 185, 129, 0.2);
 }
 
-/* Team — photo card style */
+/* ─── Team ─── */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
