@@ -21,18 +21,28 @@
 
         <div class="events-grid">
           <div v-for="event in upcomingEvents" :key="event.id" class="event-card">
-            <div class="event-date-badge">
-              <span class="event-day">{{ event.day }}</span>
-              <span class="event-month">{{ event.month }}</span>
+            <!-- Top image -->
+            <div class="event-img-wrap">
+              <img :src="event.image" :alt="event.title" class="event-img" />
             </div>
-            <div class="event-info">
+            <!-- Card body -->
+            <div class="event-body">
               <span class="event-type-tag">{{ event.type }}</span>
               <h3 class="event-title">{{ event.title }}</h3>
               <p class="event-desc">{{ event.description }}</p>
               <div class="event-meta">
+                <span>📅 {{ event.day }} {{ event.month }}</span>
                 <span>🕐 {{ event.time }}</span>
                 <span>📍 {{ event.venue }}</span>
               </div>
+              <a
+                :href="event.registerLink || '#'"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="register-btn"
+              >
+                Register Now
+              </a>
             </div>
           </div>
         </div>
@@ -53,9 +63,7 @@
         <div class="past-events-grid">
           <div v-for="event in pastEvents" :key="event.id" class="past-event-card">
             <div class="past-event-img-wrap">
-              <!-- Blurred background to fill space with mood -->
               <img :src="event.image" class="past-event-img-blur" aria-hidden="true" />
-              <!-- Sharp foreground image scaled to fit -->
               <img :src="event.image" :alt="event.title" class="past-event-img" />
               <div class="past-event-overlay">
                 <span class="past-event-date">{{ event.date }}</span>
@@ -123,11 +131,15 @@ import imgDance from "../assets/Community Events/Cultural/Dance Workshop.jpeg";
 import img3AmThoughts from "../assets/Community Events/Cultural/3 AM thoughts.jpeg";
 import imgOpenMic from "../assets/Community Events/Cultural/Open Mic.jpeg";
 
+// Upcoming event placeholder images — replace with real ones when available
+import imgUtsav from "../assets/Community Events/Cultural/Shiv Shakti.jpeg";
+import imgPhotoWalk from "../assets/Community Events/Cultural/Photography Workshop.jpeg";
+import imgOpenMicUpcoming from "../assets/Community Events/Cultural/Open Mic.jpeg";
+
 // Team Photos
 import imgLiza from "../assets/teams/Liza.jpg";
 import imgMegha from "../assets/teams/Megha.jpg";
 import imgKaviya from "../assets/teams/R.Kaviya Kaviarasi.jpg";
-
 
 useScrollReveal();
 
@@ -142,6 +154,8 @@ const upcomingEvents = [
     month: "APR",
     time: "7:00 PM",
     venue: "Open Amphitheatre",
+    image: imgUtsav,
+    registerLink: "#", // Replace with actual registration link
   },
   {
     id: 2,
@@ -153,6 +167,8 @@ const upcomingEvents = [
     month: "APR",
     time: "6:30 AM",
     venue: "Main Gate, Campus",
+    image: imgPhotoWalk,
+    registerLink: "#", // Replace with actual registration link
   },
   {
     id: 3,
@@ -164,6 +180,8 @@ const upcomingEvents = [
     month: "MAY",
     time: "6:00 PM",
     venue: "Courtyard, Block D",
+    image: imgOpenMicUpcoming,
+    registerLink: "#", // Replace with actual registration link
   },
 ];
 
@@ -250,7 +268,7 @@ const team = [
 </script>
 
 <style scoped>
-/* Accent color: #f59e0b (amber) */
+/* ─── Accent color: #f59e0b (amber) ─── */
 
 .section-header {
   margin-bottom: 2.5rem;
@@ -274,117 +292,118 @@ const team = [
   display: inline-flex;
   align-items: center;
   font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.3rem 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.9rem;
   border-radius: 999px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 0.8rem;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.1));
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1));
   color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
-/* Upcoming Events - Artistic Vibe */
+/* ─── Upcoming Events — Image 1 style ─── */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
 }
 
 .event-card {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  background: rgba(20, 15, 10, 0.4);
-  backdrop-filter: blur(12px);
+  background: rgba(20, 15, 10, 0.5);
   border: 1px solid rgba(245, 158, 11, 0.15);
-  border-radius: 24px;
-  padding: 2rem;
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  position: relative;
+  border-radius: 20px;
   overflow: hidden;
-}
-
-.event-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
 }
 
 .event-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(239, 68, 68, 0.3);
-  box-shadow: 0 15px 40px rgba(245, 158, 11, 0.1), 0 5px 15px rgba(239, 68, 68, 0.08);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(245, 158, 11, 0.12), 0 6px 16px rgba(239, 68, 68, 0.08);
+  border-color: rgba(245, 158, 11, 0.3);
 }
 
-.event-card:hover::before {
-  opacity: 1;
+/* Image on top */
+.event-img-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.event-date-badge {
+.event-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.event-card:hover .event-img {
+  transform: scale(1.05);
+}
+
+/* Card body below image */
+.event-body {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 65px;
-  border-radius: 16px;
-  padding: 0.8rem 0.6rem;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.15));
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  color: #fca5a5;
-  line-height: 1;
-  flex-shrink: 0;
-  box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.05);
+  flex: 1;
 }
-
-.event-day {
-  font-size: 1.8rem;
-  font-weight: 300;
-  color: #fcd34d;
-}
-
-.event-month {
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-top: 4px;
-}
-
-.event-info { flex: 1; }
 
 .event-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin: 0 0 0.5rem;
   color: #fff;
   letter-spacing: 0.01em;
 }
 
 .event-desc {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
   line-height: 1.6;
+  margin: 0 0 1.1rem;
+  flex: 1;
 }
 
+/* Date / time / venue row */
 .event-meta {
   display: flex;
-  gap: 1.2rem;
-  font-size: 0.85rem;
-  color: rgba(245, 158, 11, 0.8);
   flex-wrap: wrap;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  gap: 0.8rem 1.2rem;
+  font-size: 0.82rem;
+  color: rgba(245, 158, 11, 0.85);
+  font-weight: 500;
+  margin-bottom: 1.3rem;
 }
 
-/* Past Events - Gallery Vibe */
+/* Register Now button — matches Image 1 yellow button */
+.register-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  background: #f59e0b;
+  color: #0a0f1e;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.2s;
+  width: fit-content;
+}
+
+.register-btn:hover {
+  background: #fbbf24;
+  transform: translateY(-1px);
+}
+
+/* ─── Past Events — Gallery Vibe ─── */
 .past-events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -443,7 +462,7 @@ const team = [
 }
 
 .past-event-card:hover .past-event-img {
-  transform: scale(1.05); /* cinematic zoom */
+  transform: scale(1.05);
 }
 
 .past-event-overlay {
@@ -465,7 +484,7 @@ const team = [
   border-radius: 20px;
 }
 
-.past-event-body { 
+.past-event-body {
   padding: 1.8rem;
   flex: 1;
   display: flex;
@@ -496,7 +515,7 @@ const team = [
   font-weight: 500;
 }
 
-/* Team — photo card style */
+/* ─── Team ─── */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
