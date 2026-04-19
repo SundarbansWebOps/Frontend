@@ -21,18 +21,28 @@
 
         <div class="events-grid">
           <div v-for="event in upcomingEvents" :key="event.id" class="event-card">
-            <div class="event-date-badge">
-              <span class="event-day">{{ event.day }}</span>
-              <span class="event-month">{{ event.month }}</span>
+            <!-- Top image -->
+            <div class="event-img-wrap">
+              <img :src="event.image" :alt="event.title" class="event-img" />
             </div>
-            <div class="event-info">
+            <!-- Card body -->
+            <div class="event-body">
               <span class="event-type-tag">{{ event.type }}</span>
               <h3 class="event-title">{{ event.title }}</h3>
               <p class="event-desc">{{ event.description }}</p>
               <div class="event-meta">
+                <span>📅 {{ event.day }} {{ event.month }}</span>
                 <span>🕐 {{ event.time }}</span>
                 <span>📍 {{ event.venue }}</span>
               </div>
+              <a
+                :href="event.registerLink || '#'"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="register-btn"
+              >
+                Register Now
+              </a>
             </div>
           </div>
         </div>
@@ -142,6 +152,8 @@ const upcomingEvents = [
     month: "APR",
     time: "4:00 PM",
     venue: "Gaming Lab, Block C",
+    image: imgBgmiTourn, // Replace with actual Valorant event image when available
+    registerLink: "#",   // Replace with actual registration link
   },
   {
     id: 2,
@@ -153,6 +165,8 @@ const upcomingEvents = [
     month: "APR",
     time: "8:00 PM",
     venue: "Common Room, Floor 2",
+    image: imgChessShowdown, // Replace with actual Chess event image when available
+    registerLink: "#",       // Replace with actual registration link
   },
   {
     id: 3,
@@ -164,6 +178,8 @@ const upcomingEvents = [
     month: "MAY",
     time: "5:00 PM",
     venue: "Gaming Lab, Block C",
+    image: imgBgmiShowdown, // Replace with actual BGMI scrimmage image when available
+    registerLink: "#",      // Replace with actual registration link
   },
 ];
 
@@ -217,7 +233,7 @@ const pastEvents = [
     id: 6,
     title: "Sports Quiz Showdown",
     type: "Quiz",
-    description: "The Sports Quiz Showdown was a fun and energetic event that tested participants’ knowledge across various sports, players, records, and iconic moments. Members competed in a lively quiz environment filled with excitement, learning, and friendly banter. The event successfully blended entertainment with knowledge and brought out the competitive spirit of sports lovers.",
+    description: "The Sports Quiz Showdown was a fun and energetic event that tested participants' knowledge across various sports, players, records, and iconic moments. Members competed in a lively quiz environment filled with excitement, learning, and friendly banter. The event successfully blended entertainment with knowledge and brought out the competitive spirit of sports lovers.",
     date: "12 Dec 2025 | 7:00 PM",
     attendees: "50+",
     image: imgSportsQuiz,
@@ -262,7 +278,7 @@ const pastEvents = [
     id: 11,
     title: "Open Mic – Feedback Session",
     type: "Feedback Session",
-    description: "The Open Mic Feedback Session was a meaningful community interaction where members openly shared their experiences, suggestions, and ideas for future events. It served as a platform to understand participation challenges, gather valuable insights, and improve future planning. The session reflected Sundarbans House’s commitment to inclusivity, transparency, and continuous growth as a student community.",
+    description: "The Open Mic Feedback Session was a meaningful community interaction where members openly shared their experiences, suggestions, and ideas for future events. It served as a platform to understand participation challenges, gather valuable insights, and improve future planning. The session reflected Sundarbans House's commitment to inclusivity, transparency, and continuous growth as a student community.",
     date: "8:30 PM onwards",
     attendees: "50+",
     image: imgOpenMic,
@@ -349,84 +365,58 @@ const team = [
   box-shadow: 0 0 10px rgba(220, 38, 38, 0.05);
 }
 
-/* Upcoming Events */
+/* ─── Upcoming Events — Image 1 style (matches cultural page) ─── */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
 }
 
 .event-card {
-  position: relative;
-  display: flex;
-  gap: 1.2rem;
-  align-items: flex-start;
   background: rgba(15, 10, 10, 0.85);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(220, 38, 38, 0.15);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 20px;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.event-card::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, #DC2626, #F97316);
-  opacity: 0.5;
-  transition: width 0.3s ease, opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
 }
 
 .event-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(220, 38, 38, 0.45);
-  box-shadow:
-    0 10px 30px rgba(220, 38, 38, 0.12),
-    0 0 40px rgba(220, 38, 38, 0.06);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(220, 38, 38, 0.12), 0 6px 16px rgba(249, 115, 22, 0.08);
+  border-color: rgba(220, 38, 38, 0.35);
 }
 
-.event-card:hover::before {
-  width: 6px;
-  opacity: 1;
-  box-shadow: 0 0 15px #DC2626;
+/* Image on top */
+.event-img-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.event-date-badge {
+.event-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.event-card:hover .event-img {
+  transform: scale(1.05);
+}
+
+/* Card body below image */
+.event-body {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 54px;
-  border-radius: 8px;
-  padding: 0.6rem;
-  background: rgba(220, 38, 38, 0.15);
-  border: 1px solid rgba(220, 38, 38, 0.30);
-  color: #EF4444;
-  line-height: 1;
-  flex-shrink: 0;
-  text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+  flex: 1;
 }
-
-.event-day {
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-
-.event-month {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 3px;
-}
-
-.event-info { flex: 1; }
 
 .event-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
   margin: 0 0 0.5rem;
   color: #fff;
@@ -434,23 +424,49 @@ const team = [
 }
 
 .event-desc {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.65);
-  margin: 0 0 0.8rem;
   line-height: 1.6;
+  margin: 0 0 1.1rem;
+  flex: 1;
 }
 
+/* Date / time / venue row */
 .event-meta {
   display: flex;
-  gap: 1.2rem;
-  font-size: 0.82rem;
-  color: rgba(220, 38, 38, 0.80);
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: 600;
   flex-wrap: wrap;
+  gap: 0.8rem 1.2rem;
+  font-size: 0.82rem;
+  color: rgba(220, 38, 38, 0.85);
+  font-weight: 600;
+  font-family: 'Courier New', Courier, monospace;
+  margin-bottom: 1.3rem;
 }
 
-/* Past Events */
+/* Register Now button — amber to stay consistent with site-wide CTA style */
+.register-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  background: #f59e0b;
+  color: #0a0f1e;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.2s;
+  width: fit-content;
+}
+
+.register-btn:hover {
+  background: #fbbf24;
+  transform: translateY(-1px);
+}
+
+/* ─── Past Events ─── */
 .past-events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -482,9 +498,7 @@ const team = [
 
 .past-event-card:hover {
   transform: translateY(-6px) scale(1.01);
-  box-shadow:
-    0 12px 32px rgba(220, 38, 38, 0.15),
-    0 0 20px rgba(249, 115, 22, 0.08);
+  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.15), 0 0 20px rgba(249, 115, 22, 0.08);
   border-color: rgba(220, 38, 38, 0.50);
 }
 
@@ -527,7 +541,6 @@ const team = [
 .past-event-overlay {
   position: absolute;
   bottom: 8px; right: 8px;
-  padding: 0;
   z-index: 2;
 }
 
@@ -582,7 +595,7 @@ const team = [
   border-top: 1px dashed rgba(220, 38, 38, 0.20);
 }
 
-/* Team — photo card style */
+/* ─── Team ─── */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -700,15 +713,7 @@ const team = [
   border-color: #DC2626;
 }
 
-/* ── GAMING EFFECTS ── */
-
-/* Scanning line — subtle CRT/HUD sweep */
-@keyframes scanLine {
-  0%   { top: -2px; }
-  100% { top: 100%; }
-}
-
-/* Pulsing border glow for first upcoming event */
+/* ── Pulsing border glow for first upcoming event ── */
 .event-card:first-child {
   animation: borderPulse 3s ease-in-out infinite;
 }
