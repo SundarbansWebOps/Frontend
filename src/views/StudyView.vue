@@ -70,26 +70,27 @@
 
             <!-- Level selected: subjects + resources -->
             <template v-else>
-              <!-- Subject strip -->
-              <div class="sc-subject-strip" id="scSubjectStrip">
-                <div class="sc-strip-header">
-                  <span class="sc-strip-label">{{ currentLevelLabel }} — Subjects</span>
-                  <button class="sc-back-btn" @click="resetLevel">&larr; Clear</button>
+              <div class="sc-panel-body">
+                <!-- Subject strip -->
+                <div class="sc-subject-strip" id="scSubjectStrip">
+                  <div class="sc-strip-header">
+                    <span class="sc-strip-label">{{ currentLevelLabel }} — Subjects</span>
+                    <button class="sc-back-btn" @click="resetLevel">&larr; Clear</button>
+                  </div>
+                  <div class="sc-badges-row" id="scSubjectList">
+                    <button
+                      v-for="subject in filteredSubjects"
+                      :key="subject.code"
+                      class="sc-subj-badge"
+                      :class="{ active: currentSubject?.code === subject.code }"
+                      @click="selectSubject(subject)">
+                      {{ subject.subject }}
+                    </button>
+                  </div>
                 </div>
-                <div class="sc-badges-row" id="scSubjectList">
-                  <button
-                    v-for="subject in filteredSubjects"
-                    :key="subject.code"
-                    class="sc-subj-badge"
-                    :class="{ active: currentSubject?.code === subject.code }"
-                    @click="selectSubject(subject)">
-                    {{ subject.subject }}
-                  </button>
-                </div>
-              </div>
 
-              <!-- Resource panel -->
-              <div class="sc-resource-panel" id="scPanel">
+                <!-- Resource panel -->
+                <div class="sc-resource-panel" id="scPanel">
                 <template v-if="currentSubject">
                   <div style="margin-bottom:0.25rem">
                     <div class="section-tag" style="margin-bottom:0.5rem">{{ currentSubject.code }}</div>
@@ -156,7 +157,8 @@
                   <div style="font-size:3rem">📖</div>
                   <p style="font-size:0.9rem">Select a subject above to view resources</p>
                 </div>
-              </div>
+              </div> <!-- /sc-resource-panel -->
+              </div> <!-- /sc-panel-body -->
             </template>
 
           </div>
@@ -1136,6 +1138,7 @@ onMounted(async () => {
 
 .sc-panel-search {
   margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .sc-panel-empty {
@@ -1152,24 +1155,31 @@ onMounted(async () => {
   color: var(--text3);
 }
 
-/* Subject strip: fixed, no scroll */
+/* Wrapper that holds strip + resource panel as one fixed box */
+.sc-panel-body {
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Subject strip: fixed top, no scroll */
 .sc-subject-strip {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
   padding: 1.25rem 1.5rem;
   flex-shrink: 0;
 }
 
-/* Resource panel: fixed height, scrollable */
+/* Resource panel: fills remaining height, scrollable */
 .sc-resource-panel {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0 0 16px 16px;
   padding: 1.5rem 2rem;
-  height: 420px;
+  flex: 1;
   overflow-y: auto;
-  border-top: none;
   scrollbar-width: thin;
   scrollbar-color: rgba(212, 160, 23, 0.3) transparent;
 }
