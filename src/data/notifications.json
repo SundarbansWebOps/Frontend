@@ -14,7 +14,8 @@
     "title": "Hackathon 2025 — Registrations Open",
     "message": "The Sundarbans House annual hackathon is here. Register before April 30th. Teams of 2–4 members.",
     "tag": "Event",
-    "link": "https://sundarbanshouse.in/events"
+    "link": "https://sundarbanshouse.in/events",
+    "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80&auto=format&fit=crop"
   },
   {
     "id": 3,
@@ -38,7 +39,8 @@
     "date": null,
     "title": "Community Meetup — Bangalore, May 10",
     "message": "In-person meetup for Bangalore members at Koramangala Social. RSVP by May 5th.",
-    "tag": "Meetup"
+    "tag": "Meetup",
+    "image": "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&q=80&auto=format&fit=crop"
   },
   {
     "id": 6,
