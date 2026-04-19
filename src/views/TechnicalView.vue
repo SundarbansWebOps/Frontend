@@ -80,8 +80,48 @@
       </div>
     </section>
 
-    <!-- Community Team -->
+    <!-- Winners -->
     <section class="section rs">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag tech-tag">Hall of Fame</div>
+          <h2 class="section-title-xl">Event <span class="tg">Winners</span></h2>
+          <p class="desc" style="max-width: 600px">
+            The members who competed, solved, and shipped their way to the top.
+          </p>
+        </div>
+
+        <div class="winners-grid">
+          <div v-for="event in eventWinners" :key="event.id" class="winner-card">
+            <div class="winner-card-header">
+              <span class="winner-event-tag">{{ event.type }}</span>
+              <h3 class="winner-event-title">{{ event.title }}</h3>
+            </div>
+
+            <!-- No winners case -->
+            <div v-if="event.noWinner" class="no-winner">
+              <span class="no-winner-icon">—</span>
+              <span>No winner — no one qualified</span>
+            </div>
+
+            <!-- Winners list -->
+            <ul v-else class="winners-list">
+              <li
+                v-for="(winner, index) in event.winners"
+                :key="winner.name"
+                class="winner-row"
+              >
+                <span class="winner-rank">{{ index + 1 }}</span>
+                <span class="winner-name">{{ winner.name }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Community Team -->
+    <section class="section rs" style="background: var(--bg2)">
       <div class="container">
         <div class="section-header">
           <div class="section-tag tech-tag">The Team</div>
@@ -139,40 +179,28 @@ const upcomingEvents = [
     id: 1,
     title: "Hackathon: Build in 24hrs",
     type: "Hackathon",
-    description:
-      "A 24-hour build sprint where teams solve real-world problems using any stack they choose.",
-    day: "22",
-    month: "APR",
-    time: "9:00 AM",
-    venue: "Main Hall, Block A",
-    image: imgVibeCoding, // Replace with actual hackathon image when available
-    registerLink: "#",   // Replace with actual registration link
+    description: "A 24-hour build sprint where teams solve real-world problems using any stack they choose.",
+    day: "22", month: "APR", time: "9:00 AM", venue: "Main Hall, Block A",
+    image: imgVibeCoding,
+    registerLink: "#",
   },
   {
     id: 2,
     title: "AI/ML Paper Reading Club",
     type: "Workshop",
-    description:
-      "We break down a recent ML research paper together — no PhD required.",
-    day: "28",
-    month: "APR",
-    time: "6:00 PM",
-    venue: "Room 204, Tech Block",
-    image: imgStatAnalysis, // Replace with actual event image when available
-    registerLink: "#",      // Replace with actual registration link
+    description: "We break down a recent ML research paper together — no PhD required.",
+    day: "28", month: "APR", time: "6:00 PM", venue: "Room 204, Tech Block",
+    image: imgStatAnalysis,
+    registerLink: "#",
   },
   {
     id: 3,
     title: "Open Source Contribution Drive",
     type: "Sprint",
-    description:
-      "Pick an issue, raise a PR, ship it. Mentors available for first-timers.",
-    day: "05",
-    month: "MAY",
-    time: "3:00 PM",
-    venue: "Computer Lab 3, Block B",
-    image: imgCodingApt, // Replace with actual event image when available
-    registerLink: "#",   // Replace with actual registration link
+    description: "Pick an issue, raise a PR, ship it. Mentors available for first-timers.",
+    day: "05", month: "MAY", time: "3:00 PM", venue: "Computer Lab 3, Block B",
+    image: imgCodingApt,
+    registerLink: "#",
   },
 ];
 
@@ -182,107 +210,139 @@ const pastEvents = [
     title: "Vibe Coding a SaaS Application Workshop",
     type: "Workshop",
     description: "Introduced members to modern software development by building a SaaS product from scratch with AI-assisted development.",
-    date: "11 Nov 2025 | 9:30 PM",
-    attendees: "50+",
-    image: imgVibeCoding,
+    date: "11 Nov 2025 | 9:30 PM", attendees: "50+", image: imgVibeCoding,
   },
   {
     id: 2,
     title: "Coding Aptitude Challenge",
     type: "Competition",
     description: "A logic-based challenge testing analytical thinking, debugging, and problem-solving through code snippets and output prediction.",
-    date: "16 Nov 2025 | 8:30 PM",
-    attendees: "50+",
-    image: imgCodingApt,
+    date: "16 Nov 2025 | 8:30 PM", attendees: "50+", image: imgCodingApt,
   },
   {
     id: 3,
     title: "Open Mic – Journey Into Tech",
     type: "Open Mic",
     description: "An inspiring session where members shared their personal experiences, challenges, and tech learning journeys in a supportive space.",
-    date: "2 Dec 2025 | 8:00 PM",
-    attendees: "50+",
-    image: imgOpenMicTech,
+    date: "2 Dec 2025 | 8:00 PM", attendees: "50+", image: imgOpenMicTech,
   },
   {
     id: 4,
     title: "Statistical Analysis Challenge",
     type: "Challenge",
     description: "Participants worked with real-world survey data, using analytical tools to study trends, create charts, and draw logical conclusions.",
-    date: "5-7 Dec 2025 | Online",
-    attendees: "50+",
-    image: imgStatAnalysis,
+    date: "5-7 Dec 2025 | Online", attendees: "50+", image: imgStatAnalysis,
   },
   {
     id: 5,
     title: "Dark Web Fundamentals Session",
     type: "Session",
     description: "An informative workshop introducing the basics of the dark web, the Tor network, cybersecurity risks, and ethical concerns.",
-    date: "24 Mar 2025 | 7:00 PM",
-    attendees: "50+",
-    image: imgDarkWeb,
+    date: "24 Mar 2025 | 7:00 PM", attendees: "50+", image: imgDarkWeb,
   },
   {
     id: 6,
     title: "Ubuntu Mastery Quiz",
     type: "Quiz",
     description: "A competitive technical assessment conducted after the learning series to evaluate participants' understanding of Linux fundamentals.",
-    date: "5 Mar 2026 | 8:30 PM",
-    attendees: "50+",
-    image: imgUbuntuQuiz,
+    date: "5 Mar 2026 | 8:30 PM", attendees: "50+", image: imgUbuntuQuiz,
+  },
+];
+
+// Winners sourced from Tech_Winner.pdf
+const eventWinners = [
+  {
+    id: 1,
+    title: "Website Design Challenge",
+    type: "Competition",
+    noWinner: false,
+    winners: [
+      { name: "Arshpreet Singh" },
+      { name: "Varsha Jangid" },
+      { name: "Shivani Mishra" },
+    ],
+  },
+  {
+    id: 2,
+    title: "Coding Aptitude Challenge",
+    type: "Competition",
+    noWinner: false,
+    winners: [
+      { name: "Arnab Saikia" },
+      { name: "Sri Sowndharya B G" },
+      { name: "Akrish Chaurasia" },
+    ],
+  },
+  {
+    id: 3,
+    title: "Statistical Analysis Challenge",
+    type: "Challenge",
+    noWinner: false,
+    winners: [
+      { name: "Shivani Mishra" },
+      { name: "Riddhi Shete" },
+      { name: "Swati Pandey" },
+    ],
+  },
+  {
+    id: 4,
+    title: "Ubuntu Mastery Quiz",
+    type: "Quiz",
+    noWinner: false,
+    winners: [
+      { name: "Arshan Ali Khan" },
+      { name: "Saptajit Saha" },
+      { name: "Hira Irshad" },
+    ],
+  },
+  {
+    id: 5,
+    title: "Cyber Security Quiz",
+    type: "Quiz",
+    noWinner: false,
+    winners: [
+      { name: "Bhavana S" },
+      { name: "Ishan Dipta Garai" },
+      { name: "Sabal Sneh" },
+    ],
+  },
+  {
+    id: 6,
+    title: "Operation NEXUS",
+    type: "Challenge",
+    noWinner: true,
+    winners: [],
   },
 ];
 
 const team = [
   {
-    name: "Arjun Mehta",
-    role: "Community Lead",
-    track: "Full Stack",
-    city: "Delhi",
-    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80&auto=format&fit=crop&fit=crop&crop=face",
-    email: "mailto:arjun@sundarbans.in",
-    linkedin: "#",
-    instagram: "#",
+    name: "Arjun Mehta", role: "Community Lead", track: "Full Stack", city: "Delhi",
+    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80&auto=format&fit=crop&crop=face",
+    email: "mailto:arjun@sundarbans.in", linkedin: "#", instagram: "#",
   },
   {
-    name: "Priya Sharma",
-    role: "AI/ML Head",
-    track: "Machine Learning",
-    city: "Bengaluru",
+    name: "Priya Sharma", role: "AI/ML Head", track: "Machine Learning", city: "Bengaluru",
     photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&auto=format&fit=crop&crop=face",
-    email: "mailto:priya@sundarbans.in",
-    linkedin: "#",
-    instagram: "#",
+    email: "mailto:priya@sundarbans.in", linkedin: "#", instagram: "#",
   },
   {
-    name: "Rohit Das",
-    role: "Events Coordinator",
-    track: "DevOps",
-    city: "Mumbai",
+    name: "Rohit Das", role: "Events Coordinator", track: "DevOps", city: "Mumbai",
     photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80&auto=format&fit=crop&crop=face",
-    email: "mailto:rohit@sundarbans.in",
-    linkedin: "#",
-    instagram: "#",
+    email: "mailto:rohit@sundarbans.in", linkedin: "#", instagram: "#",
   },
   {
-    name: "Sneha Kapoor",
-    role: "Dev Track Lead",
-    track: "Frontend",
-    city: "Chandigarh",
+    name: "Sneha Kapoor", role: "Dev Track Lead", track: "Frontend", city: "Chandigarh",
     photo: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=80&auto=format&fit=crop&crop=face",
-    email: "mailto:sneha@sundarbans.in",
-    linkedin: "#",
-    instagram: "#",
+    email: "mailto:sneha@sundarbans.in", linkedin: "#", instagram: "#",
   },
 ];
 </script>
 
 <style scoped>
-/* ── Hacker theme accent colors: #10b981 (emerald) / #0ea5e9 (sky blue) ── */
+/* ── Hacker theme: #10b981 emerald / #0ea5e9 sky blue ── */
 
-.section-header {
-  margin-bottom: 2.5rem;
-}
+.section-header { margin-bottom: 2.5rem; }
 
 .tg {
   background: linear-gradient(135deg, #10b981, #0ea5e9);
@@ -291,7 +351,6 @@ const team = [
   -webkit-text-fill-color: transparent;
 }
 
-/* Tags */
 .tech-tag {
   background: rgba(16, 185, 129, 0.1);
   color: #10b981;
@@ -315,7 +374,7 @@ const team = [
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.05);
 }
 
-/* ─── Upcoming Events — Image 1 style (matches cultural/esports pages) ─── */
+/* ─── Upcoming Events ─── */
 .events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -339,7 +398,6 @@ const team = [
   box-shadow: 0 20px 50px rgba(16, 185, 129, 0.12), inset 0 0 15px rgba(14, 165, 233, 0.05);
 }
 
-/* Image on top */
 .event-img-wrap {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -354,11 +412,8 @@ const team = [
   transition: transform 0.5s ease;
 }
 
-.event-card:hover .event-img {
-  transform: scale(1.05);
-}
+.event-card:hover .event-img { transform: scale(1.05); }
 
-/* Card body below image */
 .event-body {
   padding: 1.5rem;
   display: flex;
@@ -383,7 +438,6 @@ const team = [
   flex: 1;
 }
 
-/* Date / time / venue row */
 .event-meta {
   display: flex;
   flex-wrap: wrap;
@@ -395,7 +449,6 @@ const team = [
   margin-bottom: 1.3rem;
 }
 
-/* Register Now button — amber, consistent with site-wide CTA */
 .register-btn {
   display: inline-flex;
   align-items: center;
@@ -454,10 +507,7 @@ const team = [
   border-color: rgba(16, 185, 129, 0.5);
 }
 
-.past-event-card:hover::before {
-  opacity: 1;
-  box-shadow: 0 2px 10px #10b981;
-}
+.past-event-card:hover::before { opacity: 1; box-shadow: 0 2px 10px #10b981; }
 
 .past-event-img-wrap {
   position: relative;
@@ -481,21 +531,15 @@ const team = [
 .past-event-img {
   position: absolute;
   top: 0; left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: contain;
   z-index: 1;
   padding: 0.5rem;
   transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.past-event-card:hover .past-event-img {
-  transform: scale(1.04);
-}
-
-.past-event-card:hover .past-event-img-blur {
-  transform: scale(1.05);
-}
+.past-event-card:hover .past-event-img { transform: scale(1.04); }
+.past-event-card:hover .past-event-img-blur { transform: scale(1.05); }
 
 .past-event-overlay {
   position: absolute;
@@ -556,6 +600,147 @@ const team = [
   border-top: 1px dashed rgba(16, 185, 129, 0.2);
 }
 
+/* ─── Winners Section ─── */
+.winners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.winner-card {
+  position: relative;
+  background: rgba(11, 17, 15, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem 1.5rem 1.5rem 1.8rem;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Left accent bar */
+.winner-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #10b981, #0ea5e9);
+  box-shadow: 0 0 10px #10b981;
+}
+
+.winner-card:hover {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+}
+
+.winner-card-header { margin-bottom: 1.2rem; }
+
+.winner-event-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.winner-event-title {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.winners-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.winner-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  transition: background 0.2s;
+}
+
+.winner-row:hover { background: rgba(16, 185, 129, 0.1); }
+
+/* Rank badge — gold / silver / bronze */
+.winner-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.winner-row:nth-child(1) .winner-rank {
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  text-shadow: 0 0 6px rgba(250, 204, 21, 0.5);
+}
+
+.winner-row:nth-child(2) .winner-rank {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.winner-row:nth-child(3) .winner-rank {
+  background: rgba(180, 120, 60, 0.15);
+  color: #cd7f32;
+  border: 1px solid rgba(180, 120, 60, 0.4);
+}
+
+.winner-name {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  letter-spacing: 0.01em;
+}
+
+.no-winner {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+.no-winner-icon {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.2);
+}
+
 /* ─── Team ─── */
 .team-grid {
   display: grid;
@@ -585,23 +770,18 @@ const team = [
 }
 
 .team-photo {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   object-position: top;
   display: block;
   transition: transform 0.4s ease;
 }
 
-.team-card:hover .team-photo {
-  transform: scale(1.04);
-}
+.team-card:hover .team-photo { transform: scale(1.04); }
 
 .team-overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   padding: 2.5rem 1rem 0.9rem;
   background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
   display: flex;
@@ -651,18 +831,13 @@ const team = [
   text-overflow: ellipsis;
 }
 
-.team-socials {
-  display: flex;
-  gap: 0.35rem;
-  flex-shrink: 0;
-}
+.team-socials { display: flex; gap: 0.35rem; flex-shrink: 0; }
 
 .social-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.4);
