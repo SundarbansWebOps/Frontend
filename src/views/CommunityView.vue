@@ -55,7 +55,9 @@
             </div>
             <div class="community-actions">
               <a
-                href="#"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSd0H31y_2l02T2TCPSaMvooqdnRyLzcpZ4ysT32PAOhvx5lkA/viewform?usp=header"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="submit-btn"
                 style="display: inline-flex; background: #f59e0b; color: #0a0f1e">
                 Join Community
@@ -138,7 +140,9 @@
             </div>
             <div class="community-actions">
               <a
-                href="#"
+                href="https://forms.gle/2DGXHZJLhCKG6z1T6"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="submit-btn"
                 style="display: inline-flex; background: #f59e0b; color: #0a0f1e">
                 Join Community
@@ -221,7 +225,9 @@
             </div>
             <div class="community-actions">
               <a
-                href="#"
+                href="https://forms.gle/q48tZxiUuqUeLN7y9"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="submit-btn"
                 style="display: inline-flex; background: #f59e0b; color: #0a0f1e">
                 Join Community
