@@ -245,26 +245,6 @@ const activeTab = ref("All");
 
 const allEvents = [
   {
-    title: "Python for Beginners",
-    category: "Workshop",
-    date: "Mar 15",
-    time: "6–8 PM",
-    location: "Virtual",
-    img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=500&q=80&auto=format&fit=crop",
-    desc: "Learn Python from scratch — hands-on exercises and real projects",
-    type: "Workshops",
-  },
-  {
-    title: "Inter-House Quiz",
-    category: "Competition",
-    date: "Mar 20",
-    time: "5–7 PM",
-    location: "Virtual",
-    img: "https://images.unsplash.com/photo-1434626881859-194d67b2b86f?w=500&q=80&auto=format&fit=crop",
-    desc: "Battle of knowledge — test your skills across multiple domains",
-    type: "Competitions",
-  },
-  {
     title: "Delhi Meetup 2026",
     category: "Offline Meetup",
     tagStyle:
@@ -287,16 +267,6 @@ const allEvents = [
     img: "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=500&q=80&auto=format&fit=crop",
     desc: "Connect with fellow students in Chennai — sessions, games and more",
     type: "Meetups",
-  },
-  {
-    title: "SundarHack 2026",
-    category: "Hackathon",
-    date: "Apr 25–27",
-    time: "All weekend",
-    location: "Virtual",
-    img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=500&q=80&auto=format&fit=crop",
-    desc: "48-hour coding marathon — build, break, and innovate with your team",
-    type: "Competitions",
   },
   {
     title: "Career in Research",
