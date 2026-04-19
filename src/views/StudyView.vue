@@ -1141,12 +1141,31 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
+.sc-search-input-wrap {
+  position: relative;
+  max-width: 420px;
+}
+
+.sc-mid-search-input {
+  width: 100%;
+  padding-left: 2.5rem;
+}
+
+.sc-mid-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text2);
+  pointer-events: none;
+}
+
 .sc-panel-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 560px;
+  height: 490px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -1159,7 +1178,7 @@ onMounted(async () => {
 .sc-panel-body {
   display: flex;
   flex-direction: column;
-  height: 560px;
+  height: 490px;
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
