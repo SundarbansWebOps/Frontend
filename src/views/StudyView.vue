@@ -1061,14 +1061,14 @@ onMounted(async () => {
 .sc-sidebar-cards {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 1rem;
 }
 
 .sc-sidebar-card {
   background: var(--surface);
   border: 1px solid rgba(212, 160, 23, 0.15);
   border-radius: 14px;
-  padding: 1.1rem 1.25rem;
+  padding: 1.6rem 1.4rem;
   cursor: pointer;
   transition: all 0.25s ease;
   position: relative;
@@ -1095,7 +1095,7 @@ onMounted(async () => {
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .sc-sidebar-emoji {
@@ -1165,7 +1165,7 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 490px;
+  height: 580px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -1178,7 +1178,7 @@ onMounted(async () => {
 .sc-panel-body {
   display: flex;
   flex-direction: column;
-  height: 490px;
+  height: 580px;
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
