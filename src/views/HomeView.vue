@@ -404,6 +404,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 
 import { useScrollReveal, useCounters } from "../composables/useAnimations.js";
+import DailyNotifications from "../components/DailyNotifications.vue";
 
 useScrollReveal();
 useCounters();
@@ -620,4 +621,3 @@ onUnmounted(() => {
   color: var(--text2);
 }
 </style>
-
