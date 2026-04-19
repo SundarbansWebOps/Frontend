@@ -3,14 +3,6 @@
     <canvas ref="canvasEl" id="bg-canvas"></canvas>
     <div class="grain"></div>
 
-    <div class="layout">
-      <div class="left-panel">
-        <div class="brand">
-          <div class="brand-icon">🌿</div>
-          <span class="brand-name">Sundarbans</span>
-          <router-link to="/" class="home-link">Home</router-link>
-        </div>
-
         <div class="heading-block">
           <div class="heading-label">Member Portal</div>
           <h1>Welcome<br /><em>back.</em></h1>
