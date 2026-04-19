@@ -31,41 +31,51 @@
             <div
               :key="active.id"
               class="notif-card"
-              :class="`type-${active.type}`"
+              :class="[`type-${active.type}`, { 'has-image': active.image }]"
             >
               <!-- Left accent bar -->
               <div class="notif-accent-bar" />
 
-              <!-- Top row: tag + date chip -->
-              <div class="notif-top-row">
-                <span class="notif-tag" :class="`tag-${active.type}`">
-                  <span class="notif-tag-icon">{{ typeIcon(active.type) }}</span>
-                  {{ active.tag }}
-                </span>
-                <span class="notif-date-chip" v-if="active.date && isToday(active.date)">
-                  Today
-                </span>
-                <span class="notif-date-chip upcoming" v-else-if="active.date">
-                  {{ formatDate(active.date) }}
-                </span>
-              </div>
+              <!-- Inner layout: text col + optional image col -->
+              <div class="notif-inner">
+                <div class="notif-text-col">
+                  <!-- Top row: tag + date chip -->
+                  <div class="notif-top-row">
+                    <span class="notif-tag" :class="`tag-${active.type}`">
+                      <span class="notif-tag-icon">{{ typeIcon(active.type) }}</span>
+                      {{ active.tag }}
+                    </span>
+                    <span class="notif-date-chip" v-if="active.date && isToday(active.date)">
+                      Today
+                    </span>
+                    <span class="notif-date-chip upcoming" v-else-if="active.date">
+                      {{ formatDate(active.date) }}
+                    </span>
+                  </div>
 
-              <!-- Content -->
-              <h3 class="notif-title">{{ active.title }}</h3>
-              <p class="notif-message">{{ active.message }}</p>
+                  <!-- Content -->
+                  <h3 class="notif-title">{{ active.title }}</h3>
+                  <p class="notif-message">{{ active.message }}</p>
 
-              <!-- Footer: link + counter -->
-              <div class="notif-footer">
-                <a
-                  v-if="active.link"
-                  :href="active.link"
-                  target="_blank"
-                  class="notif-link"
-                >
-                  Learn More →
-                </a>
-                <span v-else class="notif-spacer" />
-                <span class="notif-counter">{{ current + 1 }} / {{ sorted.length }}</span>
+                  <!-- Footer: link + counter -->
+                  <div class="notif-footer">
+                    <a
+                      v-if="active.link"
+                      :href="active.link"
+                      target="_blank"
+                      class="notif-link"
+                    >
+                      Learn More →
+                    </a>
+                    <span v-else class="notif-spacer" />
+                    <span class="notif-counter">{{ current + 1 }} / {{ sorted.length }}</span>
+                  </div>
+                </div>
+
+                <!-- Optional image -->
+                <div class="notif-img-col" v-if="active.image">
+                  <img :src="active.image" :alt="active.title" class="notif-img" />
+                </div>
               </div>
             </div>
           </transition>
@@ -235,6 +245,36 @@ function typeIcon(type) {
 .notif-dot.active {
   background: #d4a017;
   transform: scale(1.3);
+}
+
+/* ─── Inner layout (text + optional image) ─────────────────── */
+.notif-inner {
+  display: flex;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+.notif-text-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Image column ─────────────────────────────────────────── */
+.notif-img-col {
+  flex-shrink: 0;
+  width: 200px;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  align-self: stretch;
+}
+.notif-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(212, 160, 23, 0.15);
 }
 
 /* ─── Track + card ─────────────────────────────────────────── */
