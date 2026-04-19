@@ -166,7 +166,7 @@
           >
           
           <router-link
-            to="/members"
+            to="/login"
             class="nav-cta-btn"
             @click="menuOpen = false">
             <span>Lounge</span>
