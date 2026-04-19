@@ -10,278 +10,155 @@
 
     <section class="section rs" style="background: var(--bg2)" id="levelPicker">
       <div class="container">
-        <div class="sec-hdr" id="scHeader">
-          <div class="section-tag">Step 1 - Choose Your Level</div>
-          <h2 class="section-title-xl">
-            Study Resources <span class="tg">by Level</span>
-          </h2>
-        </div>
+        <div class="sc-layout">
 
-        <div class="sc-levels-grid rs" id="scLevelsContainer">
-          <div
-            v-for="level in visibleLevels"
-            :key="level.key"
-            class="card-base sc-level-card"
-            :class="{ active: currentLevel === level.key }"
-            @click="loadLevel(level.key)">
-            <div class="sc-card-emoji">{{ level.emoji }}</div>
-            <h3 class="sc-card-title">{{ level.title }}</h3>
-            <p class="desc sc-card-desc">{{ level.description }}</p>
-            <div class="sc-card-stats">
-              <span class="sc-stat-badge"
-                >{{ (scData[level.key] || []).length }} subjects</span
-              >
-              <span class="sc-stat-badge">Notes + PYQs</span>
+          <!-- LEFT: Level cards (vertical sidebar) -->
+          <div class="sc-sidebar">
+            <div class="sc-sidebar-hdr">
+              <div class="section-tag" style="margin-bottom:0">Choose Level</div>
             </div>
-            <span class="submit-btn sc-browse-btn">Browse Subjects -&gt;</span>
-          </div>
-        </div>
-
-        <div class="sc-mid-search-wrap">
-          <div class="sc-mid-search-row">
-            <div class="sc-search-input-wrap">
-              <input
-                v-model="search"
-                type="text"
-                placeholder="Search subjects, notes, PYQs, or doubts..."
-                class="form-input sc-mid-search-input" />
-              <svg
-                class="sc-mid-search-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </div>
-            <div class="filter-tabs sc-mid-tabs">
+            <div class="sc-sidebar-cards">
               <div
-                class="ftab"
-                v-for="tab in tabs"
-                :key="tab"
-                :class="{ active: activeTab === tab }"
-                @click="activeTab = tab">
-                {{ tab }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="section rs"
-      id="scResourceSection"
-      v-show="Boolean(currentLevel)">
-      <div class="container">
-        <div class="sc-subject-strip" id="scSubjectStrip">
-          <div class="sc-strip-header">
-            <span class="sc-strip-label"
-              >{{ currentLevelLabel }} - Subjects</span
-            >
-            <button class="sc-back-btn" @click="resetLevel">
-              &larr; All Levels
-            </button>
-          </div>
-          <div class="sc-badges-row" id="scSubjectList">
-            <button
-              v-for="subject in filteredSubjects"
-              :key="subject.code"
-              class="sc-subj-badge"
-              :class="{ active: currentSubject?.code === subject.code }"
-              @click="selectSubject(subject)">
-              {{ subject.subject }}
-            </button>
-          </div>
-        </div>
-
-        <div
-          style="
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 0 0 16px 16px;
-            padding: 2rem;
-            min-height: 420px;
-            border-top: none;
-          "
-          id="scPanel">
-          <template v-if="currentSubject">
-            <div style="margin-bottom: 0.25rem">
-              <div class="section-tag" style="margin-bottom: 0.5rem">
-                {{ currentSubject.code }}
-              </div>
-              <p
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text3);
-                  letter-spacing: 0.03em;
-                ">
-                {{ currentSubject.description }}
-              </p>
-            </div>
-
-            <div class="sc-tab-bar">
-              <button
-                class="sc-tab"
-                :class="{ active: currentResourceType === 'lectures' }"
-                @click="currentResourceType = 'lectures'">
-                📺 Lectures
-              </button>
-              <button
-                class="sc-tab"
-                :class="{ active: currentResourceType === 'notes' }"
-                @click="currentResourceType = 'notes'">
-                📝 Notes
-              </button>
-              <button
-                class="sc-tab"
-                :class="{ active: currentResourceType === 'pyq' }"
-                @click="currentResourceType = 'pyq'">
-                📄 PYQs
-              </button>
-            </div>
-
-            <template
-              v-if="currentResourceType === 'notes' && groupedNotes.length">
-              <div
-                class="sc-author-card"
-                v-for="(group, index) in groupedNotes"
-                :key="group.author">
-                <div class="sc-author-header" @click="toggleAuthor(index)">
-                  <span class="sc-author-name"
-                    >✦ {{ group.author }}
-                    <span class="sc-author-count"
-                      >({{ group.items.length }}
-                      {{ group.items.length === 1 ? "note" : "notes" }})</span
-                    ></span
-                  >
-                  <svg
-                    class="sc-author-chevron"
-                    :style="{
-                      transform: openAuthors[index]
-                        ? 'rotate(180deg)'
-                        : 'rotate(0deg)',
-                    }"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2">
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
-                </div>
-                <div
-                  class="sc-author-body"
-                  :class="{ open: openAuthors[index] }">
-                  <div class="sc-author-notes">
-                    <a
-                      v-for="item in group.items"
-                      :key="item.title"
-                      :href="item.link"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="sc-resource-item">
-                      <span>{{ cleanTitle(item.title) }}</span>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 0.75rem;
-                        ">
-                        <span v-if="item.badge" class="sc-badge">{{
-                          item.badge
-                        }}</span>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          style="color: var(--text3)">
-                          <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </a>
+                v-for="level in levelMeta"
+                :key="level.key"
+                class="sc-sidebar-card"
+                :class="{ active: currentLevel === level.key }"
+                @click="loadLevel(level.key)">
+                <div class="sc-sidebar-card-top">
+                  <span class="sc-sidebar-emoji">{{ level.emoji }}</span>
+                  <div class="sc-sidebar-meta">
+                    <h3 class="sc-card-title">{{ level.title }}</h3>
+                    <p class="sc-card-desc">{{ level.description }}</p>
                   </div>
                 </div>
-              </div>
-            </template>
-
-            <template
-              v-else-if="currentResourceType === 'pyq' && groupedPyq.length">
-              <div
-                class="sc-year-group"
-                v-for="group in groupedPyq"
-                :key="group.year">
-                <div class="sc-year-label">
-                  📅 {{ group.year }}
-                  <span class="sc-year-count"
-                    >({{ group.items.length }} papers)</span
-                  >
+                <div class="sc-card-stats">
+                  <span class="sc-stat-badge">{{ (scData[level.key] || []).length }} subjects</span>
+                  <span class="sc-stat-badge">Notes + PYQs</span>
                 </div>
-                <a
-                  v-for="item in group.items"
-                  :key="item.title"
-                  :href="item.link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="sc-resource-item">
-                  <span>{{ cleanTitle(item.title) }}</span>
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    style="color: var(--text3)">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </a>
-              </div>
-            </template>
-
-            <template v-else-if="filteredResources.length">
-              <a
-                v-for="item in filteredResources"
-                :key="item.title"
-                :href="item.link"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="sc-resource-item">
-                <span>{{ cleanTitle(item.title) }}</span>
-                <div style="display: flex; align-items: center; gap: 0.75rem">
-                  <span v-if="item.badge" class="sc-badge">{{
-                    item.badge
-                  }}</span>
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    style="color: var(--text3)">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
+                <div class="sc-sidebar-arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
                   </svg>
                 </div>
-              </a>
-            </template>
-
-            <div v-else class="sc-empty">
-              <div style="font-size: 2rem">🔍</div>
-              <p style="font-size: 0.85rem">No matching resources found.</p>
+              </div>
             </div>
-          </template>
+          </div>
 
-          <div v-else class="sc-empty">
-            <div style="font-size: 3rem">📖</div>
-            <p style="font-size: 0.9rem">Select a subject to view resources</p>
+          <!-- RIGHT: Content panel -->
+          <div class="sc-panel-wrap">
+
+            <!-- Search + tabs always visible -->
+            <div class="sc-panel-search">
+              <div class="sc-search-input-wrap">
+                <input
+                  v-model="search"
+                  type="text"
+                  placeholder="Search subjects, notes, PYQs..."
+                  class="form-input sc-mid-search-input" />
+                <svg class="sc-mid-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Empty state: no level selected -->
+            <div v-if="!currentLevel" class="sc-panel-empty">
+              <div style="font-size:3rem;margin-bottom:1rem">📚</div>
+              <p style="font-size:1rem;color:var(--text2)">Select a level on the left to browse subjects</p>
+            </div>
+
+            <!-- Level selected: subjects + resources -->
+            <template v-else>
+              <!-- Subject strip -->
+              <div class="sc-subject-strip" id="scSubjectStrip">
+                <div class="sc-strip-header">
+                  <span class="sc-strip-label">{{ currentLevelLabel }} — Subjects</span>
+                  <button class="sc-back-btn" @click="resetLevel">&larr; Clear</button>
+                </div>
+                <div class="sc-badges-row" id="scSubjectList">
+                  <button
+                    v-for="subject in filteredSubjects"
+                    :key="subject.code"
+                    class="sc-subj-badge"
+                    :class="{ active: currentSubject?.code === subject.code }"
+                    @click="selectSubject(subject)">
+                    {{ subject.subject }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Resource panel -->
+              <div class="sc-resource-panel" id="scPanel">
+                <template v-if="currentSubject">
+                  <div style="margin-bottom:0.25rem">
+                    <div class="section-tag" style="margin-bottom:0.5rem">{{ currentSubject.code }}</div>
+                    <p style="font-size:0.8rem;color:var(--text3);letter-spacing:0.03em">{{ currentSubject.description }}</p>
+                  </div>
+
+                  <div class="sc-tab-bar">
+                    <button class="sc-tab" :class="{ active: currentResourceType === 'lectures' }" @click="currentResourceType = 'lectures'">📺 Lectures</button>
+                    <button class="sc-tab" :class="{ active: currentResourceType === 'notes' }" @click="currentResourceType = 'notes'">📝 Notes</button>
+                    <button class="sc-tab" :class="{ active: currentResourceType === 'pyq' }" @click="currentResourceType = 'pyq'">📄 PYQs</button>
+                  </div>
+
+                  <template v-if="currentResourceType === 'notes' && groupedNotes.length">
+                    <div class="sc-author-card" v-for="(group, index) in groupedNotes" :key="group.author">
+                      <div class="sc-author-header" @click="toggleAuthor(index)">
+                        <span class="sc-author-name">✦ {{ group.author }}
+                          <span class="sc-author-count">({{ group.items.length }} {{ group.items.length === 1 ? "note" : "notes" }})</span>
+                        </span>
+                        <svg class="sc-author-chevron" :style="{ transform: openAuthors[index] ? 'rotate(180deg)' : 'rotate(0deg)' }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </div>
+                      <div class="sc-author-body" :class="{ open: openAuthors[index] }">
+                        <div class="sc-author-notes">
+                          <a v-for="item in group.items" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
+                            <span>{{ cleanTitle(item.title) }}</span>
+                            <div style="display:flex;align-items:center;gap:0.75rem">
+                              <span v-if="item.badge" class="sc-badge">{{ item.badge }}</span>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+
+                  <template v-else-if="currentResourceType === 'pyq' && groupedPyq.length">
+                    <div class="sc-year-group" v-for="group in groupedPyq" :key="group.year">
+                      <div class="sc-year-label">📅 {{ group.year }} <span class="sc-year-count">({{ group.items.length }} papers)</span></div>
+                      <a v-for="item in group.items" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
+                        <span>{{ cleanTitle(item.title) }}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                      </a>
+                    </div>
+                  </template>
+
+                  <template v-else-if="filteredResources.length">
+                    <a v-for="item in filteredResources" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
+                      <span>{{ cleanTitle(item.title) }}</span>
+                      <div style="display:flex;align-items:center;gap:0.75rem">
+                        <span v-if="item.badge" class="sc-badge">{{ item.badge }}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                      </div>
+                    </a>
+                  </template>
+
+                  <div v-else class="sc-empty">
+                    <div style="font-size:2rem">🔍</div>
+                    <p style="font-size:0.85rem">No matching resources found.</p>
+                  </div>
+                </template>
+
+                <div v-else class="sc-empty">
+                  <div style="font-size:3rem">📖</div>
+                  <p style="font-size:0.9rem">Select a subject above to view resources</p>
+                </div>
+              </div>
+            </template>
+
           </div>
         </div>
       </div>
@@ -1156,46 +1033,148 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.sc-levels-grid {
+/* ─── Two-column layout ───────────────────────────────────── */
+.sc-layout {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: 280px 1fr;
+  gap: 1.75rem;
+  align-items: start;
 }
 
-.sc-mid-search-wrap {
-  margin-top: 2.25rem;
-  padding-top: 1.1rem;
-  border-top: 1px solid rgba(212, 160, 23, 0.16);
-}
-
-.sc-mid-search-row {
+/* ─── Left sidebar ────────────────────────────────────────── */
+.sc-sidebar {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 100px;
 }
 
-.sc-search-input-wrap {
-  flex: 1;
-  min-width: 240px;
+.sc-sidebar-hdr {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(212, 160, 23, 0.15);
+  margin-bottom: 0.25rem;
+}
+
+.sc-sidebar-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.sc-sidebar-card {
+  background: var(--surface);
+  border: 1px solid rgba(212, 160, 23, 0.15);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
   position: relative;
+  overflow: hidden;
 }
 
-.sc-mid-search-input {
-  padding-left: 2.5rem;
+.sc-sidebar-card:hover {
+  border-color: rgba(212, 160, 23, 0.4);
+  background: rgba(212, 160, 23, 0.04);
 }
 
-.sc-mid-search-icon {
+.sc-sidebar-card.active {
+  border-color: var(--accent);
+  background: rgba(212, 160, 23, 0.07);
+  box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.2);
+}
+
+.sc-sidebar-card.active .sc-sidebar-arrow {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+.sc-sidebar-card-top {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.sc-sidebar-emoji {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 0.1rem;
+}
+
+.sc-sidebar-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.sc-sidebar-card .sc-card-title {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.sc-sidebar-card .sc-card-desc {
+  font-size: 0.75rem;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.sc-sidebar-arrow {
   position: absolute;
-  left: 0.85rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text2);
+  right: 1rem;
+  bottom: 1rem;
+  color: var(--text3);
+  transition: all 0.2s;
 }
 
-.sc-mid-tabs {
-  margin: 0;
+/* ─── Right panel ─────────────────────────────────────────── */
+.sc-panel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 520px;
+}
+
+.sc-panel-search {
+  margin-bottom: 1.25rem;
+}
+
+.sc-panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  text-align: center;
+  padding: 3rem;
+  color: var(--text3);
+}
+
+.sc-resource-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 0 16px 16px;
+  padding: 2rem;
+  min-height: 360px;
+  border-top: none;
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sc-layout {
+    grid-template-columns: 1fr;
+  }
+  .sc-sidebar {
+    position: static;
+  }
+  .sc-sidebar-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .sc-level-card {
@@ -1516,14 +1495,8 @@ onMounted(async () => {
   color: var(--text);
 }
 
-@media (max-width: 900px) {
-  .sc-levels-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
-  .sc-levels-grid {
+  .sc-sidebar-cards {
     grid-template-columns: 1fr;
   }
 
