@@ -209,40 +209,9 @@
       </div>
     </section>
 
-    <!-- PULSE / LIVE UPDATES -->
-    <section class="section pulse-section rs">
-      <div class="container">
-        <div class="pulse-layout">
-          <div class="pulse-hdr-col">
-            <div class="section-tag">Live Updates</div>
-            <h2 class="section-title-xl">
-              Sundarbans<br /><span class="tg">Pulse</span>
-            </h2>
-            <p class="desc">
-              Stay connected with the heartbeat of our community. Real-time
-              updates on events and achievements.
-            </p>
-            <div class="live-badge">
-              <span class="live-dot"></span><span>Live feed</span>
-            </div>
-          </div>
-          <div class="pulse-cards-col">
-            <div class="pcard" v-for="p in pulseItems" :key="p.title">
-              <div class="pcard-accent" :class="p.color"></div>
-              <div class="pcard-icon">{{ p.icon }}</div>
-              <div class="pcard-body">
-                <h4>{{ p.title }}</h4>
-                <p>{{ p.desc }}</p>
-                <div class="pcard-meta">
-                  <span class="ptag">{{ p.tag }}</span>
-                  <span class="ptime">{{ p.time }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  <!-- DAILY NOTIFICATIONS (replaces Pulse) -->
+    <DailyNotifications />
+
 
     <!-- MEET HUB -->
     <section class="section meet-section rs">
