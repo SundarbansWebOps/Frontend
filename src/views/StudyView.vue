@@ -1131,12 +1131,11 @@ onMounted(async () => {
 .sc-panel-wrap {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  min-height: 520px;
+  gap: 0.75rem;
 }
 
 .sc-panel-search {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
 }
 
 .sc-panel-empty {
@@ -1144,8 +1143,7 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  min-height: 400px;
+  height: 560px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -1154,13 +1152,34 @@ onMounted(async () => {
   color: var(--text3);
 }
 
+/* Subject strip: fixed, no scroll */
+.sc-subject-strip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  padding: 1.25rem 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Resource panel: fixed height, scrollable */
 .sc-resource-panel {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0 0 16px 16px;
-  padding: 2rem;
-  min-height: 360px;
+  padding: 1.5rem 2rem;
+  height: 420px;
+  overflow-y: auto;
   border-top: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 160, 23, 0.3) transparent;
+}
+
+.sc-resource-panel::-webkit-scrollbar {
+  width: 5px;
+}
+.sc-resource-panel::-webkit-scrollbar-thumb {
+  background: rgba(212, 160, 23, 0.3);
+  border-radius: 99px;
 }
 
 /* ─── Responsive ──────────────────────────────────────────── */
@@ -1232,13 +1251,6 @@ onMounted(async () => {
   font-size: 0.82rem;
   padding: 0.5rem 1.1rem;
   pointer-events: none;
-}
-
-.sc-subject-strip {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px 16px 0 0;
-  padding: 1.25rem 1.5rem;
 }
 
 .sc-strip-header {
