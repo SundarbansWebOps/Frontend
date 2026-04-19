@@ -114,12 +114,45 @@
                     placeholder="John Doe" />
                 </div>
                 <div class="form-field">
-                  <label>Email Address</label>
+                  <label>Student Email Address</label>
                   <input
                     v-model="form.email"
                     type="email"
                     class="form-input"
-                    placeholder="you@example.com" />
+                    placeholder="you@ds.study.iitm.ac.in" />
+                </div>
+              </div>
+              <div class="grid-2" style="gap: 1rem">
+                <div class="form-field">
+                  <label>Your House</label>
+                  <select v-model="form.house" class="form-select">
+                    <option value="">Choose</option>
+                    <option>Sundarbans</option>
+                    <option>Bandipur</option>
+                    <option>Corbett</option>
+                    <option>Gir</option>
+                    <option>Kanha</option>
+                    <option>Kaziranga</option>
+                    <option>Nallamala</option>
+                    <option>Saranda</option>
+                    <option>Wayanad</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>Your Region</label>
+                  <select v-model="form.region" class="form-select">
+                    <option value="">Choose</option>
+                    <option>Delhi Region</option>
+                    <option>Chandigarh Region</option>
+                    <option>Patna Region</option>
+                    <option>Lucknow Region</option>
+                    <option>Kolkata Region</option>
+                    <option>Mumbai Region</option>
+                    <option>Hyderabad Region</option>
+                    <option>Chennai Region</option>
+                    <option>Bengaluru Region</option>
+                    <option>Other</option>
+                  </select>
                 </div>
               </div>
               <div class="form-field">
@@ -166,7 +199,7 @@ import PageHero from "../components/PageHero.vue";
 import { useScrollReveal } from "../composables/useAnimations.js";
 useScrollReveal();
 
-const form = ref({ name: "", email: "", subject: "", message: "" });
+const form = ref({ name: "", email: "", house: "", region: "", subject: "", message: "" });
 const submitting = ref(false);
 const sent = ref(false);
 const error = ref("");
@@ -190,6 +223,8 @@ async function submitForm() {
       body: JSON.stringify({
         name: form.value.name,
         email: form.value.email,
+        house: form.value.house,
+        region: form.value.region,
         subject: form.value.subject,
         message: form.value.message,
       }),
@@ -197,7 +232,7 @@ async function submitForm() {
 
     if (response.ok) {
       sent.value = true;
-      form.value = { name: "", email: "", subject: "", message: "" };
+      form.value = { name: "", email: "", house: "", region: "", subject: "", message: "" };
     } else {
       const data = await response.json();
       error.value = data?.errors?.[0]?.message || "Something went wrong. Try again.";
