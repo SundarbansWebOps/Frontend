@@ -192,16 +192,22 @@ onBeforeUnmount(() => stopTimer());
 
 // ─── Helpers ──────────────────────────────────────────────────
 function isToday(dateStr) {
-  // dateStr format: "MM-DD"
-  const now   = new Date();
-  const [m, d] = dateStr.split("-").map(Number);
-  return now.getMonth() + 1 === m && now.getDate() === d;
+  const now = new Date();
+  const date = new Date(dateStr);
+
+  return (
+    now.getDate() === date.getDate() &&
+    now.getMonth() === date.getMonth()
+  );
 }
 
 function formatDate(dateStr) {
-  const [m, d] = dateStr.split("-").map(Number);
-  return new Date(new Date().getFullYear(), m - 1, d)
-    .toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+  const date = new Date(dateStr);
+
+  return date.toLocaleDateString("en-IN", {
+    month: "short",
+    day: "numeric"
+  });
 }
 
 function typeIcon(type) {
