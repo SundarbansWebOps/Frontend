@@ -21,28 +21,18 @@
 
         <div class="events-grid">
           <div v-for="event in upcomingEvents" :key="event.id" class="event-card">
-            <!-- Top image -->
-            <div class="event-img-wrap">
-              <img :src="event.image" :alt="event.title" class="event-img" />
+            <div class="event-date-badge">
+              <span class="event-day">{{ event.day }}</span>
+              <span class="event-month">{{ event.month }}</span>
             </div>
-            <!-- Card body -->
-            <div class="event-body">
+            <div class="event-info">
               <span class="event-type-tag">{{ event.type }}</span>
               <h3 class="event-title">{{ event.title }}</h3>
               <p class="event-desc">{{ event.description }}</p>
               <div class="event-meta">
-                <span>📅 {{ event.day }} {{ event.month }}</span>
                 <span>🕐 {{ event.time }}</span>
                 <span>📍 {{ event.venue }}</span>
               </div>
-              <a
-                :href="event.registerLink || '#'"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="register-btn"
-              >
-                Register Now
-              </a>
             </div>
           </div>
         </div>
@@ -77,6 +67,38 @@
               <p class="past-event-desc">{{ event.description }}</p>
               <div class="past-event-stat">👥 {{ event.attendees }} attended</div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Winners -->
+    <section class="section rs" style="background: var(--bg2)">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-tag esports-tag">Hall of Fame</div>
+          <h2 class="section-title-xl">Event <span class="tg-esports">Winners</span></h2>
+          <p class="desc" style="max-width: 600px">Champions who rose to the top across every tournament and challenge.</p>
+        </div>
+        <div class="winners-grid">
+          <div v-for="event in eventWinners" :key="event.id" class="winner-card">
+            <div class="winner-card-header">
+              <span class="winner-event-tag">{{ event.type }}</span>
+              <h3 class="winner-event-title">{{ event.title }}</h3>
+            </div>
+            <div v-if="event.noWinner" class="no-winner">
+              <span class="no-winner-icon">—</span>
+              <span>No winner recorded</span>
+            </div>
+            <ul v-else class="winners-list">
+              <li v-for="(winner, index) in event.winners" :key="index" class="winner-row">
+                <span class="winner-rank">{{ index + 1 }}</span>
+                <div class="winner-info">
+                  <span class="winner-name">{{ winner.name }}</span>
+                  <span class="winner-email" v-if="winner.email">{{ winner.email }}</span>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -152,8 +174,6 @@ const upcomingEvents = [
     month: "APR",
     time: "4:00 PM",
     venue: "Gaming Lab, Block C",
-    image: imgBgmiTourn, // Replace with actual Valorant event image when available
-    registerLink: "#",   // Replace with actual registration link
   },
   {
     id: 2,
@@ -165,8 +185,6 @@ const upcomingEvents = [
     month: "APR",
     time: "8:00 PM",
     venue: "Common Room, Floor 2",
-    image: imgChessShowdown, // Replace with actual Chess event image when available
-    registerLink: "#",       // Replace with actual registration link
   },
   {
     id: 3,
@@ -178,8 +196,6 @@ const upcomingEvents = [
     month: "MAY",
     time: "5:00 PM",
     venue: "Gaming Lab, Block C",
-    image: imgBgmiShowdown, // Replace with actual BGMI scrimmage image when available
-    registerLink: "#",      // Replace with actual registration link
   },
 ];
 
@@ -233,7 +249,7 @@ const pastEvents = [
     id: 6,
     title: "Sports Quiz Showdown",
     type: "Quiz",
-    description: "The Sports Quiz Showdown was a fun and energetic event that tested participants' knowledge across various sports, players, records, and iconic moments. Members competed in a lively quiz environment filled with excitement, learning, and friendly banter. The event successfully blended entertainment with knowledge and brought out the competitive spirit of sports lovers.",
+    description: "The Sports Quiz Showdown was a fun and energetic event that tested participants’ knowledge across various sports, players, records, and iconic moments. Members competed in a lively quiz environment filled with excitement, learning, and friendly banter. The event successfully blended entertainment with knowledge and brought out the competitive spirit of sports lovers.",
     date: "12 Dec 2025 | 7:00 PM",
     attendees: "50+",
     image: imgSportsQuiz,
@@ -278,11 +294,91 @@ const pastEvents = [
     id: 11,
     title: "Open Mic – Feedback Session",
     type: "Feedback Session",
-    description: "The Open Mic Feedback Session was a meaningful community interaction where members openly shared their experiences, suggestions, and ideas for future events. It served as a platform to understand participation challenges, gather valuable insights, and improve future planning. The session reflected Sundarbans House's commitment to inclusivity, transparency, and continuous growth as a student community.",
+    description: "The Open Mic Feedback Session was a meaningful community interaction where members openly shared their experiences, suggestions, and ideas for future events. It served as a platform to understand participation challenges, gather valuable insights, and improve future planning. The session reflected Sundarbans House’s commitment to inclusivity, transparency, and continuous growth as a student community.",
     date: "8:30 PM onwards",
     attendees: "50+",
     image: imgOpenMic,
   }
+];
+
+const eventWinners = [
+  {
+    id: 1, title: "Free Fire – Battle of Legends", type: "Tournament", noWinner: false,
+    winners: [
+      { name: "Bhoopendra Chandel", email: "23f3000441@es.study.iitm.ac.in" },
+      { name: "Agampreet Singh",    email: "24f2002079@ds.study.iitm.ac.in" },
+      { name: "Aditya Chaubey",     email: "25f2008372@ds.study.iitm.ac.in" },
+      { name: "Alok Chaubey",       email: "24f2006338@ds.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 2, title: "BGMI Showdown 2025", type: "Tournament", noWinner: false,
+    winners: [
+      { name: "Divyansh Chandra", email: "25f2002300@ds.study.iitm.ac.in" },
+      { name: "Sumit Singhal",    email: "24f2003662@ds.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 3, title: "Valorant Tournament", type: "Tournament", noWinner: true, winners: [],
+  },
+  {
+    id: 4, title: "Great Chess Competition", type: "Competition", noWinner: false,
+    winners: [
+      { name: "Syan Das",                    email: "25f2007719@ds.study.iitm.ac.in" },
+      { name: "Pradip Boro",                 email: "25f2001618@ds.study.iitm.ac.in" },
+      { name: "Daggubati Bapaiah Chowdary",  email: "25f3100064@es.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 5, title: "Sports Quiz Showdown", type: "Quiz", noWinner: false,
+    winners: [
+      { name: "Naren Sampath",     email: "25f3001304@ds.study.iitm.ac.in" },
+      { name: "Sai Rajith Ponnuru", email: "25f3100110@ds.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 6, title: "Back to Bachpan", type: "Casual Event", noWinner: false,
+    winners: [
+      { name: "Shaik Neeha Jasmine", email: "25f3100078@es.study.iitm.ac.in" },
+      { name: "Aditri Bordoloi",     email: "25f2008346@ds.study.iitm.ac.in" },
+      { name: "Aarya",               email: "25f1000637@ds.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 7, title: "IPL Auction – Sundarbans Edition", type: "Strategy Event", noWinner: false,
+    winners: [
+      { name: "Chandigarh Region", email: "" },
+      { name: "Kolkata Region",    email: "" },
+      { name: "Lucknow Region",    email: "" },
+    ],
+  },
+  {
+    id: 8, title: "Open Mic – Feedback Session", type: "Feedback Session", noWinner: true, winners: [],
+  },
+  {
+    id: 9, title: "Chess Showdown", type: "Competition", noWinner: false,
+    winners: [
+      { name: "Plavit Chandalia", email: "25f2000710@ds.study.iitm.ac.in" },
+      { name: "Ashish Kumar",     email: "25f1002782@ds.study.iitm.ac.in" },
+      { name: "Divyansh Tiwari",  email: "22f3001534@ds.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 10, title: "BGMI Tournament", type: "Tournament", noWinner: false,
+    winners: [
+      { name: "Abdul Kadir", email: "25f2000502@ds.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 11, title: "Sports Quiz", type: "Quiz", noWinner: false,
+    winners: [
+      { name: "Bhavana S",            email: "25f3001430@ds.study.iitm.ac.in" },
+      { name: "Neeha Jasmine Shaik",  email: "25f3100078@es.study.iitm.ac.in" },
+    ],
+  },
+  {
+    id: 12, title: "Free Fire", type: "Tournament", noWinner: true, winners: [],
+  },
 ];
 
 const team = [
@@ -365,58 +461,84 @@ const team = [
   box-shadow: 0 0 10px rgba(220, 38, 38, 0.05);
 }
 
-/* ─── Upcoming Events — Image 1 style (matches cultural page) ─── */
+/* Upcoming Events */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
 }
 
 .event-card {
-  background: rgba(15, 10, 10, 0.85);
-  border: 1px solid rgba(220, 38, 38, 0.15);
-  border-radius: 20px;
-  overflow: hidden;
+  position: relative;
   display: flex;
-  flex-direction: column;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+  gap: 1.2rem;
+  align-items: flex-start;
+  background: rgba(15, 10, 10, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.event-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #DC2626, #F97316);
+  opacity: 0.5;
+  transition: width 0.3s ease, opacity 0.3s ease;
 }
 
 .event-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(220, 38, 38, 0.12), 0 6px 16px rgba(249, 115, 22, 0.08);
-  border-color: rgba(220, 38, 38, 0.35);
+  transform: translateY(-4px);
+  border-color: rgba(220, 38, 38, 0.45);
+  box-shadow:
+    0 10px 30px rgba(220, 38, 38, 0.12),
+    0 0 40px rgba(220, 38, 38, 0.06);
 }
 
-/* Image on top */
-.event-img-wrap {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  flex-shrink: 0;
+.event-card:hover::before {
+  width: 6px;
+  opacity: 1;
+  box-shadow: 0 0 15px #DC2626;
 }
 
-.event-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.event-card:hover .event-img {
-  transform: scale(1.05);
-}
-
-/* Card body below image */
-.event-body {
-  padding: 1.5rem;
+.event-date-badge {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  border-radius: 8px;
+  padding: 0.6rem;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.30);
+  color: #EF4444;
+  line-height: 1;
+  flex-shrink: 0;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
 }
 
+.event-day {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.event-month {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.event-info { flex: 1; }
+
 .event-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 800;
   margin: 0 0 0.5rem;
   color: #fff;
@@ -424,49 +546,23 @@ const team = [
 }
 
 .event-desc {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: rgba(255, 255, 255, 0.65);
+  margin: 0 0 0.8rem;
   line-height: 1.6;
-  margin: 0 0 1.1rem;
-  flex: 1;
 }
 
-/* Date / time / venue row */
 .event-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem 1.2rem;
+  gap: 1.2rem;
   font-size: 0.82rem;
-  color: rgba(220, 38, 38, 0.85);
-  font-weight: 600;
+  color: rgba(220, 38, 38, 0.80);
   font-family: 'Courier New', Courier, monospace;
-  margin-bottom: 1.3rem;
+  font-weight: 600;
+  flex-wrap: wrap;
 }
 
-/* Register Now button — amber to stay consistent with site-wide CTA style */
-.register-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.65rem 1.4rem;
-  border-radius: 10px;
-  background: #f59e0b;
-  color: #0a0f1e;
-  font-weight: 700;
-  font-size: 0.9rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  letter-spacing: 0.02em;
-  transition: background 0.2s, transform 0.2s;
-  width: fit-content;
-}
-
-.register-btn:hover {
-  background: #fbbf24;
-  transform: translateY(-1px);
-}
-
-/* ─── Past Events ─── */
+/* Past Events */
 .past-events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -498,7 +594,9 @@ const team = [
 
 .past-event-card:hover {
   transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.15), 0 0 20px rgba(249, 115, 22, 0.08);
+  box-shadow:
+    0 12px 32px rgba(220, 38, 38, 0.15),
+    0 0 20px rgba(249, 115, 22, 0.08);
   border-color: rgba(220, 38, 38, 0.50);
 }
 
@@ -541,6 +639,7 @@ const team = [
 .past-event-overlay {
   position: absolute;
   bottom: 8px; right: 8px;
+  padding: 0;
   z-index: 2;
 }
 
@@ -595,7 +694,7 @@ const team = [
   border-top: 1px dashed rgba(220, 38, 38, 0.20);
 }
 
-/* ─── Team ─── */
+/* Team — photo card style */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -713,7 +812,15 @@ const team = [
   border-color: #DC2626;
 }
 
-/* ── Pulsing border glow for first upcoming event ── */
+/* ── GAMING EFFECTS ── */
+
+/* Scanning line — subtle CRT/HUD sweep */
+@keyframes scanLine {
+  0%   { top: -2px; }
+  100% { top: 100%; }
+}
+
+/* Pulsing border glow for first upcoming event */
 .event-card:first-child {
   animation: borderPulse 3s ease-in-out infinite;
 }
@@ -728,4 +835,103 @@ const team = [
     box-shadow: 0 0 25px rgba(220, 38, 38, 0.10);
   }
 }
+/* ─── Winners ─── */
+.winners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.winner-card {
+  position: relative;
+  background: rgba(15, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 10px;
+  padding: 1.5rem 1.5rem 1.5rem 1.8rem;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.winner-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #DC2626, #F97316);
+  box-shadow: 0 0 10px #DC2626;
+}
+
+.winner-card:hover {
+  border-color: rgba(220, 38, 38, 0.45);
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.12);
+}
+
+.winner-card-header { margin-bottom: 1.1rem; }
+
+.winner-event-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  background: rgba(220, 38, 38, 0.1);
+  color: #EF4444;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.winner-event-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.winners-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+
+.winner-row {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(220, 38, 38, 0.05);
+  border: 1px solid rgba(220, 38, 38, 0.1);
+  transition: background 0.2s;
+}
+.winner-row:hover { background: rgba(220, 38, 38, 0.1); }
+
+.winner-rank {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  font-size: 0.72rem; font-weight: 800;
+  flex-shrink: 0;
+}
+.winner-row:nth-child(1) .winner-rank { background: rgba(250,204,21,0.15); color: #facc15; border: 1px solid rgba(250,204,21,0.4); }
+.winner-row:nth-child(2) .winner-rank { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.4); }
+.winner-row:nth-child(3) .winner-rank { background: rgba(180,120,60,0.15); color: #cd7f32; border: 1px solid rgba(180,120,60,0.4); }
+.winner-row:nth-child(n+4) .winner-rank { background: rgba(220,38,38,0.1); color: #EF4444; border: 1px solid rgba(220,38,38,0.3); }
+
+.winner-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.winner-name { font-size: 0.88rem; font-weight: 600; color: #e0e0e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.winner-email { font-size: 0.68rem; color: rgba(220, 38, 38, 0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.no-winner {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(255,255,255,0.1);
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.3);
+  font-style: italic;
+}
+.no-winner-icon { color: rgba(255,255,255,0.2); }
 </style>
