@@ -1,53 +1,12 @@
 [
   {
     "id": 1,
-    "type": "birthday",
-    "date": "04-19",
-    "title": "Happy Birthday, Samar! 🎂",
-    "message": "Wishing our Web Admin a fantastic birthday. The house celebrates you today!",
-    "tag": "Today's Birthday"
-  },
-  {
-    "id": 2,
     "type": "event",
-    "date": null,
-    "title": "Hackathon 2025 — Registrations Open",
-    "message": "The Sundarbans House annual hackathon is here. Register before April 30th. Teams of 2–4 members.",
+    "date": 20-04-2026,
+    "title": "Paradox 26 — Registrations Start",
+    "message": "IIT Madras Offline Fest for BS Students ",
     "tag": "Event",
-    "link": "https://sundarbanshouse.in/events",
-    "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80&auto=format&fit=crop"
+    "link": "https://www.iitmparadox.org/",
+    "image": "https://study.iitm.ac.in/ds/assets/img/paradox/ParadoxFullLogo.png"
   },
-  {
-    "id": 3,
-    "type": "achievement",
-    "date": null,
-    "title": "Mannu Yadav — 1st Place at IIT Bombay Techfest",
-    "message": "Our Secretary brought home gold! Congratulations on representing Sundarbans House brilliantly.",
-    "tag": "Achievement"
-  },
-  {
-    "id": 4,
-    "type": "alert",
-    "date": null,
-    "title": "Term 2 Quiz Schedule Released",
-    "message": "The quiz schedule for Term 2 is now live on the portal. Check your dates and plan accordingly.",
-    "tag": "Notice"
-  },
-  {
-    "id": 5,
-    "type": "event",
-    "date": null,
-    "title": "Community Meetup — Bangalore, May 10",
-    "message": "In-person meetup for Bangalore members at Koramangala Social. RSVP by May 5th.",
-    "tag": "Meetup",
-    "image": "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&q=80&auto=format&fit=crop"
-  },
-  {
-    "id": 6,
-    "type": "birthday",
-    "date": "04-25",
-    "title": "Happy Birthday, Aditya Vaidhya! 🎂",
-    "message": "Sending love to our Deputy Secretary on his special day. You make this house proud!",
-    "tag": "Birthday"
-  }
 ]
