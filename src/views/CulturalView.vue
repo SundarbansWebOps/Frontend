@@ -308,6 +308,15 @@ const team = [
     instagram: "#",
   },
   {
+    name: "Aarusha Patil",
+    role: "Event Coordinator",
+    level: "Diploma Data Science",
+    photo: "#",
+    email: "mailto:25f2006483@ds.study.iitm.ac.in",
+    linkedin: "https://www.linkedin.com/in/aarusha-patil-92267b3a8/",
+    instagram: "https://www.instagram.com/aaru.mp4_?igsh=MWYxNXExMHd2NmdhNg==",
+  },
+  {
     name: "Navya R",
     role: "Event Coordinator",
     level: "Foundation Data Science",
