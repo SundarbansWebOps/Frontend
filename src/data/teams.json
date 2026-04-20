@@ -1,0 +1,230 @@
+{
+  "upperHouseCouncil": [
+    {
+      "name": "Samar Ahmad",
+      "photo": "Samar.jpeg",
+      "initials": "SA",
+      "role": "Web Admin",
+      "level": "Diploma · Data Science",
+      "email": "23f3001032@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/samarahmad10/",
+      "instagram": "https://www.instagram.com/thesamarsoldier/?hl=en"
+    },
+    {
+      "name": "Mannu Yadav",
+      "photo": "mannu.jpg",
+      "initials": "MY",
+      "role": "Secretary",
+      "level": "Diploma · Data Science",
+      "email": "23f3001972@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/mannuyadav/",
+      "instagram": null
+    },
+    {
+      "name": "Aditya V",
+      "photo": "aditya.jpeg",
+      "initials": "AV",
+      "role": "Deputy Secretary",
+      "level": "Diploma · Data Science",
+      "email": "23f2000809@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/aditya-vaidhya/",
+      "instagram": "https://www.instagram.com/adityavaidhya29/?hl=en"
+    }
+  ],
+  "webOpsTeam": [
+    {
+      "name": "Samar Ahmad",
+      "photo": "Samar.jpeg",
+      "initials": "SA",
+      "role": "Web Admin",
+      "level": "Diploma · Data Science",
+      "email": "23f3001032@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/samarahmad10/",
+      "instagram": "https://www.instagram.com/thesamarsoldier/?hl=en"
+    },
+    {
+      "name": "Anuraj Jit Saikia",
+      "photo": "Anuraj.jpg",
+      "initials": "AK",
+      "role": "Web Developer",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": null,
+      "instagram": null
+    },
+    {
+      "name": "Riya Moun",
+      "photo": "Riya.jpg",
+      "initials": "RM",
+      "role": "Web Developer",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": null,
+      "instagram": null
+    },
+    {
+      "name": "Sadia Tabassum",
+      "photo": "Sadia.jpeg",
+      "initials": "ST",
+      "role": "Web Developer",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": null,
+      "instagram": null
+    },
+    {
+      "name": "Tejashvi Yadav",
+      "photo": "tejashvi.jpg",
+      "initials": "TY",
+      "role": "AI & Web Engineer",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": "https://linkedin.com/in/tejashvi-yadav-46bba1272",
+      "instagram": "https://instagram.com/tejaxhvi"
+    },
+    {
+      "name": "Shoaib Sadiq Salehmohamed",
+      "photo": "shoaib.jpeg",
+      "initials": "SH",
+      "role": "Web Developer",
+      "level": "Diploma · Data Science",
+      "email": "shoaibkulsums@gmail.com",
+      "linkedin": "https://linkedin.com/in/shoaib-ssm",
+      "instagram": null
+    }
+  ],
+  "lowerHouseCouncil": [
+    {
+      "name": "Rushabh Kapse",
+      "photo": "rushabh.jpg",
+      "initials": "RK",
+      "role": "📍 Mumbai",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": null,
+      "instagram": null
+    },
+    {
+      "name": "Dishi Gupta",
+      "photo": "dishi.jpg",
+      "initials": "DG",
+      "role": "📍 Hyderabad",
+      "level": "Foundation · Data Science",
+      "email": "25f2004620@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/dishi-gupta-984ba0376",
+      "instagram": null
+    },
+    {
+      "name": "Aditri Bordoloi",
+      "photo": "Aditri.jpeg",
+      "initials": "AB",
+      "role": "📍 Bengaluru",
+      "level": "Foundation · Data Science",
+      "email": "25f2008346@ds.study.iitm.ac.in",
+      "linkedin": null,
+      "instagram": "https://www.instagram.com/algorithmfreemycuties?igsh=Z3oyNG5sZWdidzZp"
+    },
+    {
+      "name": "Aakash Rawal",
+      "photo": "aakash.webp",
+      "initials": "AR",
+      "role": "📍 Chandigarh",
+      "level": "Diploma · Data Science",
+      "email": "24f2003705@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/aakash-rawal-04b24b324",
+      "instagram": "https://www.instagram.com/aakash7468?igsh=MXJmNnV4cTBvN2Ezcg=="
+    },
+    {
+      "name": "R Sai Sahanaa",
+      "photo": "R SAI SAHANAA.jpeg",
+      "initials": "RS",
+      "role": "📍 Chennai",
+      "level": "Foundation · Data Science",
+      "email": "25f3000832@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/sai-sahanaa-ranjith-30733a366",
+      "instagram": "https://www.instagram.com/saisahanaa2521?utm_source=qr"
+    },
+    {
+      "name": "Nivash Kumar",
+      "photo": "nivash.jpeg",
+      "initials": "NK",
+      "role": "📍 Patna",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": "http://www.linkedin.com/in/nivash-kumar-896a80173",
+      "instagram": null
+    },
+    {
+      "name": "Chandan Saw",
+      "photo": "chandan.webp",
+      "initials": "CS",
+      "role": "📍 Kolkata",
+      "level": "Diploma · Electronic Science",
+      "email": "24f3100195@es.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/chandanshaw1",
+      "instagram": null
+    },
+    {
+      "name": "Kartik Singh",
+      "photo": "kartik.webp",
+      "initials": "KS",
+      "role": "📍 Lucknow",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": null,
+      "instagram": null
+    },
+    {
+      "name": "Divya Prakash",
+      "photo": "divy.jpeg",
+      "initials": "DP",
+      "role": "📍 Delhi",
+      "level": "Diploma · Data Science",
+      "email": "24f3004288@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/divya-prakash-5b564b273/",
+      "instagram": "https://www.instagram.com/divy.prakash9521"
+    },
+    {
+      "name": "Laksh Wadhawan",
+      "photo": "laksh.webp",
+      "initials": "LW",
+      "role": "📍 Delhi",
+      "level": "Diploma · Data Science",
+      "email": null,
+      "linkedin": "https://www.linkedin.com/in/laksh-w-5911791b3/",
+      "instagram": null
+    }
+  ],
+  "communityHeads": [
+    {
+      "name": "Himanshu Sharma",
+      "photo": "Himanshu.jpg",
+      "initials": "HS",
+      "role": "E-Sports",
+      "level": "Diploma · Data Science",
+      "email": "24f2003630@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/himanshu-sharma-4b2176333",
+      "instagram": "https://www.instagram.com/hs_16405/"
+    },
+    {
+      "name": "Avneesh Singh",
+      "photo": "Avneesh.jpg",
+      "initials": "AS",
+      "role": "Technical",
+      "level": "Diploma · Data Science",
+      "email": "22f3002042@ds.study.iitm.ac.in",
+      "linkedin": "https://www.linkedin.com/in/avneesh-singh-dev/",
+      "instagram": "https://www.instagram.com/0xasr.dev/"
+    },
+    {
+      "name": "Abhisekh Chowdhury",
+      "photo": "Abhishekh.jpg",
+      "initials": "AC",
+      "role": "Cultural",
+      "level": "Foundation · Data Science",
+      "email": "25f1000401@ds.study.iitm.ac.in",
+      "linkedin": null,
+      "instagram": "https://www.instagram.com/abhisekh._.901?igsh=MXBxc3d3NWFvNGg5bg=="
+    }
+  ]
+}
