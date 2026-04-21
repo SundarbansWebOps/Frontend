@@ -184,6 +184,9 @@ import imgOpenMicUpcoming from "../assets/Community Events/Cultural/Open Mic.jpe
 // Team Photos
 import imgLiza from "../assets/teams/Liza.jpg";
 import imgMegha from "../assets/teams/Megha.jpg";
+import imgAarusha from "../assets/teams/Aarusha.jpg";
+import imgNavya from "../assets/teams/Navya.jpg";
+import imgDhanya from "../assets/teams/Dhanya.jpg";
 import imgKaviya from "../assets/teams/R.Kaviya Kaviarasi.jpg";
 
 useScrollReveal();
