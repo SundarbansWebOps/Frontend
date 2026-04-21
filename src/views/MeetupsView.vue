@@ -176,12 +176,12 @@ const activeTab = ref('All Time')
 const members = [
   {
     rank: '🥇', rankClass: 'rank-1',
-    name: 'Rushabh Kapse', city: 'Mumbai', points: '1,300', badge: 'Apex', initial: 'R',
+    name: 'Nivash Kumar', city: 'Patna', points: '1,400', badge: 'Apex', initial: 'R',
   
   },
   {
     rank: '🥈', rankClass: 'rank-2',
-    name: 'Nivash Kumar', city: 'Patna', points: '1,200', badge: ' Zenith', initial: 'N',
+    name: 'Rushabh Kapse', city: 'Mumbai', points: '1,300', badge: ' Zenith', initial: 'N',
   },
   {
     rank: '🥉', rankClass: 'rank-3',
@@ -201,7 +201,7 @@ const members = [
   },
    {
     rank: '7', rankClass: '',
-    name: 'R Sai Sahanaa', city: 'Hyderabad', points: '100', badge: ' Ignite', initial: 'A',
+    name: 'R Sai Sahanaa', city: 'Chennai', points: '100', badge: ' Ignite', initial: 'A',
   },
  
   
