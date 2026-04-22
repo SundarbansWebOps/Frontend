@@ -80,11 +80,8 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-    <!-- ══ SAMAR AHMAD ══ -->
+        <!-- ══ SAMAR AHMAD ══ -->
         <div class="tm-card rc" style="--card-delay:0.1s">
           <div class="tm-photo-wrap">
             <img src="@/assets/teams/Samar.jpeg" alt="Samar Ahmad"
@@ -117,6 +114,12 @@
           </div>
         </div>
 
+        
+      </div>
+    </div>
+  </section>
+
+    
 
   <!-- ══ WEBOPS TEAM ══ -->
   <section class="section rs" style="background:var(--bg2)">
