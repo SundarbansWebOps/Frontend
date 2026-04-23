@@ -369,24 +369,7 @@
           <p>No cities found for "{{ citySearch }}"</p>
         </div>
 
-        <!-- Info cards -->
-        <div class="ec-info-row" style="margin-top:2.5rem">
-          <div class="ec-info-card card-base">
-            <div style="font-size:1.4rem;margin-bottom:0.5rem">🗓️</div>
-            <h4 style="font-family:Cinzel,serif;font-weight:700;margin-bottom:0.4rem">City Selection</h4>
-            <p style="font-size:0.82rem;color:var(--text2)">Done during course enrollment each term. Change window opens ~1 month before exams.</p>
-          </div>
-          <div class="ec-info-card card-base">
-            <div style="font-size:1.4rem;margin-bottom:0.5rem">🎫</div>
-            <h4 style="font-family:Cinzel,serif;font-weight:700;margin-bottom:0.4rem">Hall Tickets</h4>
-            <p style="font-size:0.82rem;color:var(--text2)">Released 2-7 days before exam. Verify your centre address immediately on receipt.</p>
-          </div>
-          <div class="ec-info-card card-base">
-            <div style="font-size:1.4rem;margin-bottom:0.5rem">🪪</div>
-            <h4 style="font-family:Cinzel,serif;font-weight:700;margin-bottom:0.4rem">What to Carry</h4>
-            <p style="font-size:0.82rem;color:var(--text2)">Hall ticket + original photo ID (Aadhaar/PAN/Passport). Arrive 30 min early. No watches allowed at most centres.</p>
-          </div>
-        </div>
+
       </div>
     </section>
 
