@@ -174,66 +174,64 @@
         <div class="sec-hdr">
           <div class="section-tag">Student Tools</div>
           <h2 class="section-title-xl">
-            Handy <span class="tg">tools</span> for studying
+            Weekly <span class="tg">Study Planner</span>
           </h2>
+          <p class="sec-sub">Plan your week day-by-day. Click a task to mark it done.</p>
         </div>
-        <div class="grid-3" style="margin-bottom: 1.5rem">
-          <div class="card-base rc" style="--card-delay: 0.1s">
-            <div style="font-size: 1.5rem; margin-bottom: 0.5rem">⏱️</div>
-            <h4 style="font-family: Cinzel, serif; font-weight: 700">
-              Pomodoro Timer
-            </h4>
-            <p class="desc" style="font-size: 0.82rem">
-              Study in focused 25-minute blocks
-            </p>
-            <a
-              href="#"
-              style="
-                color: var(--accent);
-                font-size: 0.82rem;
-                font-weight: 600;
-                text-decoration: none;
-              "
-              >Use Tool -&gt;</a
-            >
+        <!-- Study Planner Tool -->
+        <div class="sp-planner-wrap">
+          <!-- Week Nav -->
+          <div class="sp-week-nav">
+            <button class="sp-nav-btn" @click="prevWeek">&#8592;</button>
+            <span class="sp-week-label">Week of {{ weekLabel }}</span>
+            <button class="sp-nav-btn" @click="nextWeek">&#8594;</button>
+            <button class="sp-nav-btn sp-today-btn" @click="goToThisWeek" style="margin-left:0.5rem;font-size:0.75rem;padding:0.3rem 0.75rem">Today</button>
           </div>
-          <div class="card-base rc" style="--card-delay: 0.2s">
-            <div style="font-size: 1.5rem; margin-bottom: 0.5rem">📝</div>
-            <h4 style="font-family: Cinzel, serif; font-weight: 700">
-              Doubt Board
-            </h4>
-            <p class="desc" style="font-size: 0.82rem">
-              Post your doubts, get peer answers
-            </p>
-            <a
-              href="#doubtBoard"
-              style="
-                color: var(--accent);
-                font-size: 0.82rem;
-                font-weight: 600;
-                text-decoration: none;
-              "
-              >Open Board -&gt;</a
-            >
+
+          <!-- Day columns -->
+          <div class="sp-grid">
+            <div
+              v-for="day in weekDays"
+              :key="day.key"
+              class="sp-day-col"
+              :class="{ 'sp-today': day.isToday }">
+              <div class="sp-day-header">
+                <span class="sp-day-name">{{ day.name }}</span>
+                <span class="sp-day-date">{{ day.dateStr }}</span>
+              </div>
+              <div class="sp-tasks">
+                <div
+                  v-for="task in day.tasks"
+                  :key="task.id"
+                  class="sp-task"
+                  :class="{ 'sp-done': task.done }"
+                  @click="toggleTask(day.key, task.id)">
+                  <span class="sp-check">{{ task.done ? '✓' : '' }}</span>
+                  <span class="sp-task-text">{{ task.text }}</span>
+                  <button class="sp-del" @click.stop="deleteTask(day.key, task.id)">×</button>
+                </div>
+                <div v-if="day.tasks.length === 0" class="sp-empty-day">No tasks</div>
+              </div>
+              <div class="sp-add-wrap">
+                <input
+                  v-model="newTaskText[day.key]"
+                  class="sp-add-input"
+                  :placeholder="'Add task...'"
+                  @keyup.enter="addTask(day.key)" />
+                <button class="sp-add-btn" @click="addTask(day.key)">+</button>
+              </div>
+            </div>
           </div>
-          <div class="card-base rc" style="--card-delay: 0.3s">
-            <div style="font-size: 1.5rem; margin-bottom: 0.5rem">📅</div>
-            <h4 style="font-family: Cinzel, serif; font-weight: 700">
-              Study Planner
-            </h4>
-            <p class="desc" style="font-size: 0.82rem">
-              Plan your week, track your progress
-            </p>
-            <a
-              href="#"
-              style="
-                color: var(--accent);
-                font-size: 0.82rem;
-                font-weight: 600;
-                text-decoration: none;
-              "
-              >Plan Now -&gt;</a
-            >
+
+          <!-- Progress bar -->
+          <div class="sp-progress-wrap">
+            <div class="sp-progress-label">
+              Week Progress — {{ completedCount }}/{{ totalCount }} tasks done
+              <span v-if="totalCount > 0" style="color:var(--accent)"> ({{ Math.round(completedCount/totalCount*100) }}%)</span>
+            </div>
+            <div class="sp-progress-bar">
+              <div class="sp-progress-fill" :style="{ width: totalCount > 0 ? (completedCount/totalCount*100)+'%' : '0%' }"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -382,6 +380,82 @@
             style="display: inline-block; text-decoration: none;">
             Open Doubts Form
           </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Exam Cities Section -->
+    <section class="section rs" id="examCities">
+      <div class="container">
+        <div class="sec-hdr">
+          <div class="section-tag">Exam Info</div>
+          <h2 class="section-title-xl">
+            IITM BS <span class="tg">Exam Cities</span>
+          </h2>
+          <p class="sec-sub">Find your nearest exam centre. Cities are organized by state across India.</p>
+        </div>
+
+        <!-- Search + filter -->
+        <div class="ec-search-wrap">
+          <div class="sc-search-input-wrap" style="max-width:420px;margin:0 auto 1.5rem">
+            <input
+              v-model="citySearch"
+              type="text"
+              placeholder="Search city or state..."
+              class="form-input sc-mid-search-input" />
+            <svg class="sc-mid-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Region tabs -->
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-bottom:2rem">
+          <button
+            v-for="r in examRegions"
+            :key="r"
+            class="db-filter"
+            :class="{ active: activeRegion === r }"
+            @click="activeRegion = r">
+            {{ r }}
+          </button>
+        </div>
+
+        <!-- Cities grid -->
+        <div class="ec-grid">
+          <div
+            v-for="row in filteredExamCities"
+            :key="row.state"
+            class="ec-card card-base rc">
+            <div class="ec-state">{{ row.state }}</div>
+            <div class="ec-cities-list">
+              <span v-for="city in row.cities" :key="city" class="ec-city-tag">{{ city }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="filteredExamCities.length === 0" class="sc-empty">
+          <div style="font-size:2.5rem">🔍</div>
+          <p>No cities found for "{{ citySearch }}"</p>
+        </div>
+
+        <!-- Info cards -->
+        <div class="ec-info-row" style="margin-top:2.5rem">
+          <div class="ec-info-card card-base">
+            <div style="font-size:1.4rem;margin-bottom:0.5rem">🗓️</div>
+            <h4 style="font-family:Cinzel,serif;font-weight:700;margin-bottom:0.4rem">City Selection</h4>
+            <p style="font-size:0.82rem;color:var(--text2)">Done during course enrollment each term. Change window opens ~1 month before exams.</p>
+          </div>
+          <div class="ec-info-card card-base">
+            <div style="font-size:1.4rem;margin-bottom:0.5rem">🎫</div>
+            <h4 style="font-family:Cinzel,serif;font-weight:700;margin-bottom:0.4rem">Hall Tickets</h4>
+            <p style="font-size:0.82rem;color:var(--text2)">Released 2-7 days before exam. Verify your centre address immediately on receipt.</p>
+          </div>
+          <div class="ec-info-card card-base">
+            <div style="font-size:1.4rem;margin-bottom:0.5rem">🪪</div>
+            <h4 style="font-family:Cinzel,serif;font-weight:700;margin-bottom:0.4rem">What to Carry</h4>
+            <p style="font-size:0.82rem;color:var(--text2)">Hall ticket + original photo ID (Aadhaar/PAN/Passport). Arrive 30 min early. No watches allowed at most centres.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -584,6 +658,139 @@ import PageHero from "../components/PageHero.vue";
 import scData from "../data/scData_generated.js";
 
 useScrollReveal();
+
+// ─── Study Planner ────────────────────────────────────────────────────────────
+const weekOffset = ref(0);
+
+function getMondayOf(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+const thisMonday = getMondayOf(new Date());
+
+const currentMonday = computed(() => {
+  const d = new Date(thisMonday);
+  d.setDate(d.getDate() + weekOffset.value * 7);
+  return d;
+});
+
+const weekLabel = computed(() => {
+  const m = currentMonday.value;
+  return m.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+});
+
+const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const plannerTasks = reactive({});
+
+function getDayKey(baseMonday, offset) {
+  const d = new Date(baseMonday);
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
+
+const weekDays = computed(() => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return dayNames.map((name, i) => {
+    const d = new Date(currentMonday.value);
+    d.setDate(d.getDate() + i);
+    const key = d.toISOString().slice(0, 10);
+    if (!plannerTasks[key]) plannerTasks[key] = [];
+    return {
+      name,
+      key,
+      dateStr: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+      isToday: d.getTime() === today.getTime(),
+      tasks: plannerTasks[key],
+    };
+  });
+});
+
+const newTaskText = reactive({});
+let taskIdCounter = 1;
+
+function addTask(dayKey) {
+  const text = (newTaskText[dayKey] || '').trim();
+  if (!text) return;
+  if (!plannerTasks[dayKey]) plannerTasks[dayKey] = [];
+  plannerTasks[dayKey].push({ id: taskIdCounter++, text, done: false });
+  newTaskText[dayKey] = '';
+}
+
+function toggleTask(dayKey, id) {
+  const task = (plannerTasks[dayKey] || []).find(t => t.id === id);
+  if (task) task.done = !task.done;
+}
+
+function deleteTask(dayKey, id) {
+  if (plannerTasks[dayKey]) {
+    plannerTasks[dayKey] = plannerTasks[dayKey].filter(t => t.id !== id);
+  }
+}
+
+function prevWeek() { weekOffset.value--; }
+function nextWeek() { weekOffset.value++; }
+function goToThisWeek() { weekOffset.value = 0; }
+
+const totalCount = computed(() => weekDays.value.reduce((s, d) => s + d.tasks.length, 0));
+const completedCount = computed(() => weekDays.value.reduce((s, d) => s + d.tasks.filter(t => t.done).length, 0));
+
+// ─── Exam Cities ─────────────────────────────────────────────────────────────
+const citySearch = ref('');
+const activeRegion = ref('All');
+
+const examCitiesData = [
+  { state: 'Andaman & Nicobar Islands', region: 'Kolkata', cities: ['Port Blair'] },
+  { state: 'Andhra Pradesh', region: 'Hyderabad', cities: ['Anantapur', 'Bhimavaram', 'Guntur', 'Kadapa', 'Kurnool', 'Rajahmundry', 'Tirupathi', 'Vijayawada', 'Vishakhapatnam'] },
+  { state: 'Arunachal Pradesh', region: 'Kolkata', cities: ['Naharlagun'] },
+  { state: 'Assam', region: 'Kolkata', cities: ['Dibrugarh', 'Guwahati', 'Silchar', 'Tezpur'] },
+  { state: 'Bihar', region: 'Patna', cities: ['Patna', 'Bhagalpur', 'Gaya', 'Muzaffarpur', 'Darbhanga'] },
+  { state: 'Chhattisgarh', region: 'Patna', cities: ['Raipur'] },
+  { state: 'Delhi', region: 'Delhi', cities: ['Delhi'] },
+  { state: 'Goa', region: 'Mumbai', cities: ['Panaji'] },
+  { state: 'Gujarat', region: 'Mumbai', cities: ['Ahmedabad', 'Anand', 'Rajkot', 'Surat', 'Vadodara'] },
+  { state: 'Haryana', region: 'Chandigarh', cities: ['Faridabad', 'Gurgaon', 'Kurukshetra'] },
+  { state: 'Himachal Pradesh', region: 'Chandigarh', cities: ['Hamirpur', 'Shimla'] },
+  { state: 'Jammu & Kashmir', region: 'Chandigarh', cities: ['Jammu', 'Srinagar'] },
+  { state: 'Jharkhand', region: 'Patna', cities: ['Dhanbad', 'Jamshedpur', 'Ranchi'] },
+  { state: 'Karnataka', region: 'Bengaluru', cities: ['Belgaum', 'Bengaluru', 'Dharwad', 'Gulbarga', 'Mangalore', 'Mysore'] },
+  { state: 'Kerala', region: 'Bengaluru', cities: ['Calicut', 'Ernakulam', 'Kollam', 'Kottayam', 'Palakkad', 'Thrissur', 'Trivandrum'] },
+  { state: 'Madhya Pradesh', region: 'Mumbai', cities: ['Bhopal', 'Gwalior', 'Indore', 'Jabalpur'] },
+  { state: 'Maharashtra', region: 'Mumbai', cities: ['Amravati', 'Aurangabad', 'Jalgaon', 'Kolhapur', 'Mumbai', 'Nagpur', 'Nanded', 'Nashik', 'Pune', 'Solapur'] },
+  { state: 'Manipur', region: 'Kolkata', cities: ['Imphal'] },
+  { state: 'Meghalaya', region: 'Kolkata', cities: ['Shillong'] },
+  { state: 'Mizoram', region: 'Kolkata', cities: ['Aizawl'] },
+  { state: 'Nagaland', region: 'Kolkata', cities: ['Dimapur'] },
+  { state: 'Odisha', region: 'Kolkata', cities: ['Bhubaneswar', 'Rourkela', 'Sambalpur'] },
+  { state: 'Puducherry', region: 'Chennai', cities: ['Puducherry'] },
+  { state: 'Punjab', region: 'Chandigarh', cities: ['Chandigarh', 'Jalandhar', 'Ludhiana', 'Amritsar'] },
+  { state: 'Rajasthan', region: 'Chandigarh', cities: ['Jaipur', 'Jodhpur', 'Kota', 'Udaipur'] },
+  { state: 'Sikkim', region: 'Kolkata', cities: ['Bardang'] },
+  { state: 'Tamil Nadu', region: 'Chennai', cities: ['Chennai-Avadi', 'Chennai-South', 'Coimbatore', 'Erode', 'Kanchipuram', 'Madurai', 'Salem', 'Thanjavur', 'Tiruchirappalli', 'Tirunelveli', 'Vellore'] },
+  { state: 'Telangana', region: 'Hyderabad', cities: ['Hyderabad', 'Warangal'] },
+  { state: 'Tripura', region: 'Kolkata', cities: ['Agartala'] },
+  { state: 'Uttar Pradesh', region: 'Lucknow', cities: ['Agra', 'Allahabad', 'Ghaziabad', 'Gorakhpur', 'Greater Noida', 'Kanpur', 'Lucknow', 'Meerut', 'Varanasi'] },
+  { state: 'Uttarakhand', region: 'Chandigarh', cities: ['Dehradun', 'Haldwani', 'Roorkee'] },
+  { state: 'West Bengal', region: 'Kolkata', cities: ['Asansol', 'Adisaptagram', 'Durgapur', 'Kolkata', 'Siliguri'] },
+];
+
+const examRegions = ['All', 'Delhi', 'Chennai', 'Bengaluru', 'Hyderabad', 'Mumbai', 'Kolkata', 'Patna', 'Chandigarh', 'Lucknow'];
+
+const filteredExamCities = computed(() => {
+  const q = citySearch.value.trim().toLowerCase();
+  return examCitiesData.filter(row => {
+    const regionMatch = activeRegion.value === 'All' || row.region === activeRegion.value;
+    if (!regionMatch) return false;
+    if (!q) return true;
+    return row.state.toLowerCase().includes(q) || row.cities.some(c => c.toLowerCase().includes(q));
+  });
+});
 
 const search = ref("");
 const tabs = ["All Levels", "Foundation", "Diploma", "BS Degree"];
@@ -1566,4 +1773,228 @@ onMounted(async () => {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ─── Study Planner ─────────────────────────────────────────────────── */
+.sp-planner-wrap {
+  background: var(--surface);
+  border: 1px solid rgba(212,160,23,0.18);
+  border-radius: 18px;
+  padding: 1.75rem;
+  margin-top: 0.5rem;
+}
+
+.sp-week-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-week-label {
+  font-family: Cinzel, serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  flex: 1;
+  text-align: center;
+}
+
+.sp-nav-btn {
+  background: rgba(212,160,23,0.08);
+  border: 1px solid rgba(212,160,23,0.25);
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.sp-nav-btn:hover { background: rgba(212,160,23,0.16); }
+
+.sp-today-btn { font-size: 0.75rem !important; padding: 0.35rem 0.75rem !important; }
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.sp-day-col {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.6rem;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color 0.2s;
+}
+
+.sp-day-col.sp-today {
+  border-color: rgba(212,160,23,0.5);
+  background: rgba(212,160,23,0.05);
+}
+
+.sp-day-header {
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.sp-day-name {
+  font-family: Cinzel, serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--accent);
+  display: block;
+}
+
+.sp-day-date {
+  font-size: 0.65rem;
+  color: var(--text3);
+}
+
+.sp-tasks { flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
+
+.sp-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.3rem;
+  background: rgba(212,160,23,0.04);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0.35rem 0.4rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.72rem;
+}
+
+.sp-task:hover { background: rgba(212,160,23,0.1); }
+.sp-task.sp-done { opacity: 0.5; }
+.sp-task.sp-done .sp-task-text { text-decoration: line-through; }
+
+.sp-check {
+  color: var(--accent);
+  font-size: 0.65rem;
+  min-width: 10px;
+  margin-top: 1px;
+}
+
+.sp-task-text { flex: 1; line-height: 1.3; word-break: break-word; }
+
+.sp-del {
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.sp-task:hover .sp-del { opacity: 1; }
+
+.sp-empty-day { font-size: 0.65rem; color: var(--text3); text-align: center; padding: 0.5rem 0; }
+
+.sp-add-wrap { display: flex; gap: 0.3rem; }
+.sp-add-input {
+  flex: 1;
+  background: rgba(212,160,23,0.04);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0.3rem 0.4rem;
+  color: var(--text);
+  font-size: 0.68rem;
+  font-family: inherit;
+  min-width: 0;
+}
+.sp-add-input:focus { outline: none; border-color: var(--accent); }
+
+.sp-add-btn {
+  background: rgba(212,160,23,0.12);
+  border: 1px solid rgba(212,160,23,0.3);
+  color: var(--accent);
+  border-radius: 7px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.sp-add-btn:hover { background: rgba(212,160,23,0.22); }
+
+.sp-progress-wrap { margin-top: 0.5rem; }
+.sp-progress-label { font-size: 0.8rem; color: var(--text2); margin-bottom: 0.4rem; }
+.sp-progress-bar {
+  height: 6px;
+  background: rgba(212,160,23,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.sp-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+@media (max-width: 900px) {
+  .sp-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 600px) {
+  .sp-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── Exam Cities ───────────────────────────────────────────────────── */
+.ec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ec-card { padding: 1.1rem 1.25rem; }
+
+.ec-state {
+  font-family: Cinzel, serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(212,160,23,0.15);
+}
+
+.ec-cities-list { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.ec-city-tag {
+  font-size: 0.72rem;
+  background: rgba(212,160,23,0.06);
+  border: 1px solid rgba(212,160,23,0.15);
+  color: var(--text2);
+  padding: 0.18rem 0.55rem;
+  border-radius: 99px;
+}
+
+.ec-info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.ec-info-card {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .ec-info-row { grid-template-columns: 1fr; }
+}
+
 </style>
