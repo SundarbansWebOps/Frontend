@@ -189,7 +189,7 @@
           </div>
 
           <!-- Day columns -->
-          <div class="sp-grid">
+          <div class="sp-grid-scroll"><div class="sp-grid">
             <div
               v-for="day in weekDays"
               :key="day.key"
@@ -221,7 +221,7 @@
                 <button class="sp-add-btn" @click="addTask(day.key)">+</button>
               </div>
             </div>
-          </div>
+          </div></div>
 
           <!-- Progress bar -->
           <div class="sp-progress-wrap">
@@ -1814,11 +1814,21 @@ onMounted(async () => {
 
 .sp-today-btn { font-size: 0.75rem !important; padding: 0.35rem 0.75rem !important; }
 
+.sp-grid-scroll {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212,160,23,0.3) transparent;
+}
+.sp-grid-scroll::-webkit-scrollbar { height: 4px; }
+.sp-grid-scroll::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.3); border-radius: 99px; }
+
 .sp-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(140px, 1fr));
   gap: 0.6rem;
-  margin-bottom: 1.5rem;
+  min-width: 900px;
 }
 
 .sp-day-col {
@@ -1834,8 +1844,13 @@ onMounted(async () => {
 }
 
 .sp-day-col.sp-today {
-  border-color: rgba(212,160,23,0.5);
-  background: rgba(212,160,23,0.05);
+  border-color: var(--accent);
+  background: rgba(212,160,23,0.08);
+  box-shadow: 0 0 0 1px rgba(212,160,23,0.25);
+}
+
+.sp-day-col.sp-today .sp-day-name {
+  text-shadow: 0 0 8px rgba(212,160,23,0.4);
 }
 
 .sp-day-header {
@@ -1944,12 +1959,7 @@ onMounted(async () => {
   transition: width 0.4s ease;
 }
 
-@media (max-width: 900px) {
-  .sp-grid { grid-template-columns: repeat(4, 1fr); }
-}
-@media (max-width: 600px) {
-  .sp-grid { grid-template-columns: repeat(2, 1fr); }
-}
+
 
 /* ─── Exam Cities ───────────────────────────────────────────────────── */
 .ec-grid {
