@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "houseName": "Sundarbans",
+    "season": 2,
+    "year": 2026,
+    "programme": "IIT Madras BS Programme"
+  },
+
+  "housePoints": {
+    "total": 918,
+    "categories": [
+      { "name": "Academic",  "icon": "📚", "points": 312, "max": 400, "color": "#e8c97a" },
+      { "name": "Cultural",  "icon": "🎭", "points": 198, "max": 400, "color": "#b07ae0" },
+      { "name": "Sports",    "icon": "🏏", "points": 241, "max": 400, "color": "#4caf50" },
+      { "name": "Community", "icon": "🤝", "points": 167, "max": 400, "color": "#7ab0e0" }
+    ]
+  },
+
+  "moods": {
+    "options": [
+      { "key": "happy", "emoji": "😄", "label": "Thriving", "color": "#4caf50" },
+      { "key": "chill", "emoji": "😌", "label": "Chill",    "color": "#7ab0e0" },
+      { "key": "grind", "emoji": "😤", "label": "Grind",    "color": "#c9a84c" },
+      { "key": "meh",   "emoji": "😔", "label": "Meh",      "color": "#b07ae0" },
+      { "key": "chaos", "emoji": "🤯", "label": "Chaos",    "color": "#e07070" }
+    ],
+    "seedTally": {
+      "happy": 12,
+      "chill": 8,
+      "grind": 19,
+      "meh":   5,
+      "chaos": 7
+    }
+  },
+
+  "confessions": {
+    "seed": [
+      {
+        "id": 1,
+        "text": "I've submitted 4 assignments as drafts thinking they were submitted. Found out during grade review. Might cry.",
+        "offsetMs": 7200000,
+        "reactions": { "heart": 24, "laugh": 12, "wow": 31 }
+      },
+      {
+        "id": 2,
+        "text": "Started a 6-week course 3 days before the quiz and got 90%. I operate purely on chaos energy.",
+        "offsetMs": 18000000,
+        "reactions": { "heart": 18, "laugh": 67, "wow": 9 }
+      },
+      {
+        "id": 3,
+        "text": "I genuinely look forward to Monday technical sessions more than anything else this week. Not cringe, just facts.",
+        "offsetMs": 86400000,
+        "reactions": { "heart": 88, "laugh": 4, "wow": 11 }
+      }
+    ],
+    "reactions": [
+      { "key": "heart", "emoji": "❤️" },
+      { "key": "laugh", "emoji": "😂" },
+      { "key": "wow",   "emoji": "😮" }
+    ]
+  },
+
+  "pomodoro": {
+    "phases": [
+      { "key": "focus", "label": "Focus",       "seconds": 1500, "tabLabel": "Focus 25" },
+      { "key": "short", "label": "Short Break",  "seconds": 300,  "tabLabel": "Break 5"  },
+      { "key": "long",  "label": "Long Break",   "seconds": 900,  "tabLabel": "Long 15"  }
+    ],
+    "seedStudiers": ["Aditi S.", "Rohan V.", "Dev P.", "Mehak S."],
+    "maxSessions": 4
+  },
+
+  "studyBuddies": [
+    { "name": "Aditi Sharma",  "roll": "23f1000052", "tags": ["Night Owl",       "Explains Well",    "Speed Runner"]    },
+    { "name": "Rohan Verma",   "roll": "22f1000119", "tags": ["Silent Mode",     "Topper Energy",    "Note Sharer"]     },
+    { "name": "Mehak Singh",   "roll": "24f1000093", "tags": ["Discussion Queen","Mock Test Fan",    "Patient"]         },
+    { "name": "Dev Patel",     "roll": "23f2000114", "tags": ["Problem Solver",  "Early Riser",      "Flashcard Pro"]   },
+    { "name": "Priya Nair",    "roll": "24f2000050", "tags": ["Chill Vibes",     "Group Study",      "Mentor Mode"]     },
+    { "name": "Arjun Mehra",   "roll": "23f3000021", "tags": ["Competitive",     "CP Grinder",       "Deadline Chaser"] },
+    { "name": "Sneha Iyer",    "roll": "24f1000078", "tags": ["Structured Notes","Pomodoro Fan",     "Consistent"]      },
+    { "name": "Karan Joshi",   "roll": "23f4000031", "tags": ["Visual Learner",  "Diagram Lover",    "Calm Energy"]     }
+  ],
+
+  "buddyOptions": {
+    "subjects": [
+      "Mathematics (MAT1001)",
+      "Statistics (ST1001)",
+      "Python / PDSA",
+      "System Design",
+      "Machine Learning (MLF)",
+      "English (ENG1001)",
+      "Computational Thinking"
+    ],
+    "timeSlots": [
+      "Morning (6-10 AM)",
+      "Afternoon (12-4 PM)",
+      "Evening (4-8 PM)",
+      "Night Owl (9 PM - 1 AM)",
+      "Weekends Only"
+    ],
+    "studyStyles": [
+      "Silent Focus",
+      "Discuss and Explain",
+      "Problem Solving",
+      "Flashcards and Notes",
+      "Mock Tests"
+    ]
+  },
+
+  "dailyChallenge": {
+    "title": "Longest Substring Without Repeating Characters",
+    "difficulty": "Medium",
+    "points": 25,
+    "pointsWithHint": 15,
+    "description": "Given a string s, find the length of the longest substring without repeating characters.",
+    "examples": [
+      { "input": "\"abcabcbb\"", "output": "3", "note": "substring \"abc\"" },
+      { "input": "\"bbbbb\"",    "output": "1", "note": "substring \"b\"" },
+      { "input": "\"pwwkew\"",   "output": "3", "note": "substring \"wke\"" }
+    ],
+    "starterCode": "def lengthOfLongestSubstring(s: str) -> int:\n    # Your solution here\n    pass",
+    "hint": "Use a sliding window with a hash set. Advance the right pointer; when you hit a duplicate, shrink from the left until it is removed. Track the maximum window size.",
+    "seedSolvers": [
+      { "name": "Aditi Sharma", "time": "08:42 AM", "points": 25, "me": false },
+      { "name": "Dev Patel",    "time": "09:15 AM", "points": 25, "me": false },
+      { "name": "Rohan Verma",  "time": "10:03 AM", "points": 20, "me": false }
+    ]
+  },
+
+  "meme": {
+    "winner": {
+      "emoji": "😭📚",
+      "caption": "When the exam is tomorrow and you just found the syllabus",
+      "author": "anon_23f",
+      "fireVotes": 147,
+      "deadVotes": 89
+    },
+    "candidates": [
+      { "id": 1, "emoji": "📖😭", "title": "When you realise Stats has calculus in it", "author": "anon_24f", "fire": 34, "dead": 12 },
+      { "id": 2, "emoji": "🐱💻", "title": "My laptop at 1AM during submission week",   "author": "anon_22f", "fire": 28, "dead": 45 },
+      { "id": 3, "emoji": "🧠✨", "title": "Brain 10 mins before vs during an exam",    "author": "anon_23f", "fire": 61, "dead": 8  }
+    ]
+  }
+}
