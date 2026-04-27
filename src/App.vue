@@ -198,21 +198,6 @@
         </nav>
         <div class="nav-tools">
           <button
-            class="nav-tool-btn"
-            @click="openSearch"
-            title="Search (Ctrl+K)">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </button>
-          <button
             class="nav-tool-btn theme-toggle-btn"
             @click="toggleTheme"
             :title="isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'">
