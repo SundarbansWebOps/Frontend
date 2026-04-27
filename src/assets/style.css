@@ -2063,12 +2063,15 @@ body.video-bg-mode .navbar {
   background: transparent;
   border: none;
   box-shadow: none;
+  color: #f5edd0;
 }
 
 .theme-toggle-btn:hover {
   background: transparent;
   border: none;
+  color: var(--accent);
 }
+
 
 .nav-tool-btn:hover {
   background: var(--surface2);
