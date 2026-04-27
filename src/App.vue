@@ -212,6 +212,27 @@
               <path d="m21 21-4.35-4.35" />
             </svg>
           </button>
+          <button
+            class="nav-tool-btn theme-toggle-btn"
+            @click="toggleTheme"
+            :title="isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'">
+            <!-- Sun icon (shown in dark mode to switch to light) -->
+            <svg v-if="!isLight" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <!-- Moon icon (shown in light mode to switch to dark) -->
+            <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </button>
         </div>
       </div>
     </header>
@@ -237,6 +258,24 @@ const route = useRoute();
 
 const isLoungeRoute = computed(() => route.path === '/lounge' || route.path === '/dashboard');
 
+// --- THEME ---
+const isLight = ref(false);
+
+function applyTheme(light) {
+  if (light) {
+    document.documentElement.classList.add('light-mode');
+  } else {
+    document.documentElement.classList.remove('light-mode');
+  }
+  isLight.value = light;
+}
+
+function toggleTheme() {
+  const next = !isLight.value;
+  localStorage.setItem('sh-theme', next ? 'light' : 'dark');
+  applyTheme(next);
+}
+
 // --- PRELOADER ---
 const loading = ref(true);
 const preloaderOpacity = ref("1");
@@ -244,6 +283,12 @@ const fillWidth = ref("0%");
 const showFallback = ref(false);
 
 onMounted(() => {
+  // Init theme from localStorage
+  const saved = localStorage.getItem('sh-theme');
+  if (saved === 'light') {
+    applyTheme(true);
+  }
+
   fillWidth.value = "100%";
   setTimeout(() => {
     preloaderOpacity.value = "0";
