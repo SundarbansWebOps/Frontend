@@ -35,6 +35,7 @@ const routes = [
   { path: '/contact', component: Contact },
   { path: '/login', component: Login   },
   { path: '/lounge',  component: MembersLounge, meta: { requiresAuth: true } },
+  { path: '/dashboard', component: DashboardView },
 
   // Community + sub-pages
   { path: '/community',           component: Community     },
