@@ -1,4 +1,4 @@
-/* ===== SUNDARBANS HOUSE — BRAND THEME: BLACK + GOLD ===== */
+/* ===== SUNDARBANS HOUSE â€” BRAND THEME: BLACK + GOLD ===== */
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap");
 
 :root {
@@ -2662,4 +2662,233 @@ body.video-bg-mode .navbar {
   .gallery-grid {
     columns: 1;
   }
+}
+
+/* ===== LIGHT MODE ===== */
+html.light-mode {
+  --bg: #f5f2eb;
+  --bg2: #ede9de;
+  --surface: rgba(212, 160, 23, 0.08);
+  --surface2: rgba(212, 160, 23, 0.14);
+  --border: rgba(180, 130, 10, 0.22);
+  --accent: #b8880e;
+  --accent2: #d4a017;
+  --accent3: #8b6914;
+  --gold: #b8880e;
+  --gold-light: #d4a017;
+  --gold-dark: #7a5c0a;
+  --text: #1a1508;
+  --text2: #5a4a28;
+  --text3: #8a7450;
+  --glow: 0 0 40px rgba(180, 130, 10, 0.2);
+}
+
+/* Body background in light mode */
+html.light-mode body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Preloader */
+html.light-mode #preloader {
+  background: var(--bg);
+}
+
+/* Navbar transparent state */
+html.light-mode .navbar {
+  background: rgba(245, 242, 235, 0);
+}
+html.light-mode .navbar.scrolled {
+  background: rgba(245, 242, 235, 0.96);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile nav dropdown */
+html.light-mode .nav-links {
+  background: rgba(245, 242, 235, 0.97);
+}
+
+/* Particles: subtle in light mode */
+html.light-mode .particle {
+  background: rgba(180, 130, 10, 0.2);
+}
+
+/* Search overlay */
+html.light-mode .search-overlay {
+  background: rgba(245, 242, 235, 0.88);
+}
+html.light-mode .search-box {
+  background: #ede9de;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+}
+
+/* Hero overlays & cards - override hardcoded dark rgba */
+html.light-mode .hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 242, 235, 0.35) 0%,
+    rgba(245, 242, 235, 0.15) 50%,
+    rgba(245, 242, 235, 0.25) 100%
+  );
+}
+
+html.light-mode .about-section {
+  background: rgba(237, 233, 222, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+html.light-mode .fcard {
+  background: rgba(245, 242, 235, 0.75);
+}
+html.light-mode .fcard:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12), 0 0 30px rgba(180, 130, 10, 0.1);
+}
+
+html.light-mode .pcard {
+  background: rgba(237, 233, 222, 0.8);
+}
+
+html.light-mode .mcard {
+  background: rgba(237, 233, 222, 0.8);
+}
+
+html.light-mode .tcard {
+  background: rgba(245, 242, 235, 0.75);
+}
+
+html.light-mode .city-ov {
+  background: linear-gradient(
+    to top,
+    rgba(245, 242, 235, 0.92) 0%,
+    rgba(245, 242, 235, 0.25) 60%,
+    transparent 100%
+  );
+}
+
+html.light-mode .cn {
+  color: #1a1508;
+}
+
+html.light-mode .cta-ov {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 242, 235, 0.75) 0%,
+    rgba(245, 242, 235, 0.55) 100%
+  );
+}
+
+html.light-mode .cta-heading {
+  color: #1a1508;
+}
+
+html.light-mode .cta-sub {
+  color: rgba(90, 74, 40, 0.8);
+}
+
+html.light-mode .btn-hero-secondary {
+  background: rgba(245, 242, 235, 0.5);
+  color: #1a1508;
+  border-color: rgba(90, 74, 40, 0.3);
+}
+html.light-mode .btn-hero-secondary:hover {
+  background: rgba(245, 242, 235, 0.8);
+}
+
+html.light-mode .hero-subtitle {
+  color: #1a1508;
+}
+html.light-mode .hero-badge {
+  background: rgba(245, 242, 235, 0.5);
+  color: #1a1508;
+}
+
+html.light-mode .scroll-text {
+  color: #1a1508;
+}
+
+html.light-mode .stat-label {
+  color: #1a1508;
+}
+
+html.light-mode .stat-number {
+  background: linear-gradient(135deg, var(--gold-dark), var(--text));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Footer */
+html.light-mode .footer {
+  background: #e8e3d6;
+  border-top-color: var(--border);
+}
+html.light-mode .footer-wave-top svg path {
+  fill: #e8e3d6;
+}
+html.light-mode .footer-bottom {
+  border-top-color: var(--border);
+}
+
+/* Page hero overlay */
+html.light-mode .page-hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 242, 235, 0.92) 0%,
+    rgba(245, 242, 235, 0.78) 100%
+  );
+}
+html.light-mode .page-hero h1 {
+  color: var(--text);
+}
+
+/* Form elements */
+html.light-mode .form-input,
+html.light-mode .form-textarea,
+html.light-mode .form-select,
+html.light-mode .ninput {
+  background: rgba(255, 252, 244, 0.9);
+  color: var(--text);
+  border-color: var(--border);
+}
+html.light-mode .form-select option {
+  background: #ede9de;
+}
+
+/* Gallery overlay */
+html.light-mode .gallery-item-overlay {
+  background: linear-gradient(to top, rgba(245, 242, 235, 0.85), transparent);
+}
+html.light-mode .gallery-item-caption {
+  color: rgba(26, 21, 8, 0.9);
+}
+
+/* Theme toggle button appearance */
+html.light-mode .theme-toggle-btn {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text2);
+}
+
+
+/* Search input in light mode */
+html.light-mode .search-input-row input {
+  background: none;
+  color: var(--text);
+}
+html.light-mode .search-input-row input::placeholder {
+  color: var(--text3);
+}
+html.light-mode #searchInput {
+  color: var(--text);
+}
+html.light-mode #searchInput::placeholder {
+  color: var(--text3);
+}
+html.light-mode #searchClose {
+  color: var(--text2);
+}
+
+/* Menu toggle lines in light mode */
+html.light-mode .menu-toggle span {
+  background: var(--text);
 }
