@@ -2890,3 +2890,52 @@ html.light-mode #searchClose {
 html.light-mode .menu-toggle span {
   background: var(--text);
 }
+
+/* Fix hero overlay in light mode - make it much lighter */
+html.light-mode .hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 242, 235, 0.75) 0%,
+    rgba(245, 242, 235, 0.6) 50%,
+    rgba(245, 242, 235, 0.7) 100%
+  );
+}
+
+/* Fix hero text colors */
+html.light-mode .hero-subtitle {
+  color: #1a1508;
+}
+
+html.light-mode .hero-badge {
+  background: rgba(245, 242, 235, 0.7);
+  color: #1a1508;
+  border-color: rgba(180, 130, 10, 0.4);
+}
+
+html.light-mode .scroll-text {
+  color: #1a1508;
+}
+
+html.light-mode .stat-label {
+  color: #1a1508;
+}
+
+/* Fix dark notification/update card */
+html.light-mode .notif-card,
+html.light-mode .daily-card,
+html.light-mode [class*="notif"],
+html.light-mode [class*="card"] {
+  background: rgba(245, 242, 235, 0.92) !important;
+  border-color: rgba(180, 130, 10, 0.25) !important;
+  color: #1a1508 !important;
+}
+
+/* Fix any remaining dark section backgrounds */
+html.light-mode .section,
+html.light-mode .about-section,
+html.light-mode .pulse-section,
+html.light-mode .features-section,
+html.light-mode .meet-section,
+html.light-mode .testimonials-section {
+  background: rgba(245, 242, 235, 0.85);
+}
