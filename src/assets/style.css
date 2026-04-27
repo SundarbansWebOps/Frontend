@@ -2059,20 +2059,15 @@ body.video-bg-mode .navbar {
   gap: 1.25rem;
 }
 
-.nav-tool-btn {
-  width: 36px;
-  height: 36px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--text2);
-  font-size: 0.9rem;
-  transition: all 0.2s;
-  position: relative;
+.theme-toggle-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.theme-toggle-btn:hover {
+  background: transparent;
+  border: none;
 }
 
 .nav-tool-btn:hover {
