@@ -2691,11 +2691,11 @@ html.light-mode #preloader {
 
 /* Navbar transparent state */
 html.light-mode .navbar {
-  background: rgba(245, 242, 235, 0);
+  background: rgba(245, 242, 235, 0.98);
 }
 html.light-mode .navbar.scrolled {
-  background: rgba(245, 242, 235, 0.96);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background: rgba(245, 242, 235, 0.98);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* Mobile nav dropdown */
