@@ -9,6 +9,17 @@
     <div class="widget-label">Focus Timer</div>
     <div class="widget-title">Study Room</div>
 
+    <div class="pomo-status-strip">
+      <div>
+        <span>Mode</span>
+        <strong>{{ currentPhaseLabel }}</strong>
+      </div>
+      <div>
+        <span>Room</span>
+        <strong>{{ inRoom ? 'Joined' : 'Open' }}</strong>
+      </div>
+    </div>
+
     <!-- Phase selector tabs -->
     <div class="pomo-phase-tabs">
       <button

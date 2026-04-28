@@ -388,7 +388,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 .dashboard-page .streak-flame {
   line-height: 1;
@@ -409,6 +409,33 @@
   letter-spacing: .15em;
   text-transform: uppercase;
   margin-top: 4px;
+}
+.dashboard-page .streak-stat-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.dashboard-page .streak-stat {
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: rgba(255,255,255,.045);
+  padding: 12px 14px;
+}
+.dashboard-page .streak-stat span {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--gold-light);
+}
+.dashboard-page .streak-stat small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
 }
 .dashboard-page .streak-days-grid {
   display: grid;
@@ -461,6 +488,31 @@
   gap: 8px;
   margin-bottom: 22px;
   flex-wrap: wrap;
+}
+.dashboard-page .mood-summary {
+  display: grid;
+  grid-template-columns: 1.3fr .7fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.dashboard-page .mood-summary > div {
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: rgba(255,255,255,.045);
+  padding: 13px 14px;
+}
+.dashboard-page .mood-summary-label {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.dashboard-page .mood-summary strong {
+  color: var(--cream);
+  font-size: 15px;
+  font-weight: 500;
 }
 .dashboard-page .mood-opt {
   flex: 1; min-width: 60px;
@@ -576,6 +628,31 @@
    5. POMODORO TIMER
 ═══════════════════════════════════════════ */
 .dashboard-page .pomo-phase-tabs { display: flex; gap: 8px; margin-bottom: 22px; }
+.dashboard-page .pomo-status-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.dashboard-page .pomo-status-strip > div {
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: rgba(255,255,255,.045);
+  padding: 12px 14px;
+}
+.dashboard-page .pomo-status-strip span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.dashboard-page .pomo-status-strip strong {
+  color: var(--gold-light);
+  font-size: 15px;
+  font-weight: 500;
+}
 .dashboard-page .pomo-tab {
   padding: 7px 16px; border-radius: 100px;
   border: 1px solid var(--border-soft); background: transparent;

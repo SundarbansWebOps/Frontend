@@ -18,6 +18,17 @@
       </div>
     </div>
 
+    <div class="streak-stat-row">
+      <div class="streak-stat">
+        <span>{{ completedThisWeek }}</span>
+        <small>This week</small>
+      </div>
+      <div class="streak-stat">
+        <span>{{ best }}</span>
+        <small>Best run</small>
+      </div>
+    </div>
+
     <!-- 7-day history grid -->
     <div class="streak-days-grid">
       <div
@@ -65,6 +76,7 @@ const last = ref(load('sb_last', null));
 const streakBtnRef = ref(null);
 
 const checkedToday = computed(() => last.value === TODAY);
+const completedThisWeek = computed(() => weekDays.value.filter(day => day.done).length);
 
 const flameSize = computed(() => {
   const n = streak.value;
