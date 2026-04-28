@@ -12,7 +12,18 @@
     <!-- Difficulty + points header -->
     <div class="challenge-header-row">
       <span class="diff-badge diff-medium">Medium</span>
-      <span class="challenge-pts-badge">🏆 +25 House Points</span>
+      <span class="challenge-pts-badge">+25 House Points</span>
+    </div>
+
+    <div class="challenge-stats">
+      <div>
+        <span>Solvers</span>
+        <strong>{{ solvers.length }}</strong>
+      </div>
+      <div>
+        <span>Hint penalty</span>
+        <strong>-{{ PTS_FULL - PTS_HINT }}</strong>
+      </div>
     </div>
 
     <!-- Problem statement -->
@@ -48,7 +59,7 @@
     <!-- Action buttons -->
     <div class="challenge-actions">
       <button class="btn btn-ghost" @click="toggleHint">
-        {{ hintShown ? '🙈 Hide Hint' : '💡 Hint' }}
+        {{ hintShown ? 'Hide Hint' : 'Hint' }}
       </button>
       <button
         class="btn btn-outline"

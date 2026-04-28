@@ -3,6 +3,11 @@
     <div class="widget-label">Community</div>
     <div class="widget-title">Meme of the Week</div>
 
+    <div class="meme-summary">
+      <span>{{ candidates.length }} candidates</span>
+      <span>{{ totalCandidateVotes }} votes</span>
+    </div>
+
     <!-- Current champion -->
     <div class="meme-winner-wrap">
       <div class="meme-winner-crown">👑</div>
@@ -85,7 +90,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { save, load } from '../../composables/useLocalStorage.js';
 
 const props = defineProps({
@@ -104,6 +109,9 @@ const previewSrc = ref('');
 const uploaded = ref(false);
 const dragOver = ref(false);
 const fileInputRef = ref(null);
+const totalCandidateVotes = computed(() => {
+  return candidates.value.reduce((sum, c) => sum + c.fire + c.dead, 0);
+});
 
 function memeVote(id, type) {
   const c = candidates.value.find(x => x.id === id);

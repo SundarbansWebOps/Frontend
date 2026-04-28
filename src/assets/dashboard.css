@@ -559,6 +559,29 @@
    3. CONFESSION WALL
 ═══════════════════════════════════════════ */
 .dashboard-page .confession-input-wrap { position: relative; margin-bottom: 14px; }
+.dashboard-page .confession-summary,
+.dashboard-page .buddy-intro,
+.dashboard-page .meme-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: -6px 0 16px;
+}
+.dashboard-page .confession-summary span,
+.dashboard-page .buddy-intro span,
+.dashboard-page .meme-summary span {
+  min-width: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: rgba(255,255,255,.045);
+  color: var(--muted-strong);
+  padding: 7px 12px;
+  font-size: 10px;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 .dashboard-page .confession-textarea {
   width: 100%; background: var(--subtle);
   border: 1px solid var(--border-soft); border-radius: 12px;
@@ -609,6 +632,26 @@
 .dashboard-page .points-total-wrap  { text-align: center; margin-bottom: 30px; }
 .dashboard-page .points-total       { font-family: 'Cormorant Garamond', serif; font-size: 84px; font-weight: 300; color: var(--gold-light); line-height: 1; display: block; }
 .dashboard-page .points-total-label { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.dashboard-page .points-insight {
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: rgba(255,255,255,.045);
+  padding: 13px 14px;
+  margin: -12px 0 18px;
+}
+.dashboard-page .points-insight span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.dashboard-page .points-insight strong {
+  color: var(--gold-light);
+  font-size: 15px;
+  font-weight: 500;
+}
 .dashboard-page .points-categories  { display: flex; flex-direction: column; gap: 11px; }
 .dashboard-page .points-cat {
   display: flex; align-items: center; gap: 12px;
@@ -762,6 +805,20 @@
 .dashboard-page .buddy-match-sub  { font-size: 10px; color: var(--muted); }
 .dashboard-page .buddy-tags       { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
 .dashboard-page .buddy-tag        { padding: 4px 12px; border-radius: 100px; background: var(--subtle); border: 1px solid var(--border-soft); font-size: 10px; letter-spacing: .08em; color: var(--muted); }
+.dashboard-page .buddy-criteria {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.dashboard-page .buddy-criteria span {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(76,175,80,.1);
+  border: 1px solid rgba(76,175,80,.22);
+  color: var(--muted-strong);
+  font-size: 10px;
+}
 .dashboard-page .buddy-connect-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .dashboard-page .buddy-sent-msg   { font-size: 12px; color: var(--green); display: none; animation: pop-in .3s ease; }
 .dashboard-page .buddy-sent-msg.show { display: inline; }
@@ -775,6 +832,33 @@
 .dashboard-page .diff-easy             { background: rgba(76,175,80,.18);  color: #4caf50; border: 1px solid rgba(76,175,80,.3);  }
 .dashboard-page .diff-hard             { background: rgba(224,112,112,.18);color: #e07070; border: 1px solid rgba(224,112,112,.3);}
 .dashboard-page .challenge-pts-badge   { padding: 4px 12px; border-radius: 100px; background: var(--gold-dim); border: 1px solid var(--border); font-size: 10px; color: var(--gold); letter-spacing: .08em; }
+.dashboard-page .challenge-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.dashboard-page .challenge-stats > div {
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: rgba(255,255,255,.045);
+  padding: 12px 14px;
+}
+.dashboard-page .challenge-stats span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.dashboard-page .challenge-stats strong {
+  color: var(--gold-light);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+}
 .dashboard-page .challenge-problem     { background: var(--subtle); border: 1px solid var(--border-soft); border-radius: 12px; padding: 17px 19px; margin-bottom: 14px; }
 .dashboard-page .challenge-problem-title { font-size: 15px; font-weight: 500; margin-bottom: 8px; }
 .dashboard-page .challenge-problem-desc  { font-size: 12px; color: var(--muted); line-height: 1.8; }

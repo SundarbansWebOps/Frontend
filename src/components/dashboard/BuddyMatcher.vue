@@ -3,6 +3,11 @@
     <div class="widget-label">Find Your Match</div>
     <div class="widget-title">Study Buddy Matcher</div>
 
+    <div class="buddy-intro">
+      <span>{{ POOL.length }} active members</span>
+      <span>3-step match</span>
+    </div>
+
     <!-- Filter dropdowns -->
     <div class="buddy-fields">
       <div class="buddy-field">
@@ -65,6 +70,11 @@
       </div>
       <div class="buddy-tags">
         <span v-for="tag in matchTags" :key="tag" class="buddy-tag">{{ tag }}</span>
+      </div>
+      <div class="buddy-criteria">
+        <span>{{ selectedSub }}</span>
+        <span>{{ selectedTime }}</span>
+        <span>{{ selectedStyle }}</span>
       </div>
       <div class="buddy-connect-row">
         <button class="btn btn-outline" :disabled="connectSent" @click="connectBuddy">

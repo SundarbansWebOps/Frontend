@@ -15,6 +15,11 @@
       <div class="points-total-label">Total Points · Season 2</div>
     </div>
 
+    <div class="points-insight">
+      <span>Leading track</span>
+      <strong>{{ leadingCategory.icon }} {{ leadingCategory.name }}</strong>
+    </div>
+
     <!-- Category breakdown bars -->
     <div class="points-categories">
       <div class="points-cat" v-for="c in cats" :key="c.name">
@@ -49,6 +54,9 @@ const cats = props.config ? props.config.categories : [
 ];
 
 const TOTAL = cats.reduce((s, c) => s + c.points, 0);
+const leadingCategory = computed(() => {
+  return cats.reduce((lead, cat) => cat.points > lead.points ? cat : lead, cats[0]);
+});
 
 const displayTotal = ref(0);
 const animFired = ref(false);
