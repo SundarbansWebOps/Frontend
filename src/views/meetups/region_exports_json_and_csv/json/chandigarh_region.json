@@ -1,7 +1,96 @@
 {
   "region": "Chandigarh",
   "source_sheet": "Chandigarh(PunjabUKHPRajasthanH",
-  "structure": "empty_sheet",
-  "record_count": 0,
-  "records": []
+  "structure": "populated",
+  "record_count": 8,
+  "records": [
+    {
+      "date": "Aug 2025",
+      "meetup_no": 254,
+      "venue": "Dehradun",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": null,
+      "collaboration": null,
+      "meetup_poster": null,
+      "description": null
+    },
+    {
+      "date": "14 Sept 2025",
+      "meetup_no": 320,
+      "venue": "Udaipur",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": "https://www.instagram.com/p/DNTg0nFSOva/?igsh=MWQ2Ymx4N2R5NWkwMg==",
+      "collaboration": null,
+      "meetup_poster": null,
+      "description": null
+    },
+    {
+      "date": "Aug 2025",
+      "meetup_no": 255,
+      "venue": "Jaipur",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": "https://www.instagram.com/p/DOxWqnek5kV/?igsh=MW9jdWx2ZWkxcG8waQ==",
+      "collaboration": null,
+      "meetup_poster": "Tricolour",
+      "description": null
+    },
+    {
+      "date": "Sept 2025",
+      "meetup_no": null,
+      "venue": "Jaipur",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": "https://www.instagram.com/p/DNgVbjxyXuc/?img_index=2&igsh=MjZseTNzcHdrZjhk",
+      "collaboration": null,
+      "meetup_poster": "Navrang",
+      "description": null
+    },
+    {
+      "date": "Nov 2025",
+      "meetup_no": 375,
+      "venue": "Kota",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": "https://www.instagram.com/p/DPrFDTAkjEM/?igsh=d3cyeHpwZWVwcnU=",
+      "collaboration": null,
+      "meetup_poster": "Meetup",
+      "description": null
+    },
+    {
+      "date": "Sept 2025",
+      "meetup_no": 326,
+      "venue": "Jammu",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": "https://www.instagram.com/p/DRpROtyEpsV/?igsh=MWh0Z3V2OTVub2Rteg==",
+      "collaboration": null,
+      "meetup_poster": "Meetup",
+      "description": null
+    },
+    {
+      "date": "Feb 2026",
+      "meetup_no": 523,
+      "venue": "Jaipur",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": "https://www.instagram.com/p/DPF9LEsDK51/?igsh=YzFkMWRndWcxZmpoh",
+      "collaboration": null,
+      "meetup_poster": "RKM",
+      "description": null
+    },
+    {
+      "date": "Dec 2025",
+      "meetup_no": 418,
+      "venue": "Amritsar",
+      "total_students": null,
+      "image_drive_link": null,
+      "social_media_link": "https://www.instagram.com/p/DSC0jStk_iP/?img_index=1&igsh=cmt3dzk5bmhyeXI5",
+      "collaboration": null,
+      "meetup_poster": "Meetup",
+      "description": null
+    }
+  ]
 }
