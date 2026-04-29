@@ -9,6 +9,17 @@
     <div class="widget-label">Anonymous Vote</div>
     <div class="widget-title">House Mood Wall</div>
 
+    <div class="mood-summary">
+      <div>
+        <span class="mood-summary-label">Leading mood</span>
+        <strong>{{ leadingMood.emoji }} {{ leadingMood.label }}</strong>
+      </div>
+      <div>
+        <span class="mood-summary-label">Participation</span>
+        <strong>{{ totalVotes }}</strong>
+      </div>
+    </div>
+
     <!-- Vote buttons -->
     <div class="mood-options" id="moodOptions">
       <button
@@ -71,6 +82,12 @@ const votedToday = computed(() => myDate.value === TODAY);
 
 const totalVotes = computed(() => {
   return Object.values(tally.value).reduce((a, b) => a + b, 0);
+});
+
+const leadingMood = computed(() => {
+  return moods.reduce((lead, mood) => {
+    return (tally.value[mood.key] || 0) > (tally.value[lead.key] || 0) ? mood : lead;
+  }, moods[0]);
 });
 
 function barWidth(key) {

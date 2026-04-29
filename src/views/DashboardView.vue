@@ -18,22 +18,70 @@
       </div>
     </header>
 
-    <!-- ══ PAGE HERO ══ -->
-    <div class="page-hero">
-      <h1>Your <em>House Dashboard</em></h1>
-      <p>Eight interactive features — all working, all persisting across sessions.</p>
-    </div>
+    <main class="dashboard-shell">
+      <!-- ══ PAGE HERO ══ -->
+      <section class="dashboard-hero" aria-labelledby="dashboard-title">
+        <div class="hero-copy">
+          <span class="hero-kicker">Members Command Center</span>
+          <h1 id="dashboard-title">Your <em>House Dashboard</em></h1>
+          <p>Track your rhythm, join active study spaces, and keep the house energy moving from one focused workspace.</p>
+        </div>
+        <div class="hero-panel" aria-label="Dashboard summary">
+          <div class="hero-metric">
+            <strong>8</strong>
+            <span>Live widgets</span>
+          </div>
+          <div class="hero-metric">
+            <strong>{{ DATA.housePoints.categories.length }}</strong>
+            <span>Point tracks</span>
+          </div>
+          <div class="hero-metric">
+            <strong>{{ DATA.studyBuddies.length }}</strong>
+            <span>Buddy pool</span>
+          </div>
+        </div>
+      </section>
 
-    <!-- ══ WIDGETS GRID ══ -->
-    <main class="widgets-grid">
-      <StudyStreak   @confetti="onConfetti" />
-      <MoodWall      :config="DATA.moods" />
-      <ConfessionWall :config="DATA.confessions" />
-      <HousePoints   :config="DATA.housePoints" />
-      <PomodoroRoom  :config="DATA.pomodoro" @confetti="onConfetti" />
-      <BuddyMatcher  :pool="DATA.studyBuddies" :options="DATA.buddyOptions" />
-      <DailyChallenge :config="DATA.dailyChallenge" @confetti="onConfetti" />
-      <MemeOfWeek    :config="DATA.meme" />
+      <!-- ══ DASHBOARD WORKSPACE ══ -->
+      <section class="dashboard-workspace" aria-label="House dashboard widgets">
+        <div class="dashboard-column dashboard-column-main">
+          <div class="dashboard-section">
+            <div class="section-heading">
+              <span class="section-eyebrow">Today</span>
+              <h2>Start Here</h2>
+            </div>
+            <div class="priority-stack">
+              <StudyStreak class="widget-priority" @confetti="onConfetti" />
+              <PomodoroRoom class="widget-priority" :config="DATA.pomodoro" @confetti="onConfetti" />
+            </div>
+          </div>
+
+          <div class="dashboard-section">
+            <div class="section-heading">
+              <span class="section-eyebrow">Practice</span>
+              <h2>Skill &amp; Progress</h2>
+            </div>
+            <DailyChallenge class="widget-wide" :config="DATA.dailyChallenge" @confetti="onConfetti" />
+          </div>
+
+          <div class="dashboard-section">
+            <div class="section-heading">
+              <span class="section-eyebrow">Community</span>
+              <h2>House Pulse</h2>
+            </div>
+            <div class="community-stack">
+              <MoodWall class="widget-wide" :config="DATA.moods" />
+              <ConfessionWall class="widget-wide" :config="DATA.confessions" />
+            </div>
+          </div>
+        </div>
+
+        <aside class="dashboard-column dashboard-column-side" aria-label="Community and ranking widgets">
+          <HousePoints class="widget-compact" :config="DATA.housePoints" />
+          <BuddyMatcher class="widget-compact" :pool="DATA.studyBuddies" :options="DATA.buddyOptions" />
+          <MemeOfWeek class="widget-compact" :config="DATA.meme" />
+        </aside>
+      </section>
     </main>
 
     <!-- ══ FOOTER ══ -->

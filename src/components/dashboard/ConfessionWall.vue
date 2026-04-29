@@ -9,6 +9,11 @@
     <div class="widget-label">Anonymous</div>
     <div class="widget-title">Confession Wall</div>
 
+    <div class="confession-summary">
+      <span>{{ confs.length }} posts</span>
+      <span>{{ totalReactions }} reactions</span>
+    </div>
+
     <!-- Input area -->
     <div class="confession-input-wrap">
       <textarea
@@ -22,7 +27,7 @@
     </div>
 
     <div class="confession-submit-row">
-      <span class="confession-anon">🤫 100% anonymous · never linked to your name</span>
+      <span class="confession-anon">100% anonymous · never linked to your name</span>
       <button class="btn btn-outline" @click="postConfession">Post</button>
     </div>
 
@@ -91,6 +96,11 @@ const inputText = ref('');
 const confListRef = ref(null);
 
 const reversedConfs = computed(() => [...confs.value].reverse());
+const totalReactions = computed(() => {
+  return confs.value.reduce((sum, c) => {
+    return sum + Object.values(c.r || {}).reduce((a, b) => a + b, 0);
+  }, 0);
+});
 
 function updateCharCount() {
   // Handled reactively via v-model
