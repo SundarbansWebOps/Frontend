@@ -161,6 +161,32 @@ function titleFromVenue(venue, fallbackCity) {
     : cleanVenue
 }
 
+function mapChandigarh(record, index) {
+  const meetupNo = record.meetup_no ? `#${record.meetup_no}` : null
+  const location = cleanText(record.venue)
+  const posterName = cleanText(record.meetup_poster)
+  const title = posterName && posterName.toLowerCase() !== 'meetup'
+    ? `${location} – ${posterName}`
+    : location ? `${location} Meetup` : 'Chandigarh Region Meetup'
+  return {
+    id: index + 1,
+    badge: meetupNo ? `Meetup ${meetupNo}` : 'Community Meetup',
+    instaUrl: cleanUrl(record.social_media_link),
+    title,
+    date: cleanText(record.date),
+    location,
+    duration: null,
+    meetupNumber: meetupNo,
+    numberDisplay: meetupNo,
+    special: null,
+    about: cleanText(record.description) || 'Meetup details coming soon.',
+    attended: record.total_students ?? null,
+    tags: buildTags([location, ...splitCollaboration(record.collaboration)]),
+    sortDate: parseDate(record.date),
+    sortNo: record.meetup_no ?? null,
+  }
+}
+
 function mapBangalore(record, index) {
   const meetupNo = normalizeMeetupNumber(record['Meetup No.'])
   const location = cleanText(record.Venue)
@@ -308,7 +334,7 @@ function buildConfig(meta, meetups) {
 
 export const regionConfigs = {
   bangalore: buildConfig(regionMeta.bangalore, normalizeRecords(bengaluruRegion.records || [], mapBangalore)),
-  chandigarh: buildConfig(regionMeta.chandigarh, normalizeRecords(chandigarhRegion.records || [], () => null)),
+  chandigarh: buildConfig(regionMeta.chandigarh, normalizeRecords(chandigarhRegion.records || [], mapChandigarh)),
   chennai: buildConfig(regionMeta.chennai, normalizeRecords(chennaiRegion.records || [], () => null)),
   delhi: buildConfig(regionMeta.delhi, normalizeRecords(delhiRegion.records || [], mapDelhi)),
   hyderabad: buildConfig(regionMeta.hyderabad, normalizeRecords(hyderabadRegion.records || [], mapHyderabad)),
