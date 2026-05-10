@@ -101,6 +101,7 @@
                     <button class="sc-tab" :class="{ active: currentResourceType === 'lectures' }" @click="currentResourceType = 'lectures'">📺 Lectures</button>
                     <button class="sc-tab" :class="{ active: currentResourceType === 'notes' }" @click="currentResourceType = 'notes'">📝 Notes</button>
                     <button class="sc-tab" :class="{ active: currentResourceType === 'pyq' }" @click="currentResourceType = 'pyq'">📄 PYQs</button>
+                    <button class="sc-tab" :class="{ active: currentResourceType === 'folders' }" @click="currentResourceType = 'folders'">🗂️ Drive Folders</button>
                   </div>
 
                   <template v-if="currentResourceType === 'notes' && groupedNotes.length">
@@ -142,6 +143,15 @@
                       <span>{{ cleanTitle(item.title) }}</span>
                       <div style="display:flex;align-items:center;gap:0.75rem">
                         <span v-if="item.badge" class="sc-badge">{{ item.badge }}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                      </div>
+                    </a>
+                  </template>
+
+                  <template v-else-if="currentResourceType === 'folders' && currentFolders.length">
+                    <a v-for="item in currentFolders" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
+                      <span>{{ item.title }}</span>
+                      <div style="display:flex;align-items:center;gap:0.75rem">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                       </div>
                     </a>
@@ -704,6 +714,33 @@ const currentSubjectCode = ref(null);
 const currentResourceType = ref("notes");
 const openAuthors = ref({});
 
+const driveLinks = {
+  foundationPyq: "https://drive.google.com/drive/folders/1Fq3vpXmmN3moEFa9TdBqkBfkMfjaPyh-",
+  diplomaPyq: "https://drive.google.com/drive/folders/1FnI9uXbnSGqMBRLWyWPD5839R9xXjS5I",
+  notes: {
+    "BSMA1001": "https://drive.google.com/drive/folders/1SuT80Mt_1mhgeDb8_PF5nE2f626wI-5C",
+    "BSMA1002": "https://drive.google.com/drive/folders/1TVvNKumzi1tD5rRPR4B_SHfR6KyHXgkv",
+    "BSHS1001": "https://drive.google.com/drive/folders/1TJ_i7aNmcKBk_DAA7EmzCKTJ5fEBYWOD",
+    "BSCS1001": "https://drive.google.com/drive/folders/15BrCrZ0cBxcOOhDFwavZX9WJnwXu149O",
+    "BSMA1003": "https://drive.google.com/drive/folders/1T0Vk5wWuGlhKhCv1qGYnS7T5_mmceeFy",
+    "BSMA1004": "https://drive.google.com/drive/folders/1TNS9WHBWUKInU2Jey23DRwzNySeRjB3O",
+    "BSHS1002": "https://drive.google.com/drive/folders/1z68X9eGokOfrzlaCKV3v16bSpgInneKd",
+    "BSCS1002": "https://drive.google.com/drive/folders/1O7w1hXO6d0uptWs1U4BCMGVEdfSDxNWo",
+    "BSCS2001": "https://drive.google.com/drive/folders/1PtqrInqJV0ZcZbis2hFndmOM08lMmoS_",
+    "BSCS2005": "https://drive.google.com/drive/folders/1Q-FPcyrurSml35qHizU6An3_c7f8_xie",
+    "BSCS2003": "https://drive.google.com/drive/folders/1MbGGvTyRM0-27le2He5TKdhw8HSPfC0j",
+    "BSCS2006": "https://drive.google.com/drive/folders/1Pl7g4i6e9HRR5ZQLYaJlbj6BQ-16ZtDK",
+    "BSCS2002": "https://drive.google.com/drive/folders/1Pn7Zaa8tfXbXIBbiX9WYg_WcfIVMHCdG",
+    "BSSE2001": "https://drive.google.com/drive/folders/1PsMUC0fAMCNVB5HVgZ_TZQC3CWhT5K3g",
+    "BSMS2002": "https://drive.google.com/drive/folders/1UTximp3FWwJV6_5nBmJlISPIbzvMu8s0",
+    "BSMS2001": "https://drive.google.com/drive/folders/1UIjX4MUeJBQnSJqRnO5XI8SFm50XDPml",
+    "BSCS2004": "https://drive.google.com/drive/folders/1ODZY3E2PcsaFrzIHPo5lUhQZaBszZxxS",
+    "BSCS2008": "https://drive.google.com/drive/folders/1UIVGGZYEldx98djyOI6aR18ec-07Qies",
+    "BSCS2007": "https://drive.google.com/drive/folders/1UFpj7Lauj4l_YvA8U6tR0dqubv4K0gwy",
+    "BSSE2002": "https://drive.google.com/drive/folders/1UK3pOkccniwBm1-YfpQgjrEfXFMrOtVy"
+  }
+};
+
 const currentLevelLabel = computed(() => {
   if (currentLevel.value === "foundation") return "🌱 Foundation";
   if (currentLevel.value === "diploma") return "📐 Diploma";
@@ -775,6 +812,30 @@ const filteredResources = computed(() => {
       .toLowerCase()
       .includes(q),
   );
+});
+
+const currentFolders = computed(() => {
+  if (!currentSubject.value) return [];
+  
+  const folders = [];
+  const subjectCode = currentSubject.value.code;
+  const isFoundation = currentLevel.value === "foundation" || (String(subjectCode).startsWith("BS") && String(subjectCode).includes("10"));
+  const isDiploma = currentLevel.value === "diploma" || (String(subjectCode).startsWith("BS") && String(subjectCode).includes("20"));
+  
+  if (isFoundation) {
+    folders.push({ title: "Foundation End term PYQs", link: driveLinks.foundationPyq });
+  } else if (isDiploma) {
+    folders.push({ title: "Diploma ET PYQs", link: driveLinks.diplomaPyq });
+  }
+
+  if (driveLinks.notes[subjectCode]) {
+    folders.push({ title: `Subject Wise Notes - ${currentSubject.value.subject}`, link: driveLinks.notes[subjectCode] });
+  } else if (currentSubject.value.subject && currentSubject.value.subject.toLowerCase().includes('analytics')) {
+    // Edge case for Business Analytics if code doesn't match
+    folders.push({ title: `Subject Wise Notes - ${currentSubject.value.subject}`, link: driveLinks.notes["BSMS2002"] });
+  }
+
+  return folders;
 });
 
 function parseAuthor(title) {
