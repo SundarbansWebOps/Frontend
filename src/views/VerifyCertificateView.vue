@@ -126,7 +126,7 @@
                 <polyline points="7 10 12 15 17 10"/>
                 <line x1="12" y1="15" x2="12" y2="3"/>
               </svg>
-              Download Certificate
+              Open &amp; Download
             </button>
             <p class="no-download-msg" v-if="!result.drive_id">Certificate file not yet uploaded.</p>
           </div>
@@ -214,12 +214,14 @@ async function verifyCertificate() {
 
 function viewCertificate() {
   if (!result.value?.drive_id) return
+  // Opens in Drive viewer — reliable for all file types
   window.open(`https://drive.google.com/file/d/${result.value.drive_id}/view`, '_blank')
 }
 
 function downloadCertificate() {
   if (!result.value?.drive_id) return
-  window.open(`https://drive.google.com/uc?export=download&id=${result.value.drive_id}`, '_blank')
+  // Drive's direct download is unreliable for PDFs — open viewer where user can download
+  window.open(`https://drive.google.com/file/d/${result.value.drive_id}/view?usp=sharing`, '_blank')
 }
 </script>
 
