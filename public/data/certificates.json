@@ -3,49 +3,49 @@
     "id": "SH2025E001",
     "name": "Bhoopendra Chandel",
     "email": "23f3000441@es.study.iitm.ac.in",
-    "event": "Free Fire – Battle of Legends",
+    "event": "Free Fire \u2013 Battle of Legends",
     "date": "2025",
-    "category": "E-Sports · Tournament",
+    "category": "E-Sports \u00b7 Tournament",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "12Ezc45Ia5HJk74vVRF89rVuhg0xx6A2i",
-    "valid": true
+    "valid": true,
+    "pdf": true
   },
   "SH2025E002": {
     "id": "SH2025E002",
     "name": "Agampreet Singh",
     "email": "24f2002079@ds.study.iitm.ac.in",
-    "event": "Free Fire – Battle of Legends",
+    "event": "Free Fire \u2013 Battle of Legends",
     "date": "2025",
-    "category": "E-Sports · Tournament",
+    "category": "E-Sports \u00b7 Tournament",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E003": {
     "id": "SH2025E003",
     "name": "Aditya Chaubey",
     "email": "25f2008372@ds.study.iitm.ac.in",
-    "event": "Free Fire – Battle of Legends",
+    "event": "Free Fire \u2013 Battle of Legends",
     "date": "2025",
-    "category": "E-Sports · Tournament",
+    "category": "E-Sports \u00b7 Tournament",
     "rank": "3rd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E004": {
     "id": "SH2025E004",
     "name": "Alok Chaubey",
     "email": "24f2006338@ds.study.iitm.ac.in",
-    "event": "Free Fire – Battle of Legends",
+    "event": "Free Fire \u2013 Battle of Legends",
     "date": "2025",
-    "category": "E-Sports · Tournament",
+    "category": "E-Sports \u00b7 Tournament",
     "rank": "4th Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E005": {
     "id": "SH2025E005",
@@ -53,11 +53,11 @@
     "email": "25f2002300@ds.study.iitm.ac.in",
     "event": "BGMI Showdown 2025",
     "date": "2025",
-    "category": "E-Sports · Tournament",
+    "category": "E-Sports \u00b7 Tournament",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E006": {
     "id": "SH2025E006",
@@ -65,11 +65,11 @@
     "email": "24f2003662@ds.study.iitm.ac.in",
     "event": "BGMI Showdown 2025",
     "date": "2025",
-    "category": "E-Sports · Tournament",
+    "category": "E-Sports \u00b7 Tournament",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E007": {
     "id": "SH2025E007",
@@ -77,11 +77,11 @@
     "email": "25f2007719@ds.study.iitm.ac.in",
     "event": "Great Chess Competition",
     "date": "2025",
-    "category": "E-Sports · Competition",
+    "category": "E-Sports \u00b7 Competition",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E008": {
     "id": "SH2025E008",
@@ -89,11 +89,11 @@
     "email": "25f2001618@ds.study.iitm.ac.in",
     "event": "Great Chess Competition",
     "date": "2025",
-    "category": "E-Sports · Competition",
+    "category": "E-Sports \u00b7 Competition",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E009": {
     "id": "SH2025E009",
@@ -101,11 +101,11 @@
     "email": "25f3100064@es.study.iitm.ac.in",
     "event": "Great Chess Competition",
     "date": "2025",
-    "category": "E-Sports · Competition",
+    "category": "E-Sports \u00b7 Competition",
     "rank": "3rd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E010": {
     "id": "SH2025E010",
@@ -113,11 +113,11 @@
     "email": "25f3001304@ds.study.iitm.ac.in",
     "event": "Sports Quiz Showdown",
     "date": "2025",
-    "category": "E-Sports · Quiz",
+    "category": "E-Sports \u00b7 Quiz",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E011": {
     "id": "SH2025E011",
@@ -125,11 +125,11 @@
     "email": "25f3100110@ds.study.iitm.ac.in",
     "event": "Sports Quiz Showdown",
     "date": "2025",
-    "category": "E-Sports · Quiz",
+    "category": "E-Sports \u00b7 Quiz",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E012": {
     "id": "SH2025E012",
@@ -137,11 +137,11 @@
     "email": "25f3100078@es.study.iitm.ac.in",
     "event": "Back to Bachpan",
     "date": "2025",
-    "category": "E-Sports · Casual Event",
+    "category": "E-Sports \u00b7 Casual Event",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E013": {
     "id": "SH2025E013",
@@ -149,11 +149,11 @@
     "email": "25f2008346@ds.study.iitm.ac.in",
     "event": "Back to Bachpan",
     "date": "2025",
-    "category": "E-Sports · Casual Event",
+    "category": "E-Sports \u00b7 Casual Event",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E014": {
     "id": "SH2025E014",
@@ -161,47 +161,47 @@
     "email": "25f1000637@ds.study.iitm.ac.in",
     "event": "Back to Bachpan",
     "date": "2025",
-    "category": "E-Sports · Casual Event",
+    "category": "E-Sports \u00b7 Casual Event",
     "rank": "3rd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E015": {
     "id": "SH2025E015",
     "name": "Chandigarh Region",
     "email": "",
-    "event": "IPL Auction – Sundarbans Edition",
+    "event": "IPL Auction \u2013 Sundarbans Edition",
     "date": "2025",
-    "category": "E-Sports · Strategy Event",
+    "category": "E-Sports \u00b7 Strategy Event",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E016": {
     "id": "SH2025E016",
     "name": "Kolkata Region",
     "email": "",
-    "event": "IPL Auction – Sundarbans Edition",
+    "event": "IPL Auction \u2013 Sundarbans Edition",
     "date": "2025",
-    "category": "E-Sports · Strategy Event",
+    "category": "E-Sports \u00b7 Strategy Event",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E017": {
     "id": "SH2025E017",
     "name": "Lucknow Region",
     "email": "",
-    "event": "IPL Auction – Sundarbans Edition",
+    "event": "IPL Auction \u2013 Sundarbans Edition",
     "date": "2025",
-    "category": "E-Sports · Strategy Event",
+    "category": "E-Sports \u00b7 Strategy Event",
     "rank": "3rd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E018": {
     "id": "SH2025E018",
@@ -209,11 +209,11 @@
     "email": "25f2000710@ds.study.iitm.ac.in",
     "event": "Chess Showdown",
     "date": "2025",
-    "category": "E-Sports · Competition",
+    "category": "E-Sports \u00b7 Competition",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E019": {
     "id": "SH2025E019",
@@ -221,11 +221,11 @@
     "email": "25f1002782@ds.study.iitm.ac.in",
     "event": "Chess Showdown",
     "date": "2025",
-    "category": "E-Sports · Competition",
+    "category": "E-Sports \u00b7 Competition",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E020": {
     "id": "SH2025E020",
@@ -233,11 +233,11 @@
     "email": "22f3001534@ds.study.iitm.ac.in",
     "event": "Chess Showdown",
     "date": "2025",
-    "category": "E-Sports · Competition",
+    "category": "E-Sports \u00b7 Competition",
     "rank": "3rd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E021": {
     "id": "SH2025E021",
@@ -245,11 +245,11 @@
     "email": "25f2000502@ds.study.iitm.ac.in",
     "event": "BGMI Tournament",
     "date": "2025",
-    "category": "E-Sports · Tournament",
+    "category": "E-Sports \u00b7 Tournament",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E022": {
     "id": "SH2025E022",
@@ -257,11 +257,11 @@
     "email": "25f3001430@ds.study.iitm.ac.in",
     "event": "Sports Quiz",
     "date": "2025",
-    "category": "E-Sports · Quiz",
+    "category": "E-Sports \u00b7 Quiz",
     "rank": "1st Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   },
   "SH2025E023": {
     "id": "SH2025E023",
@@ -269,10 +269,10 @@
     "email": "25f3100078@es.study.iitm.ac.in",
     "event": "Sports Quiz",
     "date": "2025",
-    "category": "E-Sports · Quiz",
+    "category": "E-Sports \u00b7 Quiz",
     "rank": "2nd Place",
     "issued_by": "Sundarbans House",
-    "drive_id": "",
-    "valid": true
+    "valid": true,
+    "pdf": false
   }
 }
