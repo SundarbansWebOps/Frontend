@@ -112,14 +112,24 @@
               <span class="field-value">{{ result.rank }}</span>
             </div>
           </div>
-          <button class="download-btn" @click="downloadCertificate">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Download Certificate
-          </button>
+          <div class="cert-actions">
+            <button class="download-btn view-btn" @click="viewCertificate" v-if="result.drive_id">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              View Certificate
+            </button>
+            <button class="download-btn" @click="downloadCertificate" v-if="result.drive_id">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Download Certificate
+            </button>
+            <p class="no-download-msg" v-if="!result.drive_id">Certificate file not yet uploaded.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -202,9 +212,14 @@ async function verifyCertificate() {
   loading.value = false
 }
 
+function viewCertificate() {
+  if (!result.value?.drive_id) return
+  window.open(`https://drive.google.com/file/d/${result.value.drive_id}/view`, '_blank')
+}
+
 function downloadCertificate() {
-  // Placeholder — wire to your actual PDF endpoint
-  alert(`Download for ${result.value.id} will be available once the backend endpoint is ready.`)
+  if (!result.value?.drive_id) return
+  window.open(`https://drive.google.com/uc?export=download&id=${result.value.drive_id}`, '_blank')
 }
 </script>
 
@@ -478,6 +493,28 @@ function downloadCertificate() {
   font-size: 0.95rem;
   color: #f0e8d0;
   font-weight: 500;
+}
+
+.cert-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.no-download-msg {
+  font-size: 0.8rem;
+  color: rgba(240,232,208,0.35);
+  margin: 0;
+}
+
+.view-btn {
+  background: rgba(212,160,23,0.1);
+  color: #d4a017;
+}
+
+.view-btn:hover {
+  background: rgba(212,160,23,0.2);
 }
 
 .download-btn {
