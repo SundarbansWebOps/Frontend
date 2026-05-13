@@ -5,17 +5,17 @@
       breadcrumb-title="Study Corner"
       title="Study"
       accent-title="Corner"
-      subtitle="Comprehensive academic resources for Foundation, Diploma and BS level students"
-    />
+      subtitle="Comprehensive academic resources for Foundation, Diploma and BS level students" />
 
     <section class="section rs" style="background: var(--bg2)" id="levelPicker">
       <div class="container">
         <div class="sc-layout">
-
           <!-- LEFT: Level cards (vertical sidebar) -->
           <div class="sc-sidebar">
             <div class="sc-sidebar-hdr">
-              <div class="section-tag" style="margin-bottom:0">Choose Level</div>
+              <div class="section-tag" style="margin-bottom: 0">
+                Choose Level
+              </div>
             </div>
             <div class="sc-sidebar-cards">
               <div
@@ -32,12 +32,20 @@
                   </div>
                 </div>
                 <div class="sc-card-stats">
-                  <span class="sc-stat-badge">{{ (scData[level.key] || []).length }} subjects</span>
+                  <span class="sc-stat-badge"
+                    >{{ (scData[level.key] || []).length }} subjects</span
+                  >
                   <span class="sc-stat-badge">Notes + PYQs</span>
                 </div>
                 <div class="sc-sidebar-arrow">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </div>
               </div>
@@ -46,7 +54,6 @@
 
           <!-- RIGHT: Content panel -->
           <div class="sc-panel-wrap">
-
             <!-- Search + tabs always visible -->
             <div class="sc-panel-search">
               <div class="sc-search-input-wrap">
@@ -55,7 +62,14 @@
                   type="text"
                   placeholder="Search subjects, notes, PYQs..."
                   class="form-input sc-mid-search-input" />
-                <svg class="sc-mid-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  class="sc-mid-search-icon"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2">
                   <circle cx="11" cy="11" r="8" />
                   <path d="m21 21-4.35-4.35" />
                 </svg>
@@ -64,8 +78,10 @@
 
             <!-- Empty state: no level selected -->
             <div v-if="!currentLevel" class="sc-panel-empty">
-              <div style="font-size:3rem;margin-bottom:1rem">📚</div>
-              <p style="font-size:1rem;color:var(--text2)">Select a level on the left to browse subjects</p>
+              <div style="font-size: 3rem; margin-bottom: 1rem">📚</div>
+              <p style="font-size: 1rem; color: var(--text2)">
+                Select a level on the left to browse subjects
+              </p>
             </div>
 
             <!-- Level selected: subjects + resources -->
@@ -74,8 +90,12 @@
                 <!-- Subject strip -->
                 <div class="sc-subject-strip" id="scSubjectStrip">
                   <div class="sc-strip-header">
-                    <span class="sc-strip-label">{{ currentLevelLabel }} — Subjects</span>
-                    <button class="sc-back-btn" @click="resetLevel">&larr; Clear</button>
+                    <span class="sc-strip-label"
+                      >{{ currentLevelLabel }} — Subjects</span
+                    >
+                    <button class="sc-back-btn" @click="resetLevel">
+                      &larr; Clear
+                    </button>
                   </div>
                   <div class="sc-badges-row" id="scSubjectList">
                     <button
@@ -91,91 +111,215 @@
 
                 <!-- Resource panel -->
                 <div class="sc-resource-panel" id="scPanel">
-                <template v-if="currentSubject">
-                  <div style="margin-bottom:0.25rem">
-                    <div class="section-tag" style="margin-bottom:0.5rem">{{ currentSubject.code }}</div>
-                    <p style="font-size:0.8rem;color:var(--text3);letter-spacing:0.03em">{{ currentSubject.description }}</p>
-                  </div>
-
-                  <div class="sc-tab-bar">
-                    <button class="sc-tab" :class="{ active: currentResourceType === 'lectures' }" @click="currentResourceType = 'lectures'">📺 Lectures</button>
-                    <button class="sc-tab" :class="{ active: currentResourceType === 'notes' }" @click="currentResourceType = 'notes'">📝 Notes</button>
-                    <button class="sc-tab" :class="{ active: currentResourceType === 'pyq' }" @click="currentResourceType = 'pyq'">📄 PYQs</button>
-                    <button class="sc-tab" :class="{ active: currentResourceType === 'folders' }" @click="currentResourceType = 'folders'">🗂️ Drive Folders</button>
-                  </div>
-
-                  <template v-if="currentResourceType === 'notes' && groupedNotes.length">
-                    <div class="sc-author-card" v-for="(group, index) in groupedNotes" :key="group.author">
-                      <div class="sc-author-header" @click="toggleAuthor(index)">
-                        <span class="sc-author-name">✦ {{ group.author }}
-                          <span class="sc-author-count">({{ group.items.length }} {{ group.items.length === 1 ? "note" : "notes" }})</span>
-                        </span>
-                        <svg class="sc-author-chevron" :style="{ transform: openAuthors[index] ? 'rotate(180deg)' : 'rotate(0deg)' }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
+                  <template v-if="currentSubject">
+                    <div style="margin-bottom: 0.25rem">
+                      <div class="section-tag" style="margin-bottom: 0.5rem">
+                        {{ currentSubject.code }}
                       </div>
-                      <div class="sc-author-body" :class="{ open: openAuthors[index] }">
-                        <div class="sc-author-notes">
-                          <a v-for="item in group.items" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
-                            <span>{{ cleanTitle(item.title) }}</span>
-                            <div style="display:flex;align-items:center;gap:0.75rem">
-                              <span v-if="item.badge" class="sc-badge">{{ item.badge }}</span>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                            </div>
-                          </a>
+                      <p
+                        style="
+                          font-size: 0.8rem;
+                          color: var(--text3);
+                          letter-spacing: 0.03em;
+                        ">
+                        {{ currentSubject.description }}
+                      </p>
+                    </div>
+
+                    <div class="sc-tab-bar">
+                      <button
+                        class="sc-tab"
+                        :class="{ active: currentResourceType === 'lectures' }"
+                        @click="currentResourceType = 'lectures'">
+                        📺 Lectures
+                      </button>
+                      <button
+                        class="sc-tab"
+                        :class="{ active: currentResourceType === 'notes' }"
+                        @click="currentResourceType = 'notes'">
+                        📝 Notes
+                      </button>
+                      <button
+                        class="sc-tab"
+                        :class="{ active: currentResourceType === 'pyq' }"
+                        @click="currentResourceType = 'pyq'">
+                        📄 PYQs
+                      </button>
+                    </div>
+
+                    <template
+                      v-if="
+                        currentResourceType === 'notes' && groupedNotes.length
+                      ">
+                      <div
+                        class="sc-author-card"
+                        v-for="(group, index) in groupedNotes"
+                        :key="group.author">
+                        <div
+                          class="sc-author-header"
+                          @click="toggleAuthor(index)">
+                          <span class="sc-author-name"
+                            >✦ {{ group.author }}
+                            <span class="sc-author-count"
+                              >({{ group.items.length }}
+                              {{
+                                group.items.length === 1 ? "note" : "notes"
+                              }})</span
+                            >
+                          </span>
+                          <svg
+                            class="sc-author-chevron"
+                            :style="{
+                              transform: openAuthors[index]
+                                ? 'rotate(180deg)'
+                                : 'rotate(0deg)',
+                            }"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        </div>
+                        <div
+                          class="sc-author-body"
+                          :class="{ open: openAuthors[index] }">
+                          <div class="sc-author-notes">
+                            <a
+                              v-for="item in group.items"
+                              :key="item.title"
+                              :href="item.link"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="sc-resource-item">
+                              <span>{{ cleanTitle(item.title) }}</span>
+                              <div
+                                style="
+                                  display: flex;
+                                  align-items: center;
+                                  gap: 0.75rem;
+                                ">
+                                <span v-if="item.badge" class="sc-badge">{{
+                                  item.badge
+                                }}</span>
+                                <svg
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  style="color: var(--text3)">
+                                  <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                              </div>
+                            </a>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </template>
+                    </template>
 
-                  <template v-else-if="currentResourceType === 'pyq' && groupedPyq.length">
-                    <div class="sc-year-group" v-for="group in groupedPyq" :key="group.year">
-                      <div class="sc-year-label">📅 {{ group.year }} <span class="sc-year-count">({{ group.items.length }} papers)</span></div>
-                      <a v-for="item in group.items" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
+                    <template
+                      v-else-if="
+                        currentResourceType === 'pyq' && groupedPyq.length
+                      ">
+                      <div
+                        class="sc-year-group"
+                        v-for="group in groupedPyq"
+                        :key="group.year">
+                        <div class="sc-year-label">
+                          {{
+                            group.year === "Google Drive Folder" ? "🗂️" : "📅"
+                          }}
+                          {{ group.year }}
+                          <span class="sc-year-count"
+                            >({{ group.items.length }}
+                            {{
+                              group.year === "Google Drive Folder"
+                                ? "folder"
+                                : "papers"
+                            }})</span
+                          >
+                        </div>
+                        <a
+                          v-for="item in group.items"
+                          :key="item.title"
+                          :href="item.link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="sc-resource-item">
+                          <span>{{ cleanTitle(item.title) }}</span>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            style="color: var(--text3)">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </a>
+                      </div>
+                    </template>
+
+                    <template v-else-if="filteredResources.length">
+                      <a
+                        v-for="item in filteredResources"
+                        :key="item.title"
+                        :href="item.link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="sc-resource-item">
                         <span>{{ cleanTitle(item.title) }}</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        <div
+                          style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.75rem;
+                          ">
+                          <span v-if="item.badge" class="sc-badge">{{
+                            item.badge
+                          }}</span>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            style="color: var(--text3)">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </div>
                       </a>
+                    </template>
+
+                    <div v-else class="sc-empty">
+                      <div style="font-size: 2rem">🔍</div>
+                      <p style="font-size: 0.85rem">
+                        No matching resources found.
+                      </p>
                     </div>
-                  </template>
-
-                  <template v-else-if="filteredResources.length">
-                    <a v-for="item in filteredResources" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
-                      <span>{{ cleanTitle(item.title) }}</span>
-                      <div style="display:flex;align-items:center;gap:0.75rem">
-                        <span v-if="item.badge" class="sc-badge">{{ item.badge }}</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                      </div>
-                    </a>
-                  </template>
-
-                  <template v-else-if="currentResourceType === 'folders' && currentFolders.length">
-                    <a v-for="item in currentFolders" :key="item.title" :href="item.link" target="_blank" rel="noopener noreferrer" class="sc-resource-item">
-                      <span>{{ item.title }}</span>
-                      <div style="display:flex;align-items:center;gap:0.75rem">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                      </div>
-                    </a>
                   </template>
 
                   <div v-else class="sc-empty">
-                    <div style="font-size:2rem">🔍</div>
-                    <p style="font-size:0.85rem">No matching resources found.</p>
+                    <div style="font-size: 3rem">📖</div>
+                    <p style="font-size: 0.9rem">
+                      Select a subject above to view resources
+                    </p>
                   </div>
-                </template>
-
-                <div v-else class="sc-empty">
-                  <div style="font-size:3rem">📖</div>
-                  <p style="font-size:0.9rem">Select a subject above to view resources</p>
                 </div>
-              </div> <!-- /sc-resource-panel -->
-              </div> <!-- /sc-panel-body -->
+                <!-- /sc-resource-panel -->
+              </div>
+              <!-- /sc-panel-body -->
             </template>
-
           </div>
         </div>
       </div>
     </section>
-
 
     <section class="section rs" id="doubtBoard">
       <div class="container">
@@ -299,7 +443,12 @@
 
         <div
           class="card-base"
-          style="max-width: 820px; margin: 0 auto; padding: 2.5rem 2rem; text-align: center;">
+          style="
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+            text-align: center;
+          ">
           <h3
             style="
               font-family: Cinzel, serif;
@@ -309,15 +458,24 @@
             ">
             Have a Doubt?
           </h3>
-          <p style="color: var(--text2); margin-bottom: 1.5rem; font-size: 0.95rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-            Submit your doubts anonymously using our Google form. Community members or WebOps will review and post answers on the board.
+          <p
+            style="
+              color: var(--text2);
+              margin-bottom: 1.5rem;
+              font-size: 0.95rem;
+              max-width: 600px;
+              margin-left: auto;
+              margin-right: auto;
+            ">
+            Submit your doubts anonymously using our Google form. Community
+            members or WebOps will review and post answers on the board.
           </p>
           <a
             href="https://forms.gle/vZox3LpVrXti74UH7"
             target="_blank"
             rel="noopener noreferrer"
             class="submit-btn"
-            style="display: inline-block; text-decoration: none;">
+            style="display: inline-block; text-decoration: none">
             Open Doubts Form
           </a>
         </div>
@@ -325,7 +483,10 @@
     </section>
 
     <!-- Student Tools -->
-    <section class="section rs" style="background: var(--bg2)" id="studentTools">
+    <section
+      class="section rs"
+      style="background: var(--bg2)"
+      id="studentTools">
       <div class="container">
         <div class="sec-hdr">
           <div class="section-tag">Student Tools</div>
@@ -336,27 +497,85 @@
         <div class="grid-4">
           <div class="card-base rc" style="--card-delay: 0.1s">
             <div style="font-size: 1.5rem; margin-bottom: 0.5rem">📊</div>
-            <h4 style="font-family: Cinzel, serif; font-weight: 700">Score Checker</h4>
-            <p class="desc" style="font-size: 0.82rem">Check your exam scores updated by IITM BS after each exam</p>
-            <a href="#" style="color: var(--accent); font-size: 0.82rem; font-weight: 600; text-decoration: none;">Open Scores -&gt;</a>
+            <h4 style="font-family: Cinzel, serif; font-weight: 700">
+              Score Checker
+            </h4>
+            <p class="desc" style="font-size: 0.82rem">
+              Check your exam scores updated by IITM BS after each exam
+            </p>
+            <a
+              href="#"
+              style="
+                color: var(--accent);
+                font-size: 0.82rem;
+                font-weight: 600;
+                text-decoration: none;
+              "
+              >Open Scores -&gt;</a
+            >
           </div>
           <div class="card-base rc" style="--card-delay: 0.2s">
             <div style="font-size: 1.5rem; margin-bottom: 0.5rem">🧠</div>
-            <h4 style="font-family: Cinzel, serif; font-weight: 700">Practice for Exam</h4>
-            <p class="desc" style="font-size: 0.82rem">Practice quizzes and problems to prepare for your exams</p>
-            <a href="https://quizpractice.space/" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-size: 0.82rem; font-weight: 600; text-decoration: none;">Start Practising -&gt;</a>
+            <h4 style="font-family: Cinzel, serif; font-weight: 700">
+              Practice for Exam
+            </h4>
+            <p class="desc" style="font-size: 0.82rem">
+              Practice quizzes and problems to prepare for your exams
+            </p>
+            <a
+              href="https://quizpractice.space/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                color: var(--accent);
+                font-size: 0.82rem;
+                font-weight: 600;
+                text-decoration: none;
+              "
+              >Start Practising -&gt;</a
+            >
           </div>
           <div class="card-base rc" style="--card-delay: 0.3s">
             <div style="font-size: 1.5rem; margin-bottom: 0.5rem">📈</div>
-            <h4 style="font-family: Cinzel, serif; font-weight: 700">Looker Studio</h4>
-            <p class="desc" style="font-size: 0.82rem">Visual dashboards and analytics for IITM BS programme data</p>
-            <a href="https://datastudio.google.com/reporting/d02dac13-665b-49cc-8d51-0451268a6a3e/page/p_zohf4g5z2d?s=i1h4iWCG8o4" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-size: 0.82rem; font-weight: 600; text-decoration: none;">View Dashboard -&gt;</a>
+            <h4 style="font-family: Cinzel, serif; font-weight: 700">
+              Looker Studio
+            </h4>
+            <p class="desc" style="font-size: 0.82rem">
+              Visual dashboards and analytics for IITM BS programme data
+            </p>
+            <a
+              href="https://datastudio.google.com/reporting/d02dac13-665b-49cc-8d51-0451268a6a3e/page/p_zohf4g5z2d?s=i1h4iWCG8o4"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                color: var(--accent);
+                font-size: 0.82rem;
+                font-weight: 600;
+                text-decoration: none;
+              "
+              >View Dashboard -&gt;</a
+            >
           </div>
           <div class="card-base rc" style="--card-delay: 0.4s">
             <div style="font-size: 1.5rem; margin-bottom: 0.5rem">💻</div>
-            <h4 style="font-family: Cinzel, serif; font-weight: 700">OPPE Portal</h4>
-            <p class="desc" style="font-size: 0.82rem">Online Programming & Problem-solving Evaluation exam portal</p>
-            <a href="https://study.iitm.ac.in/ds/exam.html" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-size: 0.82rem; font-weight: 600; text-decoration: none;">Open Portal -&gt;</a>
+            <h4 style="font-family: Cinzel, serif; font-weight: 700">
+              OPPE Portal
+            </h4>
+            <p class="desc" style="font-size: 0.82rem">
+              Online Programming & Problem-solving Evaluation exam portal
+            </p>
+            <a
+              href="https://study.iitm.ac.in/ds/exam.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                color: var(--accent);
+                font-size: 0.82rem;
+                font-weight: 600;
+                text-decoration: none;
+              "
+              >Open Portal -&gt;</a
+            >
           </div>
         </div>
       </div>
@@ -370,25 +589,45 @@
           <h2 class="section-title-xl">
             IITM BS <span class="tg">Exam Cities</span>
           </h2>
-          <p class="sec-sub">Find your nearest exam centre. Cities are organized by state across India.</p>
+          <p class="sec-sub">
+            Find your nearest exam centre. Cities are organized by state across
+            India.
+          </p>
         </div>
 
         <!-- Search + filter -->
         <div class="ec-search-wrap">
-          <div class="sc-search-input-wrap" style="max-width:420px;margin:0 auto 1.5rem">
+          <div
+            class="sc-search-input-wrap"
+            style="max-width: 420px; margin: 0 auto 1.5rem">
             <input
               v-model="citySearch"
               type="text"
               placeholder="Search city or state..."
               class="form-input sc-mid-search-input" />
-            <svg class="sc-mid-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+            <svg
+              class="sc-mid-search-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
             </svg>
           </div>
         </div>
 
         <!-- Region tabs -->
-        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-bottom:2rem">
+        <div
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+          ">
           <button
             v-for="r in examRegions"
             :key="r"
@@ -407,27 +646,26 @@
             class="ec-card card-base rc">
             <div class="ec-state">{{ row.state }}</div>
             <div class="ec-cities-list">
-              <span v-for="city in row.cities" :key="city" class="ec-city-tag">{{ city }}</span>
+              <span
+                v-for="city in row.cities"
+                :key="city"
+                class="ec-city-tag"
+                >{{ city }}</span
+              >
             </div>
           </div>
         </div>
 
         <div v-if="filteredExamCities.length === 0" class="sc-empty">
-          <div style="font-size:2.5rem">🔍</div>
+          <div style="font-size: 2.5rem">🔍</div>
           <p>No cities found for "{{ citySearch }}"</p>
         </div>
-
-
       </div>
     </section>
 
     <section class="section rs" style="background: var(--bg2)">
       <div class="container">
-        <div
-          style="
-            align-items: stretch;
-          "
-          class="sc-contrib-grid grid-2">
+        <div style="align-items: stretch" class="sc-contrib-grid grid-2">
           <div
             class="card-base"
             style="
@@ -508,7 +746,7 @@
               target="_blank"
               rel="noopener noreferrer"
               class="submit-btn"
-              style="align-self: flex-start; text-decoration: none;"
+              style="align-self: flex-start; text-decoration: none"
               >Submit a Resource</a
             >
           </div>
@@ -606,8 +844,6 @@
         </div>
       </div>
     </section>
-
-
   </div>
 </template>
 
@@ -621,53 +857,210 @@ import scData from "../data/scData_generated.js";
 useScrollReveal();
 
 // ─── Exam Cities ─────────────────────────────────────────────────────────────
-const citySearch = ref('');
-const activeRegion = ref('All');
+const citySearch = ref("");
+const activeRegion = ref("All");
 
 const examCitiesData = [
-  { state: 'Andaman & Nicobar Islands', region: 'Kolkata', cities: ['Port Blair'] },
-  { state: 'Andhra Pradesh', region: 'Hyderabad', cities: ['Anantapur', 'Bhimavaram', 'Guntur', 'Kadapa', 'Kurnool', 'Rajahmundry', 'Tirupathi', 'Vijayawada', 'Vishakhapatnam'] },
-  { state: 'Arunachal Pradesh', region: 'Kolkata', cities: ['Naharlagun'] },
-  { state: 'Assam', region: 'Kolkata', cities: ['Dibrugarh', 'Guwahati', 'Silchar', 'Tezpur'] },
-  { state: 'Bihar', region: 'Patna', cities: ['Patna', 'Bhagalpur', 'Gaya', 'Muzaffarpur', 'Darbhanga'] },
-  { state: 'Chhattisgarh', region: 'Patna', cities: ['Raipur'] },
-  { state: 'Delhi', region: 'Delhi', cities: ['Delhi'] },
-  { state: 'Goa', region: 'Mumbai', cities: ['Panaji'] },
-  { state: 'Gujarat', region: 'Mumbai', cities: ['Ahmedabad', 'Anand', 'Rajkot', 'Surat', 'Vadodara'] },
-  { state: 'Haryana', region: 'Chandigarh', cities: ['Faridabad', 'Gurgaon', 'Kurukshetra'] },
-  { state: 'Himachal Pradesh', region: 'Chandigarh', cities: ['Hamirpur', 'Shimla'] },
-  { state: 'Jammu & Kashmir', region: 'Chandigarh', cities: ['Jammu', 'Srinagar'] },
-  { state: 'Jharkhand', region: 'Patna', cities: ['Dhanbad', 'Jamshedpur', 'Ranchi'] },
-  { state: 'Karnataka', region: 'Bengaluru', cities: ['Belgaum', 'Bengaluru', 'Dharwad', 'Gulbarga', 'Mangalore', 'Mysore'] },
-  { state: 'Kerala', region: 'Bengaluru', cities: ['Calicut', 'Ernakulam', 'Kollam', 'Kottayam', 'Palakkad', 'Thrissur', 'Trivandrum'] },
-  { state: 'Madhya Pradesh', region: 'Mumbai', cities: ['Bhopal', 'Gwalior', 'Indore', 'Jabalpur'] },
-  { state: 'Maharashtra', region: 'Mumbai', cities: ['Amravati', 'Aurangabad', 'Jalgaon', 'Kolhapur', 'Mumbai', 'Nagpur', 'Nanded', 'Nashik', 'Pune', 'Solapur'] },
-  { state: 'Manipur', region: 'Kolkata', cities: ['Imphal'] },
-  { state: 'Meghalaya', region: 'Kolkata', cities: ['Shillong'] },
-  { state: 'Mizoram', region: 'Kolkata', cities: ['Aizawl'] },
-  { state: 'Nagaland', region: 'Kolkata', cities: ['Dimapur'] },
-  { state: 'Odisha', region: 'Kolkata', cities: ['Bhubaneswar', 'Rourkela', 'Sambalpur'] },
-  { state: 'Puducherry', region: 'Chennai', cities: ['Puducherry'] },
-  { state: 'Punjab', region: 'Chandigarh', cities: ['Chandigarh', 'Jalandhar', 'Ludhiana', 'Amritsar'] },
-  { state: 'Rajasthan', region: 'Chandigarh', cities: ['Jaipur', 'Jodhpur', 'Kota', 'Udaipur'] },
-  { state: 'Sikkim', region: 'Kolkata', cities: ['Bardang'] },
-  { state: 'Tamil Nadu', region: 'Chennai', cities: ['Chennai-Avadi', 'Chennai-South', 'Coimbatore', 'Erode', 'Kanchipuram', 'Madurai', 'Salem', 'Thanjavur', 'Tiruchirappalli', 'Tirunelveli', 'Vellore'] },
-  { state: 'Telangana', region: 'Hyderabad', cities: ['Hyderabad', 'Warangal'] },
-  { state: 'Tripura', region: 'Kolkata', cities: ['Agartala'] },
-  { state: 'Uttar Pradesh', region: 'Lucknow', cities: ['Agra', 'Allahabad', 'Ghaziabad', 'Gorakhpur', 'Greater Noida', 'Kanpur', 'Lucknow', 'Meerut', 'Varanasi'] },
-  { state: 'Uttarakhand', region: 'Chandigarh', cities: ['Dehradun', 'Haldwani', 'Roorkee'] },
-  { state: 'West Bengal', region: 'Kolkata', cities: ['Asansol', 'Adisaptagram', 'Durgapur', 'Kolkata', 'Siliguri'] },
+  {
+    state: "Andaman & Nicobar Islands",
+    region: "Kolkata",
+    cities: ["Port Blair"],
+  },
+  {
+    state: "Andhra Pradesh",
+    region: "Hyderabad",
+    cities: [
+      "Anantapur",
+      "Bhimavaram",
+      "Guntur",
+      "Kadapa",
+      "Kurnool",
+      "Rajahmundry",
+      "Tirupathi",
+      "Vijayawada",
+      "Vishakhapatnam",
+    ],
+  },
+  { state: "Arunachal Pradesh", region: "Kolkata", cities: ["Naharlagun"] },
+  {
+    state: "Assam",
+    region: "Kolkata",
+    cities: ["Dibrugarh", "Guwahati", "Silchar", "Tezpur"],
+  },
+  {
+    state: "Bihar",
+    region: "Patna",
+    cities: ["Patna", "Bhagalpur", "Gaya", "Muzaffarpur", "Darbhanga"],
+  },
+  { state: "Chhattisgarh", region: "Patna", cities: ["Raipur"] },
+  { state: "Delhi", region: "Delhi", cities: ["Delhi"] },
+  { state: "Goa", region: "Mumbai", cities: ["Panaji"] },
+  {
+    state: "Gujarat",
+    region: "Mumbai",
+    cities: ["Ahmedabad", "Anand", "Rajkot", "Surat", "Vadodara"],
+  },
+  {
+    state: "Haryana",
+    region: "Chandigarh",
+    cities: ["Faridabad", "Gurgaon", "Kurukshetra"],
+  },
+  {
+    state: "Himachal Pradesh",
+    region: "Chandigarh",
+    cities: ["Hamirpur", "Shimla"],
+  },
+  {
+    state: "Jammu & Kashmir",
+    region: "Chandigarh",
+    cities: ["Jammu", "Srinagar"],
+  },
+  {
+    state: "Jharkhand",
+    region: "Patna",
+    cities: ["Dhanbad", "Jamshedpur", "Ranchi"],
+  },
+  {
+    state: "Karnataka",
+    region: "Bengaluru",
+    cities: [
+      "Belgaum",
+      "Bengaluru",
+      "Dharwad",
+      "Gulbarga",
+      "Mangalore",
+      "Mysore",
+    ],
+  },
+  {
+    state: "Kerala",
+    region: "Bengaluru",
+    cities: [
+      "Calicut",
+      "Ernakulam",
+      "Kollam",
+      "Kottayam",
+      "Palakkad",
+      "Thrissur",
+      "Trivandrum",
+    ],
+  },
+  {
+    state: "Madhya Pradesh",
+    region: "Mumbai",
+    cities: ["Bhopal", "Gwalior", "Indore", "Jabalpur"],
+  },
+  {
+    state: "Maharashtra",
+    region: "Mumbai",
+    cities: [
+      "Amravati",
+      "Aurangabad",
+      "Jalgaon",
+      "Kolhapur",
+      "Mumbai",
+      "Nagpur",
+      "Nanded",
+      "Nashik",
+      "Pune",
+      "Solapur",
+    ],
+  },
+  { state: "Manipur", region: "Kolkata", cities: ["Imphal"] },
+  { state: "Meghalaya", region: "Kolkata", cities: ["Shillong"] },
+  { state: "Mizoram", region: "Kolkata", cities: ["Aizawl"] },
+  { state: "Nagaland", region: "Kolkata", cities: ["Dimapur"] },
+  {
+    state: "Odisha",
+    region: "Kolkata",
+    cities: ["Bhubaneswar", "Rourkela", "Sambalpur"],
+  },
+  { state: "Puducherry", region: "Chennai", cities: ["Puducherry"] },
+  {
+    state: "Punjab",
+    region: "Chandigarh",
+    cities: ["Chandigarh", "Jalandhar", "Ludhiana", "Amritsar"],
+  },
+  {
+    state: "Rajasthan",
+    region: "Chandigarh",
+    cities: ["Jaipur", "Jodhpur", "Kota", "Udaipur"],
+  },
+  { state: "Sikkim", region: "Kolkata", cities: ["Bardang"] },
+  {
+    state: "Tamil Nadu",
+    region: "Chennai",
+    cities: [
+      "Chennai-Avadi",
+      "Chennai-South",
+      "Coimbatore",
+      "Erode",
+      "Kanchipuram",
+      "Madurai",
+      "Salem",
+      "Thanjavur",
+      "Tiruchirappalli",
+      "Tirunelveli",
+      "Vellore",
+    ],
+  },
+  {
+    state: "Telangana",
+    region: "Hyderabad",
+    cities: ["Hyderabad", "Warangal"],
+  },
+  { state: "Tripura", region: "Kolkata", cities: ["Agartala"] },
+  {
+    state: "Uttar Pradesh",
+    region: "Lucknow",
+    cities: [
+      "Agra",
+      "Allahabad",
+      "Ghaziabad",
+      "Gorakhpur",
+      "Greater Noida",
+      "Kanpur",
+      "Lucknow",
+      "Meerut",
+      "Varanasi",
+    ],
+  },
+  {
+    state: "Uttarakhand",
+    region: "Chandigarh",
+    cities: ["Dehradun", "Haldwani", "Roorkee"],
+  },
+  {
+    state: "West Bengal",
+    region: "Kolkata",
+    cities: ["Asansol", "Adisaptagram", "Durgapur", "Kolkata", "Siliguri"],
+  },
 ];
 
-const examRegions = ['All', 'Delhi', 'Chennai', 'Bengaluru', 'Hyderabad', 'Mumbai', 'Kolkata', 'Patna', 'Chandigarh', 'Lucknow'];
+const examRegions = [
+  "All",
+  "Delhi",
+  "Chennai",
+  "Bengaluru",
+  "Hyderabad",
+  "Mumbai",
+  "Kolkata",
+  "Patna",
+  "Chandigarh",
+  "Lucknow",
+];
 
 const filteredExamCities = computed(() => {
   const q = citySearch.value.trim().toLowerCase();
-  return examCitiesData.filter(row => {
-    const regionMatch = activeRegion.value === 'All' || row.region === activeRegion.value;
+  return examCitiesData.filter((row) => {
+    const regionMatch =
+      activeRegion.value === "All" || row.region === activeRegion.value;
     if (!regionMatch) return false;
     if (!q) return true;
-    return row.state.toLowerCase().includes(q) || row.cities.some(c => c.toLowerCase().includes(q));
+    return (
+      row.state.toLowerCase().includes(q) ||
+      row.cities.some((c) => c.toLowerCase().includes(q))
+    );
   });
 });
 
@@ -715,30 +1108,52 @@ const currentResourceType = ref("notes");
 const openAuthors = ref({});
 
 const driveLinks = {
-  foundationPyq: "https://drive.google.com/drive/folders/1Fq3vpXmmN3moEFa9TdBqkBfkMfjaPyh-",
-  diplomaPyq: "https://drive.google.com/drive/folders/1FnI9uXbnSGqMBRLWyWPD5839R9xXjS5I",
+  foundationPyq:
+    "https://drive.google.com/drive/folders/1Fq3vpXmmN3moEFa9TdBqkBfkMfjaPyh-",
+  diplomaPyq:
+    "https://drive.google.com/drive/folders/1FnI9uXbnSGqMBRLWyWPD5839R9xXjS5I",
   notes: {
-    "BSMA1001": "https://drive.google.com/drive/folders/1SuT80Mt_1mhgeDb8_PF5nE2f626wI-5C",
-    "BSMA1002": "https://drive.google.com/drive/folders/1TVvNKumzi1tD5rRPR4B_SHfR6KyHXgkv",
-    "BSHS1001": "https://drive.google.com/drive/folders/1TJ_i7aNmcKBk_DAA7EmzCKTJ5fEBYWOD",
-    "BSCS1001": "https://drive.google.com/drive/folders/15BrCrZ0cBxcOOhDFwavZX9WJnwXu149O",
-    "BSMA1003": "https://drive.google.com/drive/folders/1T0Vk5wWuGlhKhCv1qGYnS7T5_mmceeFy",
-    "BSMA1004": "https://drive.google.com/drive/folders/1TNS9WHBWUKInU2Jey23DRwzNySeRjB3O",
-    "BSHS1002": "https://drive.google.com/drive/folders/1z68X9eGokOfrzlaCKV3v16bSpgInneKd",
-    "BSCS1002": "https://drive.google.com/drive/folders/1O7w1hXO6d0uptWs1U4BCMGVEdfSDxNWo",
-    "BSCS2001": "https://drive.google.com/drive/folders/1PtqrInqJV0ZcZbis2hFndmOM08lMmoS_",
-    "BSCS2005": "https://drive.google.com/drive/folders/1Q-FPcyrurSml35qHizU6An3_c7f8_xie",
-    "BSCS2003": "https://drive.google.com/drive/folders/1MbGGvTyRM0-27le2He5TKdhw8HSPfC0j",
-    "BSCS2006": "https://drive.google.com/drive/folders/1Pl7g4i6e9HRR5ZQLYaJlbj6BQ-16ZtDK",
-    "BSCS2002": "https://drive.google.com/drive/folders/1Pn7Zaa8tfXbXIBbiX9WYg_WcfIVMHCdG",
-    "BSSE2001": "https://drive.google.com/drive/folders/1PsMUC0fAMCNVB5HVgZ_TZQC3CWhT5K3g",
-    "BSMS2002": "https://drive.google.com/drive/folders/1UTximp3FWwJV6_5nBmJlISPIbzvMu8s0",
-    "BSMS2001": "https://drive.google.com/drive/folders/1UIjX4MUeJBQnSJqRnO5XI8SFm50XDPml",
-    "BSCS2004": "https://drive.google.com/drive/folders/1ODZY3E2PcsaFrzIHPo5lUhQZaBszZxxS",
-    "BSCS2008": "https://drive.google.com/drive/folders/1UIVGGZYEldx98djyOI6aR18ec-07Qies",
-    "BSCS2007": "https://drive.google.com/drive/folders/1UFpj7Lauj4l_YvA8U6tR0dqubv4K0gwy",
-    "BSSE2002": "https://drive.google.com/drive/folders/1UK3pOkccniwBm1-YfpQgjrEfXFMrOtVy"
-  }
+    BSMA1001:
+      "https://drive.google.com/drive/folders/1SuT80Mt_1mhgeDb8_PF5nE2f626wI-5C",
+    BSMA1002:
+      "https://drive.google.com/drive/folders/1TVvNKumzi1tD5rRPR4B_SHfR6KyHXgkv",
+    BSHS1001:
+      "https://drive.google.com/drive/folders/1TJ_i7aNmcKBk_DAA7EmzCKTJ5fEBYWOD",
+    BSCS1001:
+      "https://drive.google.com/drive/folders/15BrCrZ0cBxcOOhDFwavZX9WJnwXu149O",
+    BSMA1003:
+      "https://drive.google.com/drive/folders/1T0Vk5wWuGlhKhCv1qGYnS7T5_mmceeFy",
+    BSMA1004:
+      "https://drive.google.com/drive/folders/1TNS9WHBWUKInU2Jey23DRwzNySeRjB3O",
+    BSHS1002:
+      "https://drive.google.com/drive/folders/1z68X9eGokOfrzlaCKV3v16bSpgInneKd",
+    BSCS1002:
+      "https://drive.google.com/drive/folders/1O7w1hXO6d0uptWs1U4BCMGVEdfSDxNWo",
+    BSCS2001:
+      "https://drive.google.com/drive/folders/1PtqrInqJV0ZcZbis2hFndmOM08lMmoS_",
+    BSCS2005:
+      "https://drive.google.com/drive/folders/1Q-FPcyrurSml35qHizU6An3_c7f8_xie",
+    BSCS2003:
+      "https://drive.google.com/drive/folders/1MbGGvTyRM0-27le2He5TKdhw8HSPfC0j",
+    BSCS2006:
+      "https://drive.google.com/drive/folders/1Pl7g4i6e9HRR5ZQLYaJlbj6BQ-16ZtDK",
+    BSCS2002:
+      "https://drive.google.com/drive/folders/1Pn7Zaa8tfXbXIBbiX9WYg_WcfIVMHCdG",
+    BSSE2001:
+      "https://drive.google.com/drive/folders/1PsMUC0fAMCNVB5HVgZ_TZQC3CWhT5K3g",
+    BSMS2002:
+      "https://drive.google.com/drive/folders/1UTximp3FWwJV6_5nBmJlISPIbzvMu8s0",
+    BSMS2001:
+      "https://drive.google.com/drive/folders/1UIjX4MUeJBQnSJqRnO5XI8SFm50XDPml",
+    BSCS2004:
+      "https://drive.google.com/drive/folders/1ODZY3E2PcsaFrzIHPo5lUhQZaBszZxxS",
+    BSCS2008:
+      "https://drive.google.com/drive/folders/1UIVGGZYEldx98djyOI6aR18ec-07Qies",
+    BSCS2007:
+      "https://drive.google.com/drive/folders/1UFpj7Lauj4l_YvA8U6tR0dqubv4K0gwy",
+    BSSE2002:
+      "https://drive.google.com/drive/folders/1UK3pOkccniwBm1-YfpQgjrEfXFMrOtVy",
+  },
 };
 
 const currentLevelLabel = computed(() => {
@@ -774,25 +1189,26 @@ function subjectMatchesSearch(subject, query) {
 
 const filteredSubjects = computed(() => {
   const q = search.value.trim().toLowerCase();
-  
+
   let baseSubjects = [];
   if (activeTab.value === "All Levels" && q) {
     // Collect all subjects from all levels for global search
-    ['foundation', 'diploma', 'bs'].forEach(lvl => {
-      (scData[lvl] || []).forEach(sub => {
+    ["foundation", "diploma", "bs"].forEach((lvl) => {
+      (scData[lvl] || []).forEach((sub) => {
         baseSubjects.push({ ...sub, levelKey: lvl });
       });
     });
   } else {
     // Only current level subjects
-    baseSubjects = levelSubjects.value.map(sub => ({ ...sub, levelKey: currentLevel.value }));
+    baseSubjects = levelSubjects.value.map((sub) => ({
+      ...sub,
+      levelKey: currentLevel.value,
+    }));
   }
 
   if (!q) return baseSubjects;
-  
-  return baseSubjects.filter((subject) =>
-    subjectMatchesSearch(subject, q),
-  );
+
+  return baseSubjects.filter((subject) => subjectMatchesSearch(subject, q));
 });
 
 const currentSubject = computed(
@@ -812,30 +1228,6 @@ const filteredResources = computed(() => {
       .toLowerCase()
       .includes(q),
   );
-});
-
-const currentFolders = computed(() => {
-  if (!currentSubject.value) return [];
-  
-  const folders = [];
-  const subjectCode = currentSubject.value.code;
-  const isFoundation = currentLevel.value === "foundation" || (String(subjectCode).startsWith("BS") && String(subjectCode).includes("10"));
-  const isDiploma = currentLevel.value === "diploma" || (String(subjectCode).startsWith("BS") && String(subjectCode).includes("20"));
-  
-  if (isFoundation) {
-    folders.push({ title: "Foundation End term PYQs", link: driveLinks.foundationPyq });
-  } else if (isDiploma) {
-    folders.push({ title: "Diploma ET PYQs", link: driveLinks.diplomaPyq });
-  }
-
-  if (driveLinks.notes[subjectCode]) {
-    folders.push({ title: `Subject Wise Notes - ${currentSubject.value.subject}`, link: driveLinks.notes[subjectCode] });
-  } else if (currentSubject.value.subject && currentSubject.value.subject.toLowerCase().includes('analytics')) {
-    // Edge case for Business Analytics if code doesn't match
-    folders.push({ title: `Subject Wise Notes - ${currentSubject.value.subject}`, link: driveLinks.notes["BSMS2002"] });
-  }
-
-  return folders;
 });
 
 function parseAuthor(title) {
@@ -868,13 +1260,38 @@ const groupedNotes = computed(() => {
     if (!map.has(author)) map.set(author, []);
     map.get(author).push(item);
   });
-  return Array.from(map.entries())
+  const groups = Array.from(map.entries())
     .sort((a, b) => {
       if (a[0] === "Unknown") return 1;
       if (b[0] === "Unknown") return -1;
       return a[0].localeCompare(b[0]);
     })
     .map(([author, items]) => ({ author, items }));
+
+  if (currentSubject.value) {
+    const subjectCode = currentSubject.value.code;
+    let driveLink = driveLinks.notes[subjectCode];
+    if (
+      !driveLink &&
+      currentSubject.value.subject &&
+      currentSubject.value.subject.toLowerCase().includes("analytics")
+    ) {
+      driveLink = driveLinks.notes["BSMS2002"];
+    }
+    if (driveLink) {
+      groups.unshift({
+        author: "Google Drive Folder",
+        items: [
+          {
+            title: `Subject Wise Notes - ${currentSubject.value.subject}`,
+            link: driveLink,
+          },
+        ],
+      });
+    }
+  }
+
+  return groups;
 });
 
 const groupedPyq = computed(() => {
@@ -885,13 +1302,41 @@ const groupedPyq = computed(() => {
     if (!map.has(year)) map.set(year, []);
     map.get(year).push(item);
   });
-  return Array.from(map.entries())
+  const groups = Array.from(map.entries())
     .sort((a, b) => {
       if (a[0] === "Other") return 1;
       if (b[0] === "Other") return -1;
       return Number(b[0]) - Number(a[0]);
     })
     .map(([year, items]) => ({ year, items }));
+
+  if (currentSubject.value) {
+    const subjectCode = currentSubject.value.code;
+    const isFoundation =
+      currentLevel.value === "foundation" ||
+      (String(subjectCode).startsWith("BS") &&
+        String(subjectCode).includes("10"));
+    const isDiploma =
+      currentLevel.value === "diploma" ||
+      (String(subjectCode).startsWith("BS") &&
+        String(subjectCode).includes("20"));
+
+    if (isFoundation) {
+      groups.unshift({
+        year: "Google Drive Folder",
+        items: [
+          { title: "Foundation End term PYQs", link: driveLinks.foundationPyq },
+        ],
+      });
+    } else if (isDiploma) {
+      groups.unshift({
+        year: "Google Drive Folder",
+        items: [{ title: "Diploma ET PYQs", link: driveLinks.diplomaPyq }],
+      });
+    }
+  }
+
+  return groups;
 });
 
 function toggleAuthor(index) {
@@ -1704,7 +2149,6 @@ onMounted(async () => {
   }
 }
 
-
 /* ─── Exam Cities ───────────────────────────────────────────────────── */
 .ec-grid {
   display: grid;
@@ -1713,7 +2157,9 @@ onMounted(async () => {
   margin-bottom: 1rem;
 }
 
-.ec-card { padding: 1.1rem 1.25rem; }
+.ec-card {
+  padding: 1.1rem 1.25rem;
+}
 
 .ec-state {
   font-family: Cinzel, serif;
@@ -1722,15 +2168,19 @@ onMounted(async () => {
   color: var(--accent);
   margin-bottom: 0.6rem;
   padding-bottom: 0.4rem;
-  border-bottom: 1px solid rgba(212,160,23,0.15);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.15);
 }
 
-.ec-cities-list { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ec-cities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
 
 .ec-city-tag {
   font-size: 0.72rem;
-  background: rgba(212,160,23,0.06);
-  border: 1px solid rgba(212,160,23,0.15);
+  background: rgba(212, 160, 23, 0.06);
+  border: 1px solid rgba(212, 160, 23, 0.15);
   color: var(--text2);
   padding: 0.18rem 0.55rem;
   border-radius: 99px;
@@ -1748,7 +2198,8 @@ onMounted(async () => {
 }
 
 @media (max-width: 700px) {
-  .ec-info-row { grid-template-columns: 1fr; }
+  .ec-info-row {
+    grid-template-columns: 1fr;
+  }
 }
-
 </style>
