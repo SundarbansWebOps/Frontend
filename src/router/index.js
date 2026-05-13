@@ -24,7 +24,8 @@ import KolkataMeetups    from '../views/meetups/KolkataMeetups.vue'
 import HyderabadMeetups  from '../views/meetups/HyderabadMeetups.vue'
 import PatnaMeetups      from '../views/meetups/PatnaMeetups.vue'
 import ChandigarhMeetups from '../views/meetups/ChandigarhMeetups.vue'
-import NotFoundView      from '../views/NotFoundView.vue'
+import NotFoundView           from '../views/NotFoundView.vue'
+import VerifyCertificateView  from '../views/VerifyCertificateView.vue'
 
 const routes = [
   { path: '/',       component: Home    },
@@ -52,6 +53,9 @@ const routes = [
   { path: '/meetups/hyderabad',  component: HyderabadMeetups  },
   { path: '/meetups/patna',      component: PatnaMeetups      },
   { path: '/meetups/chandigarh', component: ChandigarhMeetups },
+
+  // Certificate verification (public)
+  { path: '/verify-certificate', component: VerifyCertificateView },
 
   // 404 catch-all
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundView }
