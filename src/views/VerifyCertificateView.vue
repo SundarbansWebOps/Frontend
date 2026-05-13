@@ -113,14 +113,14 @@
             </div>
           </div>
           <div class="cert-actions">
-            <button class="download-btn view-btn" @click="viewCertificate" v-if="result.drive_id">
+            <button class="download-btn view-btn" @click="viewCertificate" v-if="result.pdf">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                 <circle cx="12" cy="12" r="3"/>
               </svg>
               View Certificate
             </button>
-            <button class="download-btn" @click="downloadCertificate" v-if="result.drive_id">
+            <button class="download-btn" @click="downloadCertificate" v-if="result.pdf">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="7 10 12 15 17 10"/>
@@ -128,7 +128,7 @@
               </svg>
               Open &amp; Download
             </button>
-            <p class="no-download-msg" v-if="!result.drive_id">Certificate file not yet uploaded.</p>
+            <p class="no-download-msg" v-if="!result.pdf">Certificate file not yet uploaded.</p>
           </div>
         </div>
       </div>
@@ -213,15 +213,16 @@ async function verifyCertificate() {
 }
 
 function viewCertificate() {
-  if (!result.value?.drive_id) return
-  // Opens in Drive viewer — reliable for all file types
-  window.open(`https://drive.google.com/file/d/${result.value.drive_id}/view`, '_blank')
+  if (!result.value?.pdf) return
+  window.open(`/certificates/${result.value.id}.pdf`, '_blank')
 }
 
 function downloadCertificate() {
-  if (!result.value?.drive_id) return
-  // Drive's direct download is unreliable for PDFs — open viewer where user can download
-  window.open(`https://drive.google.com/file/d/${result.value.drive_id}/view?usp=sharing`, '_blank')
+  if (!result.value?.pdf) return
+  const a = document.createElement('a')
+  a.href = `/certificates/${result.value.id}.pdf`
+  a.download = `${result.value.id}.pdf`
+  a.click()
 }
 </script>
 
