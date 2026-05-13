@@ -172,7 +172,7 @@
             <div class="tm-no-photo" style="display:none">AK</div>
             <div class="tm-overlay">
               <div class="tm-name">Anuraj Jit Saikia</div>
-              <div class="tm-role">Web Develope</div>
+              <div class="tm-role">Web Developer</div>
             </div>
           </div>
           <div class="tm-info">
