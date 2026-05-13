@@ -177,44 +177,6 @@ const loading = ref(false)
 const result = ref(null)
 const errorMsg = ref('')
 
-// ─── MOCK CERTIFICATE DATABASE ────────────────────────────────────────────────
-// Replace this with a real API call when the backend is ready.
-// Format: { id, name, event, date, category, rank }
-const CERTIFICATES = {
-  'SH2024001': {
-    id: 'SH2024001',
-    name: 'Rahul Sharma',
-    event: 'BGMI Showdown 2024',
-    date: '15 November 2024',
-    category: 'E-Sports',
-    rank: '1st Place',
-  },
-  'SH2024002': {
-    id: 'SH2024002',
-    name: 'Priya Mehta',
-    event: 'Open Mic Night – Cultural',
-    date: '3 December 2024',
-    category: 'Cultural',
-    rank: 'Participant',
-  },
-  'SH2025001': {
-    id: 'SH2025001',
-    name: 'Aarav Singh',
-    event: 'Coding Aptitude Challenge',
-    date: '22 January 2025',
-    category: 'Technical',
-    rank: '2nd Place',
-  },
-  'SH2025002': {
-    id: 'SH2025002',
-    name: 'Neha Gupta',
-    event: 'Statistical Analysis Challenge',
-    date: '10 February 2025',
-    category: 'Technical',
-    rank: '1st Place',
-  },
-}
-
 async function verifyCertificate() {
   const id = certificateId.value.trim().toUpperCase()
   if (!id) return
@@ -223,14 +185,18 @@ async function verifyCertificate() {
   errorMsg.value = ''
   loading.value = true
 
-  // Simulate network delay (remove when using real API)
-  await new Promise(r => setTimeout(r, 900))
-
-  const cert = CERTIFICATES[id]
-  if (cert) {
-    result.value = cert
-  } else {
-    errorMsg.value = `No certificate found with ID "${id}". Check the ID on your document and try again.`
+  try {
+    const res = await fetch('/data/certificates.json')
+    if (!res.ok) throw new Error('Failed to load certificate database')
+    const db = await res.json()
+    const cert = db[id]
+    if (cert) {
+      result.value = cert
+    } else {
+      errorMsg.value = `No certificate found with ID "${id}". Check the ID on your document and try again.`
+    }
+  } catch (err) {
+    errorMsg.value = 'Could not reach the certificate database. Please try again later.'
   }
 
   loading.value = false
