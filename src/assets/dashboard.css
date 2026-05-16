@@ -249,23 +249,71 @@
    DASHBOARD WORKSPACE LAYOUT
 ═══════════════════════════════════════════ */
 .dashboard-page .dashboard-workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(330px, 390px);
-  gap: 28px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
   padding-top: 34px;
 }
-.dashboard-page .dashboard-column {
+.dashboard-page .dashboard-tabs {
   display: grid;
-  gap: 28px;
-}
-.dashboard-page .dashboard-column-side {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 8px;
+  background: rgba(10, 15, 10, .7);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
   position: sticky;
-  top: 92px;
+  top: 84px;
+  z-index: 20;
+  backdrop-filter: blur(18px);
 }
-.dashboard-page .dashboard-section {
+.dashboard-page .dashboard-tab {
+  min-width: 0;
+  min-height: 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 18px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: background .22s, border-color .22s, color .22s;
+}
+.dashboard-page .dashboard-tab:hover {
+  background: var(--subtle);
+  border-color: var(--border-soft);
+  color: var(--cream);
+}
+.dashboard-page .dashboard-tab.active {
+  background: var(--gold-dim);
+  border-color: var(--border);
+  color: var(--gold);
+}
+.dashboard-page .tab-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.dashboard-page .tab-purpose {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+.dashboard-page .dashboard-tab.active .tab-purpose {
+  color: var(--muted-strong);
+}
+.dashboard-page .dashboard-tab-panel {
   display: grid;
-  gap: 16px;
+  gap: 18px;
+  animation: slide-up .36s cubic-bezier(.16, 1, .3, 1);
 }
 .dashboard-page .section-heading {
   display: flex;
@@ -281,15 +329,26 @@
   line-height: 1;
   color: var(--cream);
 }
-.dashboard-page .priority-stack {
+.dashboard-page .dashboard-panel-grid {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+.dashboard-page .dashboard-panel-grid-two {
   display: grid;
   grid-template-columns: minmax(280px, .82fr) minmax(320px, 1fr);
-  gap: 16px;
 }
-.dashboard-page .community-stack {
-  display: grid;
-  grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
-  gap: 16px;
+.dashboard-page .dashboard-panel-grid-practice {
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr);
+}
+.dashboard-page .dashboard-panel-grid-community {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.dashboard-page .dashboard-panel-grid-community > :last-child {
+  grid-column: 1 / -1;
+}
+.dashboard-page .dashboard-panel-grid-single {
+  max-width: 680px;
 }
 
 /* ═══════════════════════════════════════════
@@ -976,18 +1035,15 @@
    RESPONSIVE BREAKPOINTS
 ═══════════════════════════════════════════ */
 @media (max-width: 1100px) {
-  .dashboard-page .dashboard-hero,
-  .dashboard-page .dashboard-workspace {
+  .dashboard-page .dashboard-hero {
     grid-template-columns: 1fr;
   }
-  .dashboard-page .dashboard-column-side {
-    position: static;
-  }
-  .dashboard-page .dashboard-column-side {
+  .dashboard-page .dashboard-tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .dashboard-page .dashboard-column-side #widget-meme {
-    grid-column: 1 / -1;
+  .dashboard-page .dashboard-panel-grid-two,
+  .dashboard-page .dashboard-panel-grid-practice {
+    grid-template-columns: 1fr;
   }
 }
 @media (max-width: 768px) {
@@ -995,12 +1051,18 @@
   .dashboard-page .dashboard-hero { min-height: 0; padding: 22px 0 32px; }
   .dashboard-page .dashboard-hero p { font-size: 14px; }
   .dashboard-page .hero-panel,
-  .dashboard-page .priority-stack,
-  .dashboard-page .community-stack,
-  .dashboard-page .dashboard-column-side {
+  .dashboard-page .dashboard-tabs,
+  .dashboard-page .dashboard-panel-grid-community {
     grid-template-columns: 1fr;
   }
-  .dashboard-page .dashboard-column-side #widget-meme {
+  .dashboard-page .dashboard-tabs {
+    position: static;
+  }
+  .dashboard-page .dashboard-tab {
+    min-height: 62px;
+    padding: 12px 14px;
+  }
+  .dashboard-page .dashboard-panel-grid-community > :last-child {
     grid-column: auto;
   }
   .dashboard-page .section-heading {
