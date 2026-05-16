@@ -7,7 +7,8 @@
       </router-link>
 
       <nav class="nav-links">
-        <router-link to="/lounge" class="nav-link">Reading Lounge</router-link>
+        <router-link to="/lounge#events" class="nav-link">Events</router-link>
+        <router-link to="/lounge#lounge" class="nav-link">Reading</router-link>
         <router-link to="/lounge#leaderboard" class="nav-link">Leaderboard</router-link>
         <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
       </nav>
@@ -17,11 +18,6 @@
           <div class="member-avatar">{{ memberInitial }}</div>
           <span class="member-id">{{ memberEmail }}</span>
         </div>
-        <button
-          class="logout-btn"
-          style="border-color: rgba(100,200,100,0.3); color: #80e080; margin-right: 8px;"
-          @click="$emit('leave-lounge')"
-        >Leave Lounge</button>
         <button class="logout-btn" @click="$emit('logout')">Logout</button>
       </div>
     </div>
@@ -35,7 +31,7 @@ const props = defineProps({
   memberEmail: { type: String, default: '' },
 });
 
-defineEmits(['leave-lounge', 'logout']);
+defineEmits(['logout']);
 
 const memberInitial = computed(() =>
   props.memberEmail ? props.memberEmail.charAt(0).toUpperCase() : '?'

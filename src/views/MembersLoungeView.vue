@@ -14,7 +14,6 @@
     <!-- NAVBAR -->
     <MembersNavbar
       :member-email="memberEmail"
-      @leave-lounge="leaveLounge"
       @logout="logout"
     />
 
@@ -380,12 +379,6 @@ function updateCountdown() {
 function smoothScroll(hash) {
   const el = document.querySelector(hash);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
-
-function leaveLounge() {
-  const p = document.querySelector('.members-lounge-page');
-  if (p) { p.style.opacity = '0'; p.style.transition = 'opacity 0.4s'; }
-  setTimeout(() => router.push('/'), 400);
 }
 
 function logout() {
