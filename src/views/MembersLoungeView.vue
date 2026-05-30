@@ -14,7 +14,6 @@
     <!-- NAVBAR -->
     <MembersNavbar
       :member-email="memberEmail"
-      @leave-lounge="leaveLounge"
       @logout="logout"
     />
 
@@ -41,29 +40,24 @@
 
         <div class="hero-stats">
           <div class="stat">
-            <div class="stat-val">{{ memberCountText }}</div>
-            <div class="stat-lbl">Members</div>
+            <div class="stat-val">{{ todayEventName }}</div>
+            <div class="stat-lbl">Today</div>
           </div>
           <div class="stat-sep"></div>
           <div class="stat">
             <div class="stat-val countdown-val">{{ countdownText }}</div>
-            <div class="stat-lbl">Next Session In</div>
+            <div class="stat-lbl">Reading Lounge</div>
           </div>
           <div class="stat-sep"></div>
           <div class="stat">
             <div class="stat-val">5</div>
-            <div class="stat-lbl">Weekly Events</div>
-          </div>
-          <div class="stat-sep"></div>
-          <div class="stat">
-            <div class="stat-val">{{ todayEventName }}</div>
-            <div class="stat-lbl">Today's Event</div>
+            <div class="stat-lbl">Events / Week</div>
           </div>
         </div>
 
         <div class="hero-cta-row">
           <a href="#events" class="cta-primary" @click.prevent="smoothScroll('#events')">View Schedule</a>
-          <router-link to="/dashboard" class="cta-secondary">Open Dashboard →</router-link>
+          <a href="#lounge" class="cta-secondary" @click.prevent="smoothScroll('#lounge')">Reading Rooms</a>
         </div>
       </div>
 
@@ -290,52 +284,12 @@
       </div>
     </section>
 
-    <!-- ═══════════════ QUICK LINKS ═══════════════ -->
-    <section class="quicklinks-section">
-      <div class="container">
-        <div class="quicklinks-grid">
-          <router-link to="/dashboard" class="quicklink-card">
-            <span class="ql-icon">🎮</span>
-            <div>
-              <div class="ql-title">House Dashboard</div>
-              <div class="ql-desc">Widgets, streaks, mood wall & more</div>
-            </div>
-            <span class="ql-arrow">→</span>
-          </router-link>
-          <router-link to="/events" class="quicklink-card">
-            <span class="ql-icon">📅</span>
-            <div>
-              <div class="ql-title">All Events</div>
-              <div class="ql-desc">Past & upcoming house events</div>
-            </div>
-            <span class="ql-arrow">→</span>
-          </router-link>
-          <router-link to="/community" class="quicklink-card">
-            <span class="ql-icon">🌐</span>
-            <div>
-              <div class="ql-title">Community</div>
-              <div class="ql-desc">Technical, Cultural & eSports</div>
-            </div>
-            <span class="ql-arrow">→</span>
-          </router-link>
-          <router-link to="/meetups" class="quicklink-card">
-            <span class="ql-icon">📍</span>
-            <div>
-              <div class="ql-title">Meetups</div>
-              <div class="ql-desc">Find your city chapter</div>
-            </div>
-            <span class="ql-arrow">→</span>
-          </router-link>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import membersData from '../data/members.json';
 import MembersNavbar from '../components/MembersNavbar.vue';
 
 const router = useRouter();
@@ -359,11 +313,6 @@ const memberEmail   = ref('');
 const memberRoll    = ref('');
 const countdownText = ref('—');
 let   countdownInterval = null;
-
-const memberCountText = computed(() => {
-  const count = membersData?.members?.length || 0;
-  return count >= 1000 ? (Math.floor(count / 100) / 10) + 'K+' : count + '+';
-});
 
 // ── EVENTS ────────────────────────────────────────────────────────────────
 const dayIndex = new Date().getDay();
@@ -430,12 +379,6 @@ function updateCountdown() {
 function smoothScroll(hash) {
   const el = document.querySelector(hash);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
-
-function leaveLounge() {
-  const p = document.querySelector('.members-lounge-page');
-  if (p) { p.style.opacity = '0'; p.style.transition = 'opacity 0.4s'; }
-  setTimeout(() => router.push('/'), 400);
 }
 
 function logout() {
@@ -722,17 +665,6 @@ section { padding: 110px 0; }
 .lb-pts-lbl { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .lb-footer-note { font-size: 12px; color: var(--muted); line-height: 1.65; text-align: center; padding-top: 16px; border-top: 1px solid var(--border-soft); }
 
-/* QUICK LINKS */
-.quicklinks-section { padding: 64px 0; border-top: 1px solid var(--border-soft); }
-.quicklinks-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-.quicklink-card { display: flex; align-items: center; gap: 16px; padding: 22px 24px; background: var(--panel); border: 1px solid var(--border-soft); border-radius: var(--radius); text-decoration: none; color: var(--cream); transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s; backdrop-filter: blur(12px); }
-.quicklink-card:hover { border-color: var(--border); box-shadow: 0 12px 32px rgba(0,0,0,0.35); transform: translateY(-2px); }
-.ql-icon { font-size: 28px; flex-shrink: 0; }
-.ql-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-.ql-desc  { font-size: 11px; color: var(--muted); line-height: 1.4; }
-.ql-arrow { margin-left: auto; color: var(--gold); opacity: 0.6; font-size: 18px; transition: opacity 0.2s, transform 0.2s; }
-.quicklink-card:hover .ql-arrow { opacity: 1; transform: translateX(3px); }
-
 /* SCROLL REVEAL */
 .reveal { opacity: 0; transform: translateY(24px); transition: none; }
 .reveal.visible { opacity: 1; transform: translateY(0); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
@@ -741,7 +673,6 @@ section { padding: 110px 0; }
 @media (max-width: 1100px) {
   .reading-grid { grid-template-columns: 1fr 1fr; }
   .reading-pick-card { grid-column: 1 / -1; }
-  .quicklinks-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 900px) {
   .container { padding: 0 24px; }
@@ -752,12 +683,10 @@ section { padding: 110px 0; }
   .stat-sep { display: none; }
   .reading-grid { grid-template-columns: 1fr; }
   .podium { display: none; }
-  .quicklinks-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 600px) {
   .events-grid { grid-template-columns: 1fr; }
   .hero-cta-row { flex-direction: column; }
-  .quicklinks-grid { grid-template-columns: 1fr; }
   .hero-greeting { font-size: 38px; }
 }
 </style>

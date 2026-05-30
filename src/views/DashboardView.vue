@@ -44,43 +44,91 @@
 
       <!-- ══ DASHBOARD WORKSPACE ══ -->
       <section class="dashboard-workspace" aria-label="House dashboard widgets">
-        <div class="dashboard-column dashboard-column-main">
-          <div class="dashboard-section">
-            <div class="section-heading">
-              <span class="section-eyebrow">Today</span>
-              <h2>Start Here</h2>
-            </div>
-            <div class="priority-stack">
-              <StudyStreak class="widget-priority" @confetti="onConfetti" />
-              <PomodoroRoom class="widget-priority" :config="DATA.pomodoro" @confetti="onConfetti" />
-            </div>
-          </div>
+        <div class="dashboard-tabs" role="tablist" aria-label="Dashboard sections">
+          <button
+            v-for="tab in dashboardTabs"
+            :id="`dashboard-tab-${tab.id}`"
+            :key="tab.id"
+            type="button"
+            class="dashboard-tab"
+            role="tab"
+            :class="{ active: activeTab === tab.id }"
+            :aria-selected="activeTab === tab.id"
+            :aria-controls="`dashboard-panel-${tab.id}`"
+            @click="activeTab = tab.id"
+          >
+            <span class="tab-label">{{ tab.label }}</span>
+            <span class="tab-purpose">{{ tab.purpose }}</span>
+          </button>
+        </div>
 
-          <div class="dashboard-section">
-            <div class="section-heading">
-              <span class="section-eyebrow">Practice</span>
-              <h2>Skill &amp; Progress</h2>
-            </div>
-            <DailyChallenge class="widget-wide" :config="DATA.dailyChallenge" @confetti="onConfetti" />
+        <div
+          id="dashboard-panel-focus"
+          class="dashboard-tab-panel"
+          role="tabpanel"
+          aria-labelledby="dashboard-tab-focus"
+          v-show="activeTab === 'focus'"
+        >
+          <div class="section-heading">
+            <span class="section-eyebrow">Focus</span>
+            <h2>Start Here</h2>
           </div>
-
-          <div class="dashboard-section">
-            <div class="section-heading">
-              <span class="section-eyebrow">Community</span>
-              <h2>House Pulse</h2>
-            </div>
-            <div class="community-stack">
-              <MoodWall class="widget-wide" :config="DATA.moods" />
-              <ConfessionWall class="widget-wide" :config="DATA.confessions" />
-            </div>
+          <div class="dashboard-panel-grid dashboard-panel-grid-two">
+            <StudyStreak class="widget-priority" @confetti="onConfetti" />
+            <PomodoroRoom class="widget-priority" :config="DATA.pomodoro" @confetti="onConfetti" />
           </div>
         </div>
 
-        <aside class="dashboard-column dashboard-column-side" aria-label="Community and ranking widgets">
-          <HousePoints class="widget-compact" :config="DATA.housePoints" />
-          <BuddyMatcher class="widget-compact" :pool="DATA.studyBuddies" :options="DATA.buddyOptions" />
-          <MemeOfWeek class="widget-compact" :config="DATA.meme" />
-        </aside>
+        <div
+          id="dashboard-panel-practice"
+          class="dashboard-tab-panel"
+          role="tabpanel"
+          aria-labelledby="dashboard-tab-practice"
+          v-show="activeTab === 'practice'"
+        >
+          <div class="section-heading">
+            <span class="section-eyebrow">Practice</span>
+            <h2>Skill &amp; Progress</h2>
+          </div>
+          <div class="dashboard-panel-grid dashboard-panel-grid-practice">
+            <DailyChallenge class="widget-wide" :config="DATA.dailyChallenge" @confetti="onConfetti" />
+            <HousePoints class="widget-compact" :config="DATA.housePoints" />
+          </div>
+        </div>
+
+        <div
+          id="dashboard-panel-community"
+          class="dashboard-tab-panel"
+          role="tabpanel"
+          aria-labelledby="dashboard-tab-community"
+          v-show="activeTab === 'community'"
+        >
+          <div class="section-heading">
+            <span class="section-eyebrow">Community</span>
+            <h2>House Pulse</h2>
+          </div>
+          <div class="dashboard-panel-grid dashboard-panel-grid-community">
+            <MoodWall class="widget-wide" :config="DATA.moods" />
+            <ConfessionWall class="widget-wide" :config="DATA.confessions" />
+            <BuddyMatcher class="widget-compact" :pool="DATA.studyBuddies" :options="DATA.buddyOptions" />
+          </div>
+        </div>
+
+        <div
+          id="dashboard-panel-fun"
+          class="dashboard-tab-panel"
+          role="tabpanel"
+          aria-labelledby="dashboard-tab-fun"
+          v-show="activeTab === 'fun'"
+        >
+          <div class="section-heading">
+            <span class="section-eyebrow">Fun</span>
+            <h2>Weekly Fun</h2>
+          </div>
+          <div class="dashboard-panel-grid dashboard-panel-grid-single">
+            <MemeOfWeek class="widget-wide" :config="DATA.meme" />
+          </div>
+        </div>
       </section>
     </main>
 
@@ -124,7 +172,15 @@ onMounted(() => {
 
 // Confetti engine
 const canvasEl = ref(null);
+const activeTab = ref('focus');
 const { canvasRef, fireConfetti } = useConfetti();
+
+const dashboardTabs = [
+  { id: 'focus', label: 'Focus', purpose: 'Streaks & study rooms' },
+  { id: 'practice', label: 'Practice', purpose: 'Challenges & points' },
+  { id: 'community', label: 'Community', purpose: 'Mood, wall & buddies' },
+  { id: 'fun', label: 'Fun', purpose: 'Meme of the week' },
+];
 
 onMounted(() => {
   canvasRef.value = canvasEl.value;
