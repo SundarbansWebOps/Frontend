@@ -243,42 +243,7 @@ useScrollReveal();
 const tabs = ["All", "Workshops", "Meetups", "Competitions", "Talks"];
 const activeTab = ref("All");
 
-const allEvents = [
-  {
-    title: "Delhi Meetup 2026",
-    category: "Offline Meetup",
-    tagStyle:
-      "background:rgba(245,158,11,0.1);color:#F59E0B;border-color:rgba(245,158,11,0.3)",
-    date: "Apr 10",
-    time: "4 PM",
-    location: "Delhi",
-    img: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=500&q=80&auto=format&fit=crop",
-    desc: "Network with Sundarbans members in Delhi — food, fun and friendships",
-    type: "Meetups",
-  },
-  {
-    title: "Chennai Meetup 2026",
-    category: "Offline Meetup",
-    tagStyle:
-      "background:rgba(245,158,11,0.1);color:#F59E0B;border-color:rgba(245,158,11,0.3)",
-    date: "Mar 25",
-    time: "3 PM",
-    location: "Chennai",
-    img: "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=500&q=80&auto=format&fit=crop",
-    desc: "Connect with fellow students in Chennai — sessions, games and more",
-    type: "Meetups",
-  },
-  {
-    title: "Career in Research",
-    category: "Guest Talk",
-    date: "May 5",
-    time: "7–9 PM",
-    location: "Virtual",
-    img: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=500&q=80&auto=format&fit=crop",
-    desc: "PhD scholars discuss research life, opportunities and how to get started",
-    type: "Talks",
-  },
-];
+const allEvents = [];
 
 const filteredEvents = computed(() =>
   activeTab.value === "All"
@@ -287,6 +252,38 @@ const filteredEvents = computed(() =>
 );
 
 const pastEvents = [
+  {
+    title: "Career in Research",
+    category: "Guest Talk",
+    desc: "PhD scholars discuss research life, opportunities and how to get started",
+    date: "May 2026",
+    location: "Virtual",
+    img: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=500&q=80&auto=format&fit=crop",
+  },
+  {
+    title: "Bengaluru Student meetup",
+    category: "Offline Meetup",
+    desc: "The first ever sumdarbans student meetup in Bengaluru, started with light conversations and turned into heartfelt conversations.",
+    date: "May 2026",
+    location: "Talk over tables cafe",
+    img: "/assets/pastevent/bengaluru_meetup_608_1.jpg",
+  },
+  {
+    title: "Delhi Meetup 2026",
+    category: "Offline Meetup",
+    desc: "Network with Sundarbans members in Delhi — food, fun and friendships",
+    date: "April 2026",
+    location: "Delhi",
+    img: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=500&q=80&auto=format&fit=crop",
+  },
+  {
+    title: "Chennai Meetup 2026",
+    category: "Offline Meetup",
+    desc: "Connect with fellow students in Chennai — sessions, games and more",
+    date: "March 2026",
+    location: "Chennai",
+    img: "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=500&q=80&auto=format&fit=crop",
+  },
   {
     title: "Shakti Series — Episode 1",
     category: "Empowerment",
@@ -317,7 +314,7 @@ const pastEvents = [
     desc: "High-energy football tournament at Paradox'25 — strategy, skill and spirit on the field",
     date: "May 2025",
     location: "Offline",
-    img: "public/assets/pastevent/2025-05-15_12-44-00_UTC.jpg",
+    img: "/assets/pastevent/2025-05-15_12-44-00_UTC.jpg",
   },
   {
     title: "Ghost in the Firewall",
@@ -325,7 +322,7 @@ const pastEvents = [
     desc: "Capture-the-flag style cybersecurity challenge at Paradox'25 — decode, defend and uncover the rogue AI",
     date: "May 2025",
     location: "Offline",
-    img: "public/assets/pastevent/2025-05-14_08-34-35_UTC.jpg",
+    img: "/assets/pastevent/2025-05-14_08-34-35_UTC.jpg",
   },
   {
     title: "Hack Eclipse — 24-hour Hackathon",
@@ -333,7 +330,7 @@ const pastEvents = [
     desc: "Round-the-clock coding marathon where teams built innovative solutions across environment, healthcare, fintech and more",
     date: "May 2025",
     location: "Virtual",
-    img: "public/assets/pastevent/2025-05-09_06-25-51_UTC.jpg",
+    img: "/assets/pastevent/2025-05-09_06-25-51_UTC.jpg",
   },
   {
     title: "Paradox Badminton League 2.0",
@@ -357,7 +354,7 @@ const pastEvents = [
     desc: "Three-round photography contest with a ₹6000 prize pool — portraits that tell a lasting story",
     date: "February 2025",
     location: "Virtual",
-    img: "public/assets/pastevent/2025-02-10_10-25-33_UTC.jpg",
+    img: "/assets/pastevent/2025-02-10_10-25-33_UTC.jpg",
   },
   {
     title: "Into the Shadows — Special Forces Talk",
@@ -365,7 +362,7 @@ const pastEvents = [
     desc: "Gripping session with Maj. Sushant Singh on courage, resilience and life as a Special Forces operative",
     date: "February 2025",
     location: "Virtual",
-    img: "public/assets/pastevent/2025-02-13_02-15-54_UTC.jpg",
+    img: "/assets/pastevent/2025-02-13_02-15-54_UTC.jpg",
   },
   {
     title: "Python Odyssey",
@@ -373,7 +370,7 @@ const pastEvents = [
     desc: "7-episode hands-on Python journey covering fundamentals, OOP and Flask web development",
     date: "February 2025",
     location: "Virtual",
-    img: "public/assets/pastevent/2025-02-06_00-30-44_UTC.jpg",
+    img: "/assets/pastevent/2025-02-06_00-30-44_UTC.jpg",
   },
   {
     title: "Mahabharata — Science Meets History",
@@ -381,7 +378,7 @@ const pastEvents = [
     desc: "Nilesh Oak takes the audience through scientific dating of the Mahabharata and the mysteries of ancient India",
     date: "January 2025",
     location: "Virtual",
-    img: "public/assets/pastevent/2025-01-27_08-57-27_UTC.jpg",
+    img: "/assets/pastevent/2025-01-27_08-57-27_UTC.jpg",
   },
   {
     title: "Frames of Freedom — Republic Day Photography",
@@ -389,7 +386,7 @@ const pastEvents = [
     desc: "Photography contest celebrating patriotism and India's culture — themes of Tiranga, Unsung Heroes and India in Motion",
     date: "January 2025",
     location: "Virtual",
-    img: "public/assets/pastevent/2025-01-25_01-20-01_UTC.jpg",
+    img: "/assets/pastevent/2025-01-25_01-20-01_UTC.jpg",
   },
   {
     title: "Navodaya — Voices of Power with Smriti Irani",
@@ -397,7 +394,7 @@ const pastEvents = [
     desc: "Grand finale of Voices of Power featuring Smriti Irani on leadership, empowerment and women shaping the future",
     date: "December 2024",
     location: "Virtual",
-    img: "public/assets/pastevent/2024-12-05_11-31-48_UTC.jpg",
+    img: "/assets/pastevent/2024-12-05_11-31-48_UTC.jpg",
   },
   {
     title: "Dinkar Ki Pratiksha — Open Mic",
@@ -405,7 +402,7 @@ const pastEvents = [
     desc: "Collaborative open mic celebrating the 116th birth anniversary of poet Ramdhari Singh Dinkar — poetry across all languages",
     date: "September 2024",
     location: "Virtual",
-    img: "public/assets/pastevent/2024-09-23_06-54-49_UTC.jpg",
+    img: "/assets/pastevent/2024-09-23_06-54-49_UTC.jpg",
   },
   {
     title: "Sundarbans BS Talent Show",
@@ -413,7 +410,7 @@ const pastEvents = [
     desc: "Platform for IITM BS students to showcase their extraordinary talents to the wider community",
     date: "July 2024",
     location: "Virtual",
-    img: "public/assets/pastevent/2024-07-16_11-41-17_UTC.jpg",
+    img: "/assets/pastevent/2024-07-16_11-41-17_UTC.jpg",
   },
   {
     title: "How to Improve Concentration — Swami Mukundanand",
@@ -421,7 +418,7 @@ const pastEvents = [
     desc: "Enlightening session by IIT-IIM alumnus and spiritual leader Swami Mukundanand Ji on focus and Vedic wisdom",
     date: "March 2023",
     location: "Virtual",
-    img: "public/assets/pastevent/2023-03-22_09-54-19_UTC.jpg",
+    img: "/assets/pastevent/2023-03-22_09-54-19_UTC.jpg",
   },
 ];
   

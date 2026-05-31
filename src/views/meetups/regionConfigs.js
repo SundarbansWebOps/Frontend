@@ -191,12 +191,18 @@ function mapBangalore(record, index) {
   const meetupNo = normalizeMeetupNumber(record['Meetup No.'])
   const location = cleanText(record.Venue)
   const attended = parseCount(record['Total Students'])
+  const photos = meetupNo === '#608' ? [
+    '/assets/pastevent/bengaluru_meetup_608_1.jpg',
+    '/assets/pastevent/bengaluru_meetup_608_2.jpg',
+    '/assets/pastevent/bengaluru_meetup_608_3.jpg',
+    '/assets/pastevent/bengaluru_meetup_608_4.jpg'
+  ] : []
   return {
     id: index + 1,
     badge: formatBadge(null, meetupNo),
     instaUrl: cleanUrl(record['Social Media link']),
     title: titleFromVenue(location, 'Bangalore'),
-    date: null,
+    date: record['Date'] ? formatDate(record['Date']) : null,
     location,
     duration: null,
     meetupNumber: meetupNo,
@@ -204,8 +210,9 @@ function mapBangalore(record, index) {
     special: null,
     about: cleanText(record.Description) || 'Meetup details have not been added yet, but the chapter turnout is recorded in the export.',
     attended,
+    photos,
     tags: buildTags([location, ...splitCollaboration(record.Collaboration)]),
-    sortDate: null,
+    sortDate: record['Date'] ? parseDate(record['Date']) : null,
     sortNo: parseCount(record['Meetup No.']),
   }
 }
@@ -323,11 +330,11 @@ function mapPatna(record, index) {
   }
 }
 
-function buildConfig(meta, meetups) {
+function buildConfig(meta, meetups, upcoming = null) {
   return {
     ...meta,
     stats: buildStats(meetups),
-    upcoming: null,
+    upcoming,
     pastMeetups: meetups,
   }
 }
