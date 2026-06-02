@@ -141,6 +141,53 @@ function normalizeRecords(records, mapper) {
     .map(({ sortDate, sortNo, ...record }) => record)
 }
 
+/**
+ * Returns the upcoming meetup only if its date is in the future.
+ * If no parseable date is present, the upcoming is kept (fail-open).
+ * If the date has already passed, returns null.
+ */
+function resolveUpcoming(upcoming) {
+  if (!upcoming) return null
+  if (!upcoming.date) return upcoming // no date set → keep it
+  const parsed = parseDate(upcoming.date)
+  if (!parsed) return upcoming // can't parse → keep it
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return parsed >= today ? upcoming : null
+}
+
+/**
+ * If the upcoming event has expired, convert it into a past-meetup
+ * entry and prepend it to the pastMeetups array (most-recent first).
+ */
+function mergeExpiredUpcoming(upcoming, pastMeetups) {
+  if (!upcoming) return pastMeetups
+  const parsed = upcoming.date ? parseDate(upcoming.date) : null
+  if (!parsed) return pastMeetups // no parseable date, nothing to merge
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  if (parsed >= today) return pastMeetups // still upcoming
+
+  // Build a past-meetup record from the upcoming fields
+  const promoted = {
+    id:            0, // will be re-keyed by index in the template
+    badge:         formatDate(upcoming.date) || 'Community Meetup',
+    instaUrl:      upcoming.instaUrl || null,
+    title:         upcoming.name || upcoming.venue || 'Community Meetup',
+    date:          formatDate(upcoming.date),
+    location:      upcoming.venue || upcoming.address1 || null,
+    duration:      null,
+    meetupNumber:  null,
+    numberDisplay: null,
+    special:       null,
+    about:         upcoming.about || 'Meetup details coming soon.',
+    attended:      upcoming.spots ? null : null, // spots ≠ attendees
+    photos:        [],
+    tags:          upcoming.tags || [],
+  }
+  return [promoted, ...pastMeetups]
+}
+
 function buildStats(meetups) {
   const locations = new Set(meetups.map((meetup) => meetup.location).filter(Boolean))
   const members = meetups.reduce((sum, meetup) => sum + (meetup.attended || 0), 0)
@@ -331,11 +378,15 @@ function mapPatna(record, index) {
 }
 
 function buildConfig(meta, meetups, upcoming = null) {
+  // Dynamically check whether the upcoming event's date has already passed.
+  // If it has, promote it to the top of pastMeetups and clear the upcoming slot.
+  const resolvedUpcoming  = resolveUpcoming(upcoming)
+  const resolvedPastMeetups = mergeExpiredUpcoming(upcoming, meetups)
   return {
     ...meta,
-    stats: buildStats(meetups),
-    upcoming,
-    pastMeetups: meetups,
+    stats:       buildStats(resolvedPastMeetups),
+    upcoming:    resolvedUpcoming,
+    pastMeetups: resolvedPastMeetups,
   }
 }
 
