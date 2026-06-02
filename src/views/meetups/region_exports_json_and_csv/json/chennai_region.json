@@ -1,11 +1,19 @@
 {
   "region": "Chennai",
   "source_sheet": "Chennai (Tamil Nadu) Region",
-  "structure": "status_only",
+  "structure": "table",
   "record_count": 1,
   "records": [
     {
-      "status": "No meetup"
+      "Meetup No.": "521",
+      "Venue": "Banglore",
+      "Total Students": "NA",
+      "Social Media link": "https://www.instagram.com/p/DVFbTLNiVmS/?igsh=MTlicjMzZmc1dHBlYw==",
+      "Date": "",
+      "Description": "",
+      "Collaboration": "sundarbans X kaziranga X Namalla X Sportify",
+      "Image Drive Link": "",
+      "Meetup Poster": ""
     }
   ]
 }

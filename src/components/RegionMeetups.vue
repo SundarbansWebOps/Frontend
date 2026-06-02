@@ -179,19 +179,11 @@
                   <span class="past-stat-lbl">Community Event</span>
                 </div>
               </div>
-              <div class="past-photos">
-                <template v-if="meetup.photos && meetup.photos.length > 0">
-                  <div v-for="(photo, index) in meetup.photos" :key="index" class="ph">
-                    <img :src="photo" alt="" loading="lazy">
-                    <div class="ph-ov"></div>
-                  </div>
-                </template>
-                <template v-else>
-                  <div v-for="n in 5" :key="n" class="ph">
-                    <img :src="houseSrc" alt="" loading="lazy">
-                    <div class="ph-ov"></div>
-                  </div>
-                </template>
+              <div class="past-photos" v-if="meetup.photos && meetup.photos.length > 0">
+                <div v-for="(photo, index) in meetup.photos" :key="index" class="ph">
+                  <img :src="photo" alt="" loading="lazy" referrerpolicy="no-referrer">
+                  <div class="ph-ov"></div>
+                </div>
               </div>
               <div class="past-card-footer">
                 <div class="past-footer-tags">

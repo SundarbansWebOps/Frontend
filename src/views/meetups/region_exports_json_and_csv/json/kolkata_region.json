@@ -1,53 +1,82 @@
 {
   "region": "Kolkata",
   "source_sheet": "Kolkata (WB, NE, Odisha) Region",
-  "structure": "transposed_records",
+  "structure": "table",
   "record_count": 5,
   "records": [
     {
       "MEETUP NO": "# 260",
-      "No of student attended": 33,
-      "Meetup image": "https://photos.app.goo.gl/ MavTJLoFZ6c4Mhmu9",
       "Location": "Birla Meausem",
-      "2-4 line about that meetup": "From exploring history and art at the museum 🏛 to endless conversations, laughter, and curious moments - it was a day full of learning, bonding, and good vibes 🙌 We wandered through stories of the past, clicked memories, shared laughs, and enjoyed every moment together 💛",
-      "Insta post link": "https://www.instagram.com/ p/DUSyqHZiBO6/? igsh=aHkxMjd0dnczYnYx",
-      "Collaboration with": "Sundarbans x Boundless"
+      "Insta post link": "https://www.instagram.com/p/DUSyqHZiBO6/?\nigsh=aHkxMjd0dnczYnYx",
+      "2-4 line about that meetup": "From exploring history and art at the museum 🏛 to endless conversations,\nlaughter, and curious moments -it was a day full of learning, bonding, and good vibes 🙌 We wandered through stories of the past, clicked memories, shared laughs, and enjoyed every moment together 💛",
+      "No of student attended": "33",
+      "Collaboration with": "Sundarbans x Boundless",
+      "Image Drive Link": "https://photos.app.goo.gl/\nMavTJLoFZ6c4Mhmu9",
+      "Meet-uo Poster": "",
+      "photos": [
+        "https://lh3.googleusercontent.com/pw/AP1GczPIXap-4B2BHAH38NvRX0o_W8cHqOI5ewxtXfeofVBdmgOf8r2wO15uzEL0-nkiEmo4oIt4kaDI5ZRpGgynj-9_LxFrTnhuoxZoibqpkGdFxu8uq1Nq0rHwIej9mwUXgdLkSp6fL8FNVjfGWPOtPAGW=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczOBtp6lIOCz5h1ODXEfCKCRSnObnZ34ZhrbNRZB9gPCfPGiieFGXrVSn-WOeSQOdzPChmBxAZAycnsKp8lsSZkkgCDmeeg1hd69wk-rls2qcjPbQyxKg7hbvoTRukMdtNm7018EsEkJTyt4mb9mG1k0=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczPFHQT0GhnpYPwf7mCODg6MuiQHKj4iWxNXpyNeg0DFcJa9rM5zSpMlKjPDXGL0kQfSbL-8Yto6qprI2z6gIZsstCOi7ch-YCy7mm0BhyJDqe232AtM6rdJG_wbWXp-J_skU81COE71gy9gWPYbwHhR=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczOjoJw7ZKGOlmFRXU4bM0-hLij4CBxFwku7vPuKu-x740Lmc9n716HpXW2PPzxZ9YSa43ZwPVzJ7nC_m3nZXHbcrYTTg5XRAUr9bCIKeeiKM6aW12fGKp0DiHk0saD_2Znke0MFDPcAybiSz1coU5cU=w960-h720-s-no-gm?authuser=0"
+      ]
     },
     {
       "MEETUP NO": "# 283",
-      "No of student attended": 16,
-      "Meetup image": null,
       "Location": "Brahmputra  Resort",
-      "2-4 line about that meetup": "We kicked things off near the entrance and started our little adventure with a 2 km uphill walk ⛰. Once we reached the entry point, we took a breather, soaked in the peaceful vibes, and had some meaningful discussions on academics 📚✨—all while surrounded by nature’s calm.",
-      "Insta post link": "https:// www.instagram.com/p/ DOgFCRWEz01/? igsh=eWY1emdvMjU0Njhx",
-      "Collaboration with": "Sundarbans"
+      "Insta post link": "https://\nwww.instagram.com/p/\nDOgFCRWEz01/?\nigsh=eWY1emdvMjU0Njhx",
+      "2-4 line about that meetup": "We kicked things off near\nthe entrance and started\nour little adventure with a\n2 km uphill walk\n⛰.\nOnce we reached the\nentry point, we took a\nbreather, soaked in the\npeaceful vibes, and had\nsome meaningful\ndiscussions on academics 📚✨—all while\nsurrounded by nature’s\ncalm.",
+      "No of student attended": "16",
+      "Collaboration with": "Sundarbans",
+      "Image Drive Link": "",
+      "Meet-uo Poster": ""
     },
     {
       "MEETUP NO": "# 355",
-      "No of student attended": 18,
-      "Meetup image": "https://photos.app.goo.gl/ D5oYAtAoBsuk8C3C9",
       "Location": "Kolkata City",
-      "2-4 line about that meetup": "The meetup began at IB Block Puja, where the festive vibes instantly brought everyone together. We explored some other pandals, clicked pictures, admired the creativity and art of Durga Puja in Kolkata in its many beautiful forms, and truly felt the spirit of how the city celebrates this grand festival.",
-      "Insta post link": "https:// www.instagram.com/p/ DPeJ7hiEwSg/? igsh=MjJxOGtzaXR2emE2",
-      "Collaboration with": "Sundarbans x Boundless x Nallamalla x Corbett x Pravaha x Jarvis"
+      "Insta post link": "https://www.instagram.com/p/DPeJ7hiEwSg/?\nigsh=MjJxOGtzaXR2emE2",
+      "2-4 line about that meetup": "The meetup began at IB\nBlock Puja, where the\nfestive vibes instantly\nbrought everyone\ntogether. We explored\nsome other pandals,\nclicked pictures, admired\nthe creativity and art of\nDurga Puja in Kolkata in\nits many beautiful forms,\nand truly felt the spirit of\nhow the city celebrates\nthis grand festival.",
+      "No of student attended": "18",
+      "Collaboration with": "Sundarbans x Boundless x\nNallamalla x Corbett x\nPravaha x Jarvis",
+      "Image Drive Link": "https://photos.app.goo.gl/\nD5oYAtAoBsuk8C3C9",
+      "Meet-uo Poster": "",
+      "photos": [
+        "https://lh3.googleusercontent.com/pw/AP1GczO4y_5K0qw08aGSYNgJUdQhysb7ozEWBFpmoeCGeeNrS5tBmPgU8Pay7iswiAFp0e-YCTdaGN0QaBqBWG5lbwruiJuD25BXineCBfVvfJd6hakaPIYg05QTeoDT8lYGHLsfLARaHf_-H3EYzBAwGjzmLw=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczNfMfy1z9qNi1FdCFN7aXdb2KEL3ODuuZAgHZGkdiZVvdpevsc_I_wrsOHAIoo3qt2ngn7j0hoX54U5vMCORut-1XR1r9BXrxMoVSfz61suGdga6bmMULViM6LTOVwrn0HObcAWe3MnaUQbaIlLcwJK=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczMa3J0mDTj2Q4wo3UqYVhillfAO9QrfSgd4ImxqDVRYA-T12o10vJfsDMsy8J6WhyA-dCwat2ZE4htlO9-rPPBt3kENB8i0wbW9XK2cNopC1glKncKdOSNpyL7WJUiynJZGsoNJV7_SNMhPaueW01L1=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczPv3wfAJqaz4TY-LKAp80LvwP_-wQUXm1nPpNOgDo5Usy4qyrkDaEuLzEpUnt37EQppw0rgvoroogZkRG7x2YpmFy-RTEGtDsyEpR_ZvUrYx6eTzK7rsI8zZDsazAEpnYlvEZ1qA7mlmaOlkUZKtJFo=w960-h720-s-no-gm?authuser=0"
+      ]
     },
     {
       "MEETUP NO": "# 443",
-      "No of student attended": 30,
-      "Meetup image": "https:// photos.app.goo.gl/ 9ujrwMwC7T7ChYCm7",
       "Location": "Eco Park",
-      "2-4 line about that meetup": "From the first hello to the last group photo, the meet-up was filled with warmth, laughter, deep conversations, and the joy of finally meeting familiar names and faces in person. Walking together, sharing stories, clicking pictures, and simply being present made the day truly special 🤍",
-      "Insta post link": "https:// www.instagram.com/p/ DTSElL1EkID/",
-      "Collaboration with": "Wayanad x Sundarbans x Kanha"
+      "Insta post link": "https://\nwww.instagram.com/p/\nDTSElL1EkID/",
+      "2-4 line about that meetup": "From the first hello to\nthe last group photo,\nthe meet-up was filled\nwith warmth, laughter,\ndeep conversations,\nand the joy of finally meeting familiar names\nand faces in person. Walking together,\nsharing stories, clicking\npictures, and simply\nbeing present made the\nday truly special 🤍",
+      "No of student attended": "30",
+      "Collaboration with": "Wayanad x Sundarbans\nx Kanha",
+      "Image Drive Link": "https://\nphotos.app.goo.gl/\n9ujrwMwC7T7ChYCm7",
+      "Meet-uo Poster": "",
+      "photos": [
+        "https://lh3.googleusercontent.com/pw/AP1GczOQuysKlkDhxTiNcgmUEZvbQ5jPA4ub_R8LAWV-WY7xKbeJV1okyp0gxovun0R2IKqnWpK2WK-P5lV_W6DwgGeB1I5pAaCiHtMR_rUfl4hP1Sfk03DHu6Ov62yb6Wh2W_VoKgP0wsAoVOgKekNNtUDJ=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczNVGY3f4S601NOVxjPMXVkdSy3Wh_B9BFhvT1ULqCfjD44EZyeKq74GlPy5bApO_BnJA10chZxwdvV3yMhWYeWfrzMBa2XcnHSEuk6evjSfMd4xqE6YeP4R7m16PhbnO_VKT9o87glHssu2LtKlP6KO=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczNP20Xr6Hr3LypK-V8Letu3K9yd9UsbgDe6iRC7nbgIDQ6kc-Shss7mOrea_dFePEGH_zxoOVAnivVx0QeLAZ_CXOLzDAxxaqeeHkYoEt04PxPUz1AX0_mdrvTnv9INWBBvi-71tA1rmJd7hHIKnrmf=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczOAlxj4oXw3sx4aIk-cwOihpi1cYnQqbMJXX43el_bEbVhpagh6lFwcP3DopiOnpfclOxvCJeQjKX15HdilQcjt3eLwpvkI8OyQTR-5iZS-vb85_5fsdmr_ksbCXdh7EvzimiO_8wq2AZjhW82lMb2k=w960-h720-s-no-gm?authuser=0"
+      ]
     },
     {
       "MEETUP NO": "# 534",
-      "No of student attended": 16,
-      "Meetup image": "https://photos.app.goo.gl/ JwAg8zLJcDH4pcr89",
       "Location": "Sodepur",
-      "2-4 line about that meetup": "4 teams clashed, moments created, madness at Copa Arena Turf 💥 From 1PM to 3PM — every ball was a thriller Every wicket dropped, every cheer echoed 💙 Unforgettable cricket, unforgettable vibe 😍 Battles on the pitch, bonds off it 🙌. Winner took it all, Runner-Ups gave it their best 💪",
-      "Insta post link": "https://www.instagram.com/ sundarbansiitm/p/ DVF2Y85CCXa/",
-      "Collaboration with": "Sportify x Sundarbans x Kaziranga x Nallamalla"
+      "Insta post link": "https://www.instagram.com/\nsundarbansiitm/p/\nDVF2Y85CCXa/",
+      "2-4 line about that meetup": "4 teams clashed, moments\ncreated, madness at Copa\nArena Turf 💥\nFrom 1PM to 3PM — every\nball was a thriller\nEvery wicket dropped, every\ncheer echoed 💙\nUnforgettable cricket,\nunforgettable vibe 😍\nBattles on the pitch, bonds\noff it 🙌. Winner took it all,\nRunner-Ups gave it their\nbest 💪",
+      "No of student attended": "16",
+      "Collaboration with": "Sportify x Sundarbans x\nKaziranga x Nallamalla",
+      "Image Drive Link": "https://photos.app.goo.gl/\nJwAg8zLJcDH4pcr89",
+      "Meet-uo Poster": "",
+      "photos": [
+        "https://lh3.googleusercontent.com/pw/AP1GczMBl1xjqtyH7yDtMS3YuhVOiraPGae1l3XoMUvF37n4j1PwytgfhYSCmLgbYI5bmL5BlE8_JQvr2-ShEB8G-rvDHtU5589txpz8GSm3EQLSQuc0ZQKdzt54SqMGjhfuq7RZr2xsDL5MgzcOSMjbqQZK=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczO9mVn-xZ0vn15IRPBQDshVRcdAbH4BdUzhyLj3OSnhbbf8lhJOy3s8RIXtgnTr8_NQ4EWP92gfId5Ynvs0BG7xGtjuc5SvAcSCxhJJKItFtBiiEi-QK3mjmW3DT5E1aD6bSw-P7O6Z5s63NRAFXN-Y=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczP9jtoDmBmBMA4Q1xieL_FeEaEyOuFix8AHuESibPXrxe4Uo6OuMd-9_ftioTegxPy0QSkVqr2hmC1oDHMC_4uuH2PKSnO85JjfZlF4sPJCYWQDClyzajLm1-V6K7__1OeiX5-v0Ic9T8mP9V8P8kOL=w960-h720-s-no-gm?authuser=0",
+        "https://lh3.googleusercontent.com/pw/AP1GczOff_lJfmpdXbadScC5Xj7pEdBclgN_0Rth3M6MDBsDegw86FQ5e2VM8aIuWIySNUV9lsziNn5Rt4LU2OrD00c1bwEH8LIGEahCYMeFdeU0RGbVxpGVmTGbyE_iWDhb6VZxzvvd8ab1oikQA01xAwfT=w960-h720-s-no-gm?authuser=0"
+      ]
     }
   ]
 }
