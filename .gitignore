@@ -1,3 +1,8 @@
 node_modules
 project_files
+dist/
+scratch/
 
+# Ignore raw CSV exports and manifest CSVs
+**/*.csv
+src/views/meetups/region_exports_json_and_csv/csv/

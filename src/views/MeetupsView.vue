@@ -136,6 +136,8 @@ import imgKolkata    from '@/assets/regions/kolkata.jpg'
 import imgHyderabad  from '@/assets/regions/hyderabad.jpg'
 import imgPatna      from '@/assets/regions/patna.jpg'
 import imgChandigarh from '@/assets/regions/chandigarh.jpg'
+import imgChennai    from '@/assets/regions/chennai.jpg'
+import imgLucknow    from '@/assets/regions/lucknow.jpg'
 
 useScrollReveal()
 
@@ -150,6 +152,8 @@ const regions = [
   { slug: 'hyderabad',  name: 'Hyderabad',  members: '210+', image: imgHyderabad,  badge: null                            },
   { slug: 'patna',      name: 'Patna',      members: '180+', image: imgPatna,      badge: null                            },
   { slug: 'chandigarh', name: 'Chandigarh', members: '120+', image: imgChandigarh, badge: 'Rising Chapter'                },
+  { slug: 'chennai',    name: 'Chennai',    members: '150+', image: imgChennai,    badge: null                            },
+  { slug: 'lucknow',    name: 'Lucknow',    members: '110+', image: imgLucknow,    badge: null                            },
 ]
 
 function goToRegion(slug) {

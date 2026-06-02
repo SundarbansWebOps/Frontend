@@ -19,7 +19,11 @@
           </p>
         </div>
 
-        <div class="events-grid">
+        <!-- Empty state when all upcoming events have passed -->
+        <div v-if="upcomingEvents.length === 0" style="text-align:center;padding:3rem 0;color:var(--text2);">
+          <p style="font-size:1.1rem;">🎉 No upcoming events right now — check back soon!</p>
+        </div>
+        <div v-else class="events-grid">
           <div v-for="event in upcomingEvents" :key="event.id" class="event-card">
             <div class="event-img-wrap">
               <img :src="event.image" :alt="event.title" class="event-img" />
@@ -54,7 +58,7 @@
         </div>
 
         <div class="past-events-grid">
-          <div v-for="event in pastEvents" :key="event.id" class="past-event-card">
+          <div v-for="event in allPastEvents" :key="event.id" class="past-event-card">
             <div class="past-event-img-wrap">
               <img :src="event.image" class="past-event-img-blur" aria-hidden="true" />
               <img :src="event.image" :alt="event.title" class="past-event-img" />
@@ -169,6 +173,7 @@
 <script setup>
 import PageHero from "../components/PageHero.vue";
 import { useScrollReveal } from "../composables/useAnimations.js";
+import { useEventDateFilter } from "../composables/useEventDateFilter.js";
 
 import imgShivShakti from "../assets/Community Events/Cultural/Shiv Shakti.jpeg";
 import imgPhotography from "../assets/Community Events/Cultural/Photography Workshop.jpeg";
@@ -191,7 +196,10 @@ import imgKaviya from "../assets/teams/R.Kaviya Kaviarasi.jpg";
 
 useScrollReveal();
 
-const upcomingEvents = [
+// ─── All upcoming events ───────────────────────────────────────────────────
+// Add `dateISO: 'YYYY-MM-DD'` OR use `day`/`month` for auto-migration.
+// Once the date passes the event moves to Past Events automatically.
+const _upcomingRaw = [
   {
     id: 1,
     title: "Sundarban Utsav — Cultural Night",
@@ -217,11 +225,12 @@ const upcomingEvents = [
     description: "A stage for poetry, stories, and raw expression. All languages welcome.",
     day: "08", month: "MAY", time: "6:00 PM", venue: "Courtyard, Block D",
     image: imgOpenMicUpcoming,
-    registerLink: "#", // Replace with actual registration link
+    registerLink: "#",
   },
 ];
 
-const pastEvents = [
+// ─── Static past events ────────────────────────────────────────────────────
+const _pastRaw = [
   {
     id: 1,
     title: "Shiv–Shakti: The Eternal Union",
@@ -258,6 +267,9 @@ const pastEvents = [
     date: "26 Mar 2026 | 8:00 PM", attendees: "50+", image: imgOpenMic,
   },
 ];
+
+// Apply dynamic date-checking: upcoming → past when date passes
+const { upcomingEvents, allPastEvents } = useEventDateFilter(_upcomingRaw, _pastRaw);
 
 // Winners data — replace placeholder emails when available
 const eventWinners = [

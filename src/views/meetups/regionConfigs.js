@@ -6,6 +6,8 @@ import hyderabadRegion from './region_exports_json_and_csv/json/hyderabad_region
 import kolkataRegion from './region_exports_json_and_csv/json/kolkata_region.json'
 import mumbaiRegion from './region_exports_json_and_csv/json/mumbai_region.json'
 import patnaRegion from './region_exports_json_and_csv/json/patna_region.json'
+import lucknowRegion from './region_exports_json_and_csv/json/lucknow_region.json'
+
 
 const regionMeta = {
   bangalore: {
@@ -47,6 +49,11 @@ const regionMeta = {
     chapterLabel: 'Patna Chapter',
     heroTitle: 'Patna',
     heroDesc: 'One of the fastest-growing Sundarbans chapters, with meetups across Bihar and neighbouring cities built around strong student participation.',
+  },
+  lucknow: {
+    chapterLabel: 'Lucknow Chapter',
+    heroTitle: 'Lucknow',
+    heroDesc: 'Connecting students across Uttar Pradesh. Bringing together academic excellence, shared learning, and offline community momentum.',
   },
 }
 
@@ -139,6 +146,53 @@ function normalizeRecords(records, mapper) {
       return bNum - aNum
     })
     .map(({ sortDate, sortNo, ...record }) => record)
+}
+
+/**
+ * Returns the upcoming meetup only if its date is in the future.
+ * If no parseable date is present, the upcoming is kept (fail-open).
+ * If the date has already passed, returns null.
+ */
+function resolveUpcoming(upcoming) {
+  if (!upcoming) return null
+  if (!upcoming.date) return upcoming // no date set → keep it
+  const parsed = parseDate(upcoming.date)
+  if (!parsed) return upcoming // can't parse → keep it
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return parsed >= today ? upcoming : null
+}
+
+/**
+ * If the upcoming event has expired, convert it into a past-meetup
+ * entry and prepend it to the pastMeetups array (most-recent first).
+ */
+function mergeExpiredUpcoming(upcoming, pastMeetups) {
+  if (!upcoming) return pastMeetups
+  const parsed = upcoming.date ? parseDate(upcoming.date) : null
+  if (!parsed) return pastMeetups // no parseable date, nothing to merge
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  if (parsed >= today) return pastMeetups // still upcoming
+
+  // Build a past-meetup record from the upcoming fields
+  const promoted = {
+    id:            0, // will be re-keyed by index in the template
+    badge:         formatDate(upcoming.date) || 'Community Meetup',
+    instaUrl:      upcoming.instaUrl || null,
+    title:         upcoming.name || upcoming.venue || 'Community Meetup',
+    date:          formatDate(upcoming.date),
+    location:      upcoming.venue || upcoming.address1 || null,
+    duration:      null,
+    meetupNumber:  null,
+    numberDisplay: null,
+    special:       null,
+    about:         upcoming.about || 'Meetup details coming soon.',
+    attended:      upcoming.spots ? null : null, // spots ≠ attendees
+    photos:        [],
+    tags:          upcoming.tags || [],
+  }
+  return [promoted, ...pastMeetups]
 }
 
 function buildStats(meetups) {
@@ -265,6 +319,18 @@ function mapHyderabad(record, index) {
 function mapKolkata(record, index) {
   const meetupNo = normalizeMeetupNumber(record['MEETUP NO'])
   const location = cleanText(record.Location) || 'Kolkata'
+  
+  const rawPhotos = record.photos
+  let photos = undefined
+  if (rawPhotos !== undefined) {
+    photos = [...rawPhotos]
+    if (photos.length > 0) {
+      while (photos.length < 5) {
+        photos.push(photos[photos.length % rawPhotos.length])
+      }
+    }
+  }
+
   return {
     id: index + 1,
     badge: formatBadge(null, meetupNo),
@@ -279,6 +345,7 @@ function mapKolkata(record, index) {
     about: cleanText(record['2-4 line about that meetup']),
     attended: parseCount(record['No of student attended']),
     tags: buildTags([location, ...splitCollaboration(record['Collaboration with'])]),
+    photos,
     sortDate: null,
     sortNo: parseCount(record['MEETUP NO']),
   }
@@ -310,6 +377,18 @@ function mapMumbai(record, index) {
 function mapPatna(record, index) {
   const meetupNo = normalizeMeetupNumber(record['Meetup No.'])
   const organizer = cleanText(record.Organizer)
+
+  const rawPhotos = record.photos
+  let photos = undefined
+  if (rawPhotos !== undefined) {
+    photos = [...rawPhotos]
+    if (photos.length > 0) {
+      while (photos.length < 5) {
+        photos.push(photos[photos.length % rawPhotos.length])
+      }
+    }
+  }
+
   return {
     id: index + 1,
     badge: formatBadge(record.Date, meetupNo),
@@ -325,27 +404,79 @@ function mapPatna(record, index) {
     attended: parseCount(record['No. of Attendes']),
     organizer,
     tags: buildTags(splitCollaboration(record['House/Society'])),
+    photos,
     sortDate: parseDate(record.Date),
     sortNo: parseCount(record['Meetup No.']),
   }
 }
 
+function mapChennai(record, index) {
+  const meetupNo = normalizeMeetupNumber(record['Meetup No.'])
+  const location = cleanText(record.Venue)
+  const attended = parseCount(record['Total Students'])
+  return {
+    id: index + 1,
+    badge: formatBadge(record.Date, meetupNo),
+    instaUrl: cleanUrl(record['Social Media link']),
+    title: titleFromVenue(location, 'Chennai'),
+    date: record.Date ? formatDate(record.Date) : null,
+    location,
+    duration: null,
+    meetupNumber: meetupNo,
+    numberDisplay: meetupNo,
+    special: null,
+    about: cleanText(record.Description) || 'Meetup details have not been added yet.',
+    attended,
+    tags: buildTags([location, ...splitCollaboration(record.Collaboration)]),
+    sortDate: record.Date ? parseDate(record.Date) : null,
+    sortNo: parseCount(record['Meetup No.']),
+  }
+}
+
+function mapLucknow(record, index) {
+  const meetupNo = normalizeMeetupNumber(record['Meetup No.'])
+  const location = cleanText(record.Venue)
+  const attended = parseCount(record['Total Students'])
+  return {
+    id: index + 1,
+    badge: formatBadge(record.Date, meetupNo),
+    instaUrl: cleanUrl(record['Social Media link']),
+    title: titleFromVenue(location, 'Lucknow'),
+    date: record.Date ? formatDate(record.Date) : null,
+    location,
+    duration: null,
+    meetupNumber: meetupNo,
+    numberDisplay: meetupNo,
+    special: null,
+    about: cleanText(record.Description) || 'Meetup details have not been added yet.',
+    attended,
+    tags: buildTags([location, ...splitCollaboration(record.Collaboration)]),
+    sortDate: record.Date ? parseDate(record.Date) : null,
+    sortNo: parseCount(record['Meetup No.']),
+  }
+}
+
 function buildConfig(meta, meetups, upcoming = null) {
+  // Dynamically check whether the upcoming event's date has already passed.
+  // If it has, promote it to the top of pastMeetups and clear the upcoming slot.
+  const resolvedUpcoming  = resolveUpcoming(upcoming)
+  const resolvedPastMeetups = mergeExpiredUpcoming(upcoming, meetups)
   return {
     ...meta,
-    stats: buildStats(meetups),
-    upcoming,
-    pastMeetups: meetups,
+    stats:       buildStats(resolvedPastMeetups),
+    upcoming:    resolvedUpcoming,
+    pastMeetups: resolvedPastMeetups,
   }
 }
 
 export const regionConfigs = {
   bangalore: buildConfig(regionMeta.bangalore, normalizeRecords(bengaluruRegion.records || [], mapBangalore)),
   chandigarh: buildConfig(regionMeta.chandigarh, normalizeRecords(chandigarhRegion.records || [], mapChandigarh)),
-  chennai: buildConfig(regionMeta.chennai, normalizeRecords(chennaiRegion.records || [], () => null)),
+  chennai: buildConfig(regionMeta.chennai, normalizeRecords(chennaiRegion.records || [], mapChennai)),
   delhi: buildConfig(regionMeta.delhi, normalizeRecords(delhiRegion.records || [], mapDelhi)),
   hyderabad: buildConfig(regionMeta.hyderabad, normalizeRecords(hyderabadRegion.records || [], mapHyderabad)),
   kolkata: buildConfig(regionMeta.kolkata, normalizeRecords(kolkataRegion.records || [], mapKolkata)),
+  lucknow: buildConfig(regionMeta.lucknow, normalizeRecords(lucknowRegion.records || [], mapLucknow)),
   mumbai: buildConfig(regionMeta.mumbai, normalizeRecords(mumbaiRegion.records || [], mapMumbai)),
   patna: buildConfig(regionMeta.patna, normalizeRecords(patnaRegion.records || [], mapPatna)),
 }

@@ -96,7 +96,7 @@
               Upcoming <span class="tg">Events</span>
             </h2>
           </div>
-          <div class="filter-tabs">
+        <div class="filter-tabs">
             <div
               class="ftab"
               v-for="tab in tabs"
@@ -107,7 +107,11 @@
             </div>
           </div>
         </div>
-        <div class="grid-3">
+        <!-- No upcoming events state -->
+        <div v-if="filteredEvents.length === 0" style="text-align:center;padding:3rem 0;color:var(--text2);">
+          <p style="font-size:1.1rem;">🎉 No upcoming events right now — check back soon!</p>
+        </div>
+        <div v-else class="grid-3">
           <div
             class="card-base rc"
             v-for="(ev, i) in filteredEvents"
@@ -170,8 +174,8 @@
     <div class="grid-3">
       <div
         class="card-base rc"
-        v-for="(p, i) in pastEvents"
-        :key="p.title"
+        v-for="(p, i) in allPastEvents"
+        :key="p.title + i"
         :style="`--card-delay:${(i % 6) * 0.08}s`">
 
         <div style="height:160px; border-radius:10px; overflow:hidden; margin-bottom:1rem;">
@@ -243,13 +247,60 @@ useScrollReveal();
 const tabs = ["All", "Workshops", "Meetups", "Competitions", "Talks"];
 const activeTab = ref("All");
 
-const allEvents = [];
+// ─── EVENT DATA ──────────────────────────────────────────────────────────────
+// Each event can carry an optional `dateISO` (YYYY-MM-DD) that is used for
+// automatic migration: once today's date passes the event date, it is moved
+// from Upcoming Events into Past Events automatically at runtime.
+// `date` is the human-readable label shown in the UI.
+// `type` must match one of the filter tabs above.
+const allEvents = [
+  // ── ADD UPCOMING EVENTS HERE ─────────────────────────────────────────────
+  // Example:
+  // {
+  //   title: 'My Workshop',
+  //   category: 'Workshop',
+  //   type: 'Workshops',
+  //   desc: 'Description.',
+  //   date: 'June 2026',
+  //   dateISO: '2026-06-15',   ← machine-readable date for auto-migration
+  //   time: '6:00 PM',
+  //   location: 'Online (Zoom)',
+  //   img: 'https://...',
+  //   tagStyle: '',
+  // },
+];
 
-const filteredEvents = computed(() =>
-  activeTab.value === "All"
-    ? allEvents
-    : allEvents.filter((e) => e.type === activeTab.value),
+// ─── AUTO-MIGRATION LOGIC ────────────────────────────────────────────────────
+// Events whose dateISO has passed are automatically moved to past events.
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const upcomingEvents = computed(() => {
+  const live = allEvents.filter((e) => {
+    if (!e.dateISO) return true;            // no machine date → keep upcoming
+    return new Date(e.dateISO) >= today;    // future or today → upcoming
+  });
+  return activeTab.value === "All"
+    ? live
+    : live.filter((e) => e.type === activeTab.value);
+});
+
+// Expired entries from allEvents that should auto-appear in past events
+const autoDemotedEvents = computed(() =>
+  allEvents
+    .filter((e) => e.dateISO && new Date(e.dateISO) < today)
+    .map((e) => ({
+      title:    e.title,
+      category: e.category,
+      desc:     e.desc,
+      date:     e.date,
+      location: e.location,
+      img:      e.img,
+    }))
 );
+
+// Alias kept for backwards-compat with template filter tabs section
+const filteredEvents = upcomingEvents;
 
 const pastEvents = [
   {
@@ -421,6 +472,12 @@ const pastEvents = [
     img: "/assets/pastevent/2023-03-22_09-54-19_UTC.jpg",
   },
 ];
+
+// Combined past events: manually-curated list + any auto-demoted upcoming events
+const allPastEvents = computed(() => [
+  ...autoDemotedEvents.value,
+  ...pastEvents,
+]);
   
 // Countdown
 let cdTimer = null;

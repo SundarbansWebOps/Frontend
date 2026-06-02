@@ -2,24 +2,18 @@
   "region": "Bengaluru",
   "source_sheet": "Bengaluru (Karnataka, Kerala) R",
   "structure": "table",
-  "record_count": 2,
+  "record_count": 1,
   "records": [
     {
-      "Meetup No.": 608,
+      "Meetup No.": "608",
       "Venue": "Talk over tables cafe",
-      "Total Students": 4,
-      "Description": "The first ever sumdarbans student meetup in Bengaluru, started with light conversations and turned into heartfelt conversations with round 2 over the ice creams. The day well spent with company of great stories and teachings.",
+      "Total Students": "4",
       "Social Media link": "https://www.instagram.com/p/DYqk1BeGlTq/?igsh=MTZ3dTBmYmFuand0ZA==",
+      "Date": "17-05-2026",
+      "Description": "The first ever sumdarbans student meetup in Bengaluru, started with light conversations and turned into heartfelt conversations with round 2 over the ice creams. The day well spent with company of great stories and teachings.",
       "Collaboration": "Sundarbans",
-      "Date": "17-05-2026"
-    },
-    {
-      "Meetup No.": 521,
-      "Venue": "Banglore",
-      "Total Students": 27,
-      "Description": "NA",
-      "Social Media link": "https://www.instagram.com/p/DVFbTLNiVmS/?igsh=MTlicjMzZmc1dHBlYw==",
-      "Collaboration": "sundarbans X kaziranga X Namalla X Sportify"
+      "Image Drive Link": "",
+      "Meetup Poster": ""
     }
   ]
 }

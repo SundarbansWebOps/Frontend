@@ -1,7 +1,41 @@
 {
   "region": "Lucknow",
   "source_sheet": "Lucknow (UP, Gwalior) Region",
-  "structure": "empty_sheet",
-  "record_count": 0,
-  "records": []
+  "structure": "table",
+  "record_count": 3,
+  "records": [
+    {
+      "Meetup No.": "520",
+      "Venue": "Ballers Sports Arena",
+      "Total Students": "25",
+      "Social Media link": "https://www.instagram.com/p/DVBy74lCJWt/?igsh=MWV6YnJlb2NzdGFzZg==",
+      "Date": "18th Feb 2026",
+      "Description": "From thrilling matches and team spirit 🏏 to cheering, laughter, and unforgettable last-ball moments — it was a day full of excitement, bonding, and amazing vibes 🙌 We played with passion, shared memories, enjoyed refreshments, and made the tournament truly special 💛",
+      "Collaboration": "Sundarbans x Nallamala x sportify",
+      "Image Drive Link": "",
+      "Meet-uo Poster": ""
+    },
+    {
+      "Meetup No.": "390",
+      "Venue": "Project Udaan Meetup",
+      "Total Students": "36",
+      "Social Media link": "https://www.instagram.com/p/DRpLpt9iOhf/?igsh=MWF3c2d3YmJkaXowbw==",
+      "Date": "13th Nov 2025",
+      "Description": "From sharing smiles and joyful moments 🎈 to spreading learning, care, and happiness among children 💛 — it was a heartwarming Children’s Day celebration filled with love, bonding, and hope 🌈 Together, Nilgiri House, Sundarbans House, and Sahara Council created beautiful memories and reminded us that every child deserves support, joy, and a chance to dream 👧👦✨",
+      "Collaboration": "Sundarbans x Nilgiri x Sahara",
+      "Image Drive Link": "",
+      "Meet-uo Poster": ""
+    },
+    {
+      "Meetup No.": "253",
+      "Venue": "Gorakhnath Temple Gorakhpur",
+      "Total Students": "31",
+      "Social Media link": "https://www.instagram.com/p/DNxkEzuUH-L/?igsh=NGpvMTVpcGN5aDI1",
+      "Date": "20th Aug 2025",
+      "Description": "From introduction to peaceful darshan in the vibes of temple then enjoying games and snacks",
+      "Collaboration": "Boundless X Sundarbans",
+      "Image Drive Link": "",
+      "Meet-uo Poster": ""
+    }
+  ]
 }

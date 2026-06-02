@@ -16,7 +16,11 @@
           <h2 class="section-title-xl">What's <span class="tg">Coming Up</span></h2>
           <p class="desc" style="max-width: 600px">Events planned ahead — mark your calendar and show up.</p>
         </div>
-        <div class="events-grid">
+        <!-- Empty state when all upcoming events have passed -->
+        <div v-if="upcomingEvents.length === 0" style="text-align:center;padding:3rem 0;color:var(--text2);">
+          <p style="font-size:1.1rem;">🛠️ No upcoming events right now — check back soon!</p>
+        </div>
+        <div v-else class="events-grid">
           <div v-for="event in upcomingEvents" :key="event.id" class="event-card">
             <div class="event-img-wrap">
               <img :src="event.image" :alt="event.title" class="event-img" />
@@ -46,7 +50,7 @@
           <p class="desc" style="max-width: 600px">A record of everything we've built, shipped, and learned from.</p>
         </div>
         <div class="past-events-grid">
-          <div v-for="event in pastEvents" :key="event.id" class="past-event-card">
+          <div v-for="event in allPastEvents" :key="event.id" class="past-event-card">
             <div class="past-event-img-wrap">
               <img :src="event.image" class="past-event-img-blur" aria-hidden="true" />
               <img :src="event.image" :alt="event.title" class="past-event-img" />
@@ -162,6 +166,7 @@
 <script setup>
 import PageHero from "../components/PageHero.vue";
 import { useScrollReveal } from "../composables/useAnimations.js";
+import { useEventDateFilter } from "../composables/useEventDateFilter.js";
 
 import imgVibeCoding from "../assets/Community Events/Technical/Vibe Coding a SAAS application.jpeg";
 import imgCodingApt from "../assets/Community Events/Technical/Coding Aptitude Challenge.jpeg";
@@ -172,7 +177,10 @@ import imgUbuntuQuiz from "../assets/Community Events/Technical/Ubuntu Mastery Q
 
 useScrollReveal();
 
-const upcomingEvents = [
+// ─── All upcoming events ───────────────────────────────────────────────────
+// Add `dateISO: 'YYYY-MM-DD'` OR use `day`/`month` for auto-migration.
+// Once the date passes the event moves to Past Events automatically.
+const _upcomingRaw = [
   {
     id: 1, title: "Hackathon: Build in 24hrs", type: "Hackathon",
     description: "A 24-hour build sprint where teams solve real-world problems using any stack they choose.",
@@ -193,7 +201,8 @@ const upcomingEvents = [
   },
 ];
 
-const pastEvents = [
+// ─── Static past events ────────────────────────────────────────────────────
+const _pastRaw = [
   {
     id: 1, title: "Vibe Coding a SaaS Application Workshop", type: "Workshop",
     description: "Introduced members to modern software development by building a SaaS product from scratch with AI-assisted development.",
@@ -225,6 +234,9 @@ const pastEvents = [
     date: "5 Mar 2026 | 8:30 PM", attendees: "50+", image: imgUbuntuQuiz,
   },
 ];
+
+// Apply dynamic date-checking: upcoming → past when date passes
+const { upcomingEvents, allPastEvents } = useEventDateFilter(_upcomingRaw, _pastRaw);
 
 const eventWinners = [
   {

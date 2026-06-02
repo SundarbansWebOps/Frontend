@@ -1,15 +1,11 @@
 {
   "region": "International",
   "source_sheet": "International Region",
-  "structure": "raw_single_row",
+  "structure": "status_only",
   "record_count": 1,
   "records": [
     {
-      "column_1": "25f2100046@es.study.iitm.ac.in",
-      "column_2": "MANAMA",
-      "column_3": null,
-      "column_4": "Sundarbans House",
-      "column_5": "International"
+      "status": "No meetup"
     }
   ]
 }
