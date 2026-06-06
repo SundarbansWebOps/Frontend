@@ -284,6 +284,64 @@
       </div>
     </section>
 
+    <div class="divider"></div>
+
+    <!-- ═══════════════ WHATSAPP COMMUNITY ═══════════════ -->
+    <section id="community">
+      <div class="container">
+        <div class="reveal" v-observe>
+          <div class="section-label">Stay Connected</div>
+          <h2 class="section-title">WhatsApp Groups</h2>
+          <p class="section-desc">Join the main Sundarbans house group or find your regional group below. Fill the form to get added.</p>
+        </div>
+
+        <!-- Main Group -->
+        <div class="wa-main-card reveal" v-observe>
+          <div class="wa-main-left">
+            <div class="wa-icon-wrap">
+              <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.155a.75.75 0 0 0 .918.918l5.303-1.475A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.956 9.956 0 0 1-5.193-1.453l-.372-.22-3.148.875.875-3.148-.22-.372A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            </div>
+            <div>
+              <div class="wa-main-label">Main House Group</div>
+              <h3 class="wa-main-title">Sundarbans House</h3>
+              <p class="wa-main-desc">Official sign-up for the main Sundarbans house group. Announcements, events, and everything in between.</p>
+            </div>
+          </div>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdP9gY3ET4EylNi771CaXQ8ihmsqEdjbat7rvSDZAsu2j0a9Q/viewform" target="_blank" rel="noopener" class="wa-join-btn wa-join-main">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.155a.75.75 0 0 0 .918.918l5.303-1.475A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.956 9.956 0 0 1-5.193-1.453l-.372-.22-3.148.875.875-3.148-.22-.372A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            Join Main Group
+          </a>
+        </div>
+
+        <!-- Regional Groups -->
+        <div class="wa-regions-header reveal" v-observe>
+          <div class="section-label" style="margin-bottom:0">Regional Groups</div>
+        </div>
+
+        <div class="whatsapp-grid">
+          <div class="whatsapp-card" v-observe :style="{ transitionDelay: `${index * 0.07}s` }"
+            v-for="(region, index) in waRegions" :key="region.id">
+            <div class="wa-card-top">
+              <div class="wa-icon-wrap wa-icon-region">
+                <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.155a.75.75 0 0 0 .918.918l5.303-1.475A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.956 9.956 0 0 1-5.193-1.453l-.372-.22-3.148.875.875-3.148-.22-.372A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+              </div>
+              <span class="wa-region-badge">{{ region.id.toUpperCase() }}</span>
+            </div>
+            <h3 class="wa-title">{{ region.name }}</h3>
+            <div v-if="region.coordinator" class="wa-coordinator">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              {{ region.coordinator }}
+            </div>
+            <a :href="region.form" target="_blank" rel="noopener" class="wa-join-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.155a.75.75 0 0 0 .918.918l5.303-1.475A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.956 9.956 0 0 1-5.193-1.453l-.372-.22-3.148.875.875-3.148-.22-.372A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+              Sign Up
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </div>
 </template>
 
@@ -412,6 +470,19 @@ onMounted(() => {
 });
 
 onUnmounted(() => { if (countdownInterval) clearInterval(countdownInterval); });
+
+// ── WHATSAPP REGIONS ─────────────────────────────────────────────────────
+const waRegions = [
+  { id: 'chd', name: 'Chandigarh',  form: 'https://forms.gle/roBd62dYk6829eYCA', coordinator: 'Aakash Rawal' },
+  { id: 'hyd', name: 'Hyderabad',   form: 'https://forms.gle/d8QRQ5eXooDHL8Db6', coordinator: 'Dishi Gupta' },
+  { id: 'lko', name: 'Lucknow',     form: 'https://forms.gle/poriXvnwuENkmiKF8', coordinator: 'Kartik Singh' },
+  { id: 'kol', name: 'Kolkata',     form: 'https://forms.gle/z6qnTg58cvjjNtxP6', coordinator: 'Chanan Shaw' },
+  { id: 'pat', name: 'Patna',       form: 'https://forms.gle/jK7W2USVNEj9ifi17', coordinator: 'Nivash Kumar' },
+  { id: 'del', name: 'Delhi',       form: 'https://forms.gle/2gagK33ZhBzsqGz67', coordinator: 'Divy Prakash & Laksh Wadhawan' },
+  { id: 'mum', name: 'Mumbai',      form: 'https://shorturl.at/EfRDc',            coordinator: 'Rushabh Kapse' },
+  { id: 'che', name: 'Chennai',     form: 'https://forms.gle/uYzCs5WwngKm4zHH8', coordinator: null },
+  { id: 'blr', name: 'Bengaluru',   form: 'https://forms.gle/G2qfFnE4hRPj682B9', coordinator: null },
+];
 </script>
 
 <style scoped>
@@ -668,6 +739,182 @@ section { padding: 110px 0; }
 /* SCROLL REVEAL */
 .reveal { opacity: 0; transform: translateY(24px); transition: none; }
 .reveal.visible { opacity: 1; transform: translateY(0); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+
+/* WHATSAPP COMMUNITY */
+.wa-main-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  background: var(--panel);
+  border: 1px solid rgba(37,211,102,0.18);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  margin-bottom: 52px;
+  position: relative;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+.wa-main-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(37,211,102,0.05), transparent 55%);
+  pointer-events: none;
+}
+.wa-main-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 1;
+  min-width: 0;
+}
+.wa-main-label {
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #25d366;
+  margin-bottom: 6px;
+}
+.wa-main-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  margin: 0 0 8px;
+  line-height: 1.1;
+}
+.wa-main-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 480px;
+}
+
+.wa-regions-header {
+  margin-bottom: 24px;
+}
+
+.whatsapp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.whatsapp-card {
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 24px 22px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.whatsapp-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1), border-color 0.3s, box-shadow 0.3s;
+}
+.whatsapp-card:hover {
+  border-color: rgba(37,211,102,0.2);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+}
+
+.wa-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.wa-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(37,211,102,0.1);
+  border: 1px solid rgba(37,211,102,0.18);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.wa-icon-region { background: rgba(37,211,102,0.08); border-color: rgba(37,211,102,0.14); }
+.wa-icon { width: 18px; height: 18px; color: #25d366; }
+.wa-region-badge {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 3px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 100px;
+}
+
+.wa-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  margin: 0 0 8px;
+  line-height: 1.2;
+  color: var(--cream);
+}
+.wa-coordinator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  flex: 1;
+}
+.wa-coordinator svg { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.6; }
+
+.wa-join-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: rgba(37,211,102,0.08);
+  border: 1px solid rgba(37,211,102,0.2);
+  border-radius: 100px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #25d366;
+  cursor: pointer;
+  transition: all 0.22s;
+  text-decoration: none;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+.wa-join-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.wa-join-btn:hover {
+  background: #25d366;
+  color: var(--black);
+  border-color: #25d366;
+  box-shadow: 0 4px 18px rgba(37,211,102,0.28);
+  transform: translateY(-1px);
+}
+.wa-join-main {
+  padding: 12px 28px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1100px) {
+  .whatsapp-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 860px) {
+  .whatsapp-grid { grid-template-columns: 1fr 1fr; }
+  .wa-main-card { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 500px) {
+  .whatsapp-grid { grid-template-columns: 1fr; }
+}
 
 /* RESPONSIVE */
 @media (max-width: 1100px) {
