@@ -6,7 +6,7 @@ export const leaderboardData = {
     { name: 'Aakash Rawal',  city: 'Chandigarh', points: 900,  badge: 'Pinnacle',   initial: 'A' },
     { name: 'Chandan Saw',   city: 'Kolkata',    points: 500,  badge: 'Summit',   initial: 'C' },
     { name: 'Dishi Gupta',   city: 'Hyderabad',  points: 400,  badge: 'Ascent',     initial: 'D' },
-    { name: 'Kartik Sharma', city: 'Chennai',    points: 300,  badge: 'Rise',   initial: 'K' },
+    { name: 'Kartik Singh', city: 'Lucknow',    points: 300,  badge: 'Rise',   initial: 'K' },
     { name: 'R Sai Sahanaa', city: 'Chennai',    points: 100,  badge: 'Ignite',   initial: 'R' },
     { name: 'Aditri B', city: 'Bangalore',    points: 100,  badge: 'Ignite',   initial: 'A' },
   ],
