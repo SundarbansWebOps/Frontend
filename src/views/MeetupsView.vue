@@ -62,10 +62,10 @@
         <div class="sec-hdr">
           <div class="section-tag">Hall of Fame</div>
           <h2 class="section-title-xl">
-            Member <span class="tg">Leaderboard</span>
+            Regional Coordinator <span class="tg">Leaderboard</span>
           </h2>
           <p class="sec-sub">
-            Top contributors and most active members of Sundarbans House
+           Top Contributors and Most Active Regional Coordinators of Sundarbans House
           </p>
         </div>
 
