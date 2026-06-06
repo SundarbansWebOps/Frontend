@@ -9,6 +9,7 @@
       <nav class="nav-links">
         <router-link to="/lounge#events" class="nav-link">Events</router-link>
         <router-link to="/lounge#lounge" class="nav-link">Reading</router-link>
+        <router-link to="/lounge#community" class="nav-link">Community</router-link>
         <router-link to="/lounge#leaderboard" class="nav-link">Leaderboard</router-link>
         <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
       </nav>
