@@ -19,7 +19,7 @@ export const leaderboardData = {
     { name: 'Rushabh Kapse', city: 'Mumbai',     points: 700, badge: 'Zenith',   initial: 'R' },
     { name: 'Nivash Kumar',  city: 'Patna',      points: 600, badge: 'Apex',     initial: 'N' },
     { name: 'Aakash Rawal',  city: 'Chandigarh', points: 400, badge: 'Summit',   initial: 'A' },
-    
+  ], 
   term3: [
     { name: 'Nivash', city: 'Patna',     points: 1000, badge: 'Apex',   initial: 'N' },
     { name: 'R Sai Sahanaa', city: 'Chennai',    points: 100, badge: 'Ignite',   initial: 'R' },
