@@ -643,15 +643,31 @@
           <div
             v-for="row in filteredExamCities"
             :key="row.state"
-            class="ec-card card-base rc">
-            <div class="ec-state">{{ row.state }}</div>
-            <div class="ec-cities-list">
-              <span
-                v-for="city in row.cities"
-                :key="city"
-                class="ec-city-tag"
-                >{{ city }}</span
-              >
+            class="ec-card card-base rc ec-card-collapsible"
+            :class="{ 'ec-card-open': expandedState === row.state }"
+            @click="toggleState(row.state)">
+            <div class="ec-state-row">
+              <div class="ec-state">{{ row.state }}</div>
+              <div class="ec-state-meta">
+                <span class="ec-city-count">{{ row.cities.length }} {{ row.cities.length === 1 ? 'city' : 'cities' }}</span>
+                <svg
+                  class="ec-chevron"
+                  :style="{ transform: expandedState === row.state ? 'rotate(180deg)' : 'rotate(0deg)' }"
+                  width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+            </div>
+            <div class="ec-cities-collapse" :class="{ open: expandedState === row.state }">
+              <div class="ec-cities-list">
+                <span
+                  v-for="city in row.cities"
+                  :key="city"
+                  class="ec-city-tag"
+                  >{{ city }}</span
+                >
+              </div>
             </div>
           </div>
         </div>
@@ -859,6 +875,11 @@ useScrollReveal();
 // ─── Exam Cities ─────────────────────────────────────────────────────────────
 const citySearch = ref("");
 const activeRegion = ref("All");
+const expandedState = ref(null);
+
+function toggleState(stateName) {
+  expandedState.value = expandedState.value === stateName ? null : stateName;
+}
 
 const examCitiesData = [
   {
@@ -1049,6 +1070,8 @@ const examRegions = [
   "Chandigarh",
   "Lucknow",
 ];
+
+watch(activeRegion, () => { expandedState.value = null; });
 
 const filteredExamCities = computed(() => {
   const q = citySearch.value.trim().toLowerCase();
@@ -2161,6 +2184,56 @@ onMounted(async () => {
   padding: 1.1rem 1.25rem;
 }
 
+.ec-card-collapsible {
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ec-card-collapsible:hover {
+  border-color: rgba(212, 160, 23, 0.3);
+}
+.ec-card-open {
+  border-color: rgba(212, 160, 23, 0.35) !important;
+  box-shadow: 0 0 0 1px rgba(212, 160, 23, 0.1);
+}
+
+.ec-state-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.ec-state-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.ec-city-count {
+  font-size: 0.68rem;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.ec-chevron {
+  color: var(--text3);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+.ec-card-open .ec-chevron {
+  color: var(--accent);
+}
+
+.ec-cities-collapse {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.ec-cities-collapse.open {
+  max-height: 400px;
+}
+
 .ec-state {
   font-family: Cinzel, serif;
   font-weight: 700;
@@ -2175,6 +2248,7 @@ onMounted(async () => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+  padding-top: 0.75rem;
 }
 
 .ec-city-tag {
