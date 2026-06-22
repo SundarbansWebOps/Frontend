@@ -5,12 +5,6 @@
 
       <div class="layout">
       <div class="left-panel">
-        <div class="brand">
-          <div class="brand-icon">🌿</div>
-          <span class="brand-name">Sundarbans</span>
-          <router-link to="/" class="home-link">Home</router-link>
-        </div>
-
         <div class="heading-block">
           <div class="heading-label">Member Portal</div>
           <h1>Welcome<br /><em>back.</em></h1>
@@ -21,24 +15,6 @@
         </div>
 
         <div class="form-block">
-          <div class="input-wrapper">
-            <label>IITM Email Address</label>
-            <input
-              v-model="email"
-              type="email"
-              class="input-field"
-              placeholder="yourroll@ds.study.iitm.ac.in"
-              autocomplete="email"
-              @keyup.enter="login" />
-          </div>
-
-          <button class="login-btn" :class="{ loading }" @click="login">
-            Enter the Lounge
-          </button>
-          <p class="message" :class="messageType">{{ message }}</p>
-
-          <div class="divider"><span>or</span></div>
-
           <button
             type="button"
             class="google-btn"
@@ -52,6 +28,7 @@
             </svg>
             <span>{{ googleLoading ? "Connecting..." : "Continue with Google" }}</span>
           </button>
+          <p class="message" :class="messageType">{{ message }}</p>
         </div>
 
         <p class="footer-text">
@@ -134,8 +111,6 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import membersData from "../data/members.json";
 
-const email = ref("");
-const loading = ref(false);
 const message = ref("");
 const router = useRouter();
 
@@ -156,21 +131,6 @@ function grantOrDenyAccess(rawEmail) {
   }
   message.value = "Access denied. Email not found in member registry.";
   return false;
-}
-
-function login() {
-  if (!email.value || !email.value.includes("@")) {
-    message.value = "Please enter a valid IITM email address.";
-    return;
-  }
-
-  loading.value = true;
-  message.value = "";
-
-  setTimeout(() => {
-    loading.value = false;
-    grantOrDenyAccess(email.value);
-  }, 900);
 }
 
 // ── GOOGLE SIGN-IN ───────────────────────────────────────────────────────
@@ -339,28 +299,6 @@ onMounted(() => {
   padding: 80px 70px;
   position: relative;
 }
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 70px;
-}
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgba(201, 168, 76, 0.5);
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-}
-.brand-name,
-.home-link {
-  color: #c9a84c;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-size: 12px;
-  text-decoration: none;
-}
 .heading-label {
   font-size: 11px;
   letter-spacing: 0.3em;
@@ -384,42 +322,6 @@ h1 em {
   color: rgba(245, 240, 232, 0.45);
   line-height: 1.7;
 }
-.input-wrapper label {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(245, 240, 232, 0.45);
-  margin-bottom: 10px;
-}
-.input-field {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  padding: 16px 20px;
-  color: #f5f0e8;
-}
-.input-field:focus {
-  outline: none;
-  border-color: rgba(201, 168, 76, 0.5);
-}
-.login-btn {
-  width: 100%;
-  margin-top: 12px;
-  padding: 18px 24px;
-  background: #c9a84c;
-  color: #080a08;
-  border: none;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-weight: 600;
-}
-.login-btn.loading {
-  opacity: 0.7;
-  pointer-events: none;
-}
 .message {
   margin-top: 16px;
   min-height: 20px;
@@ -430,23 +332,6 @@ h1 em {
 }
 .message.success {
   color: #7dba7d;
-}
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 22px 0;
-  color: rgba(245, 240, 232, 0.3);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-}
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
 }
 .google-btn {
   width: 100%;
