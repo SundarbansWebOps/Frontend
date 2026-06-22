@@ -9,8 +9,7 @@
           <div class="heading-label">Member Portal</div>
           <h1>Welcome<br /><em>back.</em></h1>
           <p class="sub-text">
-            Access the Sundarbans House community.<br />Exclusive to IIT Madras
-            BS Programme members.
+            Access the Sundarbans House Lounge.<br />Exclusive to SUNDARBANS HOUSE members.<br /> Log in with Student E-mail ID
           </p>
         </div>
 
