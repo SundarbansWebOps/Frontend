@@ -31,9 +31,6 @@
           <p class="message" :class="messageType">{{ message }}</p>
         </div>
 
-        <p class="footer-text">
-          Sundarbans House · IIT Madras BS Programme · Est. 2021
-        </p>
       </div>
 
       <div class="right-panel">
