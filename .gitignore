@@ -2,6 +2,8 @@ node_modules
 project_files
 dist/
 scratch/
+.env
+.env.local
 
 # Ignore raw CSV exports and manifest CSVs
 **/*.csv
