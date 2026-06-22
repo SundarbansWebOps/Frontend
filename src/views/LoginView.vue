@@ -292,8 +292,8 @@ onMounted(() => {
 .left-panel {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 80px 70px;
+  justify-content: space-between;
+  padding: 80px 70px 60px 70px;
   position: relative;
 }
 .heading-label {
