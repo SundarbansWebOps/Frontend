@@ -687,7 +687,7 @@
                   <div
                     v-for="row in filteredExamCities"
                     :key="row.state"
-                    class="ec-card card-base rc">
+                    class="ec-card card-base">
                     <div class="ec-state">{{ row.state }}</div>
                     <div class="ec-cities-list">
                       <span
