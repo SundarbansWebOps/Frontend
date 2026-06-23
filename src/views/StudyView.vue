@@ -595,7 +595,7 @@
           </p>
         </div>
 
-        <!-- Search + filter -->
+        <!-- Search -->
         <div class="ec-search-wrap">
           <div
             class="sc-search-input-wrap"
@@ -619,46 +619,92 @@
           </div>
         </div>
 
-        <!-- Region tabs -->
-        <div
-          style="
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-          ">
-          <button
-            v-for="r in examRegions"
-            :key="r"
-            class="db-filter"
-            :class="{ active: activeRegion === r }"
-            @click="activeRegion = r">
-            {{ r }}
-          </button>
-        </div>
-
-        <!-- Cities grid -->
-        <div class="ec-grid">
-          <div
-            v-for="row in filteredExamCities"
-            :key="row.state"
-            class="ec-card card-base rc">
-            <div class="ec-state">{{ row.state }}</div>
-            <div class="ec-cities-list">
-              <span
-                v-for="city in row.cities"
-                :key="city"
-                class="ec-city-tag"
-                >{{ city }}</span
-              >
+        <div class="ec-layout">
+          <!-- LEFT: Region sidebar -->
+          <div class="ec-sidebar">
+            <div class="sc-sidebar-hdr">
+              <div class="section-tag" style="margin-bottom: 0">
+                Choose Region
+              </div>
+            </div>
+            <div class="ec-sidebar-cards">
+              <div
+                v-for="region in examRegionMeta"
+                :key="region.key"
+                class="ec-sidebar-card"
+                :class="{ active: activeRegion === region.key }"
+                @click="selectExamRegion(region.key)">
+                <div class="ec-sidebar-card-top">
+                  <span class="ec-sidebar-emoji">{{ region.emoji }}</span>
+                  <div class="ec-sidebar-meta">
+                    <h3 class="sc-card-title">{{ region.key }}</h3>
+                  </div>
+                </div>
+                <div class="sc-card-stats">
+                  <span class="sc-stat-badge"
+                    >{{ region.stateCount }} states</span
+                  >
+                  <span class="sc-stat-badge"
+                    >{{ region.cityCount }} cities</span
+                  >
+                </div>
+                <div class="ec-sidebar-arrow">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div v-if="filteredExamCities.length === 0" class="sc-empty">
-          <div style="font-size: 2.5rem">🔍</div>
-          <p>No cities found for "{{ citySearch }}"</p>
+          <!-- RIGHT: Cities panel -->
+          <div class="ec-panel-wrap">
+            <div v-if="!activeRegion" class="sc-panel-empty">
+              <div style="font-size: 3rem; margin-bottom: 1rem">📍</div>
+              <p style="font-size: 1rem; color: var(--text2)">
+                Select a region on the left to view exam cities
+              </p>
+            </div>
+
+            <template v-else>
+              <div class="ec-strip-header">
+                <span class="sc-strip-label"
+                  >{{ activeRegion }} — Exam Cities</span
+                >
+                <button class="sc-back-btn" @click="resetExamRegion">
+                  &larr; Clear
+                </button>
+              </div>
+
+              <div class="ec-grid">
+                <div
+                  v-for="row in filteredExamCities"
+                  :key="row.state"
+                  class="ec-card card-base rc">
+                  <div class="ec-state">{{ row.state }}</div>
+                  <div class="ec-cities-list">
+                    <span
+                      v-for="city in row.cities"
+                      :key="city"
+                      class="ec-city-tag"
+                      >{{ city }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="filteredExamCities.length === 0" class="sc-empty">
+                <div style="font-size: 2.5rem">🔍</div>
+                <p>No cities found for "{{ citySearch }}"</p>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
     </section>
@@ -858,7 +904,7 @@ useScrollReveal();
 
 // ─── Exam Cities ─────────────────────────────────────────────────────────────
 const citySearch = ref("");
-const activeRegion = ref("All");
+const activeRegion = ref(null);
 
 const examCitiesData = [
   {
@@ -1037,8 +1083,7 @@ const examCitiesData = [
   },
 ];
 
-const examRegions = [
-  "All",
+const examRegionKeys = [
   "Delhi",
   "Chennai",
   "Bengaluru",
@@ -1050,12 +1095,32 @@ const examRegions = [
   "Lucknow",
 ];
 
+const examRegionMeta = computed(() =>
+  examRegionKeys.map((key) => {
+    const rows = examCitiesData.filter((row) => row.region === key);
+    const cityCount = rows.reduce((sum, row) => sum + row.cities.length, 0);
+    return {
+      key,
+      emoji: "📍",
+      stateCount: rows.length,
+      cityCount,
+    };
+  }),
+);
+
+function selectExamRegion(region) {
+  activeRegion.value = region;
+}
+
+function resetExamRegion() {
+  activeRegion.value = null;
+}
+
 const filteredExamCities = computed(() => {
+  if (!activeRegion.value) return [];
   const q = citySearch.value.trim().toLowerCase();
   return examCitiesData.filter((row) => {
-    const regionMatch =
-      activeRegion.value === "All" || row.region === activeRegion.value;
-    if (!regionMatch) return false;
+    if (row.region !== activeRegion.value) return false;
     if (!q) return true;
     return (
       row.state.toLowerCase().includes(q) ||
@@ -2150,6 +2215,106 @@ onMounted(async () => {
 }
 
 /* ─── Exam Cities ───────────────────────────────────────────────────── */
+
+/* Region sidebar + panel (mirrors the Study Corner level picker above) */
+.ec-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.ec-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ec-sidebar-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ec-sidebar-card {
+  background: var(--surface);
+  border: 1px solid rgba(212, 160, 23, 0.15);
+  border-radius: 14px;
+  padding: 1.4rem 1.3rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.ec-sidebar-card:hover {
+  border-color: rgba(212, 160, 23, 0.4);
+  background: rgba(212, 160, 23, 0.04);
+}
+
+.ec-sidebar-card.active {
+  border-color: var(--accent);
+  background: rgba(212, 160, 23, 0.07);
+  box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.2);
+}
+
+.ec-sidebar-card.active .ec-sidebar-arrow {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+.ec-sidebar-card-top {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.ec-sidebar-emoji {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.ec-sidebar-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.ec-sidebar-arrow {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  color: var(--text3);
+  transition: all 0.2s;
+}
+
+.ec-panel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ec-strip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+  .ec-layout {
+    grid-template-columns: 1fr;
+  }
+  .ec-sidebar-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ec-sidebar-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
 .ec-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
