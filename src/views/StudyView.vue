@@ -672,7 +672,7 @@
               </p>
             </div>
 
-            <template v-else>
+            <div v-else class="ec-panel-body">
               <div class="ec-strip-header">
                 <span class="sc-strip-label"
                   >{{ activeRegion }} — Exam Cities</span
@@ -682,28 +682,30 @@
                 </button>
               </div>
 
-              <div class="ec-grid">
-                <div
-                  v-for="row in filteredExamCities"
-                  :key="row.state"
-                  class="ec-card card-base rc">
-                  <div class="ec-state">{{ row.state }}</div>
-                  <div class="ec-cities-list">
-                    <span
-                      v-for="city in row.cities"
-                      :key="city"
-                      class="ec-city-tag"
-                      >{{ city }}</span
-                    >
+              <div class="ec-cities-scroll">
+                <div class="ec-grid">
+                  <div
+                    v-for="row in filteredExamCities"
+                    :key="row.state"
+                    class="ec-card card-base rc">
+                    <div class="ec-state">{{ row.state }}</div>
+                    <div class="ec-cities-list">
+                      <span
+                        v-for="city in row.cities"
+                        :key="city"
+                        class="ec-city-tag"
+                        >{{ city }}</span
+                      >
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div v-if="filteredExamCities.length === 0" class="sc-empty">
-                <div style="font-size: 2.5rem">🔍</div>
-                <p>No cities found for "{{ citySearch }}"</p>
+                <div v-if="filteredExamCities.length === 0" class="sc-empty">
+                  <div style="font-size: 2.5rem">🔍</div>
+                  <p>No cities found for "{{ citySearch }}"</p>
+                </div>
               </div>
-            </template>
+            </div>
           </div>
         </div>
       </div>
@@ -1696,6 +1698,7 @@ onMounted(async () => {
   padding-bottom: 0.75rem;
   border-bottom: 1px solid rgba(212, 160, 23, 0.15);
   margin-bottom: 0.25rem;
+  flex-shrink: 0;
 }
 
 .sc-sidebar-cards {
@@ -2227,6 +2230,7 @@ onMounted(async () => {
 .ec-sidebar {
   display: flex;
   flex-direction: column;
+  height: 580px;
   gap: 0.75rem;
 }
 
@@ -2234,6 +2238,19 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 160, 23, 0.3) transparent;
+}
+
+.ec-sidebar-cards::-webkit-scrollbar {
+  width: 5px;
+}
+.ec-sidebar-cards::-webkit-scrollbar-thumb {
+  background: rgba(212, 160, 23, 0.3);
+  border-radius: 99px;
 }
 
 .ec-sidebar-card {
@@ -2244,6 +2261,7 @@ onMounted(async () => {
   cursor: pointer;
   transition: all 0.25s ease;
   position: relative;
+  flex-shrink: 0;
 }
 
 .ec-sidebar-card:hover {
@@ -2290,13 +2308,44 @@ onMounted(async () => {
 .ec-panel-wrap {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  height: 580px;
+}
+
+/* Fixed-height box for the cities side: header stays put, list scrolls */
+.ec-panel-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .ec-strip-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.ec-cities-scroll {
+  background: var(--surface);
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 2rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 160, 23, 0.3) transparent;
+}
+
+.ec-cities-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.ec-cities-scroll::-webkit-scrollbar-thumb {
+  background: rgba(212, 160, 23, 0.3);
+  border-radius: 99px;
 }
 
 @media (max-width: 900px) {
