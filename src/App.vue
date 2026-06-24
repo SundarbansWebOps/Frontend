@@ -230,24 +230,6 @@ const route = useRoute();
 
 const isLoungeRoute = computed(() => route.path === '/lounge' || route.path === '/dashboard');
 
-// --- THEME ---
-const isLight = ref(false);
-
-function applyTheme(light) {
-  if (light) {
-    document.documentElement.classList.add('light-mode');
-  } else {
-    document.documentElement.classList.remove('light-mode');
-  }
-  isLight.value = light;
-}
-
-function toggleTheme() {
-  const next = !isLight.value;
-  localStorage.setItem('sh-theme', next ? 'light' : 'dark');
-  applyTheme(next);
-}
-
 // --- PRELOADER ---
 const loading = ref(true);
 const preloaderOpacity = ref("1");
@@ -255,12 +237,6 @@ const fillWidth = ref("0%");
 const showFallback = ref(false);
 
 onMounted(() => {
-  // Init theme from localStorage
-  const saved = localStorage.getItem('sh-theme');
-  if (saved === 'light') {
-    applyTheme(true);
-  }
-
   fillWidth.value = "100%";
   setTimeout(() => {
     preloaderOpacity.value = "0";
