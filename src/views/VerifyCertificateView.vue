@@ -12,7 +12,7 @@
         <h1 class="verify-title animate-in">
           Verify
           <em class="verify-title-accent">Certificates</em>
-          <br />Instantly &amp; Securely
+          <br /> &amp; Securely
         </h1>
         <p class="verify-subtitle animate-in">
           Authenticate certificates issued under Sundarbans House.<br />
