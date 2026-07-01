@@ -20,8 +20,10 @@
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
             position: relative;
+            background: #111;
           ">
           <iframe
+            v-if="showFlipbook"
             src="https://937908f4-trial.flowpaper.com/Thedeltadiaries"
             title="The Delta Diaries"
             style="
@@ -33,6 +35,40 @@
             "
             allow="fullscreen"
             allowfullscreen></iframe>
+          <div
+            v-else
+            @click="showFlipbook = true"
+            style="
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              background: linear-gradient(135deg, rgba(212,160,23,0.15), rgba(8,7,5,0.95));
+            ">
+            <div style="font-size: 3rem; margin-bottom: 1rem">📖</div>
+            <h3
+              style="
+                font-family: Cinzel, serif;
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: #fff;
+                margin-bottom: 0.5rem;
+              ">
+              The Delta Diaries — Vol. 1
+            </h3>
+            <p style="color: var(--text2); margin-bottom: 1.5rem">
+              Click to view the flipbook
+            </p>
+            <button
+              class="cta-btn-p"
+              style="border: none; cursor: pointer"
+              @click="showFlipbook = true">
+              View Flipbook →
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -630,10 +666,13 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { useScrollReveal, useCounters } from "../composables/useAnimations.js";
 import PageHero from "../components/PageHero.vue";
 useScrollReveal();
 useCounters();
+
+const showFlipbook = ref(false);
 
 const values = [
   {
