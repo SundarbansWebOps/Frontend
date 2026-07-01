@@ -99,45 +99,26 @@
               <span class="field-value">{{ result.name }}</span>
             </div>
 
-            <!-- EVENT-TYPE FIELDS -->
-            <template v-if="result.type !== 'department'">
-              <div class="result-field">
-                <span class="field-label">Event / Achievement</span>
-                <span class="field-value">{{ result.event }}</span>
-              </div>
-              <div class="result-field">
-                <span class="field-label">Issue Date</span>
-                <span class="field-value">{{ result.date }}</span>
-              </div>
-              <div class="result-field" v-if="result.category">
-                <span class="field-label">Category</span>
-                <span class="field-value">{{ result.category }}</span>
-              </div>
-              <div class="result-field" v-if="result.rank">
-                <span class="field-label">Rank / Position</span>
-                <span class="field-value">{{ result.rank }}</span>
-              </div>
-            </template>
-
-            <!-- DEPARTMENT-TYPE FIELDS -->
-            <template v-else>
-              <div class="result-field">
-                <span class="field-label">Department</span>
-                <span class="field-value">{{ result.department }}</span>
-              </div>
-              <div class="result-field">
-                <span class="field-label">Role</span>
-                <span class="field-value">{{ result.role }}</span>
-              </div>
-              <div class="result-field" v-if="result.tenure">
-                <span class="field-label">Tenure</span>
-                <span class="field-value">{{ result.tenure }}</span>
-              </div>
-              <div class="result-field">
-                <span class="field-label">Issue Date</span>
-                <span class="field-value">{{ result.date }}</span>
-              </div>
-            </template>
+            <div class="result-field">
+              <span class="field-label">Event / Department</span>
+              <span class="field-value">{{ result.type === 'department' ? result.department : result.event }}</span>
+            </div>
+            <div class="result-field">
+              <span class="field-label">Issue Date</span>
+              <span class="field-value">{{ result.date }}</span>
+            </div>
+            <div class="result-field" v-if="result.category">
+              <span class="field-label">Category</span>
+              <span class="field-value">{{ result.category }}</span>
+            </div>
+            <div class="result-field" v-if="result.type === 'department' ? result.role : result.rank">
+              <span class="field-label">Rank / Role</span>
+              <span class="field-value">{{ result.type === 'department' ? result.role : result.rank }}</span>
+            </div>
+            <div class="result-field" v-if="result.tenure">
+              <span class="field-label">Tenure</span>
+              <span class="field-value">{{ result.tenure }}</span>
+            </div>
           </div>
           <div class="cert-actions">
             <button class="download-btn view-btn" @click="viewCertificate" v-if="result.pdf">
