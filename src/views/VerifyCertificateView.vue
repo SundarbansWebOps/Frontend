@@ -100,7 +100,7 @@
             </div>
 
             <div class="result-field">
-              <span class="field-label">Event / Department</span>
+              <span class="field-label">Department</span>
               <span class="field-value">{{ result.type === 'department' ? result.department : result.event }}</span>
             </div>
             <div class="result-field">
