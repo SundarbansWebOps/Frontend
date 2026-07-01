@@ -8,6 +8,28 @@
       subtitle="Our story, mission, and the vibrant community that makes us unique"
     />
 
+    <!-- Flipbook Embed -->
+    <section class="section rs" style="padding-bottom: 0">
+      <div class="container">
+        <div
+          style="
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 720px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+          ">
+          <iframe
+            src="https://937908f4-trial.flowpaper.com/Thedeltadiaries"
+            title="The Delta Diaries"
+            style="width: 100%; height: 100%; border: 0"
+            allow="fullscreen"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
     <!-- Our Story -->
     <section class="section about-section rs">
       <div class="container">
