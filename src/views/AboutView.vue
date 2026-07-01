@@ -19,11 +19,18 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            position: relative;
           ">
           <iframe
             src="https://937908f4-trial.flowpaper.com/Thedeltadiaries"
             title="The Delta Diaries"
-            style="width: 100%; height: 100%; border: 0"
+            style="
+              width: 100%;
+              height: calc(100% + 56px);
+              margin-top: -56px;
+              border: 0;
+              display: block;
+            "
             allow="fullscreen"
             allowfullscreen></iframe>
         </div>
