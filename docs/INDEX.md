@@ -12,5 +12,5 @@
 | specs/ | Numbered specs for complex features (see /spec) |
 | specs/001-codebase-overhaul.md | Spec 001 — overhaul goals, phases, constraints |
 | specs/001-tickets.md | Spec 001 — ticket list + **live status board** (T-01…T-29) |
-| reports/sundarbans-rag-chatbot-audit-2026-09-03.md | Live RAG chatbot audit and graph-ready CSV companion |
+| reports/sundarbans-rag-chatbot-audit-2026-09-03.md | Live RAG chatbot audit findings and probes |
 | sessions/ | One append-only log per day |
