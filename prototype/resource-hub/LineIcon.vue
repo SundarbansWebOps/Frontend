@@ -1,0 +1,87 @@
+<!-- PROTOTYPE — hand-drawn 24px line icons; no icon font, no emoji. -->
+<template>
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="ic">
+    <path v-for="(d, i) in PATHS[name] ?? []" :key="i" :d="d" />
+  </svg>
+</template>
+
+<script setup>
+defineProps({ name: { type: String, required: true } });
+const PATHS = {
+  portal: ['M4 5h16v11H4z', 'M9 20h6', 'M12 16v4', 'M8 11l2.5-2.5L13 11l3-3'],
+  chat: ['M5 5h14v10H10l-4 4v-4H5z', 'M9 10h6'],
+  calc: ['M6 3h12v18H6z', 'M9 7h6', 'M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01'],
+  book: ['M5 4h9a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4z', 'M5 16a4 4 0 0 1 4-4h9'],
+  pin: [
+    'M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z',
+    'M12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+  ],
+  seal: [
+    'M12 3l2.4 1.8 3 .1.9 2.9 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-.9 2.9-3 .1L12 21l-2.4-1.8-3-.1-.9-2.9L3.3 14.4l.9-2.9-.9-2.9 2.4-1.8.9-2.9 3-.1z',
+    'M9 12l2 2 4-4',
+  ],
+  wa: [
+    'M4 20l1.3-4A8 8 0 1 1 8 18.7z',
+    'M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z',
+  ],
+  home: ['M4 11l8-7 8 7v9h-5v-6H9v6H4z'],
+  cal: ['M4 6h16v14H4z', 'M4 10h16', 'M8 3v5M16 3v5'],
+  house: ['M3 21h18', 'M5 21V9l7-5 7 5v12', 'M10 21v-6h4v6'],
+  arrow: ['M5 12h14', 'M13 6l6 6-6 6'],
+  back: ['M19 12H5', 'M11 6l-6 6 6 6'],
+  linkedin: [
+    'M4 4h16v16H4z',
+    'M8 10v6',
+    'M8 7.5v.01',
+    'M12 16v-6',
+    'M12 12.5a2.5 2.5 0 0 1 5 0V16',
+  ],
+  x: ['M4 4h4.5L20 20h-4.5z', 'M19.5 4l-6.4 7M10.9 13 4.5 20'],
+  instagram: ['M4 4h16v16H4z', 'M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z', 'M16.5 7.5v.01'],
+  live: [
+    'M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
+    'M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7',
+    'M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8',
+  ],
+  moon: ['M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z'],
+  people: [
+    'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+    'M3 20a6 6 0 0 1 12 0',
+    'M16 5.5a3 3 0 0 1 0 5.5',
+    'M18 14.5a6 6 0 0 1 3 5.5',
+  ],
+  trophy: [
+    'M8 4h8v5a4 4 0 0 1-8 0z',
+    'M8 6H5a3 3 0 0 0 3 4',
+    'M16 6h3a3 3 0 0 1-3 4',
+    'M12 13v4',
+    'M9 20h6',
+  ],
+  cert: ['M4 5h16v11H4z', 'M8 9h8M8 12h5', 'M15 16v5l2-1.2 2 1.2v-5'],
+  lock: ['M6 11h12v9H6z', 'M8.5 11V8a3.5 3.5 0 0 1 7 0v3'],
+  play: ['M8 5v14l11-7z'],
+  door: ['M6 21V4.5L15 3v18', 'M3 21h18', 'M15 5h3v16', 'M12 12.5v.01'],
+  photo: ['M4 7h4l1.5-2h5L16 7h4v12H4z', 'M12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z'],
+  close: ['M6 6l12 12M18 6 6 18'],
+  next: ['M9 5l7 7-7 7'],
+  prev: ['M15 5l-7 7 7 7'],
+  sun: [
+    'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+    'M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5',
+  ],
+  pause: ['M8 5v14M16 5v14'],
+  replay: ['M4 12a8 8 0 1 0 2.3-5.7', 'M4 4v4.5h4.5'],
+};
+</script>
+
+<style scoped>
+.ic {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+</style>
