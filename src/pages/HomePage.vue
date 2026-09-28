@@ -1770,7 +1770,8 @@ h3 {
     bottom: 22%;
   }
   .panel {
-    grid-template-columns: 1fr;
+    /* minmax(0, …): a bare 1fr grows to the poster line's scroll width and pushes the art off-screen. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 22px;
     padding: 44px calc(var(--edge-w) + 16px) 52px;
   }
