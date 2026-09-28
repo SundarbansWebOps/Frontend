@@ -70,13 +70,11 @@
 </template>
 
 <script setup>
+import CREST from '../../assets/crest.webp';
 import LineIcon from './LineIcon.vue';
 import { WHATSAPP } from '../../lib/courses.js';
 import { theme, toggleTheme } from '../../lib/theme.js';
 
-// Same official crest, delivered at 80px instead of the 1000px the old site pulled.
-const CREST =
-  'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto,w_80,c_limit/v1785911356/sundarbans/src/assets/LOGO.jpg';
 const LINKS = [
   { to: '/resources', label: 'Resources', icon: 'book' },
   { to: '/events', label: 'Events', icon: 'cal' },

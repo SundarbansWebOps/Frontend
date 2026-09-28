@@ -71,6 +71,7 @@
 </template>
 
 <script setup>
+import CREST from '../../assets/crest.webp';
 import { computed, ref, watch } from 'vue';
 import { WINGS, events, fullDate } from '../../lib/events.js';
 import { toast } from '../../lib/store.js';
@@ -81,8 +82,6 @@ const STEPS = [
   'Your name goes on the signed template',
   'Anyone can verify it with the ID',
 ];
-const CREST =
-  'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto,w_80,c_limit/v1785911356/sundarbans/src/assets/LOGO.jpg';
 
 const list = events.filter((x) => x.at).slice(0, 24);
 const eventId = ref(list[0].id);

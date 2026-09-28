@@ -308,6 +308,7 @@
 </template>
 
 <script setup>
+import CREST from '../assets/crest.webp';
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import LineIcon from '../components/site/LineIcon.vue';
 import PatFigure from '../components/site/PatFigure.vue';
@@ -320,8 +321,6 @@ import { events, WINGS } from '../lib/events.js';
 import { meetupCount, photoCount, portrait, regions, upper, lower } from '../lib/house.js';
 import { COMMUNITIES, CREW } from '../data/teams.js';
 
-const CREST =
-  'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto,w_320,c_limit/v1785911356/sundarbans/src/assets/LOGO.jpg';
 const PORTAL = TOOLS[0];
 const forestSet = `${ASSET.forest800} 800w, ${ASSET.forest} 1400w`;
 
