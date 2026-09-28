@@ -2,8 +2,9 @@
 > IITM BS Sundarbans House frontend and backend work · Last checkpoint: 2026-09-28
 
 ## In progress / next
-- **The prototype is now the live site in `src/`** (2026-09-28, uncommitted on `feat/prototype-site-delta`). Home = Pat, typeface = Anek Latin, nav light/dark toggle. Next: Raja reviews it in the browser (`npm run dev`), then decides on commit/PR.
-- Old site files deleted 2026-09-28 on Raja's go-ahead (`src/views/`, old `src/components/*`, `src/composables/`, old CSS and dashboard data). Meetup JSON moved to `src/data/meetups/json/`.
+- **The prototype is the live site in `src/`**, committed on `feat/prototype-site-delta` (latest `0a7ea4c`; not pushed, no PR). Next: Raja reviews in the browser (`npm run dev`), then decides on push/PR.
+- 2026-09-28 polish, all committed: theme switch ripples out of the nav toggle (copied from Raja's portfolio `ThemeToggle.tsx`); borderless round crest (`src/assets/crest.webp`, `public/favicon.png`, `public/apple-touch-icon.png`, cropped from `~/Downloads/sundarbans.png`); Home Events art sits beside the copy with less bottom space; panel art no longer off-screen on phones.
+- Old site deleted; meetup JSON lives in `src/data/meetups/json/`.
 - Not ported (were on old /study): doubts board, student tools, exam cities, contribute cards. Grade calculator and exam cities show "coming soon" in Resources tools.
 - Backend v1 is built and fully tested locally (Supabase stack, 51/51 API checks). Next: owner creates the free cloud Supabase project (region **Mumbai / ap-south-1**), then `supabase link` + `db push` + `functions deploy` per `backend/README.md`. Members' sign-in waits on this.
 - Council agenda (certificates, winners, rosters, meetup photos, lounge rooms): `docs/council-questions.md`.
@@ -12,6 +13,7 @@
 - Routes (`src/router/index.js`): `/` Pat · `/resources` · `/events` · `/house` · `/teams` · `/lounge` (tour only) · `/login` (sign-in coming soon) · `/verify-certificate` (rethemed, same `public/data/certificates.json` lookup) · 404. Old URLs redirect: `/study`→Resources, `/about`→`/house#story`, `/meetups*`→`/house#regions`, `/community`→`/teams#communities`, `/community/{technical,cultural,esports}`→`/events?wing=`, `/contact`→`/house#contact` (footer), `/dashboard`→`/lounge`.
 - Verified 2026-09-28 against the production build: `npm run lint` exit 0, `npm run build` ok, `npm run test:smoke` 19/19 (all routes + redirects, no console errors). Playwright/Chromium checks: every route light at 1366 and dark at 390, no horizontal overflow; theme toggle persists across reload and follows system until chosen; verify found/not-found; course sheet deep link + Back; event sheet open + Back keeps scroll; anchor redirects land on their sections.
 - `npm run format:check` fails only on 7 untracked prototype "Current" files (`prototype/resource-hub/Current*.vue`, `LandingCurrent.vue`, `current-flow.js`) — pre-existing, not ported.
+- Theme ripple, crest and Events layout verified in headless Chromium only (frames, screenshots at 1846/1366/1024/390/360); smoke 19/19, lint 0.
 - Not verified: real phones/Safari, reduced-motion in a live browser, sustained frame rate, signed-in Chrome profile.
 - Home (Pat) ignores the theme by design (Raja, 2026-09-28): the painted scroll looks identical in light and dark; only the nav and the thin footer strip under the scroll follow the theme, as in the prototype. Verified by pixel-diffing light vs dark screenshots at 1366 and 390.
 
@@ -36,6 +38,8 @@
 - Site direction: bespoke motion, warm palette, no green, no lock icons; nav Resources · Events · House · Teams · Lounge.
 
 ## Gotchas
+- Theme ripple (`src/lib/theme.js` + `tokens.css`): a view-transition clip-path circle, 700ms ease-in-out. `html.theme-ripple` pauses colour transitions so the new snapshot is final; keep it if adding colour fades.
+- Home phone grid must be `minmax(0, 1fr)`: a bare `1fr` grows to the poster line's ~5900px scroll width and pushes every panel's art off-screen.
 - Vue scoped CSS: `:global(.a) .b` compiles to `.a` only. Write `:root[data-theme='dark'] .b` instead.
 - Vue scoped styles: a parent class on a child component's root inherits the parent's scoped rules (bit the Lounge rail).
 - Overlays that push history must keep vue-router's state: use `router.push({ query, state })` or spread `history.state` (see `PhotoViewer.vue`).

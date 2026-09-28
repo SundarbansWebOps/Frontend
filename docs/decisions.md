@@ -89,3 +89,6 @@
 
 ## 2026-09-28 — Home ignores the light/dark theme
 **Why:** The owner wants the Pat scroll to look exactly as in the prototype in both modes. Only the nav (and the thin footer strip under the scroll) follows the theme; the painting keeps its paper palette and brightness. The unused dark scroll palette was removed.
+
+## 2026-09-28 — Theme switch ripples exactly like Raja's portfolio
+**Why:** Raja rejected a soft-edged, wavelet ripple and asked for the portfolio's animation: a hard-edged clip-path circle on the new view-transition snapshot, from the toggle's centre to the farthest corner, 700ms ease-in-out. The UA cross-fade is disabled. With reduced motion, or without the View Transitions API, the theme switches instantly.
