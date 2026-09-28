@@ -84,6 +84,11 @@ html {
   font-family: var(--font);
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
+  /* Android Chrome's text autosizer (on when the phone's font size is above default) inflates
+   * some blocks and not others, and re-decides on every layout — names flickered between two
+   * sizes on phones and fit.js chased them. Sizes here are already set for phones. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   transition:
     background-color 0.4s,
     color 0.4s;
