@@ -1,56 +1,37 @@
+import { nextTick } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
 // Every route is lazy so a visitor to "/" downloads only the homepage chunk.
 // Paths must stay literal strings — Vite needs them statically analysable to
-// emit one chunk per view.
+// emit one chunk per page.
 const routes = [
-  { path: '/', component: () => import('../views/HomeView.vue') },
-  { path: '/about', component: () => import('../views/AboutView.vue') },
-  { path: '/events', component: () => import('../views/EventsView.vue') },
-  { path: '/study', component: () => import('../views/StudyView.vue') },
-  { path: '/teams', component: () => import('../views/TeamsView.vue') },
-  { path: '/contact', component: () => import('../views/ContactView.vue') },
-  { path: '/login', component: () => import('../views/LoginView.vue') },
-  {
-    path: '/lounge',
-    component: () => import('../views/MembersLoungeView.vue'),
-    meta: { requiresAuth: true },
-  },
-  { path: '/dashboard', component: () => import('../views/DashboardView.vue') },
+  { path: '/', component: () => import('../pages/HomePage.vue') },
+  { path: '/resources', component: () => import('../pages/ResourcesPage.vue') },
+  { path: '/events', component: () => import('../pages/EventsPage.vue') },
+  { path: '/house', component: () => import('../pages/HousePage.vue') },
+  { path: '/teams', component: () => import('../pages/TeamsPage.vue') },
+  { path: '/lounge', component: () => import('../pages/LoungePage.vue') },
+  { path: '/login', component: () => import('../pages/LoginPage.vue') },
+  { path: '/verify-certificate', component: () => import('../pages/VerifyPage.vue') },
 
-  // Community + sub-pages
-  { path: '/community', component: () => import('../views/CommunityView.vue') },
-  {
-    path: '/community/technical',
-    component: () => import('../views/TechnicalView.vue'),
-  },
-  {
-    path: '/community/cultural',
-    component: () => import('../views/CulturalView.vue'),
-  },
-  {
-    path: '/community/esports',
-    component: () => import('../views/ESportsView.vue'),
-  },
-
-  // Meetups + single param route for all regions (slug map in RegionMeetupsView)
-  { path: '/meetups', component: () => import('../views/MeetupsView.vue') },
-  {
-    path: '/meetups/:region',
-    component: () => import('../views/meetups/RegionMeetupsView.vue'),
-  },
-
-  // Certificate verification (public)
-  {
-    path: '/verify-certificate',
-    component: () => import('../views/VerifyCertificateView.vue'),
-  },
+  // Links from the previous site (shared on WhatsApp, bookmarked) land on the page that
+  // now holds that content.
+  { path: '/study', redirect: '/resources' },
+  { path: '/about', redirect: { path: '/house', hash: '#story' } },
+  { path: '/meetups', redirect: { path: '/house', hash: '#regions' } },
+  { path: '/meetups/:region', redirect: { path: '/house', hash: '#regions' } },
+  { path: '/community', redirect: { path: '/teams', hash: '#communities' } },
+  { path: '/community/technical', redirect: { path: '/events', query: { wing: 'tech' } } },
+  { path: '/community/cultural', redirect: { path: '/events', query: { wing: 'cultural' } } },
+  { path: '/community/esports', redirect: { path: '/events', query: { wing: 'games' } } },
+  { path: '/contact', redirect: { path: '/house', hash: '#contact' } },
+  { path: '/dashboard', redirect: '/lounge' },
 
   // 404 catch-all
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: () => import('../views/NotFoundView.vue'),
+    component: () => import('../pages/NotFoundPage.vue'),
   },
 ];
 
@@ -97,29 +78,63 @@ function waitForAnchor(hash, token) {
   });
 }
 
+// Room for the sticky nav and a page's section rail above an anchored section.
+const ANCHOR_OFFSET = 120;
+// Pages measure themselves after mounting (canvases, fitted names): land once, then settle.
+const ANCHOR_SETTLE_MS = 450;
+
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function scrollToAnchor(el, behavior) {
+  window.scrollTo({
+    top: el.getBoundingClientRect().top + window.scrollY - ANCHOR_OFFSET,
+    behavior: reducedMotion() ? 'auto' : behavior,
+  });
+}
+
 export const router = createRouter({
   history: createWebHashHistory(),
   routes,
-  scrollBehavior(to) {
+  scrollBehavior(to, from, savedPosition) {
     const token = ++scrollToken;
+    // Same page and section, new query (a course or event sheet, the photo viewer): stay
+    // where the reader is.
+    if (to.path === from.path && to.hash === from.hash) return false;
     if (to.hash) {
-      // Falsy means "leave the scroll alone" — same as the old string-selector
-      // form, which vue-router ignored when the element did not exist.
-      return waitForAnchor(to.hash, token).then((el) =>
-        el && token === scrollToken ? { el, behavior: 'smooth' } : false
-      );
+      // Scrolls itself (offset + settle) and resolves falsy so vue-router leaves it alone.
+      return waitForAnchor(to.hash, token).then((el) => {
+        if (!el || token !== scrollToken) return false;
+        const samePage = to.path === from.path;
+        scrollToAnchor(el, samePage ? 'smooth' : 'auto');
+        if (!samePage)
+          setTimeout(() => token === scrollToken && scrollToAnchor(el, 'smooth'), ANCHOR_SETTLE_MS);
+        return false;
+      });
     }
-    return { top: 0 };
+    return savedPosition ?? { top: 0 };
   },
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
-    const token = localStorage.getItem('sundarbans_auth_token');
-    token ? next() : next('/login');
-  } else {
-    next();
-  }
+// Page changes cross-fade where the browser supports view transitions. The old page is
+// captured first; the transition completes once the new page has rendered.
+router.beforeResolve((to, from) => {
+  if (!from.matched.length || to.path === from.path) return;
+  if (!document.startViewTransition || reducedMotion()) return;
+  return new Promise((captured) => {
+    const transition = document.startViewTransition(
+      () =>
+        new Promise((rendered) => {
+          captured();
+          const off = router.afterEach(() => {
+            off();
+            nextTick(rendered);
+          });
+        })
+    );
+    // A transition skipped by a quick second navigation or a hidden tab is not an error;
+    // the page still swaps, just without the fade.
+    transition.ready.catch(() => {});
+  });
 });
 
 // A tab left open across a deploy asks for chunk files the new build no longer

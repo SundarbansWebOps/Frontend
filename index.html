@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f2e8" />
     <title>Sundarbans House | IIT Madras BS</title>
     <link
       rel="icon"
@@ -33,11 +34,28 @@
       content="https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1785911312/sundarbans/public/assets/og-preview.jpg"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Anek Latin (Ek Type, Mumbai): variable width + weight, the house typeface. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anek+Latin:wdth,wght@75..125,300..800&display=swap"
       rel="stylesheet"
     />
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Theme before first paint (same rule as src/lib/theme.js): saved choice, else system. -->
+    <script>
+      (() => {
+        let t = null;
+        try {
+          t = localStorage.getItem('sundarbans-theme');
+        } catch {
+          /* storage blocked */
+        }
+        if (t !== 'light' && t !== 'dark')
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+        if (t === 'dark')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#15120e');
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>
