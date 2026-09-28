@@ -89,6 +89,23 @@ html {
     color 0.4s;
 }
 
+/* Theme ripple (src/lib/theme.js): a clip-path circle on the new snapshot grows out of the
+ * toggle. The UA cross-fade would tint the whole page at once and fade the old snapshot out
+ * from under the circle, so both default animations go; mix-blend-mode overrides the UA's
+ * plus-lighter, which would blow the stacked snapshots out to white. Colour transitions pause
+ * meanwhile so the new snapshot is already in its final colours; the toggle keeps its morph. */
+html.theme-ripple,
+html.theme-ripple *:not(.theme, .theme *),
+html.theme-ripple *::before,
+html.theme-ripple *::after {
+  transition: none !important;
+}
+html.theme-ripple::view-transition-old(root),
+html.theme-ripple::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 body {
   margin: 0;
   min-height: 100vh;

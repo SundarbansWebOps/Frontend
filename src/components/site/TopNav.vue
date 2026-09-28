@@ -32,7 +32,7 @@
           :class="{ dark: theme === 'dark' }"
           :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
           :title="theme === 'dark' ? 'Light mode' : 'Dark mode'"
-          @click="toggleTheme"
+          @click="toggleTheme($event)"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <mask id="nav-moon">
