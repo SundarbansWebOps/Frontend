@@ -1,4 +1,7 @@
-<!-- PROTOTYPE tooling — not part of the design. T toggles the theme, F cycles the typeface. -->
+<!--
+  PROTOTYPE tooling — not part of the design. T toggles the theme, F cycles the typeface.
+  On Home: V cycles the landing variant, R replays its intro.
+-->
 <template>
   <div class="sw" role="toolbar" aria-label="Prototype controls">
     <span class="lbl"><b>PROTOTYPE</b></span>
@@ -8,7 +11,13 @@
     <button type="button" class="font" title="Next typeface (F)" @click="nextFont">
       Font: <b>{{ fontById[font].name }}</b>
     </button>
-    <button type="button" title="Clear pinned courses" @click="reset">Reset pins</button>
+    <template v-if="page === 'home'">
+      <button type="button" class="font" title="Next landing variant (V)" @click="nextVariant">
+        Home: <b>{{ store.landingV }} · {{ LANDINGS[store.landingV - 1].name }}</b>
+      </button>
+      <button type="button" title="Replay the intro (R)" @click="store.replay++">Replay</button>
+    </template>
+    <button v-else type="button" title="Clear pinned courses" @click="reset">Reset pins</button>
   </div>
 </template>
 
@@ -16,8 +25,9 @@
 import { onBeforeUnmount, onMounted } from 'vue';
 import { store } from './store.js';
 import { FONTS, fontById } from './fonts.js';
+import { LANDINGS, nextVariant } from './landings.js';
 
-const props = defineProps({ theme: String, font: String });
+const props = defineProps({ theme: String, font: String, page: String });
 const emit = defineEmits(['update:theme', 'update:font']);
 
 function nextFont() {
@@ -33,6 +43,8 @@ function onKey(e) {
   if (e.target.matches?.('input, textarea, [contenteditable]') || store.sheet) return;
   if (e.key === 't') emit('update:theme', props.theme === 'light' ? 'dark' : 'light');
   if (e.key === 'f') nextFont();
+  if (props.page === 'home' && e.key === 'v') nextVariant();
+  if (props.page === 'home' && e.key === 'r') store.replay++;
 }
 onMounted(() => window.addEventListener('keydown', onKey));
 onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
@@ -89,6 +101,10 @@ button:hover {
   .sw {
     bottom: 76px;
     right: 10px;
+    max-width: calc(100vw - 20px);
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 16px;
   }
 }
 </style>

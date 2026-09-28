@@ -1,10 +1,16 @@
-# PROTOTYPE — Resources + Events + House + Teams + Lounge (throwaway)
+# PROTOTYPE — Home + Resources + Events + House + Teams + Lounge (throwaway)
 
 Question: what should the student-first Sundarbans site look and move like?
 
-Run: `npm run dev`, then open `http://localhost:5173/prototype/resource-hub/`.
-Pages: Resources (default) · Events (`?page=events`) · House (`?page=house`) · Teams (`?page=teams`)
+Run: `npm run dev -- --port 5191`, then open `http://localhost:5191/prototype/resource-hub/`.
+Pages: Home (default) · Resources (`?page=resources`) · Events (`?page=events`) · House (`?page=house`) · Teams (`?page=teams`)
 · Lounge (`?page=lounge`). `?theme=dark` or `t`; typeface `?font=anek|familjen|schibsted` or `f`.
+
+- **Home** — Synchrony (`?v=1`): layered mangroves, fireflies revealing the identity and forming
+  real resource/event/meetup/team counts. Pat (`?v=2`): full-width painted scroll, tiger, moving
+  river/boat, illustrated feature sections and poster line. Both have working resource search.
+  `v` cycles Synchrony → Pat → Current; `r` replays. Current (`?v=3`) remains in the
+  prototype unchanged; further design work is limited to Synchrony and Pat. Generated landing artwork was explicitly authorized for this round.
 
 - **Resources** — the chosen "Delta" direction (variant A; B and C were dropped 2026-09-27).
   Real notes/PYQ Drive links from `src/data/scData_generated.js`; term dates are sample data.

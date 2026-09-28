@@ -22,17 +22,18 @@ export const portrait = {
   face: (u) => u?.replace(CLD, 'f_auto,q_auto,w_96,h_96,c_thumb,g_face'),
 };
 
-// Meetup photos: Google Photos links from the sheets (the `=w960` suffix sets the size), plus
-// one Bengaluru meetup already on Cloudinary. `photo(u, w, h)` crops to w×h; omit h to fit.
+// Meetup photos: use Google delivery URLs as exported. Cloudinary supports sized crops.
 const BENGALURU_608 = [1, 2, 3, 4].map(
   (k, i) =>
     `https://res.cloudinary.com/l59gy0g2/image/upload/${CLD}/v178591132${[4, 6, 7, 8][i]}/sundarbans/public/assets/pastevent/bengaluru_meetup_608_${k}.png`
 );
 export function photo(u, w, h) {
+  if (!u) return undefined;
   if (u.includes('res.cloudinary.com'))
     return u.replace(CLD, `f_auto,q_auto,w_${w}${h ? `,h_${h},c_fill` : ',c_limit'}`);
-  // Google Photos: drop any query and the size suffix, then ask for our own size.
-  return `${u.split('?')[0].replace(/=[^/]*$/, '')}=${h ? `w${w}-h${h}-c` : `w${w}`}`;
+  // Preserve Google's exported delivery flags and query. Rewritten URLs can be
+  // rejected when embedded; CSS crops thumbnails from the shared original.
+  return u;
 }
 
 export const council = COUNCIL.map((p) => ({ ...p, id: slug(p.name) }));
@@ -128,16 +129,18 @@ export const deadPhotos = reactive(new Set());
 export const livePhotos = (m) => m.photos.filter((u) => !deadPhotos.has(u));
 // Google also refuses bursts of requests now and then, so a failure is retried once (after a
 // pause) before the photo is written off. Pass the <img> error event.
-const failedOnce = new Set();
+const failedOnce = new WeakSet();
 export function markDead(u, e) {
   const img = e?.target;
-  if (img && !failedOnce.has(u)) {
-    failedOnce.add(u);
-    const src = img.src;
+  if (!u) return;
+  if (img && !failedOnce.has(img)) {
+    failedOnce.add(img);
     setTimeout(
       () => {
+        if (!img.isConnected) return;
+        // Each image gets one retry; another thumbnail must not consume its attempt.
         img.removeAttribute('src');
-        img.src = src;
+        img.src = u;
       },
       1500 + Math.random() * 1500
     );

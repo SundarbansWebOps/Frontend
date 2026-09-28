@@ -144,8 +144,11 @@ function branch(x, y, ang, len, depth, t0) {
   const bend = rand(-0.25, 0.25);
   const cx = x + Math.cos(ang + bend) * len * 0.55;
   const cy = y + Math.sin(ang + bend) * len * 0.55;
+  // Keep the prop-root junction raised, but carry the trunk down to the mud line.
+  const start =
+    depth === 0 ? `M${TX} ${WATER} Q${TX - 3} ${WATER - 23} ${f(x)} ${f(y)}` : `M${f(x)} ${f(y)}`;
   tree.push({
-    d: `M${f(x)} ${f(y)} Q${f(cx)} ${f(cy)} ${f(ex)} ${f(ey)}`,
+    d: `${start} Q${f(cx)} ${f(cy)} ${f(ex)} ${f(ey)}`,
     w: f(Math.max(1, 10 * Math.pow(0.62, depth))),
     t0: f(t0),
     dur: 0.14,
@@ -216,7 +219,7 @@ const sunStripes = Array.from({ length: 12 }, (_, i) => ({
   transform: scale(clamp(0, (var(--p) - var(--t0)) * 9, 1));
 }
 .tree {
-  transform-origin: 196px 306px;
+  transform-origin: 196px 352px;
   animation: sway 7s ease-in-out infinite alternate;
 }
 @keyframes sway {

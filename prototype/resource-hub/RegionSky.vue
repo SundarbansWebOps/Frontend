@@ -87,6 +87,7 @@
         role="presentation"
       >
         <img
+          referrerpolicy="no-referrer"
           v-if="livePhotos(tip.m).length"
           :src="photo(livePhotos(tip.m)[0], 240, 150)"
           alt=""
@@ -119,6 +120,7 @@
             @pointerleave="hover = null"
           >
             <img
+              referrerpolicy="no-referrer"
               :src="photo(livePhotos(m)[0], 112, 112)"
               alt=""
               width="56"
@@ -422,7 +424,11 @@ const io = new IntersectionObserver(
       // Warm the cache so polaroids aren't blank on slow connections, a few at a time (Google
       // refuses bursts). Failures are ignored here — only a real <img> decides a photo is gone.
       byTime.forEach((m, i) =>
-        setTimeout(() => (new Image().src = photo(m.photos[0], 112, 112)), i * 150)
+        setTimeout(() => {
+          const img = new Image();
+          img.referrerPolicy = 'no-referrer';
+          img.src = photo(m.photos[0], 112, 112);
+        }, i * 150)
       );
       play();
       io.disconnect();

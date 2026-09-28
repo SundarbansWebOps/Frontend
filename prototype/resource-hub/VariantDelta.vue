@@ -46,7 +46,8 @@ import CourseTicket from './CourseTicket.vue';
 import ToolLinks from './ToolLinks.vue';
 import { openCourse, search, store } from './store.js';
 
-const q = ref('');
+const q = ref(store.q);
+store.q = '';
 const res = computed(() => search(q.value));
 const parsed = computed(() => ({
   tab: res.value.parsed.tab ?? 'pyqs',

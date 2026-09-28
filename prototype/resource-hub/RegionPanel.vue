@@ -118,6 +118,7 @@
               @click="house.photos = { m, i: 0 }"
             >
               <img
+                referrerpolicy="no-referrer"
                 v-for="(u, k) in livePhotos(m).slice(0, 3)"
                 :key="u"
                 :src="photo(u, 120, 120)"

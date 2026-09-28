@@ -5,7 +5,12 @@
 <template>
   <header class="nav">
     <div class="in">
-      <a class="brand" href="#" @click.prevent="emit('go', 'resources')">
+      <a
+        class="brand"
+        href="#"
+        aria-label="Sundarbans House, home"
+        @click.prevent="emit('go', 'home')"
+      >
         <img :src="CREST" alt="" width="34" height="34" />
         <span class="word">
           <b>Sundarbans</b>
@@ -53,7 +58,7 @@ import LineIcon from './LineIcon.vue';
 import { toast } from './store.js';
 import { WHATSAPP } from './data.js';
 
-defineProps({ page: { type: String, default: 'resources' } });
+defineProps({ page: { type: String, default: 'home' } });
 const emit = defineEmits(['go']);
 const BUILT = ['resources', 'events', 'house', 'teams', 'lounge'];
 function nav(l) {
@@ -261,6 +266,23 @@ const LINKS = [
 
 .tabbar {
   display: none;
+}
+
+@media (min-width: 761px) and (max-width: 1020px) {
+  .in {
+    gap: 12px;
+    padding-inline: 16px;
+  }
+  .links a {
+    padding-inline: 10px;
+  }
+  .wa span {
+    display: none;
+  }
+  .wa {
+    padding: 9px;
+    flex-shrink: 0;
+  }
 }
 
 @media (max-width: 760px) {

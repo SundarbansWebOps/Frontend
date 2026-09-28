@@ -1,4 +1,4 @@
-<!-- PROTOTYPE shell — Resources (Delta, chosen 2026-09-27), Events, House, Teams and the Lounge, switched by ?page=. -->
+<!-- PROTOTYPE shell — Home (landing, 3 variants), Resources (Delta), Events, House, Teams and the Lounge, switched by ?page=. -->
 <template>
   <TopNav :page="page" @go="go" />
   <component :is="PAGES[page]" :key="page" />
@@ -6,7 +6,7 @@
   <Transition name="toast">
     <div v-if="store.toast" class="toast" role="status">{{ store.toast }}</div>
   </Transition>
-  <PrototypeSwitcher v-model:theme="theme" v-model:font="font" />
+  <PrototypeSwitcher v-model:theme="theme" v-model:font="font" :page="page" />
 </template>
 
 <script setup>
@@ -14,6 +14,7 @@ import { ref, watch } from 'vue';
 import TopNav from './TopNav.vue';
 import CourseSheet from './CourseSheet.vue';
 import PrototypeSwitcher from './PrototypeSwitcher.vue';
+import LandingPage from './LandingPage.vue';
 import VariantDelta from './VariantDelta.vue';
 import EventsPage from './EventsPage.vue';
 import HousePage from './HousePage.vue';
@@ -23,6 +24,7 @@ import { fontById, useFont } from './fonts.js';
 import { nav, store } from './store.js';
 
 const PAGES = {
+  home: LandingPage,
   resources: VariantDelta,
   events: EventsPage,
   house: HousePage,
@@ -31,7 +33,7 @@ const PAGES = {
 };
 
 const params = new URL(location.href).searchParams;
-const page = ref(PAGES[params.get('page')] ? params.get('page') : 'resources');
+const page = ref(PAGES[params.get('page')] ? params.get('page') : 'home');
 const theme = ref(params.get('theme') === 'dark' ? 'dark' : 'light');
 const font = ref(fontById[params.get('font')] ? params.get('font') : 'anek');
 
@@ -62,7 +64,7 @@ nav.go = go;
 
 addEventListener('popstate', () => {
   const q = new URL(location.href).searchParams.get('page');
-  const want = PAGES[q] ? q : 'resources';
+  const want = PAGES[q] ? q : 'home';
   if (want !== page.value) go(want, null, false);
 });
 
@@ -73,7 +75,7 @@ watch(
     document.documentElement.dataset.theme = t;
     const url = new URL(location.href);
     url.searchParams.delete('variant');
-    if (p === 'resources') url.searchParams.delete('page');
+    if (p === 'home') url.searchParams.delete('page');
     else url.searchParams.set('page', p);
     if (t === 'dark') url.searchParams.set('theme', 'dark');
     else url.searchParams.delete('theme');

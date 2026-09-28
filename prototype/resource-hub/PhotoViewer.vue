@@ -31,14 +31,22 @@
         <div class="stage" @pointerdown="swipeStart" @pointerup="swipeEnd" @click.self="close">
           <Transition :name="dir > 0 ? 'nx' : 'pr'">
             <img
-              :key="v.i"
+              referrerpolicy="no-referrer"
+              v-if="list[v.i]"
+              :key="list[v.i]"
               class="big"
               :src="photo(list[v.i], bigW)"
+              :data-photo="list[v.i]"
               :alt="`${v.m.title}, photo ${v.i + 1} of ${list.length}`"
               draggable="false"
-              @error="lost(list[v.i], $event)"
+              @error="lost($event.target.dataset.photo, $event)"
             />
           </Transition>
+          <p v-if="!list.length" class="unavailable" role="status">
+            These photos couldn't load.<template v-if="v.m.insta">
+              Try the original post below.</template
+            >
+          </p>
           <button
             v-if="list.length > 1"
             type="button"
@@ -70,6 +78,7 @@
                 @click="go(k)"
               >
                 <img
+                  referrerpolicy="no-referrer"
                   :src="photo(u, 96, 96)"
                   alt=""
                   width="48"
@@ -79,7 +88,7 @@
               </button>
             </li>
           </ol>
-          <span class="mono count">{{ v.i + 1 }} / {{ list.length }}</span>
+          <span v-if="list.length" class="mono count">{{ v.i + 1 }} / {{ list.length }}</span>
           <a v-if="v.m.insta" class="ig" :href="v.m.insta" target="_blank" rel="noopener"
             ><LineIcon name="instagram" /> <span>Instagram post</span></a
           >
@@ -101,26 +110,30 @@ const closeBtn = ref(null);
 // Width to request: the screen, capped — 1280 is plenty for a phone or a laptop.
 const bigW = Math.min(1280, Math.round(innerWidth * Math.min(devicePixelRatio, 2)));
 
-// A dead link drops out; stay on a photo that exists, or close if none are left.
+// A dead link drops out; keep the viewer usable even when the source is unavailable.
 function lost(u, e) {
   markDead(u, e);
-  if (!list.value.length) return close();
-  if (v.value.i >= list.value.length) house.photos = { ...v.value, i: 0 };
 }
+watch(list, (photos) => {
+  if (v.value && v.value.i >= photos.length) house.photos = { ...v.value, i: 0 };
+});
 function go(k) {
+  if (!v.value || !list.value[k]) return;
   dir.value = k >= v.value.i ? 1 : -1;
   house.photos = { ...v.value, i: k };
 }
 function step(d) {
   const n = list.value.length;
+  if (!v.value || !n) return;
   dir.value = d;
   house.photos = { ...v.value, i: (v.value.i + d + n) % n };
 }
 
 // Back closes the viewer instead of leaving the page.
 function close() {
+  if (!house.photos) return;
+  house.photos = null;
   if (history.state?.photos) history.back();
-  else house.photos = null;
 }
 function onPop() {
   if (house.photos) house.photos = null;

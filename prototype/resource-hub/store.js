@@ -20,6 +20,11 @@ export const store = reactive({
   toast: '',
   // Section to scroll to after a page switch (see App.go).
   anchor: null,
+  // A search typed on Home, carried into the Resources search bar.
+  q: '',
+  // Home prototype: which landing variant (1-3), and a counter that replays its intro.
+  landingV: 1,
+  replay: 0,
 });
 
 watch(
