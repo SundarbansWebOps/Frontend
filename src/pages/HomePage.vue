@@ -1413,7 +1413,12 @@ h2::after {
     transform: scale(1.25);
   }
 }
+.ev {
+  padding-bottom: clamp(32px, 3.5vw, 56px);
+}
+/* Last in order, so the flipped art stays beside the copy instead of wrapping under the line. */
 .posters {
+  order: 3;
   grid-column: 1 / -1;
   margin: 10px calc(var(--edge-w) - var(--panel-gut)) 0;
 }
