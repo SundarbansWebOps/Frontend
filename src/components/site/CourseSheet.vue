@@ -241,7 +241,9 @@ async function copy() {
   }
 }
 
-// Tide reveal: a circle grows from the tap point across the panel.
+// Tide reveal: a circle grows from the tap point across the panel. It stops exactly at the
+// farthest corner, and its easing is still moving there: a strong ease-out (and a radius past
+// the corner) left the corners filling in a slow tail that read as a stall.
 function enter(el, done) {
   const p = el.querySelector('.panel');
   const b = el.querySelector('.backdrop');
@@ -251,14 +253,14 @@ function enter(el, done) {
   const o = store.sheet?.origin ?? { x: r.left, y: r.top };
   const ox = o.x - r.left;
   const oy = o.y - r.top;
-  const R = Math.hypot(Math.max(ox, r.width - ox), Math.max(oy, r.height - oy)) + 40;
+  const R = Math.hypot(Math.max(ox, r.width - ox), Math.max(oy, r.height - oy)) + 1;
   b.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: 'ease-out' });
   p.animate(
     [
       { clipPath: `circle(0px at ${ox}px ${oy}px)` },
       { clipPath: `circle(${R}px at ${ox}px ${oy}px)` },
     ],
-    { duration: 640, easing: 'cubic-bezier(.22,1,.36,1)' }
+    { duration: 560, easing: 'cubic-bezier(.25,.5,.4,.9)' }
   ).finished.then(done);
 }
 function leave(el, done) {
