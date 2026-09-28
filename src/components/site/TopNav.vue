@@ -49,7 +49,7 @@
         </button>
         <a class="wa" :href="WHATSAPP" target="_blank" rel="noopener">
           <LineIcon name="wa" />
-          <span>Join WhatsApp</span>
+          <span>WhatsApp Channel</span>
         </a>
       </div>
     </div>
