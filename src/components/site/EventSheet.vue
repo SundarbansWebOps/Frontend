@@ -5,10 +5,7 @@
 <template>
   <Teleport to="body">
     <Transition :css="false" @enter="enter" @leave="leave">
-      <div
-        v-if="e"
-        class="root"
-      >
+      <div v-if="e" class="root">
         <div class="backdrop" @click="closeEvent()" />
         <aside
           ref="panel"
