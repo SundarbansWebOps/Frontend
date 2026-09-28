@@ -15,11 +15,11 @@ Pages: Home (default) · Resources (`?page=resources`) · Events (`?page=events`
 - **Resources** — the chosen "Delta" direction (variant A; B and C were dropped 2026-09-27).
   Real notes/PYQ Drive links from `src/data/scData_generated.js`; term dates are sample data.
 - **Events** — past events only (live events live in the members' lounge). No winners until the
-  council decides. `events.data.js` is a generated snapshot of `src/views/*View.vue` (stock photos
+  council decides. `events.data.js` is a generated snapshot of the old site's `src/views/*View.vue` (since deleted) (stock photos
   dropped). Each event links to the lounge for its participation certificate (planned).
 - **House** — About (draft copy) with a procedural mangrove, the Upper House Council (cards fan
   out and turn over on scroll), where we meet (regions + meetups from
-  `src/views/meetups/.../json/`, season playback; meetup photos fly into a roll and open in a
+  `src/data/meetups/json/`, season playback; meetup photos fly into a roll and open in a
   viewer), and the lounge door. `house.data.js` is a generated snapshot of the Teams view and
   region blurbs.
 - **Teams** — how the house works (a river delta that draws as you scroll), UHC, Lower House

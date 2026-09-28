@@ -3,15 +3,15 @@
 import { reactive } from 'vue';
 import { COUNCIL, REGION_BLURB } from './house.data.js';
 import { MONTH, parseDate, slug } from './events.js';
-import bengaluru from '../../src/views/meetups/region_exports_json_and_csv/json/bengaluru_region.json';
-import chandigarh from '../../src/views/meetups/region_exports_json_and_csv/json/chandigarh_region.json';
-import chennai from '../../src/views/meetups/region_exports_json_and_csv/json/chennai_region.json';
-import delhi from '../../src/views/meetups/region_exports_json_and_csv/json/delhi_region.json';
-import hyderabad from '../../src/views/meetups/region_exports_json_and_csv/json/hyderabad_region.json';
-import kolkata from '../../src/views/meetups/region_exports_json_and_csv/json/kolkata_region.json';
-import lucknow from '../../src/views/meetups/region_exports_json_and_csv/json/lucknow_region.json';
-import mumbai from '../../src/views/meetups/region_exports_json_and_csv/json/mumbai_region.json';
-import patna from '../../src/views/meetups/region_exports_json_and_csv/json/patna_region.json';
+import bengaluru from '../../src/data/meetups/json/bengaluru_region.json';
+import chandigarh from '../../src/data/meetups/json/chandigarh_region.json';
+import chennai from '../../src/data/meetups/json/chennai_region.json';
+import delhi from '../../src/data/meetups/json/delhi_region.json';
+import hyderabad from '../../src/data/meetups/json/hyderabad_region.json';
+import kolkata from '../../src/data/meetups/json/kolkata_region.json';
+import lucknow from '../../src/data/meetups/json/lucknow_region.json';
+import mumbai from '../../src/data/meetups/json/mumbai_region.json';
+import patna from '../../src/data/meetups/json/patna_region.json';
 
 // Cloudinary portraits: face-aware crops sized to where they're shown.
 const CLD = 'f_auto,q_auto:good,w_1000,c_limit';

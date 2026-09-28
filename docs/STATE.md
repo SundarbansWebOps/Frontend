@@ -3,7 +3,7 @@
 
 ## In progress / next
 - **The prototype is now the live site in `src/`** (2026-09-28, uncommitted on `feat/prototype-site-delta`). Home = Pat, typeface = Anek Latin, nav light/dark toggle. Next: Raja reviews it in the browser (`npm run dev`), then decides on commit/PR.
-- **Old site files are still on disk, unrouted**: `src/views/*` (except `meetups/.../json/`, still imported by `src/lib/house.js`), `src/components/{AppFooter,DailyNotifications,MembersNavbar,PageHero,RegionMeetups}.vue`, `src/components/{community,dashboard,study}/`, `src/composables/`, `src/assets/{style,community,dashboard}.css`, `src/data/{dashboard.json,leaderboard.js,notifications.json}`. Deleting them was blocked by the permission classifier; Raja must approve/perform it. After deletion, move meetup JSON to `src/data/meetups/` and update `src/lib/house.js`.
+- Old site files deleted 2026-09-28 on Raja's go-ahead (`src/views/`, old `src/components/*`, `src/composables/`, old CSS and dashboard data). Meetup JSON moved to `src/data/meetups/json/`.
 - Not ported (were on old /study): doubts board, student tools, exam cities, contribute cards. Grade calculator and exam cities show "coming soon" in Resources tools.
 - Backend v1 is built and fully tested locally (Supabase stack, 51/51 API checks). Next: owner creates the free cloud Supabase project (region **Mumbai / ap-south-1**), then `supabase link` + `db push` + `functions deploy` per `backend/README.md`. Members' sign-in waits on this.
 - Council agenda (certificates, winners, rosters, meetup photos, lounge rooms): `docs/council-questions.md`.
