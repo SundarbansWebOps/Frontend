@@ -1,64 +1,54 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Every real app route from src/router/index.js (hash history).
- * Catch-all NotFound is omitted — a nonsense path still mounts #app, but
- * the goal is to smoke the declared pages, not 404 UX.
- *
- * /lounge (router meta.requiresAuth) and /dashboard (in-view token check)
- * redirect to /login when unauthenticated; that is expected and OK.
+ * Every page in src/router/index.js (hash history), mapped to where it should land.
+ * Old-site paths redirect to the page that now holds their content.
+ * Catch-all NotFound is omitted — the goal is to smoke the declared pages, not 404 UX.
  */
-const ROUTES = [
-  '/',
-  '/about',
-  '/events',
-  '/study',
-  '/teams',
-  '/contact',
-  '/login',
-  '/lounge',
-  '/dashboard',
-  '/community',
-  '/community/technical',
-  '/community/cultural',
-  '/community/esports',
-  '/meetups',
-  '/meetups/delhi-ncr',
-  '/meetups/mumbai',
-  '/meetups/bangalore',
-  '/meetups/kolkata',
-  '/meetups/hyderabad',
-  '/meetups/patna',
-  '/meetups/chandigarh',
-  '/meetups/chennai',
-  '/meetups/lucknow',
-  '/verify-certificate',
-];
+const ROUTES = {
+  '/': '/',
+  '/resources': '/resources',
+  '/events': '/events',
+  '/house': '/house',
+  '/teams': '/teams',
+  '/lounge': '/lounge',
+  '/login': '/login',
+  '/verify-certificate': '/verify-certificate',
+  // Old site
+  '/study': '/resources',
+  '/about': '/house',
+  '/meetups': '/house',
+  '/meetups/delhi-ncr': '/house',
+  '/meetups/patna': '/house',
+  '/community': '/teams',
+  '/community/technical': '/events',
+  '/community/cultural': '/events',
+  '/community/esports': '/events',
+  '/contact': '/house',
+  '/dashboard': '/lounge',
+};
 
 function hashUrl(path) {
   // Hash router: base is origin only; route lives after #.
   return path === '/' ? '/#/' : `/#${path}`;
 }
 
-/** Path portion of location.hash (no leading #, no query). e.g. "#/about?x=1" → "/about" */
+/** Path portion of location.hash (no leading #, query or section). e.g. "#/house#story" → "/house" */
 function hashPathFromUrl(url) {
   let hash = new URL(url).hash || '';
   if (hash.startsWith('#')) hash = hash.slice(1);
-  if (hash.includes('?')) hash = hash.split('?')[0];
-  if (!hash || hash === '') return '/';
+  hash = hash.split('?')[0].split('#')[0];
+  if (!hash) return '/';
   return hash.startsWith('/') ? hash : `/${hash}`;
 }
 
-// Auth-gated paths may end at /login when no sundarbans_auth_token is set.
-const AUTH_REDIRECT_ROUTES = new Set(['/lounge', '/dashboard']);
-
-// CDN/hotlink resource failures (fonts, GSI, Unsplash, LinkedIn) are noise for smoke.
+// CDN/hotlink resource failures (fonts, Cloudinary, Google photos) are noise for smoke.
 function isCdnResourceFailure(text) {
   return /Failed to load resource/i.test(text);
 }
 
 test.describe('route smoke', () => {
-  for (const path of ROUTES) {
+  for (const [path, landing] of Object.entries(ROUTES)) {
     test(`renders ${path} without console errors`, async ({ page }) => {
       const consoleErrors = [];
       const pageErrors = [];
@@ -73,27 +63,17 @@ test.describe('route smoke', () => {
         pageErrors.push(err.message);
       });
 
-      // Prefer 'load' over 'networkidle' — app always pulls fonts/GSI; many pages Unsplash.
       await page.goto(hashUrl(path), { waitUntil: 'load' });
 
       const app = page.locator('#app');
       await expect(app).toBeVisible();
 
-      // Hash path must match the declared route (or login redirect for auth-gated paths).
-      const finalUrl = page.url();
-      const actual = hashPathFromUrl(finalUrl);
-      if (AUTH_REDIRECT_ROUTES.has(path)) {
-        expect(
-          actual === path || actual === '/login',
-          `${path} should stay put or redirect to /login; got ${finalUrl}`
-        ).toBe(true);
-      } else {
-        expect(actual, `expected hash path ${path} for ${finalUrl}`).toBe(path);
-      }
+      await expect
+        .poll(() => hashPathFromUrl(page.url()), { message: `${path} should land on ${landing}` })
+        .toBe(landing);
 
-      // Declared routes must not render NotFoundView (distinctive badge + 404 heading).
-      await expect(page.getByText('Page Not Found', { exact: true })).toHaveCount(0);
-      await expect(page.locator('h1.notfound-code')).toHaveCount(0);
+      // Declared routes must not render the 404 page.
+      await expect(page.getByText('This channel runs dry', { exact: true })).toHaveCount(0);
 
       expect(pageErrors, `pageerror on ${path}: ${pageErrors.join(' | ')}`).toEqual([]);
       expect(consoleErrors, `console error on ${path}: ${consoleErrors.join(' | ')}`).toEqual([]);

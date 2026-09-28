@@ -1,0 +1,185 @@
+/*
+ * PROTOTYPE — Sundarbans palette tokens. Light is the shipping theme; dark is defined
+ * now so every colour decision is proven in both before the real build.
+ *
+ * Contrast (WCAG, checked 2026-09-27): every *text* token is >= 4.5:1 on paper, sunk
+ * and card in both themes. --line / --line-strong / --channel are decorative only.
+ * Rule that keeps themes in sync: text on marigold is ALWAYS --on-mari (dark ink),
+ * in both themes. Never put paper-coloured text on marigold.
+ */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --paper: #f7f2e8;
+  --sunk: #efe7d8;
+  --card: #fffcf6;
+  --ink: #1d1915;
+  --ink-2: #5e5449;
+  --ink-3: #6f6255;
+  --line: #e0d5c3;
+  --line-strong: #c9bba5;
+  --mari: #f2a93b;
+  --mari-soft: #fbe6c2;
+  --mari-ink: #8f4a00;
+  --on-mari: #1d1915;
+  --verm: #b8341b;
+  --verm-soft: #f7dcd3;
+  --channel: #d3c5ae;
+  --flow: #b8741a;
+  --shadow: 0 1px 0 rgb(29 25 21 / 0.04), 0 12px 32px -18px rgb(29 25 21 / 0.28);
+  --grain-opacity: 0.35;
+  /* Event wings — each is >= 4.5:1 as text on paper, sunk and card. */
+  --w-cultural: #9a5200;
+  --w-games: #b8341b;
+  --w-tech: #2f4f9e;
+  --w-talks: #7e3474;
+  --w-meetups: #6b4a2b;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #15120e;
+  --sunk: #0f0d0a;
+  --card: #1f1a15;
+  --ink: #f3ebdd;
+  --ink-2: #b9ac9a;
+  --ink-3: #8f8373;
+  --line: #2e271f;
+  --line-strong: #4a4035;
+  --mari: #f4b04a;
+  --mari-soft: #3a2b14;
+  --mari-ink: #f6bb5e;
+  --on-mari: #1d1915;
+  --verm: #ff7a5c;
+  --verm-soft: #3b1d15;
+  --channel: #4a4035;
+  --flow: #f4b04a;
+  --shadow: 0 1px 0 rgb(0 0 0 / 0.3), 0 16px 40px -20px rgb(0 0 0 / 0.7);
+  --grain-opacity: 0.12;
+  --w-cultural: #f4b04a;
+  --w-games: #ff7a5c;
+  --w-tech: #93a9ff;
+  --w-talks: #e394d4;
+  --w-meetups: #d4ab80;
+}
+
+:root {
+  --font: ui-sans-serif, system-ui, sans-serif; /* set by fonts.js */
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --r: 14px;
+  --nav-h: 60px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.4s,
+    color 0.4s;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* Paper grain: a 300-byte SVG noise, not an image download. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .3 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-theme='dark'] body::before {
+  mix-blend-mode: screen;
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.mono {
+  font-family: var(--mono);
+  letter-spacing: -0.01em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid var(--mari-ink);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* One class per wing sets --w, so components colour themselves from a single token. */
+.w-cultural {
+  --w: var(--w-cultural);
+}
+.w-games {
+  --w: var(--w-games);
+}
+.w-tech {
+  --w: var(--w-tech);
+}
+.w-talks {
+  --w: var(--w-talks);
+}
+.w-meetups {
+  --w: var(--w-meetups);
+}
+
+/* Entrance: content rises in a quick stagger — no loader, no blocking. */
+.rise {
+  animation: rise 0.7s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

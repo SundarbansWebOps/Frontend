@@ -37,65 +37,18 @@ Sundarbans-House_Vue-main/
 │   └── whatsapp.html
 │
 └── src/                              # Vue app source
-    ├── main.js                       # App bootstrap
-    ├── App.vue                       # Root component
-    │
+    ├── main.js                       # App bootstrap (router, theme, tokens)
+    ├── App.vue                       # Shell: nav, page, footer, course sheet, toast
     ├── router/
-    │   └── index.js                  # All route definitions
-    │
-    ├── composables/
-    │   └── useAnimations.js          # Reusable animation logic
-    │
-    ├── components/                   # Shared/reusable components
-    │   ├── AppFooter.vue
-    │   ├── MembersNavbar.vue
-    │   ├── PageHero.vue
-    │   └── RegionMeetups.vue
-    │
-    ├── data/                         # Static data files
-    │   ├── members.json              # Member records
-    │   └── scData_generated.js       # Generated student council data
-    │
-    ├── assets/                       # Bundled assets (processed by Vite)
-    │   ├── style.css                 # Global styles
-    │   ├── IITM-Logo.png
-    │   ├── LOGO.JPEG
-    │   ├── login-illustration.png
-    │   ├── Sundarbans-House_Vue.jpg
-    │   ├── regions/                  # City images (bangalore, chennai, delhi…)
-    │   ├── teams/                    # Team member photos
-    │   └── Community Events/
-    │       ├── Cultural/             # Cultural event posters
-    │       ├── E-Sports/             # E-Sports event posters
-    │       └── Technical/            # Technical event posters
-    │
-    └── views/                        # Page-level Vue components
-        ├── HomeView.vue
-        ├── AboutView.vue
-        ├── EventsView.vue
-        ├── StudyView.vue
-        ├── TeamsView.vue
-        ├── CommunityView.vue
-        ├── ContactView.vue
-        ├── LoginView.vue
-        ├── MembersLoungeView.vue
-        ├── DashboardView.vue
-        ├── TechnicalView.vue         # /community/technical
-        ├── CulturalView.vue          # /community/cultural
-        ├── ESportsView.vue           # /community/esports
-        ├── MeetupsView.vue           # /meetups (landing)
-        └── meetups/                  # Region-specific meetup pages
-            ├── regionConfigs.js      # Shared config for all regions
-            ├── DelhiMeetups.vue
-            ├── MumbaiMeetups.vue
-            ├── BangaloreMeetups.vue
-            ├── KolkataMeetups.vue
-            ├── HyderabadMeetups.vue
-            ├── PatnaMeetups.vue
-            ├── ChandigarhMeetups.vue
-            ├── manifest.json / manifest.csv
-            └── region_exports_json_and_csv/
-                ├── json/             # Per-region meetup data (JSON)
-                └── csv/              # Per-region meetup data (CSV)
+    │   └── index.js                  # All routes, old-URL redirects, scroll + page transitions
+    ├── pages/                        # One *Page.vue per route (Home = Pat)
+    ├── components/
+    │   └── site/                     # Components used by the pages
+    ├── lib/                          # Shared state and data adapters (store, events, house, courses, theme)
+    ├── data/                         # Static data: events, council, teams, course data
+    │   └── meetups/json/             # Per-region meetup data
+    └── assets/
+        ├── tokens.css                # Colours (light/dark), type, spacing
+        └── pat/                      # Pat home artwork
 ```
 

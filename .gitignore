@@ -13,7 +13,7 @@ scratch/
 
 # Ignore raw CSV exports and manifest CSVs
 **/*.csv
-src/views/meetups/region_exports_json_and_csv/csv/
+src/data/meetups/csv/
 
 # Local agent/tool scratch and deploy state
 .claude/
