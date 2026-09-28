@@ -1,6 +1,7 @@
 <!--
   Lounge room: Night Owl, the reading lounge (9:30 PM every night, English and
-  Hindi rooms). The clock is real (IST); the reader counts are SAMPLE. Each reader is a firefly.
+  Hindi rooms). The clock is real (IST); the reader counts are SAMPLE. Each reader is a firefly,
+  circling the room's painted pat (an owl with its book, a reader in a lamplit boat).
 -->
 <template>
   <div class="owl">
@@ -15,8 +16,8 @@
       <article v-for="r in rooms" :key="r.id" class="room">
         <div class="sky" aria-hidden="true">
           <i v-for="s in STARS" :key="s.k" class="star" :style="s.style" />
+          <PatArt class="art" :fig="ART[r.art]" :name="r.art" />
           <i v-for="f in r.n" :key="f" class="fly" :style="FLIES[(f + r.seed) % FLIES.length]" />
-          <span class="moon" />
         </div>
         <div class="body">
           <h3>{{ r.name }}</h3>
@@ -36,6 +37,8 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import LineIcon from './LineIcon.vue';
+import PatArt from './PatArt.vue';
+import { ART } from '../../lib/art.js';
 import { toast } from '../../lib/store.js';
 
 const rooms = reactive([
@@ -45,6 +48,7 @@ const rooms = reactive([
     desc: 'Bring your book. Camera off, mic off, reading together.',
     n: 23,
     seed: 0,
+    art: 'owl-en',
   },
   {
     id: 'hi',
@@ -52,6 +56,7 @@ const rooms = reactive([
     desc: 'हिंदी में पढ़ने वालों के लिए — same quiet hour.',
     n: 14,
     seed: 7,
+    art: 'owl-hi',
   },
 ]);
 
@@ -138,7 +143,7 @@ onBeforeUnmount(() => clearInterval(timer));
 }
 .sky {
   position: relative;
-  height: 150px;
+  height: 250px;
   overflow: hidden;
   background: linear-gradient(180deg, #0b0a14, #1d1622 60%, #2a1d17);
 }
@@ -155,16 +160,13 @@ onBeforeUnmount(() => clearInterval(timer));
     opacity: 0.1;
   }
 }
-.moon {
+/* The plate sits low on the right; a faint warm rim keeps its figures reading on the night sky. */
+.art {
   position: absolute;
-  right: 22px;
-  top: 18px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  box-shadow:
-    inset -9px 3px 0 0 #f6d9a8,
-    0 0 26px rgb(246 217 168 / 0.25);
+  right: 5%;
+  bottom: 6px;
+  width: min(58%, 226px);
+  filter: drop-shadow(0 0 1px rgb(255 222 170 / 0.45)) drop-shadow(0 0 18px rgb(255 190 110 / 0.12));
 }
 .fly {
   position: absolute;

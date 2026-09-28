@@ -15,16 +15,6 @@
     :class="{ rolling, ff, settled, rm: RM }"
     :style="{ '--brush': `url(${ASSET.brush})`, '--brush-v': `url(${ASSET.brushV})` }"
   >
-    <!-- Keylines only: dark pixels stay as warm ink, everything lighter drops to transparent. -->
-    <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
-      <filter id="pat-ink" color-interpolation-filters="sRGB">
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 .114  0 0 0 0 .098  0 0 0 0 .082  -2.691 -5.283 -1.026 12 -9.3"
-        />
-      </filter>
-    </svg>
-
     <div ref="scrollEl" class="scroll" @animationend.self="unrolled">
       <div class="rod" aria-hidden="true" />
 
@@ -755,12 +745,6 @@ onBeforeUnmount(() => {
   overflow-x: clip;
   background: var(--paper);
 }
-.defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-}
-
 .scroll {
   position: relative;
   width: var(--col);
