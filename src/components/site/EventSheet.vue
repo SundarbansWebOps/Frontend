@@ -8,11 +8,8 @@
       <div
         v-if="e"
         class="root"
-        @keydown.esc="closeEvent"
-        @keydown.left="step(-1)"
-        @keydown.right="step(1)"
       >
-        <div class="backdrop" @click="closeEvent" />
+        <div class="backdrop" @click="closeEvent()" />
         <aside
           ref="panel"
           class="panel"
@@ -61,7 +58,7 @@
               </svg>
               <span class="visually-hidden">Copy link</span>
             </button>
-            <button type="button" class="icon" title="Close (Esc)" @click="closeEvent">
+            <button type="button" class="icon" title="Close (Esc)" @click="closeEvent()">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
               <span class="visually-hidden">Close</span>
             </button>
@@ -128,7 +125,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TypePoster from './TypePoster.vue';
 import { WINGS, byId, closeEvent, ev, fullDate, img, openEvent } from '../../lib/events.js';
 import { nav } from '../../lib/store.js';
@@ -166,6 +163,20 @@ function step(d) {
   dir.value = d;
   openEvent(n.id);
 }
+
+// Esc / ← / → live on the window (like PhotoViewer): stepping to the first or
+// last event disables the focused button, which drops focus to <body> —
+// handlers on the panel would stop hearing keys right when they matter most.
+function onKey(e) {
+  if (!ev.open) return;
+  if (e.key === 'Escape') closeEvent();
+  else if (!e.target?.matches?.('input, textarea, [contenteditable]')) {
+    if (e.key === 'ArrowRight') step(1);
+    else if (e.key === 'ArrowLeft') step(-1);
+  }
+}
+onMounted(() => addEventListener('keydown', onKey));
+onBeforeUnmount(() => removeEventListener('keydown', onKey));
 
 async function copy() {
   try {

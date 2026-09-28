@@ -187,10 +187,11 @@ export function openEvent(id, e) {
 }
 
 // `then` runs once the panel is gone — after the history entry pops, so a follow-up
-// page change doesn't race the back navigation.
+// page change doesn't race the back navigation. Template handlers must not pass
+// their DOM event through (@click="closeEvent()"): only a real callback is kept.
 let afterClose = null;
 export function closeEvent(then) {
-  afterClose = then ?? null;
+  afterClose = typeof then === 'function' ? then : null;
   if (history.state?.event) history.back();
   else {
     ev.open = null;
@@ -203,7 +204,7 @@ export function closeEvent(then) {
 function runAfterClose() {
   const f = afterClose;
   afterClose = null;
-  f?.();
+  if (typeof f === 'function') f();
 }
 
 // The URL is the source of truth: Back drops ?event= and the sheet closes; a shared
