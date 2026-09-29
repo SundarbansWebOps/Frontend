@@ -1,1821 +1,1831 @@
-<!--
-  Home — "Pat". Bengal's patuas sing a story while unrolling a painted scroll
-  (a pat) panel by panel; this page is the house's pat. On load the roll drops from the top rod and
-  unrolls the title panel: the mangrove plate goes down as black keylines and the colour follows
-  behind the brush, a line-drawn tiger walks in and is coloured, the name is brushed on and the
-  degree is lettered into a cartouche. Scrolling keeps unrolling: the roll rides the bottom edge of
-  the screen, turning and thinning, and each feature is the next panel, its figure painting itself
-  in as it arrives. The plates are generated patachitra (landing-assets/v2), split into moving parts
-  in pat.js / PatFigure.vue; every number is computed from the site's data.
--->
 <template>
-  <main
-    ref="root"
-    class="pat"
-    :class="{ rolling, ff, settled, rm: RM }"
-    :style="{ '--brush': `url(${ASSET.brush})`, '--brush-v': `url(${ASSET.brushV})` }"
-  >
-    <!-- Keylines only: dark pixels stay as warm ink, everything lighter drops to transparent. -->
-    <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
-      <filter id="pat-ink" color-interpolation-filters="sRGB">
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 .114  0 0 0 0 .098  0 0 0 0 .082  -2.691 -5.283 -1.026 12 -9.3"
-        />
-      </filter>
-    </svg>
+  <main class="home-page">
+    <!-- ============ 1. Hero Section ============ -->
+    <section class="hero-section" aria-labelledby="hero-title">
+      <div class="hero-container">
+        <div class="hero-main">
+          <div class="hero-badge">
+            <img :src="CREST" alt="IIT Madras Crest" class="crest-img" width="28" height="28" />
+            <span>IIT Madras BS Degree · Sundarbans House</span>
+          </div>
 
-    <div ref="scrollEl" class="scroll" @animationend.self="unrolled">
-      <div class="rod" aria-hidden="true" />
+          <h1 id="hero-title" class="hero-title">
+            The Academic &amp; Community Hub of Sundarbans House
+          </h1>
 
-      <div class="paper">
-        <!-- ============ Title panel ============ -->
-        <section ref="heroEl" class="hero" aria-labelledby="pat-title">
-          <div class="band" aria-hidden="true" />
-          <div ref="sceneEl" class="scene" aria-hidden="true">
-            <img
-              class="forest ink"
-              :src="ASSET.forest"
-              :srcset="forestSet"
-              sizes="100vw"
-              alt=""
-              fetchpriority="high"
-            />
-            <div class="forest color">
-              <img
-                ref="forestEl"
-                :src="ASSET.forest"
-                alt=""
-                fetchpriority="high"
-                @load="forestLoaded"
+          <p class="hero-desc">
+            Past papers, lecture notes, student events, and regional chapters for IIT Madras BS
+            learners.
+          </p>
+
+          <div class="hero-actions">
+            <button type="button" class="btn btn-primary" @click="nav.go('resources')">
+              <span>Browse Resources</span>
+              <LineIcon name="arrow" />
+            </button>
+            <button type="button" class="btn btn-secondary" @click="nav.go('events')">
+              <LineIcon name="cal" />
+              <span>Explore Events</span>
+            </button>
+          </div>
+
+          <!-- Quick Course Search Bar -->
+          <div class="hero-search-wrap">
+            <div class="search-box">
+              <LineIcon name="book" />
+              <input
+                v-model="searchQuery"
+                type="search"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Search courses, past papers, notes (e.g. Maths 1, DBMS, DL)..."
+                aria-label="Search courses, past papers, and notes"
+                @keydown.enter="handleSearchSubmit"
               />
-              <canvas ref="waterEl" class="water" />
+              <button
+                v-if="searchQuery.trim()"
+                type="button"
+                class="search-clear"
+                aria-label="Clear search"
+                @click="searchQuery = ''"
+              >
+                <LineIcon name="close" />
+              </button>
+              <button
+                v-if="searchQuery.trim()"
+                type="button"
+                class="search-submit"
+                @click="handleSearchSubmit"
+              >
+                Search
+              </button>
             </div>
-            <div class="tiger">
-              <div class="walk">
-                <div class="bob">
-                  <PatFigure
-                    :fig="FIGS.tiger"
-                    name="tiger"
-                    sketch
-                    :paint="tigerPaint"
-                    :instant="instant"
-                    :live="heroLive && settled"
-                  />
+
+            <!-- Instant search results dropdown -->
+            <div v-if="searchHits.length" class="search-results" role="listbox">
+              <div
+                v-for="hit in searchHits"
+                :key="hit.code"
+                class="search-hit"
+                role="option"
+                tabindex="0"
+                @click="(e) => openCourse(hit.code, hit, e)"
+                @keydown.enter="(e) => openCourse(hit.code, hit, e)"
+              >
+                <div class="hit-info">
+                  <strong class="hit-name">{{ byCode[hit.code]?.short || hit.code }}</strong>
+                  <span class="hit-code mono">{{ hit.code }}</span>
+                </div>
+                <div class="hit-meta">
+                  <span class="hit-count">{{ hitCountText(hit) }}</span>
+                  <LineIcon name="arrow" />
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="title">
-            <span class="seal" aria-hidden="true">
-              <svg viewBox="0 0 100 100">
-                <circle class="ring" cx="50" cy="50" r="46" />
-                <circle class="dots" cx="50" cy="50" r="40.5" />
-              </svg>
-              <img :src="CREST" alt="" width="64" height="64" />
-            </span>
-            <h1 id="pat-title">
-              <span class="w w1">Sundarbans</span>
-              <span class="w w2">House</span>
-            </h1>
-            <p class="cartouche">
-              <svg viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true">
-                <path class="fill" d="M24 3 H276 A20 20 0 0 1 276 43 H24 A20 20 0 0 1 24 3 Z" />
-                <path
-                  class="rule"
-                  pathLength="1"
-                  d="M24 3 H276 A20 20 0 0 1 276 43 H24 A20 20 0 0 1 24 3 Z"
-                />
-              </svg>
-              <span>IIT Madras BS degree <i aria-hidden="true" /> since 2021</span>
-            </p>
-            <p class="line">Notes, past papers, events and people, all in one place.</p>
-          </div>
-          <div class="band" aria-hidden="true" />
-        </section>
-
-        <!-- ============ Resources ============ -->
-        <section
-          id="pat-resources"
-          ref="resEl"
-          class="panel res"
-          :class="{ seen: seen.res }"
-          aria-labelledby="pat-h-res"
-        >
-          <div class="art">
-            <PatFigure
-              :fig="FIGS.reader"
-              name="reader"
-              :paint="seen.res"
-              :instant="RM"
-              :live="live.res"
-            />
-          </div>
-          <div class="copy">
-            <h2 id="pat-h-res" class="brushed">Resources</h2>
-            <p class="lede">Every past paper and set of notes, sorted by course and exam.</p>
-            <dl class="stats">
-              <div v-for="s in STATS.res" :key="s.label">
-                <dt>{{ s.label }}</dt>
-                <dd>{{ shown[s.key] }}</dd>
-              </div>
-            </dl>
-            <PatSearch />
-            <button type="button" class="cta" @click="nav.go('resources')">
-              Open Resources <LineIcon name="arrow" />
-            </button>
-          </div>
-        </section>
-
-        <div class="band" aria-hidden="true" />
-
-        <!-- ============ Events ============ -->
-        <section
-          id="pat-events"
-          ref="evEl"
-          class="panel ev flip"
-          :class="{ seen: seen.ev, live: live.ev }"
-          aria-labelledby="pat-h-ev"
-        >
-          <div class="art">
-            <PatFigure
-              :fig="FIGS.drummers"
-              name="drummers"
-              :paint="seen.ev"
-              :instant="RM"
-              :live="live.ev"
-            />
-            <svg class="beat" viewBox="0 0 100 100" aria-hidden="true">
-              <circle v-for="k in 3" :key="k" cx="50" cy="50" r="30" :style="{ '--k': k }" />
-            </svg>
-          </div>
-          <div class="copy">
-            <h2 id="pat-h-ev" class="brushed">Events</h2>
-            <p class="lede">
-              Every event the house has run, from talks to tournaments, month by month.
-            </p>
-            <dl class="stats">
-              <div v-for="s in STATS.ev" :key="s.label">
-                <dt>{{ s.label }}</dt>
-                <dd>{{ shown[s.key] }}</dd>
-              </div>
-            </dl>
-            <button type="button" class="cta" @click="nav.go('events')">
-              See the archive <LineIcon name="arrow" />
-            </button>
-          </div>
-          <div class="posters">
-            <PatPosters :live="live.ev" />
-          </div>
-        </section>
-
-        <div class="band" aria-hidden="true" />
-
-        <!-- ============ House ============ -->
-        <section
-          id="pat-house"
-          ref="houseEl"
-          class="panel house"
-          :class="{ seen: seen.house }"
-          :style="{ '--arrive': arrive }"
-          aria-labelledby="pat-h-house"
-        >
-          <div class="art">
-            <PatFigure
-              :fig="FIGS.gathering"
-              name="gathering"
-              :paint="seen.house"
-              :instant="RM"
-              :live="live.house"
-            />
-          </div>
-          <div class="copy">
-            <h2 id="pat-h-house" class="brushed">House</h2>
-            <p class="lede">
-              Who we are, who runs the house, and the cities where we meet in person.
-            </p>
-            <dl class="stats">
-              <div v-for="s in STATS.house" :key="s.label">
-                <dt>{{ s.label }}</dt>
-                <dd>{{ shown[s.key] }}</dd>
-              </div>
-            </dl>
-            <h3>Where we meet</h3>
-            <ul class="places">
-              <li v-for="(r, i) in regions" :key="r.id" :style="{ '--i': i }">
-                {{ r.name }} <small class="mono">{{ r.items.length }}</small>
-              </li>
-            </ul>
-            <h3>Upper House Council</h3>
-            <ul class="council">
-              <li v-for="(pp, i) in upper" :key="pp.id" :style="{ '--i': i }">
-                <span class="roundel" aria-hidden="true">
-                  <img :src="portrait.card(pp.img)" alt="" loading="lazy" decoding="async" />
-                  <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" /></svg>
-                </span>
-                <b>{{ pp.name }}</b>
-                <small>{{ pp.role }}</small>
-              </li>
-            </ul>
-            <button type="button" class="cta" @click="nav.go('house')">
-              Meet the house <LineIcon name="arrow" />
-            </button>
-          </div>
-        </section>
-
-        <div class="band" aria-hidden="true" />
-
-        <!-- ============ Teams ============ -->
-        <section
-          id="pat-teams"
-          ref="teamsEl"
-          class="panel teams"
-          :class="{ seen: seen.teams, live: live.teams }"
-          aria-labelledby="pat-h-teams"
-        >
-          <div class="copy head">
-            <h2 id="pat-h-teams" class="brushed">Teams</h2>
-            <p class="lede">
-              How the house works: the councils, the communities and the crew behind it.
-            </p>
-            <dl class="stats">
-              <div v-for="s in STATS.teams" :key="s.label">
-                <dt>{{ s.label }}</dt>
-                <dd>{{ shown[s.key] }}</dd>
-              </div>
-            </dl>
-          </div>
-          <div class="art">
-            <PatFigure
-              :fig="FIGS.rowers"
-              name="rowers"
-              :paint="seen.teams"
-              :instant="RM"
-              :live="live.teams"
-            />
-            <span
-              v-for="c in CREWMAP"
-              :key="c.n"
-              class="marker"
-              :style="{ left: `${c.at[0]}%`, top: `${c.at[1]}%` }"
-              aria-hidden="true"
-              >{{ c.n }}</span
-            >
-          </div>
-          <ol class="crew">
-            <li v-for="c in CREWMAP" :key="c.n" :style="{ '--i': c.n }">
-              <span class="num" aria-hidden="true">{{ c.n }}</span>
-              <small>{{ c.where }}</small>
-              <b
-                >{{ c.who }} <span class="mono">{{ c.count }}</span></b
+            <!-- Search chips -->
+            <div class="search-chips">
+              <span class="chips-label">Popular:</span>
+              <button
+                v-for="chip in POPULAR_SEARCHES"
+                :key="chip.q"
+                type="button"
+                class="chip"
+                @click="applySearchChip(chip)"
               >
-              <p>{{ c.what }}</p>
-            </li>
-          </ol>
-          <button type="button" class="cta" @click="nav.go('teams', 'how')">
-            See how it works <LineIcon name="arrow" />
+                {{ chip.label }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Companion: Live Vitals Bento -->
+        <aside class="hero-vitals" aria-label="House metrics and term dates">
+          <div class="vitals-header">
+            <div class="vitals-title-group">
+              <span class="vitals-sub">Academic &amp; Student Operations</span>
+              <h2 class="vitals-heading">House Vitals</h2>
+            </div>
+            <span class="status-pill">Active House</span>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-num mono">{{ courses.length }}</span>
+              <span class="stat-label">Courses Indexed</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num mono">{{ totalPapers }}</span>
+              <span class="stat-label">Past Exam Papers</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num mono">{{ totalNotes }}</span>
+              <span class="stat-label">Verified Study Notes</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num mono">{{ regions.length }}</span>
+              <span class="stat-label">Regional Chapters</span>
+            </div>
+          </div>
+
+          <div v-if="nextExam" class="exam-alert">
+            <div class="alert-icon">
+              <LineIcon name="cal" />
+            </div>
+            <div class="alert-content">
+              <strong>Upcoming Academic Milestone</strong>
+              <p>{{ nextExam.label }} scheduled for {{ formatExamDate(nextExam.date) }}.</p>
+            </div>
+            <button
+              type="button"
+              class="alert-link"
+              aria-label="View relevant past papers"
+              @click="findExamPyqs(nextExam.exam)"
+            >
+              Past Papers
+            </button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ 2. Academic Resources & Study Hub ============ -->
+    <section id="resources" class="section-container" aria-labelledby="resources-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="resources-heading" class="section-title">Academic Resources</h2>
+          <p class="section-desc">
+            Organized course materials across all degree levels with direct access to exam papers
+            and lecture notes.
+          </p>
+        </div>
+        <button type="button" class="btn btn-secondary" @click="nav.go('resources')">
+          <span>Open Full Course Map</span>
+          <LineIcon name="arrow" />
+        </button>
+      </div>
+
+      <!-- Pinned Courses Bar (if student has pinned courses) -->
+      <div v-if="store.mine.length" class="pinned-bar">
+        <span class="pinned-label">Your Pinned Courses:</span>
+        <div class="pinned-chips">
+          <button
+            v-for="code in store.mine"
+            :key="code"
+            type="button"
+            class="pinned-chip"
+            @click="(e) => openCourse(code, {}, e)"
+          >
+            <b>{{ byCode[code]?.short || code }}</b>
+            <span class="mono">{{ code }}</span>
           </button>
-        </section>
+        </div>
+      </div>
 
-        <div class="band" aria-hidden="true" />
+      <!-- Level Filter Tabs -->
+      <div class="level-tabs" role="tablist" aria-label="Course levels">
+        <button
+          v-for="tab in LEVEL_TABS"
+          :key="tab.id"
+          type="button"
+          role="tab"
+          class="level-tab"
+          :class="{ active: activeLevel === tab.id }"
+          :aria-selected="activeLevel === tab.id"
+          @click="activeLevel = tab.id"
+        >
+          <span>{{ tab.label }}</span>
+          <span class="tab-count mono">{{ getCoursesByLevel(tab.id).length }}</span>
+        </button>
+      </div>
 
-        <!-- ============ Close ============ -->
-        <section class="panel close" aria-label="Stay in touch">
-          <p>Hear about the next event, meetup and set of notes first.</p>
-          <a class="cta wa" :href="WHATSAPP" target="_blank" rel="noopener">
-            <LineIcon name="wa" /> Join the WhatsApp channel
+      <!-- Course Cards Grid -->
+      <div class="courses-grid">
+        <article v-for="course in displayedCourses" :key="course.code" class="course-card">
+          <div class="course-card-top">
+            <div class="course-identity">
+              <span class="course-code mono">{{ course.code }}</span>
+              <span class="course-level-tag">{{ getTrackLabel(course.track) }}</span>
+            </div>
+            <button
+              type="button"
+              class="pin-btn"
+              :class="{ pinned: isMine(course.code) }"
+              :aria-label="isMine(course.code) ? 'Unpin course' : 'Pin course'"
+              @click="togglePin(course.code)"
+            >
+              <LineIcon name="pin" />
+            </button>
+          </div>
+
+          <h3 class="course-title">{{ course.name }}</h3>
+
+          <div class="course-metrics">
+            <span class="metric-item">
+              <LineIcon name="book" />
+              <span>{{ course.pyqs.length }} Past Papers</span>
+            </span>
+            <span class="metric-item">
+              <LineIcon name="portal" />
+              <span>{{ course.notes.length }} Note Sets</span>
+            </span>
+          </div>
+
+          <div class="course-card-actions">
+            <button
+              type="button"
+              class="btn-open-course"
+              @click="(e) => openCourse(course.code, { tab: 'pyqs' }, e)"
+            >
+              <span>View Past Papers</span>
+              <LineIcon name="arrow" />
+            </button>
+            <button
+              type="button"
+              class="btn-open-notes"
+              @click="(e) => openCourse(course.code, { tab: 'notes' }, e)"
+            >
+              Notes
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <div class="section-footer-action">
+        <button type="button" class="btn btn-secondary" @click="nav.go('resources')">
+          <span>Search all {{ courses.length }} courses in the Study Corner</span>
+          <LineIcon name="arrow" />
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ 3. Events & Wings Showcase ============ -->
+    <section id="events" class="section-container" aria-labelledby="events-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="events-heading" class="section-title">House Events &amp; Wings</h2>
+          <p class="section-desc">
+            Competitions, cultural evenings, tech workshops, and guest talks curated by our student
+            committees.
+          </p>
+        </div>
+        <button type="button" class="btn btn-secondary" @click="nav.go('events')">
+          <span>View All {{ events.length }} Events</span>
+          <LineIcon name="arrow" />
+        </button>
+      </div>
+
+      <!-- Wing Filter Pills -->
+      <div class="wing-filters" role="tablist" aria-label="Event wings">
+        <button
+          type="button"
+          class="wing-filter-btn"
+          :class="{ active: activeWing === 'all' }"
+          @click="activeWing = 'all'"
+        >
+          All Wings
+        </button>
+        <button
+          v-for="(meta, key) in WINGS"
+          :key="key"
+          type="button"
+          class="wing-filter-btn"
+          :class="[`w-${key}`, { active: activeWing === key }]"
+          @click="activeWing = key"
+        >
+          {{ meta.label }}
+        </button>
+      </div>
+
+      <!-- Events Presentation: Spotlight + Recent Grid -->
+      <div class="events-layout">
+        <!-- Spotlight Event Card -->
+        <article v-if="spotlightEvent" class="event-spotlight-card">
+          <div v-if="spotlightEvent.image" class="spotlight-image-wrap">
+            <img
+              :src="img.card(spotlightEvent.image)"
+              :alt="spotlightEvent.title"
+              loading="lazy"
+              decoding="async"
+              class="spotlight-img"
+            />
+          </div>
+          <div class="spotlight-body">
+            <div class="spotlight-meta">
+              <span class="wing-tag" :class="`w-${spotlightEvent.wing}`">
+                {{ WINGS[spotlightEvent.wing]?.label || spotlightEvent.wing }}
+              </span>
+              <span class="date-badge mono">{{ formatEventDate(spotlightEvent) }}</span>
+            </div>
+            <h3 class="spotlight-title">{{ spotlightEvent.title }}</h3>
+            <p class="spotlight-desc">{{ spotlightEvent.desc }}</p>
+            <div class="spotlight-foot">
+              <span v-if="spotlightEvent.attendees" class="attendee-count">
+                <LineIcon name="people" />
+                <span>{{ spotlightEvent.attendees }} Attendees</span>
+              </span>
+              <button type="button" class="btn btn-secondary btn-sm" @click="nav.go('events')">
+                <span>Event Archive</span>
+                <LineIcon name="arrow" />
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Recent Events Column -->
+        <div class="recent-events-list">
+          <article v-for="event in recentEvents" :key="event.id" class="recent-event-card">
+            <div class="recent-event-header">
+              <span class="wing-indicator" :class="`w-${event.wing}`" />
+              <span class="wing-name">{{ WINGS[event.wing]?.label || event.wing }}</span>
+              <span class="event-date-text mono">{{ formatEventDate(event) }}</span>
+            </div>
+            <h4 class="recent-event-title">{{ event.title }}</h4>
+            <p class="recent-event-snippet">{{ truncateText(event.desc, 120) }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. Regional Chapters Network ============ -->
+    <section id="house" class="section-container" aria-labelledby="regions-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="regions-heading" class="section-title">Regional Chapters</h2>
+          <p class="section-desc">
+            Nine regional hubs across India connecting students through in-person meetups, hack
+            sessions, and celebrations.
+          </p>
+        </div>
+        <button type="button" class="btn btn-secondary" @click="nav.go('house', 'regions')">
+          <span>Explore Regional Chapters</span>
+          <LineIcon name="arrow" />
+        </button>
+      </div>
+
+      <div class="regions-grid">
+        <article
+          v-for="region in regions"
+          :key="region.id"
+          class="region-card"
+          tabindex="0"
+          @click="nav.go('house', 'regions')"
+          @keydown.enter="nav.go('house', 'regions')"
+        >
+          <div class="region-top">
+            <span class="region-pin">
+              <LineIcon name="pin" />
+            </span>
+            <span class="region-meetup-count mono">{{ region.items.length }} Meetups</span>
+          </div>
+          <h3 class="region-city">{{ region.name }}</h3>
+          <p class="region-info">
+            {{
+              region.items.length > 0
+                ? `${region.items.length} community gatherings hosted`
+                : 'Active regional hub'
+            }}
+          </p>
+          <div class="region-link">
+            <span>View Meetup Log</span>
+            <LineIcon name="arrow" />
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ 5. Upper House Council (UHC) Leadership ============ -->
+    <section id="teams" class="section-container" aria-labelledby="council-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="council-heading" class="section-title">House Leadership</h2>
+          <p class="section-desc">
+            Elected student representatives steering academic operations, community wings, and
+            student welfare.
+          </p>
+        </div>
+        <button type="button" class="btn btn-secondary" @click="nav.go('teams')">
+          <span>View Full House Roster</span>
+          <LineIcon name="arrow" />
+        </button>
+      </div>
+
+      <div class="council-grid">
+        <article v-for="leader in upper" :key="leader.id" class="council-card">
+          <div class="council-photo-wrap">
+            <img
+              v-if="leader.img"
+              :src="portrait.card(leader.img)"
+              :alt="leader.name"
+              loading="lazy"
+              decoding="async"
+              class="council-photo"
+            />
+            <div v-else class="council-photo-fallback">
+              <LineIcon name="people" />
+            </div>
+          </div>
+          <div class="council-body">
+            <h3 class="council-name">{{ leader.name }}</h3>
+            <span class="council-role">{{ leader.role }}</span>
+            <span class="council-house-tag">Upper House Council</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="teams-banner">
+        <div class="teams-banner-text">
+          <strong>Looking for community wings and crew teams?</strong>
+          <p>
+            Sundarbans House is supported by Lower House regional coordinators, technical builders,
+            and cultural curators.
+          </p>
+        </div>
+        <button type="button" class="btn btn-secondary" @click="nav.go('teams', 'how')">
+          <span>See How Teams Work</span>
+          <LineIcon name="arrow" />
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ 6. Student Quick Access & Portal Integration ============ -->
+    <section class="section-container" aria-labelledby="utilities-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="utilities-heading" class="section-title">Student Access &amp; Portals</h2>
+          <p class="section-desc">
+            Quick shortcuts to verified certificate validation, the official IITM student portal,
+            and community channels.
+          </p>
+        </div>
+      </div>
+
+      <div class="utilities-grid">
+        <article class="utility-card">
+          <div class="utility-icon">
+            <LineIcon name="seal" />
+          </div>
+          <h3 class="utility-title">Verify Certificate</h3>
+          <p class="utility-desc">
+            Validate authentic event participation and council certificates issued under Sundarbans
+            House.
+          </p>
+          <RouterLink to="/verify-certificate" class="utility-btn">
+            <span>Verify Credential</span>
+            <LineIcon name="arrow" />
+          </RouterLink>
+        </article>
+
+        <article class="utility-card">
+          <div class="utility-icon">
+            <LineIcon :name="PORTAL.icon" />
+          </div>
+          <h3 class="utility-title">IITM Student Portal</h3>
+          <p class="utility-desc">
+            Access your primary IIT Madras BS degree portal for course registration, grades, and
+            official submissions.
+          </p>
+          <a :href="PORTAL.href" target="_blank" rel="noopener" class="utility-btn">
+            <span>Launch Student Portal</span>
+            <LineIcon name="arrow" />
           </a>
-        </section>
-      </div>
+        </article>
 
-      <div v-if="rolling" class="roll intro" aria-hidden="true" />
-      <div class="roll end" :class="{ away: scrolled }" aria-hidden="true">
-        <span class="cue">Scroll to unroll</span>
-      </div>
-    </div>
+        <article class="utility-card">
+          <div class="utility-icon">
+            <LineIcon name="wa" />
+          </div>
+          <h3 class="utility-title">WhatsApp Announcements</h3>
+          <p class="utility-desc">
+            Join the verified official broadcast channel for instant meetup updates, reminders, and
+            house news.
+          </p>
+          <a :href="WHATSAPP" target="_blank" rel="noopener" class="utility-btn">
+            <span>Join Official Channel</span>
+            <LineIcon name="arrow" />
+          </a>
+        </article>
 
-    <footer class="foot">
-      <RouterLink to="/verify-certificate">
-        <LineIcon name="seal" /> Verify a certificate
-      </RouterLink>
-      <a :href="PORTAL.href" target="_blank" rel="noopener">
-        <LineIcon :name="PORTAL.icon" /> IITM student portal
-      </a>
-      <small>Sundarbans House · IIT Madras BS degree</small>
-    </footer>
+        <article class="utility-card">
+          <div class="utility-icon">
+            <LineIcon name="door" />
+          </div>
+          <h3 class="utility-title">Members Lounge</h3>
+          <p class="utility-desc">
+            Access the house lounge for study rooms, collaborative discussions, and community
+            achievements.
+          </p>
+          <RouterLink to="/lounge" class="utility-btn">
+            <span>Enter Lounge</span>
+            <LineIcon name="arrow" />
+          </RouterLink>
+        </article>
+      </div>
+    </section>
   </main>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import CREST from '../assets/crest.webp';
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import LineIcon from '../components/site/LineIcon.vue';
-import PatFigure from '../components/site/PatFigure.vue';
-import PatPosters from '../components/site/PatPosters.vue';
-import PatSearch from '../components/site/PatSearch.vue';
-import { ASSET, FIGS, FOREST } from '../lib/pat.js';
-import { nav } from '../lib/store.js';
-import { courses, TOOLS, WHATSAPP } from '../lib/courses.js';
-import { events, WINGS } from '../lib/events.js';
-import { meetupCount, photoCount, portrait, regions, upper, lower } from '../lib/house.js';
-import { COMMUNITIES, CREW } from '../data/teams.js';
+import { courses, byCode, nextExam, TOOLS, WHATSAPP } from '../lib/courses.js';
+import { events, WINGS, MONTH } from '../lib/events.js';
+import { regions, upper, portrait } from '../lib/house.js';
+import { isMine, nav, openCourse, search, store, togglePin } from '../lib/store.js';
 
 const PORTAL = TOOLS[0];
-const forestSet = `${ASSET.forest800} 800w, ${ASSET.forest} 1400w`;
 
-// ---- Numbers, all from the data ------------------------------------------------------------
-const sum = (f) => courses.reduce((n, c) => n + f(c), 0);
-const TOTALS = {
-  courses: courses.length,
-  papers: sum((c) => c.pyqs.length),
-  notes: sum((c) => c.notes.length),
-  events: events.length,
-  wings: Object.keys(WINGS).length,
-  seasons: new Set(events.filter((e) => e.y != null).map((e) => e.y)).size,
-  regions: regions.length,
-  meetups: meetupCount,
-  photos: photoCount,
-  seats: upper.length + lower.length,
-  communities: COMMUNITIES.length,
-  crew: CREW.length,
-};
-const STATS = {
-  res: [
-    { key: 'courses', label: 'courses' },
-    { key: 'papers', label: 'past papers' },
-    { key: 'notes', label: 'sets of notes' },
-  ],
-  ev: [
-    { key: 'events', label: 'events' },
-    { key: 'wings', label: 'wings' },
-    { key: 'seasons', label: 'seasons' },
-  ],
-  house: [
-    { key: 'regions', label: 'regions' },
-    { key: 'meetups', label: 'meetups' },
-    { key: 'photos', label: 'photos' },
-  ],
-  teams: [
-    { key: 'seats', label: 'council seats' },
-    { key: 'communities', label: 'communities' },
-    { key: 'crew', label: 'crew teams' },
-  ],
-};
+// ---- Totals & Stats -------------------------------------------------------------
+const totalPapers = computed(() => courses.reduce((acc, c) => acc + (c.pyqs?.length || 0), 0));
+const totalNotes = computed(() => courses.reduce((acc, c) => acc + (c.notes?.length || 0), 0));
 
-// The snake-boat as the house: who sits where. `at` is the marker's spot on the plate (%).
-const names = (list) => list.map((x) => x.name).join(', ');
-const CREWMAP = [
-  {
-    n: 1,
-    at: [86, 9],
-    where: 'At the helm',
-    who: 'Upper House Council',
-    count: upper.length,
-    what: `${upper.map((p) => p.role).join(', ')}: they steer the house.`,
-  },
-  {
-    n: 2,
-    at: [38, 91],
-    where: 'At the oars',
-    who: 'Lower House Council',
-    count: lower.length,
-    what: 'A coordinator for each region, pulling together.',
-  },
-  {
-    n: 3,
-    at: [9.5, 30],
-    where: 'On the drum',
-    who: 'Communities',
-    count: COMMUNITIES.length,
-    what: `${names(COMMUNITIES)} set the beat with events.`,
-  },
-  {
-    n: 4,
-    at: [63, 74],
-    where: 'In the hull',
-    who: 'Crew',
-    count: CREW.length,
-    what: `${names(CREW)} keep the boat seen and afloat.`,
-  },
+// ---- Search Handling -----------------------------------------------------------
+const searchQuery = ref('');
+const searchHits = computed(() => {
+  const q = searchQuery.value.trim();
+  if (!q) return [];
+  return search(q).courses.slice(0, 5);
+});
+
+const POPULAR_SEARCHES = [
+  { label: 'Maths 1 PYQs', q: 'Maths 1 pyq' },
+  { label: 'DBMS Notes', q: 'dbms notes' },
+  { label: 'Deep Learning', q: 'deep learning' },
+  { label: 'Python Notes', q: 'python notes' },
+  { label: 'PDSA PYQs', q: 'pdsa pyq' },
 ];
 
-// ---- Intro ----------------------------------------------------------------------------------
-const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
-const RM = ref(motionPreference.matches);
-const rolling = ref(!RM.value);
-const ff = ref(RM.value);
-const instant = ref(RM.value);
-const settled = ref(RM.value);
-const tigerPaint = ref(RM.value);
-const timers = [];
-const later = (ms, f) => timers.push(setTimeout(f, ms));
-
-function unrolled(e) {
-  if (e.animationName.includes('unroll')) rolling.value = false;
-}
-// Any input during the intro jumps straight to the composed title panel.
-function fastForward() {
-  timers.forEach(clearTimeout);
-  ff.value = true;
-  rolling.value = false;
-  instant.value = true;
-  tigerPaint.value = true;
-  settled.value = true;
-  dropIntroListeners();
-}
-const INTRO_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchmove'];
-function dropIntroListeners() {
-  for (const t of INTRO_EVENTS) removeEventListener(t, fastForward, true);
-}
-
-// ---- Panels: paint once when they arrive, loop only while on screen ---------------------------
-const seen = reactive({ res: RM.value, ev: RM.value, house: RM.value, teams: RM.value });
-const live = reactive({ res: false, ev: false, house: false, teams: false });
-const shown = reactive(
-  Object.fromEntries(Object.keys(TOTALS).map((k) => [k, RM.value ? TOTALS[k] : 0]))
-);
-const root = ref(null);
-const scrollEl = ref(null);
-const heroEl = ref(null);
-const sceneEl = ref(null);
-const resEl = ref(null);
-const evEl = ref(null);
-const houseEl = ref(null);
-const teamsEl = ref(null);
-const heroLive = ref(true);
-const arrive = ref(RM.value ? 1 : 0);
-const scrolled = ref(false);
-
-const countRafs = new Set();
-function countUp(id) {
-  const t0 = performance.now();
-  const keys = STATS[id].map((s) => s.key);
-  const tick = (t) => {
-    const k = Math.min(1, (t - t0) / 1100);
-    const e = 1 - (1 - k) ** 3;
-    for (const key of keys) shown[key] = Math.round(TOTALS[key] * e);
-    countRafs.delete(raf);
-    if (k < 1) {
-      raf = requestAnimationFrame(tick);
-      countRafs.add(raf);
-    }
-  };
-  let raf = requestAnimationFrame(tick);
-  countRafs.add(raf);
-}
-
-let io;
-let heroIo;
-function watchPanels() {
-  const els = { res: resEl.value, ev: evEl.value, house: houseEl.value, teams: teamsEl.value };
-  const idOf = new Map(Object.entries(els).map(([k, el]) => [el, k]));
-  io = new IntersectionObserver(
-    (entries) => {
-      for (const en of entries) {
-        const id = idOf.get(en.target);
-        live[id] = en.isIntersecting && !document.hidden && !RM.value;
-        if (en.isIntersecting && en.intersectionRatio > 0.18 && !seen[id]) {
-          seen[id] = true;
-          if (!RM.value) countUp(id);
-        }
-      }
-    },
-    { threshold: [0, 0.18, 0.4] }
-  );
-  Object.values(els).forEach((el) => io.observe(el));
-  heroIo = new IntersectionObserver(([en]) => {
-    heroLive.value = en.isIntersecting;
-    kickWater();
-  });
-  heroIo.observe(heroEl.value);
-}
-
-// ---- Scroll: the roll turns and thins; the House boats glide in -----------------------------
-let scrollRaf = 0;
-function onScroll() {
-  if (!scrollRaf) scrollRaf = requestAnimationFrame(applyScroll);
-}
-function applyScroll() {
-  scrollRaf = 0;
-  const el = scrollEl.value;
-  if (!el) return;
-  const y = scrollY;
-  const max = Math.max(1, el.offsetHeight - innerHeight);
-  scrolled.value = y > 40;
-  el.style.setProperty('--spin', `${(y * 0.9).toFixed(1)}px`);
-  el.style.setProperty('--thin', (1 - Math.min(1, y / max) * 0.32).toFixed(3));
-  if (!RM.value && houseEl.value) {
-    const r = houseEl.value.getBoundingClientRect();
-    const k = (innerHeight - r.top) / (innerHeight * 0.75);
-    arrive.value = Math.max(0, Math.min(1, k)).toFixed(3);
+function applySearchChip(chip) {
+  searchQuery.value = chip.q;
+  const res = search(chip.q);
+  if (res.courses.length > 0) {
+    const first = res.courses[0];
+    openCourse(first.code, first);
+  } else {
+    handleSearchSubmit();
   }
 }
 
-// ---- Pointer: the tiger looks toward it; painted things shift a hair -------------------------
-let ptrRaf = 0;
-let ptr = null;
-function onPointer(e) {
-  ptr = e;
-  if (!ptrRaf) ptrRaf = requestAnimationFrame(applyPointer);
-}
-function applyPointer() {
-  ptrRaf = 0;
-  const hero = heroEl.value;
-  if (!hero || !heroLive.value || !ptr) return;
-  const r = hero.getBoundingClientRect();
-  const mx = ((ptr.clientX - r.left) / r.width) * 2 - 1;
-  const my = ((ptr.clientY - r.top) / r.height) * 2 - 1;
-  hero.style.setProperty('--mx', Math.max(-1, Math.min(1, mx)).toFixed(3));
-  hero.style.setProperty('--my', Math.max(-1, Math.min(1, my)).toFixed(3));
-  const head = hero.querySelector('.tiger .pt-head');
-  if (head) {
-    const h = head.getBoundingClientRect();
-    const look = (h.top + h.height * 0.55 - ptr.clientY) / 320;
-    hero.style.setProperty('--look', Math.max(-1, Math.min(1, look)).toFixed(3));
-  }
+function handleSearchSubmit() {
+  if (!searchQuery.value.trim()) return;
+  store.q = searchQuery.value.trim();
+  nav.go('resources');
 }
 
-// ---- Water: the plate's river rows ripple sideways, the fishing boat rocks ------------------
-const forestEl = ref(null);
-const waterEl = ref(null);
-let geo = null;
-let waterRaf = 0;
-let forestReady = false;
-let disposed = false;
-let ro;
-function forestLoaded() {
-  (forestEl.value?.decode?.() ?? Promise.resolve())
-    .catch(() => {})
-    .finally(() => {
-      if (disposed) return;
-      forestReady = !!forestEl.value?.naturalWidth;
-      measureWater();
-      kickWater();
-    });
-}
-function measureWater() {
-  const scene = sceneEl.value;
-  const cv = waterEl.value;
-  if (!scene || !cv) return;
-  const W = scene.clientWidth;
-  const H = scene.clientHeight;
-  if (!W || !H) {
-    geo = null;
-    return;
+function hitCountText(hit) {
+  const n = hit.count;
+  if (hit.tab === 'notes') {
+    return `${n} ${n === 1 ? 'note set' : 'note sets'}`;
   }
-  const s = Math.max(W / FOREST.w, H / FOREST.h); // object-fit: cover, anchored bottom
-  const ox = (W - FOREST.w * s) / 2;
-  const oy = H - FOREST.h * s;
-  const top = oy + FOREST.boat.y * s;
-  const dpr = Math.min(devicePixelRatio || 1, 1.5);
-  cv.style.top = `${top}px`;
-  cv.style.height = `${H - top}px`;
-  cv.width = Math.round(W * dpr);
-  cv.height = Math.round((H - top) * dpr);
-  geo = { s, ox, oy, top, dpr, W, H };
-}
-function kickWater() {
-  if (RM.value || waterRaf || !forestReady || !heroLive.value || document.hidden) return;
-  waterRaf = requestAnimationFrame(drawWater);
-}
-function drawWater(t) {
-  waterRaf = 0;
-  const cv = waterEl.value;
-  const img = forestEl.value;
-  if (disposed || RM.value || !cv || !img || !geo || !heroLive.value || document.hidden) return;
-  // Responsive srcset changes can briefly reset naturalWidth while a new source loads.
-  // Keep the original plate visible and wait for its load event before painting again.
-  if (!img.complete || !img.naturalWidth || !img.naturalHeight || !cv.width || !cv.height) return;
-  const ctx = cv.getContext('2d');
-  const { s, ox, oy, top, dpr, W } = geo;
-  const k = img.naturalWidth / FOREST.w; // source px per plate px
-  const sec = t / 1000;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, W, cv.height / dpr);
-  // River rows below the boat's waterline: each 2-plate-px row slides on its own sine.
-  const y0 = 805;
-  for (let y = y0; y < FOREST.h; y += 2) {
-    const amp = Math.min(1, (y - y0) / 40) * 2.4;
-    const dx = Math.sin(sec * 1.25 + y * 0.075) * amp + Math.sin(sec * 0.6 + y * 0.021) * amp * 0.5;
-    ctx.globalAlpha = Math.min(1, (y - y0) / 24);
-    ctx.drawImage(
-      img,
-      0,
-      y * k,
-      img.naturalWidth,
-      2 * k,
-      ox + dx,
-      oy + y * s - top,
-      FOREST.w * s,
-      2 * s + 0.6
-    );
-  }
-  ctx.globalAlpha = 1;
-  // The fishing boat rocks on the swell.
-  const b = FOREST.boat;
-  const cx = ox + (b.x + b.w / 2) * s;
-  const cy = oy + (b.y + b.h * 0.85) * s - top;
-  ctx.save();
-  ctx.translate(cx, cy + Math.sin(sec * 1.1) * 1.6);
-  ctx.rotate(Math.sin(sec * 1.1 - 0.8) * 0.011);
-  ctx.drawImage(boatCopy(img, k), -b.w * s * 0.5, -b.h * s * 0.85, b.w * s, b.h * s);
-  ctx.restore();
-  waterRaf = requestAnimationFrame(drawWater);
+  return `${n} ${n === 1 ? 'paper' : 'papers'}`;
 }
 
-// The boat's patch of the plate, feathered at the sides and bottom so its rocking leaves no seam.
-let boatCv = null;
-function boatCopy(img, k) {
-  if (boatCv?.src === img.currentSrc && boatCv.width === img.naturalWidth) return boatCv.cv;
-  const b = FOREST.boat;
-  const cv = document.createElement('canvas');
-  cv.width = Math.round(b.w * k);
-  cv.height = Math.round(b.h * k);
-  const c = cv.getContext('2d');
-  c.drawImage(img, b.x * k, b.y * k, b.w * k, b.h * k, 0, 0, cv.width, cv.height);
-  c.globalCompositeOperation = 'destination-in';
-  const gx = c.createLinearGradient(0, 0, cv.width, 0);
-  gx.addColorStop(0, '#0000');
-  gx.addColorStop(0.06, '#000');
-  gx.addColorStop(0.94, '#000');
-  gx.addColorStop(1, '#0000');
-  c.fillStyle = gx;
-  c.fillRect(0, 0, cv.width, cv.height);
-  const gy = c.createLinearGradient(0, 0, 0, cv.height);
-  gy.addColorStop(0, '#0000');
-  gy.addColorStop(0.04, '#000');
-  gy.addColorStop(0.9, '#000');
-  gy.addColorStop(1, '#0000');
-  c.fillStyle = gy;
-  c.fillRect(0, 0, cv.width, cv.height);
-  boatCv = { src: img.currentSrc, width: img.naturalWidth, cv };
-  return cv;
+// ---- Level Tabs -----------------------------------------------------------------
+const LEVEL_TABS = [
+  { id: 'all', label: 'All Courses' },
+  { id: 'foundation', label: 'Foundation' },
+  { id: 'programming', label: 'Diploma Programming' },
+  { id: 'datascience', label: 'Diploma Data Science' },
+  { id: 'degree', label: 'Degree Level' },
+];
+
+const activeLevel = ref('all');
+
+function getCoursesByLevel(levelId) {
+  if (levelId === 'all') return courses;
+  return courses.filter((c) => c.track === levelId);
 }
 
-function onVisibility() {
-  const els = { res: resEl.value, ev: evEl.value, house: houseEl.value, teams: teamsEl.value };
-  for (const [id, el] of Object.entries(els)) {
-    const r = el.getBoundingClientRect();
-    live[id] = !RM.value && !document.hidden && r.bottom > 0 && r.top < innerHeight;
-  }
-  kickWater();
-}
-function onMotionChange(e) {
-  RM.value = e.matches;
-  if (RM.value) {
-    fastForward();
-    for (const id of Object.keys(seen)) seen[id] = true;
-    for (const raf of countRafs) cancelAnimationFrame(raf);
-    countRafs.clear();
-    Object.assign(shown, TOTALS);
-    arrive.value = 1;
-    cancelAnimationFrame(waterRaf);
-    waterRaf = 0;
-  }
-  onVisibility();
-}
-
-onMounted(() => {
-  if (!RM.value) {
-    for (const t of INTRO_EVENTS)
-      addEventListener(t, fastForward, { capture: true, passive: true });
-    later(1250, () => (tigerPaint.value = true));
-    later(2700, () => {
-      settled.value = true;
-      dropIntroListeners();
-    });
-    later(1700, () => (rolling.value = false)); // in case animationend never fires
-  }
-  motionPreference.addEventListener('change', onMotionChange);
-  watchPanels();
-  addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', onScroll, { passive: true });
-  addEventListener('pointermove', onPointer, { passive: true });
-  document.addEventListener('visibilitychange', onVisibility);
-  ro = new ResizeObserver(() => {
-    measureWater();
-    kickWater();
-  });
-  ro.observe(sceneEl.value);
-  if (forestEl.value?.complete && forestEl.value.naturalWidth) forestLoaded();
-  applyScroll();
+const displayedCourses = computed(() => {
+  const list = getCoursesByLevel(activeLevel.value);
+  // Show top courses for this level
+  return list.slice(0, 6);
 });
 
-onBeforeUnmount(() => {
-  disposed = true;
-  motionPreference.removeEventListener('change', onMotionChange);
-  timers.forEach(clearTimeout);
-  dropIntroListeners();
-  io?.disconnect();
-  heroIo?.disconnect();
-  ro?.disconnect();
-  removeEventListener('scroll', onScroll);
-  removeEventListener('resize', onScroll);
-  removeEventListener('pointermove', onPointer);
-  document.removeEventListener('visibilitychange', onVisibility);
-  cancelAnimationFrame(scrollRaf);
-  cancelAnimationFrame(ptrRaf);
-  cancelAnimationFrame(waterRaf);
-  for (const raf of countRafs) cancelAnimationFrame(raf);
-  countRafs.clear();
-  waterRaf = 0;
+function getTrackLabel(track) {
+  switch (track) {
+    case 'foundation':
+      return 'Foundation';
+    case 'programming':
+      return 'Diploma Prog';
+    case 'datascience':
+      return 'Diploma DS';
+    case 'degree':
+      return 'Degree Level';
+    default:
+      return 'Course';
+  }
+}
+
+// ---- Events Filter --------------------------------------------------------------
+const activeWing = ref('all');
+
+const filteredEvents = computed(() => {
+  if (activeWing.value === 'all') return events;
+  return events.filter((e) => e.wing === activeWing.value);
 });
+
+const spotlightEvent = computed(() => filteredEvents.value[0] || null);
+const recentEvents = computed(() => filteredEvents.value.slice(1, 4));
+
+function formatEventDate(ev) {
+  if (!ev) return '';
+  if (ev.d != null && ev.m != null) {
+    return `${ev.d} ${MONTH[ev.m]} ${ev.y || ''}`.trim();
+  }
+  if (ev.m != null) {
+    return `${MONTH[ev.m]} ${ev.y || ''}`.trim();
+  }
+  return ev.date || 'Recent';
+}
+
+function formatExamDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function findExamPyqs(examName) {
+  store.q = `${examName || 'exam'} pyq`;
+  nav.go('resources');
+}
+
+function truncateText(text, maxLen) {
+  if (!text) return '';
+  if (text.length <= maxLen) return text;
+  return text.slice(0, maxLen).trim() + '...';
+}
 </script>
 
 <style scoped>
-@property --u {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 0px;
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding-bottom: 72px;
 }
 
-/* ---- Scroll palette: pigments on paper. The painting ignores the site theme; only the nav follows it. ---- */
-.pat {
-  --pp: #efdfc4;
-  --pcard: #f7ecd8;
-  --pi: #1d1915;
-  --pi2: #54483c;
-  --pv: #a52d16;
-  --pmari: #eaa53c;
-  --pmari-soft: #f6dcae;
-  --art-filter: none;
-  --beat: 0.7s;
-  --stroke: 2.4s;
-  --edge-w: 14px;
-  --tab-h: 0px;
-  --rod-h: 22px;
-  --roll-h: 46px;
-  --band-h: 22px;
-  --col: 100%;
-  --panel-gut: clamp(36px, 6vw, 120px);
-  --hero-h: max(520px, calc(100svh - var(--nav-h) - var(--tab-h) - var(--rod-h)));
-  position: relative;
-  padding: 0 0 36px;
-  overflow-x: clip;
-  background: var(--paper);
-}
-.defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-}
-
-.scroll {
-  position: relative;
-  width: var(--col);
-  margin: 0 auto;
-  padding-top: 0;
-}
-
-/* ---- Paper: colour, grain and the lotus borders, all under the lamp filter in dark ---- */
-.paper {
-  position: relative;
-  isolation: isolate;
-  color: var(--pi);
-}
-.paper::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    url('../assets/pat/edge.webp') left top / var(--edge-w) auto repeat-y,
-    url('../assets/pat/edge.webp') right top / var(--edge-w) auto repeat-y,
-    url('../assets/pat/grain.webp') 0 0 / 512px 512px,
-    var(--pp);
-  background-blend-mode: normal, normal, multiply, normal;
-  filter: var(--art-filter);
-}
-.rolling .paper {
-  clip-path: inset(0 -40px calc(100% - var(--u)) -40px);
-}
-.rolling .scroll {
-  animation: unroll 1.45s cubic-bezier(0.55, 0.02, 0.25, 1) both;
-}
-@keyframes unroll {
-  0% {
-    --u: 0px;
-  }
-  82% {
-    --u: calc(var(--hero-h) + 10px);
-  }
-  100% {
-    --u: var(--hero-h);
-  }
-}
-
-.band {
-  height: var(--band-h);
-  margin: 0 var(--edge-w);
-  background: url('../assets/pat/band.webp') center / auto 100% repeat-x;
-  filter: var(--art-filter);
-}
-
-/* ---- The rod at the top and the roll that carries the rest of the scroll ---- */
-.rod,
-.roll {
-  position: relative;
-  z-index: 4;
-  margin: 0;
-  border-radius: 99px;
-  filter: var(--art-filter);
-}
-.rod {
-  height: var(--rod-h);
-  background: linear-gradient(
-    #3a2412 0,
-    #8a4b1c 18%,
-    #d99a4a 40%,
-    #f3c47b 50%,
-    #b8702c 72%,
-    #5a3214 100%
+/* ==========================================================================
+   1. HERO SECTION
+   ========================================================================== */
+.hero-section {
+  padding: 32px 24px 16px;
+  background: radial-gradient(
+    ellipse 80% 50% at 50% -20%,
+    color-mix(in srgb, var(--mari) 12%, transparent),
+    transparent
   );
-  box-shadow: 0 6px 10px -6px rgb(40 20 5 / 0.6);
 }
-.rod::before,
-.rod::after,
-.roll::before,
-.roll::after {
-  content: '';
+
+.hero-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 12px 4px 6px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 550;
+  width: fit-content;
+}
+
+.crest-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.hero-title {
+  font-size: clamp(32px, 4.5vw, 54px);
+  line-height: 1.1;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.hero-desc {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 58ch;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Base button styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition:
+    transform 0.18s var(--ease-out),
+    background-color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--mari);
+  color: var(--on-mari);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--mari) 35%, transparent);
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--mari) 88%, #000);
+}
+
+.btn-secondary {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+
+.btn-secondary:hover {
+  background: var(--sunk);
+  border-color: var(--ink-3);
+}
+
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* Search Box */
+.hero-search-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1.5px solid var(--line-strong);
+  border-radius: 12px;
+  padding: 0 10px 0 16px;
+  height: 52px;
+  box-shadow: var(--shadow);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.search-box:focus-within {
+  border-color: var(--mari-ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mari) 25%, transparent);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 15px;
+  outline: none;
+}
+
+.search-box input::placeholder {
+  color: var(--ink-3);
+}
+
+.search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--ink-3);
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.search-clear:hover {
+  color: var(--ink);
+  background: var(--sunk);
+}
+
+.search-submit {
+  background: var(--mari);
+  color: var(--on-mari);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.18s;
+}
+
+.search-submit:hover {
+  background: color-mix(in srgb, var(--mari) 90%, #000);
+}
+
+/* Results dropdown */
+.search-results {
   position: absolute;
-  top: -4px;
-  bottom: -4px;
-  width: 18px;
-  border-radius: 7px;
-  border: 2px solid #1d1915;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 5px,
-      #1d1915 5px 7px,
-      transparent 7px 11px,
-      #1d1915 11px 13px,
-      transparent 13px
-    ),
-    linear-gradient(#7d1e0c, #c9391d 35%, #f06a3f 50%, #b8341b 70%, #6a1a0a);
-}
-.rod::before,
-.roll::before {
-  left: -2px;
-}
-.rod::after,
-.roll::after {
-  right: -2px;
-}
-/* The roll: layers of wound paper (the turning lines) with its lotus edges showing at the ends. */
-.roll {
-  height: var(--roll-h);
-  pointer-events: none;
-  background:
-    linear-gradient(
-      rgb(40 22 8 / 0.55),
-      rgb(40 22 8 / 0.05) 26%,
-      rgb(255 250 235 / 0.4) 40%,
-      rgb(40 22 8 / 0) 58%,
-      rgb(40 22 8 / 0.5) 100%
-    ),
-    linear-gradient(
-      90deg,
-      transparent 14px,
-      #c9391d 14px 18px,
-      #eaa53c 18px 24px,
-      #f5ead0 24px 34px,
-      #eaa53c 34px 40px,
-      transparent 40px calc(100% - 40px),
-      #eaa53c calc(100% - 40px) calc(100% - 34px),
-      #f5ead0 calc(100% - 34px) calc(100% - 24px),
-      #eaa53c calc(100% - 24px) calc(100% - 18px),
-      #c9391d calc(100% - 18px) calc(100% - 14px),
-      transparent calc(100% - 14px)
-    ),
-    repeating-linear-gradient(
-        rgb(90 60 30 / 0) 0 5px,
-        rgb(90 60 30 / 0.22) 5px 6px,
-        rgb(90 60 30 / 0) 6px 11px
-      )
-      0 var(--spin, 0px) / 100% 11px,
-    #ecdcbc;
-  box-shadow:
-    0 -14px 18px -12px rgb(40 22 8 / 0.35),
-    0 12px 16px -8px rgb(20 10 0 / 0.45);
-}
-.roll.intro {
-  position: absolute;
-  top: var(--rod-h);
+  top: 58px;
   left: 0;
   right: 0;
-  transform: translateY(calc(var(--u) - var(--roll-h)));
-}
-.roll.intro {
-  --spin: calc(var(--u) * 0.9);
-}
-.roll.end {
-  position: sticky;
-  bottom: var(--tab-h);
-  margin-top: calc(-1 * var(--roll-h));
-  transform-origin: 50% 100%;
-  transform: scaleY(var(--thin, 1));
-}
-.rolling .roll.end {
-  visibility: hidden;
-}
-.cue {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #3a2412;
-  transform: scaleY(calc(1 / var(--thin, 1)));
-  transition: opacity 0.5s;
-}
-.away .cue {
-  opacity: 0;
-}
-
-/* ============ Title panel ============ */
-.hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: var(--band-h) minmax(0, 1fr) var(--band-h);
-  height: var(--hero-h);
-  --mx: 0;
-  --my: 0;
-}
-.hero > .band:first-child {
-  grid-area: 1 / 1;
-}
-.hero > .band:last-child {
-  grid-area: 3 / 1;
-}
-.scene {
-  position: relative;
-  grid-column: 1;
-  grid-row: 2;
-  min-width: 0;
-  min-height: 0;
-  margin: 0 var(--edge-w);
+  z-index: 40;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px -12px rgb(0 0 0 / 0.2);
   overflow: hidden;
-  filter: var(--art-filter);
-}
-.scene::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse 48% 46% at 50% 5%, var(--pp) 38%, transparent 100%);
-}
-.forest {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.forest img,
-img.forest {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 100%;
-}
-img.forest.ink {
-  position: absolute;
-  inset: 0;
-  filter: url(#pat-ink);
-}
-.water {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  pointer-events: none;
-}
-.pat:not(.ff) .forest.color {
-  -webkit-mask: var(--brush-v) no-repeat 0 100% / 100% 250%;
-  mask: var(--brush-v) no-repeat 0 100% / 100% 250%;
-  animation: wipe-v 1.35s cubic-bezier(0.5, 0.05, 0.3, 1) 0.5s both;
-}
-@keyframes wipe-v {
-  to {
-    -webkit-mask-position: 0 0;
-    mask-position: 0 0;
-  }
-}
-.pat.settled .forest.color {
-  animation: none;
-  -webkit-mask: none;
-  mask: none;
-}
-.pat.settled .w {
-  animation: none;
-  -webkit-mask: none;
-  mask: none;
-}
-.settled img.forest.ink {
-  display: none;
+  max-height: 320px;
+  overflow-y: auto;
 }
 
-/* The tiger: walks in as a line drawing, stops on the bank, is coloured in. */
-.tiger {
-  position: absolute;
-  left: 45%;
-  bottom: 17%;
-  width: 36%;
-  transform: translate(calc(var(--mx) * 9px), calc(var(--my) * 4px));
-  transition: transform 0.8s var(--ease-out);
-}
-.pat:not(.ff) .walk {
-  animation: walk 1.9s cubic-bezier(0.3, 0.1, 0.25, 1) 0.55s both;
-}
-@keyframes walk {
-  from {
-    transform: translateX(170%);
-  }
-}
-.pat:not(.ff) .bob {
-  animation: stride 0.4s ease-in-out 0.55s 4 alternate both;
-}
-@keyframes stride {
-  from {
-    transform: translateY(0) rotate(0);
-  }
-  to {
-    transform: translateY(-2.2%) rotate(-0.7deg);
-  }
-}
-
-/* Title: crest pressed like a seal, the name brushed on, the degree lettered in a cartouche. */
-.title {
-  position: relative;
-  grid-row: 2;
-  grid-column: 1;
-  align-self: start;
-  justify-self: center;
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  margin-top: clamp(22px, 5vh, 52px);
-  padding: 0 20px;
-  text-align: center;
-  transform: translate(calc(var(--mx) * -3px), calc(var(--my) * -2px));
-  transition: transform 0.8s var(--ease-out);
-}
-.seal {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 84px;
-  height: 84px;
-  filter: var(--art-filter);
-}
-.seal svg {
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-}
-.seal .ring {
-  fill: #eaa53c;
-  stroke: #1d1915;
-  stroke-width: 3;
-}
-.seal .dots {
-  fill: none;
-  stroke: #b8341b;
-  stroke-width: 4.5;
-  stroke-linecap: round;
-  stroke-dasharray: 0 8.48;
-}
-.seal img {
-  position: relative;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2.5px solid #1d1915;
-  background: #111;
-}
-.pat:not(.ff) .seal {
-  animation: stamp 0.55s cubic-bezier(0.3, 1.6, 0.5, 1) 1.35s both;
-}
-@keyframes stamp {
-  from {
-    opacity: 0;
-    transform: scale(1.5) rotate(-14deg);
-  }
-  40% {
-    opacity: 1;
-  }
-}
-h1 {
-  margin: 0;
+.search-hit {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  column-gap: 0.26em;
-  font-size: clamp(44px, 5.6vw, 84px);
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-  color: var(--pi);
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background-color 0.15s;
 }
-.w2 {
-  color: var(--pv);
+
+.search-hit:last-child {
+  border-bottom: none;
 }
-.w,
-.brushed {
-  display: inline-block;
-  padding: 0.04em 0.06em 0.1em;
+
+.search-hit:hover,
+.search-hit:focus-visible {
+  background: var(--sunk);
+  outline: none;
 }
-.pat:not(.ff) .w {
-  -webkit-mask: var(--brush) no-repeat 100% 0 / 250% 100%;
-  mask: var(--brush) no-repeat 100% 0 / 250% 100%;
-  animation: wipe-h 0.75s cubic-bezier(0.5, 0.05, 0.35, 1) 0.95s both;
-}
-.pat:not(.ff) .w2 {
-  animation-delay: 1.35s;
-  animation-duration: 0.6s;
-}
-@keyframes wipe-h {
-  to {
-    -webkit-mask-position: 0 0;
-    mask-position: 0 0;
-  }
-}
-.cartouche {
-  position: relative;
-  margin: 2px 0 0;
-  padding: 11px 34px 12px;
-  font-size: clamp(14px, 1.35vw, 17px);
-  font-weight: 650;
-  letter-spacing: 0.02em;
-  color: var(--pi);
-}
-.cartouche svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-.cartouche .fill {
-  fill: var(--pmari-soft);
-}
-.cartouche .rule {
-  fill: none;
-  stroke: var(--pi);
-  stroke-width: 2.2;
-  vector-effect: non-scaling-stroke;
-  stroke-dasharray: none;
-}
-.cartouche span {
-  position: relative;
-  display: inline-flex;
+
+.hit-info {
+  display: flex;
   align-items: center;
   gap: 10px;
 }
-.cartouche i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--pv);
-}
-.pat:not(.ff) .cartouche .rule {
-  /* Dashes must scale with the path during the reveal; restore the fixed-width
-     solid stroke afterward so neither the delay nor the finish has a stray arc. */
-  animation: draw 0.9s cubic-bezier(0.5, 0, 0.3, 1) 1.55s backwards;
-}
-@keyframes draw {
-  from {
-    vector-effect: none;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-  }
-  to {
-    vector-effect: none;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-  }
-}
-.pat:not(.ff) .cartouche .fill,
-.pat:not(.ff) .cartouche span {
-  animation: fade 0.5s ease-out 2.1s both;
-}
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-}
-.line {
-  max-width: 34ch;
-  margin: 2px 0 0;
-  font-size: clamp(15px, 1.4vw, 18px);
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--pi2);
-}
-.pat:not(.ff) .line {
-  animation: rise-in 0.6s var(--ease-out) 2.25s both;
-}
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
+
+.hit-name {
+  font-size: 14px;
+  color: var(--ink);
 }
 
-/* ============ Feature panels ============ */
-.panel {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 32px clamp(40px, 7vw, 132px);
-  padding: clamp(64px, 7vw, 112px) var(--panel-gut);
-}
-.panel.flip .art {
-  order: 2;
-}
-.art {
-  position: relative;
-  width: 100%;
-  max-width: 680px;
-  justify-self: center;
-}
-.copy {
-  max-width: 600px;
-}
-.copy {
-  display: grid;
-  justify-items: start;
-  gap: 18px;
-}
-h2 {
-  margin: 0 0 -6px -0.06em;
-  font-size: clamp(40px, 4.6vw, 66px);
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-  color: var(--pi);
-}
-h2::after {
-  content: '';
-  display: block;
-  width: 1.3em;
-  height: 0.14em;
-  margin-top: 0.1em;
-  border-radius: 99px;
-  background:
-    radial-gradient(circle, var(--pi) 0.045em, transparent 0.05em) 0 50% / 0.2em 100% repeat-x,
-    transparent;
-  opacity: 0.8;
-}
-.panel .brushed {
-  -webkit-mask: var(--brush) no-repeat 100% 0 / 250% 100%;
-  mask: var(--brush) no-repeat 100% 0 / 250% 100%;
-}
-.panel.seen .brushed {
-  animation: wipe-h 0.8s cubic-bezier(0.5, 0.05, 0.35, 1) 0.25s both;
-}
-.rm .panel .brushed {
-  -webkit-mask: none;
-  mask: none;
-  animation: none;
-}
-.lede {
-  max-width: 30ch;
-  margin: 0;
-  font-size: clamp(18px, 1.6vw, 22px);
-  font-weight: 550;
-  line-height: 1.35;
-  color: var(--pi);
-}
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 30px;
-  margin: 2px 0 4px;
-}
-.stats div {
-  display: flex;
-  flex-direction: column-reverse;
-}
-.stats dd {
-  margin: 0;
-  font-size: clamp(30px, 3vw, 40px);
-  font-weight: 750;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-  color: var(--pv);
-}
-.stats dt {
-  margin-top: 4px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--pi2);
-}
-.copy > * {
-  transition:
-    opacity 0.6s var(--ease-out),
-    transform 0.6s var(--ease-out);
-}
-.panel:not(.seen) .copy > :not(h2) {
-  opacity: 0;
-  transform: translateY(12px);
-}
-.panel.seen .copy > :nth-child(2) {
-  transition-delay: 0.35s;
-}
-.panel.seen .copy > :nth-child(3) {
-  transition-delay: 0.45s;
-}
-.panel.seen .copy > :nth-child(n + 4) {
-  transition-delay: 0.55s;
-}
-.res .find {
-  width: 100%;
-  max-width: 520px;
-}
-
-/* Painted button: ink outline, marigold paint, a lifted shadow drawn in ink. */
-.cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 50px;
-  padding: 0 22px 0 24px;
-  border: 2px solid var(--pi);
-  border-radius: 99px;
-  background: var(--pmari);
-  color: #1d1915;
-  font-size: 16px;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 3px 4px 0 var(--pi);
-  transition:
-    transform 0.2s var(--ease-spring),
-    box-shadow 0.2s var(--ease-spring);
-}
-.cta .ic {
-  transition: transform 0.25s var(--ease-spring);
-}
-.cta:hover {
-  transform: translate(-1px, -2px);
-  box-shadow: 5px 7px 0 var(--pi);
-}
-.cta:hover .ic {
-  transform: translateX(4px);
-}
-.cta:active {
-  transform: translate(2px, 3px);
-  box-shadow: 1px 1px 0 var(--pi);
-}
-.cta:focus-visible {
-  outline: 3px solid var(--pv);
-  outline-offset: 3px;
-}
-
-/* Events: the dhak's rings keep the beat; the poster line hangs across the panel. */
-.beat {
-  position: absolute;
-  left: 27.2%;
-  top: 53%;
-  width: 34%;
-  translate: -50% -50%;
-  overflow: visible;
-  pointer-events: none;
-}
-.beat circle {
-  fill: none;
-  stroke: #b8341b;
-  stroke-width: 2.5;
-  stroke-dasharray: 5 7;
-  opacity: 0;
-  transform-origin: 50% 50%;
-  filter: var(--art-filter);
-}
-.ev.live .beat circle {
-  animation: ring calc(var(--beat) * 2) cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
-  animation-delay: calc(var(--k) * var(--beat) * 0.66 - var(--beat) * 0.66);
-}
-@keyframes ring {
-  0% {
-    opacity: 0.85;
-    transform: scale(0.35);
-  }
-  60%,
-  100% {
-    opacity: 0;
-    transform: scale(1.25);
-  }
-}
-.ev {
-  padding-bottom: clamp(32px, 3.5vw, 56px);
-}
-/* Last in order, so the flipped art stays beside the copy instead of wrapping under the line. */
-.posters {
-  order: 3;
-  grid-column: 1 / -1;
-  margin: 10px calc(var(--edge-w) - var(--panel-gut)) 0;
-}
-
-/* House */
-.house {
-  --arrive: 1;
-}
-h3 {
-  margin: 8px 0 -6px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--pv);
-}
-.places {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.places li {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 5px 11px 6px;
-  border: 1.5px solid var(--pi);
-  border-radius: 6px 14px 6px 14px;
-  background: var(--pcard);
-  font-size: 14.5px;
-  font-weight: 600;
-}
-.places small {
+.hit-code {
   font-size: 12px;
-  color: var(--pv);
-}
-.council {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.council li {
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  width: 112px;
-  text-align: center;
-}
-.roundel {
-  position: relative;
-  width: 86px;
-  height: 86px;
-  margin-bottom: 6px;
-  padding: 7px;
-  border-radius: 50%;
-  border: 2.5px solid var(--pi);
-  background:
-    radial-gradient(circle, #b8341b 1.6px, transparent 2px) 0 0 / 8px 8px,
-    #eaa53c;
-}
-.roundel img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid var(--pi);
-  object-fit: cover;
-  object-position: 50% 28%;
-  background: var(--pcard);
-}
-.roundel svg {
-  position: absolute;
-  inset: -9px;
-  width: calc(100% + 18px);
-  height: calc(100% + 18px);
-  overflow: visible;
-}
-.roundel circle {
-  fill: none;
-  stroke: var(--pi);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 0 7.4;
-}
-.council b {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-.council small {
-  font-size: 12.5px;
-  color: var(--pi2);
-}
-
-/* Teams: the whole crew in one boat. */
-.teams {
-  grid-template-columns: 1fr;
-  justify-items: center;
-  text-align: center;
-}
-.teams .copy {
-  justify-items: center;
-}
-.teams .lede {
-  max-width: 36ch;
-}
-.teams .art {
-  width: min(100%, 1000px);
-  margin-top: 6px;
-}
-.teams h2::after {
-  margin-inline: auto;
-}
-.marker {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  margin: -15px 0 0 -15px;
-  border: 2px solid var(--pi);
-  border-radius: 50%;
-  background: #eaa53c;
-  color: #1d1915;
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow: 2px 3px 0 var(--pi);
-  opacity: 0;
-  transform: scale(0.4);
-  transition:
-    opacity 0.4s,
-    transform 0.5s var(--ease-spring);
-}
-.teams.seen .marker {
-  opacity: 1;
-  transform: none;
-  transition-delay: 1.4s;
-}
-.crew {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px 26px;
-  width: 100%;
-  margin: 8px 0 6px;
-  padding: 0;
-  list-style: none;
-  text-align: left;
-}
-.crew li {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-content: start;
-  column-gap: 12px;
-  transition:
-    opacity 0.6s var(--ease-out),
-    transform 0.6s var(--ease-out);
-  transition-delay: calc(0.6s + var(--i) * 90ms);
-}
-.teams:not(.seen) .crew li {
-  opacity: 0;
-  transform: translateY(12px);
-}
-.crew .num {
-  grid-row: span 3;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 2px solid var(--pi);
-  border-radius: 50%;
-  background: var(--pmari);
-  color: #1d1915;
-  font-size: 14px;
-  font-weight: 800;
-}
-.crew small {
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pv);
-}
-.crew b {
-  font-size: 17px;
-  font-weight: 750;
-  line-height: 1.25;
-}
-.crew b .mono {
-  font-size: 14px;
-  color: var(--pv);
-}
-.crew p {
-  margin: 4px 0 0;
-  font-size: 14.5px;
-  line-height: 1.45;
-  color: var(--pi2);
-}
-
-/* Close: the last panel before the roll. */
-.close {
-  grid-template-columns: 1fr;
-  justify-items: center;
-  gap: 18px;
-  padding-block: 56px 96px;
-  text-align: center;
-}
-.close p {
-  max-width: 26ch;
-  margin: 0;
-  font-size: clamp(22px, 2.2vw, 30px);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
-.cta.wa .ic {
-  width: 20px;
-  height: 20px;
-}
-
-/* ---- Footer, on the cloth under the scroll ---- */
-.foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px 28px;
-  width: var(--col);
-  padding-inline: 24px;
-  margin: 34px auto 0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--sunk);
   color: var(--ink-2);
-  font-size: 14px;
 }
-.foot button,
-.foot a {
+
+.hit-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+/* Search Chips */
+.search-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.chips-label {
+  color: var(--ink-3);
+}
+
+.chip {
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.chip:hover {
+  background: var(--sunk);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+/* Hero Vitals Aside */
+.hero-vitals {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.vitals-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vitals-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.vitals-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mari-ink);
+  letter-spacing: 0.02em;
+}
+
+.vitals-heading {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 2px 0 0;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--mari-soft);
+  color: var(--mari-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+}
+
+.stat-num {
+  font-size: 26px;
+  font-weight: 750;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.exam-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--mari) 12%, var(--card));
+  border: 1px solid var(--mari-soft);
+}
+
+.alert-icon {
+  color: var(--mari-ink);
+  display: flex;
+  align-items: center;
+}
+
+.alert-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-content strong {
+  display: block;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.alert-content p {
+  font-size: 12px;
+  color: var(--ink-2);
+  margin: 1px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alert-link {
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.alert-link:hover {
+  background: var(--sunk);
+}
+
+/* ==========================================================================
+   2. SHARED SECTION STYLES
+   ========================================================================== */
+.section-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-title {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 750;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.section-desc {
+  font-size: 15px;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 65ch;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   3. ACADEMIC RESOURCES SECTION
+   ========================================================================== */
+.pinned-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+}
+
+.pinned-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.pinned-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pinned-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pinned-chip:hover {
+  border-color: var(--mari-ink);
+}
+
+.pinned-chip .mono {
+  color: var(--ink-3);
+  font-size: 11px;
+}
+
+.level-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+
+.level-tab {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 4px;
-  border: 0;
-  background: none;
-  color: var(--ink);
-  font-size: 14.5px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 14px;
   font-weight: 600;
-  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
 }
-.foot button:hover,
-.foot a:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+
+.level-tab:hover {
+  background: var(--sunk);
+  color: var(--ink);
 }
-.foot .ic {
-  width: 18px;
-  height: 18px;
+
+.level-tab.active {
+  background: var(--card);
+  border-color: var(--line-strong);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
+}
+
+.tab-count {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--sunk);
+  color: var(--ink-3);
+}
+
+.level-tab.active .tab-count {
+  background: var(--mari);
+  color: var(--on-mari);
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.course-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.2s var(--ease-out),
+    border-color 0.2s;
+}
+
+.course-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+}
+
+.course-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.course-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.course-code {
+  font-size: 13px;
+  font-weight: 700;
   color: var(--mari-ink);
 }
-.foot small {
-  flex-basis: 100%;
-  text-align: center;
-  color: var(--ink-3);
-  font-size: 12.5px;
+
+.course-level-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--sunk);
+  color: var(--ink-2);
 }
 
-/* ============ Phones ============ */
-@media (max-width: 1020px) {
-  .panel {
-    padding-inline: calc(var(--edge-w) + 28px);
-    column-gap: 36px;
-  }
-  .crew {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .posters {
-    margin-inline: -28px;
-  }
+.pin-btn {
+  background: transparent;
+  border: none;
+  color: var(--ink-3);
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 6px;
 }
-@media (max-width: 760px) {
-  .pat {
-    --edge-w: 6px;
-    --tab-h: calc(64px + env(safe-area-inset-bottom));
-    --rod-h: 16px;
-    --roll-h: 34px;
-    --band-h: 16px;
-    padding-bottom: 100px;
-  }
-  .rod,
-  .roll {
-    margin: 0;
-  }
-  .rod::before,
-  .rod::after,
-  .roll::before,
-  .roll::after {
-    width: 12px;
-    border-width: 1.5px;
-    background:
-      linear-gradient(90deg, transparent 3px, #1d1915 3px 5px, transparent 5px),
-      linear-gradient(#7d1e0c, #c9391d 35%, #f06a3f 50%, #b8341b 70%, #6a1a0a);
-  }
-  .roll {
-    background-size:
-      100% 100%,
-      100% 100%,
-      100% 11px,
-      auto;
-  }
-  .cue {
-    font-size: 10.5px;
-  }
-  .hero {
-    grid-template-rows: var(--band-h) auto minmax(0, 1fr) var(--band-h);
-  }
-  .hero > .band:last-child {
-    grid-row: 4;
-  }
-  .title {
-    grid-row: 2;
-    margin-top: 22px;
-    gap: 8px;
-  }
-  .seal {
-    width: 68px;
-    height: 68px;
-  }
-  .seal img {
-    width: 52px;
-    height: 52px;
-  }
-  h1 {
-    font-size: clamp(40px, 12.4vw, 54px);
-    flex-direction: column;
-    align-items: center;
-  }
-  .scene::after {
-    background: none;
-  }
-  .scene {
-    grid-row: 3;
-    margin-top: 12px;
-  }
-  .tiger {
-    left: 22%;
-    width: 72%;
-    bottom: 22%;
-  }
-  .panel {
-    /* minmax(0, …): a bare 1fr grows to the poster line's scroll width and pushes the art off-screen. */
-    grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-    padding: 44px calc(var(--edge-w) + 16px) 52px;
-  }
-  .panel.flip .art {
-    order: 0;
-  }
-  .ev .art {
-    order: 0;
-  }
-  .posters {
-    margin-inline: -16px;
-  }
-  .crew {
+
+.pin-btn:hover {
+  color: var(--ink);
+  background: var(--sunk);
+}
+
+.pin-btn.pinned {
+  color: var(--mari-ink);
+}
+
+.course-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.course-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.metric-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.course-card-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.btn-open-course {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-open-course:hover {
+  background: var(--mari);
+  color: var(--on-mari);
+  border-color: var(--mari);
+}
+
+.btn-open-notes {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-open-notes:hover {
+  background: var(--sunk);
+  color: var(--ink);
+}
+
+.section-footer-action {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+/* ==========================================================================
+   4. EVENTS & WINGS SECTION
+   ========================================================================== */
+.wing-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wing-filter-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wing-filter-btn:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.wing-filter-btn.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.events-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 24px;
+}
+
+.event-spotlight-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.spotlight-image-wrap {
+  width: 100%;
+  max-height: 280px;
+  overflow: hidden;
+  background: var(--sunk);
+}
+
+.spotlight-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.spotlight-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.spotlight-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wing-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--w, var(--mari-ink));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.date-badge {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.spotlight-title {
+  font-size: 22px;
+  font-weight: 750;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.spotlight-desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.spotlight-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.attendee-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.recent-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.recent-event-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.15s,
+    border-color 0.15s;
+}
+
+.recent-event-card:hover {
+  transform: translateX(2px);
+  border-color: var(--line-strong);
+}
+
+.recent-event-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.wing-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--w, var(--mari));
+}
+
+.wing-name {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.event-date-text {
+  margin-left: auto;
+  color: var(--ink-3);
+}
+
+.recent-event-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.recent-event-snippet {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ==========================================================================
+   5. REGIONAL CHAPTERS SECTION
+   ========================================================================== */
+.regions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.region-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.18s var(--ease-out),
+    border-color 0.18s;
+}
+
+.region-card:hover,
+.region-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--mari-ink);
+  outline: none;
+}
+
+.region-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.region-pin {
+  color: var(--mari-ink);
+  display: flex;
+}
+
+.region-meetup-count {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--sunk);
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.region-city {
+  font-size: 18px;
+  font-weight: 750;
+  color: var(--ink);
+  margin: 0;
+}
+
+.region-info {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.region-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mari-ink);
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+/* ==========================================================================
+   6. COUNCIL LEADERSHIP SECTION
+   ========================================================================== */
+.council-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.council-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.council-photo-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--sunk);
+  overflow: hidden;
+}
+
+.council-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.council-photo-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  font-size: 32px;
+}
+
+.council-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.council-name {
+  font-size: 17px;
+  font-weight: 750;
+  color: var(--ink);
+  margin: 0;
+}
+
+.council-role {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mari-ink);
+}
+
+.council-house-tag {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.teams-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 14px;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+}
+
+.teams-banner-text strong {
+  display: block;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.teams-banner-text p {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin: 4px 0 0;
+}
+
+/* ==========================================================================
+   7. STUDENT UTILITIES SECTION
+   ========================================================================== */
+.utilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.utility-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.utility-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--mari-soft);
+  color: var(--mari-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.utility-title {
+  font-size: 18px;
+  font-weight: 750;
+  color: var(--ink);
+  margin: 0;
+}
+
+.utility-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.utility-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+  color: var(--mari-ink);
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.utility-btn:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+@media (max-width: 960px) {
+  .hero-container {
     grid-template-columns: 1fr;
   }
-  .marker {
-    width: 24px;
-    height: 24px;
-    margin: -12px 0 0 -12px;
-    font-size: 12px;
-  }
-  .close {
-    padding-block: 40px 72px;
+
+  .events-layout {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tiger,
-  .title {
-    transform: none;
-    transition: none;
+@media (max-width: 640px) {
+  .home-page {
+    gap: 40px;
+    padding-bottom: 56px;
   }
-  .copy > *,
-  .crew li,
-  .marker {
-    transition: none;
+
+  .hero-section {
+    padding: 20px 16px 8px;
   }
-  .ev.live .beat circle,
-  .panel.seen .brushed {
-    animation: none;
+
+  .section-container {
+    padding: 0 16px;
+    gap: 18px;
   }
-  .panel .brushed {
-    -webkit-mask: none;
-    mask: none;
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .regions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .council-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .utilities-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

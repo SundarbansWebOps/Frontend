@@ -2,7 +2,7 @@
 <template>
   <TopNav />
   <RouterView />
-  <SiteFooter v-if="route.path !== '/'" />
+  <SiteFooter />
   <CourseSheet />
   <Transition name="toast">
     <div v-if="store.toast" class="toast" role="status">{{ store.toast }}</div>
