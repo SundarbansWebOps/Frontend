@@ -398,7 +398,7 @@
     <section id="teams" class="section-container" aria-labelledby="council-heading">
       <div class="section-head">
         <div>
-          <h2 id="council-heading" class="section-title">House Leadership</h2>
+          <h2 id="council-heading" class="section-title">House Leadership &amp; Crew</h2>
           <p class="section-desc">
             Elected student representatives steering academic operations, community wings, and
             student welfare.
@@ -429,8 +429,61 @@
             <h3 class="council-name">{{ leader.name }}</h3>
             <span class="council-role">{{ leader.role }}</span>
             <span class="council-house-tag">Upper House Council</span>
+            <!-- UHC Social Media Buttons -->
+            <div v-if="leader.links && leader.links.length" class="council-socials">
+              <a
+                v-for="link in leader.links"
+                :key="link.kind"
+                :href="link.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="council-social-btn"
+                :class="`social-${link.kind.toLowerCase()}`"
+                :aria-label="`${leader.name} on ${link.kind}`"
+                :title="`${leader.name} on ${link.kind}`"
+              >
+                <LineIcon
+                  :name="
+                    link.kind === 'LinkedIn'
+                      ? 'linkedin'
+                      : link.kind === 'X'
+                        ? 'x'
+                        : link.kind.toLowerCase()
+                  "
+                />
+              </a>
+            </div>
           </div>
         </article>
+      </div>
+
+      <!-- House Crew Structure (Crew Map: Helm, Oars, Drum, Hull) -->
+      <div class="crew-structure-section">
+        <div class="crew-section-head">
+          <h3 class="crew-section-title">House Crew Breakdown</h3>
+          <p class="crew-section-subtitle">
+            How Sundarbans House is organized across four collaborative tiers.
+          </p>
+        </div>
+        <div class="crew-map-grid">
+          <article
+            v-for="crew in CREWMAP"
+            :key="crew.n"
+            class="crew-card"
+            tabindex="0"
+            role="button"
+            @click="nav.go(crew.link)"
+            @keydown.enter="nav.go(crew.link)"
+          >
+            <div class="crew-card-head">
+              <span class="crew-num mono">{{ crew.n }}</span>
+              <span class="crew-where">{{ crew.where }}</span>
+              <span class="crew-count mono">{{ crew.count }}</span>
+            </div>
+            <h4 class="crew-who">{{ crew.who }}</h4>
+            <p class="crew-what">{{ crew.what }}</p>
+          </article>
+        </div>
       </div>
 
       <div class="teams-banner">
@@ -454,13 +507,135 @@
         <div>
           <h2 id="utilities-heading" class="section-title">Student Access &amp; Portals</h2>
           <p class="section-desc">
-            Quick shortcuts to verified certificate validation, the official IITM student portal,
-            and community channels.
+            Direct shortcuts to verified certificate validation, the official IITM student portal,
+            official grading documents, and community channels.
           </p>
         </div>
       </div>
 
+      <!-- Academic Policy & Term Deadlines Summary (from Sep 2026 Student Document) -->
+      <div class="term-brief-card">
+        <div class="term-brief-head">
+          <div class="term-brief-title-wrap">
+            <span class="term-chip mono">Sep 2026 Term</span>
+            <h3 class="term-brief-title">Academic Schedule &amp; Grading Rules</h3>
+          </div>
+          <a
+            href="https://docs.google.com/document/d/e/2PACX-1vT_FeqnTq0Br4sUaN7OYAmj1B9MwjchyTEed1Bh5FkZvi5NyIMeAvvkuttostVsJBPjZcs3SjjEfiho/pub"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-secondary btn-sm"
+          >
+            <span>Full Document</span>
+            <LineIcon name="arrow" />
+          </a>
+        </div>
+
+        <div class="term-milestones-row">
+          <div class="milestone-item">
+            <span class="milestone-name">Quiz 1 (In Person)</span>
+            <span class="milestone-date mono">Sun, 15 Nov 2026</span>
+            <span class="milestone-note">Centres across India &amp; abroad</span>
+          </div>
+          <div class="milestone-item">
+            <span class="milestone-name">OPPE 1 (Online Proctored)</span>
+            <span class="milestone-date mono">Sun, 22 Nov 2026</span>
+            <span class="milestone-note">Requires SCT completion</span>
+          </div>
+          <div class="milestone-item highlight">
+            <span class="milestone-name">End Term Eligibility Cutoff</span>
+            <span class="milestone-date mono">Wed, 25 Nov 2026</span>
+            <span class="milestone-note">Best 5 of 7 weeks average &gt;= 40/100</span>
+          </div>
+          <div class="milestone-item">
+            <span class="milestone-name">Quiz 2 (In Person)</span>
+            <span class="milestone-date mono">Sat, 5 Dec 2026</span>
+            <span class="milestone-note">Centres across India &amp; abroad</span>
+          </div>
+          <div class="milestone-item">
+            <span class="milestone-name">OPPE 2 (Days 1 &amp; 2)</span>
+            <span class="milestone-date mono">20 Dec 2026 &amp; 3 Jan 2027</span>
+            <span class="milestone-note">Syllabus Weeks 1 to 8</span>
+          </div>
+          <div class="milestone-item">
+            <span class="milestone-name">End Term Exam</span>
+            <span class="milestone-date mono">Sun, 10 Jan 2027</span>
+            <span class="milestone-note">In person centres, 2 sessions</span>
+          </div>
+        </div>
+
+        <div class="policy-pills-row">
+          <div class="policy-pill">
+            <strong>GAA Weightage:</strong>
+            <span>Foundation = 0 (tested in Quizzes/ET) · Diploma = 5 marks</span>
+          </div>
+          <div class="policy-pill">
+            <strong>Bonus Marks:</strong>
+            <span>Up to 2 marks for mocks (&gt;= 40) + up to 3 for extra course activities</span>
+          </div>
+          <div class="policy-pill">
+            <strong>Discourse Badges:</strong>
+            <span>Badge 1 (4h read time) · Badge 2 (8h) · Badge 3 (12h+)</span>
+          </div>
+        </div>
+      </div>
+
       <div class="utilities-grid">
+        <article class="utility-card">
+          <div class="utility-icon">
+            <LineIcon name="book" />
+          </div>
+          <h3 class="utility-title">Sep 2026 Grading Document</h3>
+          <p class="utility-desc">
+            Official IITM grading document detailing exam dates, formula calculations, bonus marks,
+            and OPPE eligibility criteria.
+          </p>
+          <a
+            href="https://docs.google.com/document/d/e/2PACX-1vT_FeqnTq0Br4sUaN7OYAmj1B9MwjchyTEed1Bh5FkZvi5NyIMeAvvkuttostVsJBPjZcs3SjjEfiho/pub"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="utility-btn"
+          >
+            <span>Read Official Document</span>
+            <LineIcon name="arrow" />
+          </a>
+        </article>
+
+        <article class="utility-card">
+          <div class="utility-icon">
+            <LineIcon name="cert" />
+          </div>
+          <h3 class="utility-title">OPPE SCT Setup Guide</h3>
+          <p class="utility-desc">
+            Standard Operating Procedure for completing the mandatory System Compatibility Test
+            before OPPE 1 and OPPE 2.
+          </p>
+          <a
+            href="https://docs.google.com/document/d/e/2PACX-1vS4Hhh4MsKD2WL8_D26Vw2WJKw0CBtPihZyKrnEM_kefRXm_O75GqTcJA6lR0X_xCiVL5gUi5y6_bjw/pub"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="utility-btn"
+          >
+            <span>Open SCT SoP Guide</span>
+            <LineIcon name="arrow" />
+          </a>
+        </article>
+
+        <article class="utility-card">
+          <div class="utility-icon">
+            <LineIcon :name="PORTAL.icon" />
+          </div>
+          <h3 class="utility-title">IITM Student Portal</h3>
+          <p class="utility-desc">
+            Access your primary IIT Madras BS degree portal for course registration, grades, and
+            official submissions.
+          </p>
+          <a :href="PORTAL.href" target="_blank" rel="noopener noreferrer" class="utility-btn">
+            <span>Launch Student Portal</span>
+            <LineIcon name="arrow" />
+          </a>
+        </article>
+
         <article class="utility-card">
           <div class="utility-icon">
             <LineIcon name="seal" />
@@ -478,21 +653,6 @@
 
         <article class="utility-card">
           <div class="utility-icon">
-            <LineIcon :name="PORTAL.icon" />
-          </div>
-          <h3 class="utility-title">IITM Student Portal</h3>
-          <p class="utility-desc">
-            Access your primary IIT Madras BS degree portal for course registration, grades, and
-            official submissions.
-          </p>
-          <a :href="PORTAL.href" target="_blank" rel="noopener" class="utility-btn">
-            <span>Launch Student Portal</span>
-            <LineIcon name="arrow" />
-          </a>
-        </article>
-
-        <article class="utility-card">
-          <div class="utility-icon">
             <LineIcon name="wa" />
           </div>
           <h3 class="utility-title">WhatsApp Announcements</h3>
@@ -500,7 +660,7 @@
             Join the verified official broadcast channel for instant meetup updates, reminders, and
             house news.
           </p>
-          <a :href="WHATSAPP" target="_blank" rel="noopener" class="utility-btn">
+          <a :href="WHATSAPP" target="_blank" rel="noopener noreferrer" class="utility-btn">
             <span>Join Official Channel</span>
             <LineIcon name="arrow" />
           </a>
@@ -526,13 +686,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { animate, stagger } from 'animejs';
 import CREST from '../assets/crest.webp';
 import LineIcon from '../components/site/LineIcon.vue';
 import { courses, byCode, nextExam, TOOLS, WHATSAPP } from '../lib/courses.js';
 import { events, WINGS, MONTH } from '../lib/events.js';
-import { regions, upper, portrait } from '../lib/house.js';
+import { regions, upper, lower, portrait } from '../lib/house.js';
+import { COMMUNITIES, CREW } from '../data/teams.js';
 import { isMine, nav, openCourse, search, store, togglePin } from '../lib/store.js';
 
 const PORTAL = TOOLS[0];
@@ -540,6 +702,42 @@ const PORTAL = TOOLS[0];
 // ---- Totals & Stats -------------------------------------------------------------
 const totalPapers = computed(() => courses.reduce((acc, c) => acc + (c.pyqs?.length || 0), 0));
 const totalNotes = computed(() => courses.reduce((acc, c) => acc + (c.notes?.length || 0), 0));
+
+// ---- Crew Map (Original House Structure) ----------------------------------------
+const CREWMAP = [
+  {
+    n: 1,
+    where: 'At the helm',
+    who: 'Upper House Council',
+    count: upper.length,
+    what: `${upper.map((p) => p.role).join(', ')}: steering academic and executive operations.`,
+    link: 'teams',
+  },
+  {
+    n: 2,
+    where: 'At the oars',
+    who: 'Lower House Council',
+    count: lower.length,
+    what: 'Regional coordinators across 9 hubs pulling together.',
+    link: 'house',
+  },
+  {
+    n: 3,
+    where: 'On the drum',
+    who: 'Communities',
+    count: COMMUNITIES.length,
+    what: 'Cultural, Technical, and E-Sports setting the pace with tournaments and workshops.',
+    link: 'teams',
+  },
+  {
+    n: 4,
+    where: 'In the hull',
+    who: 'Technical & Creative Crew',
+    count: CREW.length,
+    what: 'PR & Outreach, Graphic Design, and WebOps keeping the house built and running.',
+    link: 'teams',
+  },
+];
 
 // ---- Search Handling -----------------------------------------------------------
 const searchQuery = ref('');
@@ -600,7 +798,6 @@ function getCoursesByLevel(levelId) {
 
 const displayedCourses = computed(() => {
   const list = getCoursesByLevel(activeLevel.value);
-  // Show top courses for this level
   return list.slice(0, 6);
 });
 
@@ -658,6 +855,62 @@ function truncateText(text, maxLen) {
   if (text.length <= maxLen) return text;
   return text.slice(0, maxLen).trim() + '...';
 }
+
+// ---- Subtle Anime.js Animations (Respects prefers-reduced-motion) ----------------
+let animInstances = [];
+
+onMounted(() => {
+  if (
+    typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    return;
+  }
+
+  try {
+    const heroAnim = animate('.hero-main > *', {
+      translateY: [14, 0],
+      opacity: [0, 1],
+      delay: stagger(60, { start: 80 }),
+      duration: 600,
+      ease: 'outCubic',
+    });
+    if (heroAnim) animInstances.push(heroAnim);
+
+    const vitalsAnim = animate('.hero-vitals', {
+      translateY: [18, 0],
+      opacity: [0, 1],
+      delay: 200,
+      duration: 650,
+      ease: 'outCubic',
+    });
+    if (vitalsAnim) animInstances.push(vitalsAnim);
+
+    const statAnim = animate('.stat-card', {
+      scale: [0.96, 1],
+      opacity: [0, 1],
+      delay: stagger(50, { start: 280 }),
+      duration: 500,
+      ease: 'outCubic',
+    });
+    if (statAnim) animInstances.push(statAnim);
+  } catch {
+    // Non-blocking fallback
+  }
+});
+
+onBeforeUnmount(() => {
+  animInstances.forEach((inst) => {
+    try {
+      if (typeof inst.revert === 'function') inst.revert();
+      else if (typeof inst.pause === 'function') inst.pause();
+    } catch {
+      // ignore
+    }
+  });
+  animInstances = [];
+});
 </script>
 
 <style scoped>
@@ -1695,6 +1948,152 @@ function truncateText(text, maxLen) {
   margin-top: 2px;
 }
 
+.council-socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.council-social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    background-color 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+}
+
+.council-social-btn:hover {
+  background: var(--card);
+  color: var(--mari-ink);
+  border-color: var(--mari-ink);
+  transform: translateY(-1px);
+}
+
+.council-social-btn:focus-visible {
+  outline: 2px solid var(--mari);
+  outline-offset: 2px;
+}
+
+/* Crew Structure Breakdown */
+.crew-structure-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.crew-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.crew-section-title {
+  font-size: 18px;
+  font-weight: 750;
+  color: var(--ink);
+  margin: 0;
+}
+
+.crew-section-subtitle {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.crew-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.crew-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.16s var(--ease-out),
+    border-color 0.16s;
+}
+
+.crew-card:hover,
+.crew-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--mari-ink);
+  outline: none;
+}
+
+.crew-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crew-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--mari-soft);
+  color: var(--mari-ink);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.crew-where {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mari-ink);
+}
+
+.crew-count {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--sunk);
+}
+
+.crew-who {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.crew-what {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.45;
+  margin: 0;
+}
+
 .teams-banner {
   display: flex;
   flex-wrap: wrap;
@@ -1722,6 +2121,110 @@ function truncateText(text, maxLen) {
 /* ==========================================================================
    7. STUDENT UTILITIES SECTION
    ========================================================================== */
+.term-brief-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1.5px solid color-mix(in srgb, var(--mari) 30%, var(--line));
+  box-shadow: var(--shadow);
+}
+
+.term-brief-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.term-brief-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.term-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--mari-soft);
+  color: var(--mari-ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.term-brief-title {
+  font-size: 18px;
+  font-weight: 750;
+  color: var(--ink);
+  margin: 0;
+}
+
+.term-milestones-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.milestone-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+}
+
+.milestone-item.highlight {
+  border-color: color-mix(in srgb, var(--mari) 40%, var(--line));
+  background: color-mix(in srgb, var(--mari) 8%, var(--card));
+}
+
+.milestone-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.milestone-date {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--mari-ink);
+}
+
+.milestone-note {
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.35;
+}
+
+.policy-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.policy-pill {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+
+.policy-pill strong {
+  color: var(--ink);
+}
+
 .utilities-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -1791,6 +2294,10 @@ function truncateText(text, maxLen) {
   .events-layout {
     grid-template-columns: 1fr;
   }
+
+  .term-milestones-row {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1821,7 +2328,15 @@ function truncateText(text, maxLen) {
   }
 
   .council-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  .crew-map-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .term-milestones-row {
+    grid-template-columns: 1fr;
   }
 
   .utilities-grid {

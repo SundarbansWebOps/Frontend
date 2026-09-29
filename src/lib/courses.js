@@ -150,24 +150,96 @@ for (const [level, list] of Object.entries(raw)) {
 
 export const byCode = Object.fromEntries(courses.map((c) => [c.code, c]));
 
-// ---- SAMPLE term calendar (Sep 2026 term). Replace with Supabase important_dates. ----
-export const TODAY = new Date('2026-09-27T10:00:00+05:30');
+// ---- Sep 2026 Term Calendar from Official Student Grading Document ----
+export const TODAY = new Date('2026-09-30T10:00:00+05:30');
 export const TERM = {
   label: 'Sep 2026 term',
-  start: new Date('2026-09-07T00:00:00+05:30'),
-  end: new Date('2026-12-20T00:00:00+05:30'),
+  start: new Date('2026-09-28T00:00:00+05:30'),
+  end: new Date('2027-01-10T23:59:59+05:30'),
   weeks: 12,
 };
 export const DATES = [
-  { id: 'a3', label: 'Week 3 assignments due', short: 'W3 due', date: '2026-10-01', kind: 'due' },
-  { id: 'q1', label: 'Quiz 1', short: 'Quiz 1', date: '2026-10-18', kind: 'exam', exam: 'Quiz 1' },
-  { id: 'o1', label: 'OPPE 1', short: 'OPPE 1', date: '2026-10-25', kind: 'exam', exam: 'OPPE' },
-  { id: 'q2', label: 'Quiz 2', short: 'Quiz 2', date: '2026-11-22', kind: 'exam', exam: 'Quiz 2' },
+  { id: 'w1', label: 'Week 1 assignment due', short: 'W1 due', date: '2026-10-11', kind: 'due' },
+  {
+    id: 'w4',
+    label: 'OPPE 1 eligibility closes (W4)',
+    short: 'OPPE 1 cutoff',
+    date: '2026-11-01',
+    kind: 'cutoff',
+  },
+  {
+    id: 'q1',
+    label: 'Quiz 1 (In person centres)',
+    short: 'Quiz 1',
+    date: '2026-11-15',
+    kind: 'exam',
+    exam: 'Quiz 1',
+  },
+  {
+    id: 'o1',
+    label: 'OPPE 1 (Online proctored)',
+    short: 'OPPE 1',
+    date: '2026-11-22',
+    kind: 'exam',
+    exam: 'OPPE',
+  },
+  {
+    id: 'w7',
+    label: 'End term eligibility closes (W7)',
+    short: 'ET cutoff',
+    date: '2026-11-25',
+    kind: 'cutoff',
+  },
+  {
+    id: 'w8',
+    label: 'OPPE 2 eligibility closes (W8)',
+    short: 'OPPE 2 cutoff',
+    date: '2026-11-29',
+    kind: 'cutoff',
+  },
+  {
+    id: 'q2',
+    label: 'Quiz 2 (In person centres)',
+    short: 'Quiz 2',
+    date: '2026-12-05',
+    kind: 'exam',
+    exam: 'Quiz 2',
+  },
+  {
+    id: 'w10',
+    label: 'GAA calculation closes (W10)',
+    short: 'GAA cutoff',
+    date: '2026-12-13',
+    kind: 'cutoff',
+  },
+  {
+    id: 'o2_d1',
+    label: 'OPPE 2 Day 1',
+    short: 'OPPE 2 (D1)',
+    date: '2026-12-20',
+    kind: 'exam',
+    exam: 'OPPE',
+  },
+  {
+    id: 'w12',
+    label: 'Week 11 & 12 assignments due',
+    short: 'W12 due',
+    date: '2026-12-23',
+    kind: 'due',
+  },
+  {
+    id: 'o2_d2',
+    label: 'OPPE 2 Day 2',
+    short: 'OPPE 2 (D2)',
+    date: '2027-01-03',
+    kind: 'exam',
+    exam: 'OPPE',
+  },
   {
     id: 'et',
-    label: 'End term',
+    label: 'End term exam (In person)',
     short: 'End term',
-    date: '2026-12-20',
+    date: '2027-01-10',
     kind: 'exam',
     exam: 'End term',
   },
@@ -175,37 +247,45 @@ export const DATES = [
 
 export const DAY = 86400000;
 export const daysUntil = (d) => Math.ceil((d - TODAY) / DAY);
-export const currentWeek = Math.min(TERM.weeks, Math.floor((TODAY - TERM.start) / (7 * DAY)) + 1);
+export const currentWeek = Math.max(
+  1,
+  Math.min(TERM.weeks, Math.floor((TODAY - TERM.start) / (7 * DAY)) + 1)
+);
 export const nextDate = DATES.find((d) => d.at > TODAY);
 export const nextExam = DATES.find((d) => d.at > TODAY && d.kind === 'exam');
 
 export const fmtDate = (d) =>
   d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
 
-// Important links. External ones are real IITM portals; `soon` ones are not built yet.
+// Official links from IITM & the official Sep 2026 Student Grading Document.
 export const TOOLS = [
   {
     id: 'portal',
     label: 'Student portal',
-    hint: 'Dashboard, marks',
+    hint: 'Dashboard, marks & registration',
     href: 'https://app.onlinedegree.iitm.ac.in/',
     icon: 'portal',
   },
   {
-    id: 'discourse',
-    label: 'Discourse',
-    hint: 'Course forums',
-    href: 'https://discourse.onlinedegree.iitm.ac.in/',
-    icon: 'chat',
+    id: 'grading_doc',
+    label: 'Sep 2026 Grading Doc',
+    hint: 'Official exam schedule & formulas',
+    href: 'https://docs.google.com/document/d/e/2PACX-1vT_FeqnTq0Br4sUaN7OYAmj1B9MwjchyTEed1Bh5FkZvi5NyIMeAvvkuttostVsJBPjZcs3SjjEfiho/pub',
+    icon: 'book',
   },
   {
-    id: 'grade',
-    label: 'Grade calculator',
-    hint: 'What you need in the end term',
-    href: '#grade',
-    icon: 'calc',
-    internal: true,
-    soon: true,
+    id: 'oppe_sop',
+    label: 'OPPE SCT SoP',
+    hint: 'System compatibility test guide',
+    href: 'https://docs.google.com/document/d/e/2PACX-1vS4Hhh4MsKD2WL8_D26Vw2WJKw0CBtPihZyKrnEM_kefRXm_O75GqTcJA6lR0X_xCiVL5gUi5y6_bjw/pub',
+    icon: 'cert',
+  },
+  {
+    id: 'discourse',
+    label: 'Discourse',
+    hint: 'Course forums & badges',
+    href: 'https://discourse.onlinedegree.iitm.ac.in/',
+    icon: 'chat',
   },
   {
     id: 'handbook',
@@ -213,15 +293,6 @@ export const TOOLS = [
     hint: 'Rules, grading, policies',
     href: 'https://study.iitm.ac.in/ds/academics.html',
     icon: 'book',
-  },
-  {
-    id: 'cities',
-    label: 'Exam cities',
-    hint: 'Centres near you',
-    href: '#cities',
-    icon: 'pin',
-    internal: true,
-    soon: true,
   },
   {
     id: 'verify',
