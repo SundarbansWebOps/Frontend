@@ -1,0 +1,321 @@
+{
+  "code": "BSSE2002",
+  "subject": "Tools in Data Science",
+  "description": "Pandas, NumPy, Matplotlib",
+  "notes": [
+    {
+      "title": "TDS ET Mock type (by Visist Tallam)",
+      "link": "https://drive.google.com/file/d/1QLG0p31RFF1QGUo1hS-E5flNu2Dn8xWo/view"
+    },
+    {
+      "title": "TDS Qp with solutions (by Visist Tallam)",
+      "link": "https://drive.google.com/file/d/1h0NCzMWHoJRGfvE_0f4W65pADDVabNrw/view"
+    },
+    {
+      "title": "TDS ET Key Notes (by Visist Tallam)",
+      "link": "https://drive.google.com/file/d/10_5GS4YVri7vvvxlmRlpG3TbidXMPmic/view"
+    },
+    {
+      "title": "TDS Programming Notes (by Indranil Bhattacharya)",
+      "link": "https://drive.google.com/file/d/1g5tGQyp_7PzE1lyYP9y2OJOYzh7lgTlT/view"
+    },
+    {
+      "title": "Week 1-8 Notes January 2022 Term (by Naveen)",
+      "link": "https://drive.google.com/file/d/18NszA8n4ECVHQZ1fRS8U8sAvmc2acprL/view"
+    },
+    {
+      "title": "Week 1 Notes (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/17hyzHb6JIeIVVNvRvBCorWdELEl7O2uz/view"
+    },
+    {
+      "title": "All Weeks - Summary Notes (by Kautuk N D)",
+      "link": "https://drive.google.com/file/d/1yZ2nkxf6TlyDFTaaUtZH-zKSUt3r4EqK/view"
+    },
+    {
+      "title": "Week 2-3 (by Kautuk N D)",
+      "link": "https://drive.google.com/file/d/1huuuwgorWtT3kxVlqW79Z_55BXgBfUnR/view"
+    },
+    {
+      "title": "TDS All Week Notes (by Kumar Chandan)",
+      "link": "https://drive.google.com/file/d/14b5wzvPbLXNYgfP7WgGewSGKjU7IpIdh/view"
+    },
+    {
+      "title": "Video Lectures Playlist (by IITM BSc)",
+      "link": "https://www.youtube.com/playlist?list=PLZ2ps__7DhBZJ2q_hd8ZbDRgOJlB0CZLw"
+    },
+    {
+      "title": "TDS Notes GitHub Repository (by Anand Iyer)",
+      "link": "https://github.com/ananddotiyer/IIT-M/tree/main/My%20Notes/TDS"
+    }
+  ],
+  "pyqs": [
+    {
+      "title": "Diploma End Term September 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1nAX1r5M6jToRYv5-7wkBkUIhPT7BYLv1/view?usp=sharing"
+    },
+    {
+      "title": "Diploma End Term September 2021 Term QP4",
+      "link": "https://drive.google.com/file/d/1-14hejaKCaurjH1CQHNsJCiSRd-S-Ycw/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 January 2022 Term QPE2",
+      "link": "https://drive.google.com/file/d/1LS_bWQPu4kbiYbku9f0TjSKearx8GVd3/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 January 2022 Term QPG1",
+      "link": "https://drive.google.com/file/d/1RPwLOHCUECZXgc3vteIh4RNTR6CvK_4h/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 Set B September 2021 Term",
+      "link": "https://drive.google.com/file/d/1wHiolFFECNm-jdtPZGKhen49m4agpLw6/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 January 2022 Term QPE1",
+      "link": "https://drive.google.com/file/d/13VeosdOtZKgumum8Cu8Bk0aw5xdx1-8m/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 January 2022 Term QPF1",
+      "link": "https://drive.google.com/file/d/1cr5piE95MHiWDpvsXJsGlobX2vX1UKbX/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 January 2022 Term QPF2",
+      "link": "https://drive.google.com/file/d/19qtbx4DWHQX8DaPOPIp8CjrS3KeKnrJT/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 January 2022 Term QPG2",
+      "link": "https://drive.google.com/file/d/1o9oPkI3Ys-OOMz_tJRKKZwX-2oQs_tdH/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 1 January 2022 Term QPH2",
+      "link": "https://drive.google.com/file/d/1MGrR8OHiFKQusT2pwMVKQ5-nC4QMG5yY/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 1 January 2022 Term QPI2",
+      "link": "https://drive.google.com/file/d/1qA18_MPxS6cOba1oKOVysbrD9Ix1X3XU/view?usp=sharing"
+    },
+    {
+      "title": "Diploma End Term September 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1sN6IA65-xgcqHQW0l_jdPNpVheXmTXml/view?usp=sharing"
+    },
+    {
+      "title": "Diploma End Term September 2021 Term QP3",
+      "link": "https://drive.google.com/file/d/1GRi0EmPu4Gr4hwMK0hNquUOP401C7i_G/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 1 Set A September 2021 Term",
+      "link": "https://drive.google.com/file/d/1hf-a_mbggrObZNyDzJl2bC3F8aMLpmHy/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 1 January 2022 Term QPH1",
+      "link": "https://drive.google.com/file/d/1-jN-zn1rHzBr6XfACVUPSQvfoPgVK6_T/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 1 January 2022 Term QPI1",
+      "link": "https://drive.google.com/file/d/1LEAFK9NcAMd6dRVeOGUBUbgVyr9D63Oj/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 1 January 2022 Term QPJ1",
+      "link": "https://drive.google.com/file/d/1AJxYJCuuu9YoKLX59Q9sX7CoWMh_xm8U/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 1 January 2022 Term QPJ2",
+      "link": "https://drive.google.com/file/d/1Ob4XiJMhlHt2l9FmjFXshPBuPO8YbK7X/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 - DIPLOMA QUIZ1 EXAM QPF1",
+      "link": "https://drive.google.com/file/d/142Y5geoKMCEjAG61fDNOPFTq_BgiHRHN/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - DIPLOMA QUIZ1 EXAM QPE1",
+      "link": "https://drive.google.com/file/d/1qfOr42mHWgaW7eZEEmgq8T6QBtNhFEqf/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - DIPLOMA QUIZ1 EXAM QPG1",
+      "link": "https://drive.google.com/file/d/1cvaPi9o5hD3VEpnUrH6dD4xv5RduDTeZ/view?usp=share_link"
+    },
+    {
+      "title": "SEP 22 - DIPLOMA QUIZ2 EXAM AN3 QPD3",
+      "link": "https://drive.google.com/file/d/1HRkRFNHx7SWHRMK6ViNpFcZxIdDwbYtu/view?usp=share_link"
+    },
+    {
+      "title": "Diploma Quiz 3 September 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1Y8uF3eTmSnR68lYzI5zATd5hvmwwrK5P/view?usp=sharing"
+    },
+    {
+      "title": "Diploma January 2023",
+      "link": "https://drive.google.com/file/d/19afiPTzl_9ftJ8vHAQONktW85_sBjz0t/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 2 September 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1mB7sdqsVC7PSKAsI_CddcqO3VRs-te5T/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 2 January 2022 Term QPC1",
+      "link": "https://drive.google.com/file/d/1PDsaqs-4P0lv4-3uOQP9vCu2ZjX7mMBX/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 2 January 2022 Term QPD2",
+      "link": "https://drive.google.com/file/d/1vC5bUt6AYYcGTKvQ8qLRBUIGZInmtFNe/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 -  DIPLOMA QUIZ2 EXAM QPC1",
+      "link": "https://drive.google.com/file/d/1PDsaqs-4P0lv4-3uOQP9vCu2ZjX7mMBX/view?usp=share_link"
+    },
+    {
+      "title": "JAN 22 -  DIPLOMA QUIZ2 EXAM QPD1",
+      "link": "https://drive.google.com/file/d/1aludjjkFkv0eBd2W5jfLArh5KAB_b1L7/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 -  DIPLOMA QUIZ2 EXAM QPG1",
+      "link": "https://drive.google.com/file/d/1lE9YoUlom1FDoZY4kCydtY4Qf9Q588j2/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 -  DIPLOMA QUIZ2 EXAM QPE1",
+      "link": "https://drive.google.com/file/d/172Eo_MGe0utBTd07MJVSWxXxoiCnLsRf/view?usp=share_link"
+    },
+    {
+      "title": "SEP 22 - DIPLOMA QUIZ2 EXAM AN2 QPD1",
+      "link": "https://drive.google.com/file/d/1SwucG0V_ZvBOr1oUqNGmG403GS08tqzU/view?usp=share_link"
+    },
+    {
+      "title": "Diploma Quiz 3 September 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1k4-jMXZsMm7F2NbdtOvPuk712YZTjqUv/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 3 September 2021 Term QP5",
+      "link": "https://drive.google.com/file/d/1qGQPJRoBQNxWPGD_PE1wuQpLHVPG0zu3/view?usp=sharing"
+    },
+    {
+      "title": "Diploma September 2023",
+      "link": "https://drive.google.com/file/d/1o2RChWHys2IUwWfkpzdgHI3HCITAVWX7/view?usp=sharing"
+    },
+    {
+      "title": "Diploma May 2023",
+      "link": "https://drive.google.com/file/d/1YgjtfRaxBBAdLKZ0_2OT7B3oMVa5nUX4/view?usp=sharing"
+    },
+    {
+      "title": "Diploma January 2023 AN",
+      "link": "https://drive.google.com/file/d/1KxyS0v5v747_-2OMfXUWe6RSP60vB6sk/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 2 January 2022 Term QPD1",
+      "link": "https://drive.google.com/file/d/1aludjjkFkv0eBd2W5jfLArh5KAB_b1L7/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 2 January 2022 Term QPB1",
+      "link": "https://drive.google.com/file/d/1rgUX96Q7bMHRF0Q8BSgbbaTXux4iHzBM/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 -  DIPLOMA QUIZ2 EXAM QPF1",
+      "link": "https://drive.google.com/file/d/1njPJ1N_h0HVed7QObTc0BqVFQFdB5ASg/view?usp=share_link"
+    },
+    {
+      "title": "Diploma Quiz 3 September 2021 Term QP3",
+      "link": "https://drive.google.com/file/d/1O1sQy_P3TyJ9I5fbBA2boN-v_1JtoNth/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 3 September 2021 Term QP6",
+      "link": "https://drive.google.com/file/d/14votinsvcmo-GB51vupKCaNvFSydRCh4/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 2 September 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1YB98-QcBDonOGV21QMcjD49kAxWAe8cm/view?usp=sharing"
+    },
+    {
+      "title": "Diploma Quiz 2 January 2022 Term QPC2",
+      "link": "https://drive.google.com/file/d/1w6xVPYG6Xm66rIzravPxCFez_HAe1ked/view?usp=sharing"
+    },
+    {
+      "title": "Diploma DAD Quiz 2 January 2022 Term QPB2",
+      "link": "https://drive.google.com/file/d/1xFxpIx0o8C1hl0N1Nx2XY9fs4rCH2VXD/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 -  DIPLOMA QUIZ2 EXAM QPC2",
+      "link": "https://drive.google.com/file/d/1w6xVPYG6Xm66rIzravPxCFez_HAe1ked/view?usp=share_link"
+    },
+    {
+      "title": "JAN 22 -  DIPLOMA QUIZ2 EXAM QPD2",
+      "link": "https://drive.google.com/file/d/1vC5bUt6AYYcGTKvQ8qLRBUIGZInmtFNe/view?usp=share_link"
+    },
+    {
+      "title": "SEP 22 - DIPLOMA QUIZ2 EXAM AN4 QPD5",
+      "link": "https://drive.google.com/file/d/1Jy3djD-D0lxnyN0easqCyuC9JClXyjgA/view?usp=share_link"
+    },
+    {
+      "title": "Diploma Quiz 3 September 2021 Term QP4",
+      "link": "https://drive.google.com/file/d/1cIhClgDwe7MHu1Nff9S_z5nwpWa_csD9/view?usp=sharing"
+    },
+    {
+      "title": "Diploma January 2023 Term",
+      "link": "https://drive.google.com/file/d/1o3-jZ6WxfoVQFQEizPNWbRCg69-NubOJ/view?usp=sharing"
+    },
+    {
+      "title": "Diploma January 2023 FN",
+      "link": "https://drive.google.com/file/d/1_aTZrpkfP6rQDiXgISFm4nIORSkq403R/view?usp=sharing"
+    },
+    {
+      "title": "Diploma May 2023 FN",
+      "link": "https://drive.google.com/file/d/1AyAjREbuUCRDl2_AvN-88Km0hZUS-X5h/view?usp=sharing"
+    },
+    {
+      "title": "Diploma May 2023 AN",
+      "link": "https://drive.google.com/file/d/15hVk_blX25Xz5bqf4UvFqsUFXZ1StqR5/view?usp=sharing"
+    },
+    {
+      "title": "DS Diploma Quiz 1 January 2024",
+      "link": "https://drive.google.com/file/d/1KsbbNMbEJpAjD7gSqaIoTJ-5zijVDZvG/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma End Term January 2024 FN",
+      "link": "https://drive.google.com/file/d/1e7vMUBhk6tNkjEKH6haQn0yWuIsN33AB/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma End Term January 2024 AN",
+      "link": "https://drive.google.com/file/d/1OQF9aRY2EnCO_oOSFuGR6PjVJj88k5TW/view?usp=drive_link"
+    },
+    {
+      "title": "May 2024 Term Quiz 1 Diploma",
+      "link": "https://drive.google.com/file/d/1UsTqmXiiAIYujk3KlKSVcvvTq6S2lOYA/view?usp=drive_link"
+    },
+    {
+      "title": "Diploma May 2024 Term",
+      "link": "https://drive.google.com/file/d/1SrZxhMWHZmdCyKAlTC7Otm_4-OAmTe5j/view?usp=drive_link"
+    },
+    {
+      "title": "Diploma Jan 2024 Term",
+      "link": "https://drive.google.com/file/d/1F5VwRIDNOMHubJBVMVdiyx0d7Xp8YwCj/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma End Term FN Sep 2023",
+      "link": "https://drive.google.com/file/d/1UxX-ieHAvT9UyeWhCTYNWJYcOVi9tyYR/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma End Term AN Sep 2023",
+      "link": "https://drive.google.com/file/d/1KH5Ld2xw5A7b0qxJ9c5KKHhdZlsidSIB/view?usp=sharing"
+    },
+    {
+      "title": "DS Diploma Quiz 1 Sep 2024",
+      "link": "https://drive.google.com/file/d/1m-MPjNElvVc9TnzU8WWtbxei3G1xogLR/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma Quiz 2 Sep 2024",
+      "link": "https://drive.google.com/file/d/1XPj_GWNZYQkV8xpSxwFkh0qeoG3t61-L/view?usp=sharing"
+    },
+    {
+      "title": "DS Diploma End Term AN Sep 2024",
+      "link": "https://drive.google.com/file/d/1vsznp-JcfW_FBpJlRqhMsvvFyOlIhkpl/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma End Term FN Sep 2024",
+      "link": "https://drive.google.com/file/d/160X5T3IYA_c-D8MIWYhWwCdqqj-NML-6/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma End Term FN May 2024",
+      "link": "https://drive.google.com/file/d/1oDuoIm9ieun79_FSdoM_u5qz27OrrV9I/view?usp=drive_link"
+    },
+    {
+      "title": "DS Diploma End Term AN May 2024",
+      "link": "https://drive.google.com/file/d/1lOd_X3sinhraoHHqa1aWp_j2eCZ91Whf/view?usp=drive_link"
+    }
+  ]
+}

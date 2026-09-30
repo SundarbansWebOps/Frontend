@@ -19,7 +19,7 @@
 
 ## Architecture map
 - Pages -> `src/pages/*Page.vue`; page components -> `src/components/site/`; shell -> `src/App.vue` (TopNav, RouterView, SiteFooter except Home, CourseSheet, toast)
-- Shared state -> `src/lib/store.js` (`nav.go(page, anchor)` = router push; course sheet `?course=`), `src/lib/events.js` (`?event=`), `src/lib/house.js`, `src/lib/courses.js` (adapts `src/data/scData_generated.js`), `src/lib/pat.js`, `src/lib/theme.js`
+- Shared state -> `src/lib/store.js` (`nav.go(page, anchor)` = router push; course sheet `?course=`), `src/lib/events.js` (`?event=`), `src/lib/house.js`, `src/lib/courses.js` (adapts `src/data/study/`: one JSON per course, checked by `npm run check:study`), `src/lib/pat.js`, `src/lib/theme.js`
 - Snapshots/data -> `src/data/{events.data.js,house.data.js,teams.js}`; Pat plates -> `src/assets/pat/`; tokens -> `src/assets/tokens.css`
 - Scroll/anchors/view transitions -> `scrollBehavior` + `beforeResolve` in `src/router/index.js`
 - Prototype (Synchrony/Current variants remain here only) -> `prototype/resource-hub/`

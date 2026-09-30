@@ -13,7 +13,7 @@ Pages: Home (default) · Resources (`?page=resources`) · Events (`?page=events`
   prototype unchanged; further design work is limited to Synchrony and Pat. Generated landing artwork was explicitly authorized for this round.
 
 - **Resources** — the chosen "Delta" direction (variant A; B and C were dropped 2026-09-27).
-  Real notes/PYQ Drive links from `src/data/scData_generated.js`; term dates are sample data.
+  Real notes/PYQ Drive links from `src/data/study/courses/`; term dates are sample data.
 - **Events** — past events only (live events live in the members' lounge). No winners until the
   council decides. `events.data.js` is a generated snapshot of the old site's `src/views/*View.vue` (since deleted) (stock photos
   dropped). Each event links to the lounge for its participation certificate (planned).

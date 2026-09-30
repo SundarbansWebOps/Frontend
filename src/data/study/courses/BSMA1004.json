@@ -1,0 +1,677 @@
+{
+  "code": "BSMA1004",
+  "subject": "Statistics for Data Science II",
+  "description": "Hypothesis testing, regression",
+  "notes": [
+    {
+      "title": "Statistics-2 WEEK 4 Notes (by SATYAM SAURABH)",
+      "link": "https://drive.google.com/drive/folders/1JJNqqrF0eHcwtsqKvGQVpwJLHpKAEAZS?usp=sharing"
+    },
+    {
+      "title": "Stats 2 Activity Questions Soltuion Week 0-4 by Rishu (by Rishu Raj Gautam)",
+      "link": "https://drive.google.com/file/d/11JrAY7dLHqgDrmg4VxOFeHPEQ1COabQ5/view"
+    },
+    {
+      "title": "Stats2 week 4 By Rishu (by Rishu Raj Gautam)",
+      "link": "https://drive.google.com/file/d/1XmLoKf-NpJpx92M6cKaBn7cFDz4LNxdu/view"
+    },
+    {
+      "title": "Stats 2 week 1- week 3 By Rishu (by Rishu Raj Gautam)",
+      "link": "https://drive.google.com/file/d/1pJxoauP8v_dWo962rHX_sENDcxczu-FN/view"
+    },
+    {
+      "title": "WEEK 9 Handwritten with explanation (by MOHAMMAD SARIM)",
+      "link": "https://drive.google.com/file/d/1PXAeFX3MTvNNcSeL8KcTxju1qH2zXDyB/view?usp=drive_link"
+    },
+    {
+      "title": "Stats2 week-4 notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1QXlc4yLOU-N3bbmxOWLtM-3fJ7P_7umr/view"
+    },
+    {
+      "title": "Stats 2 week-3 Notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1ZmVrcReX0MSMrk1Aqrk4Ibw1G6uSJsQK/view"
+    },
+    {
+      "title": "Stats 2 week-2 notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1TEKPA-ZJ9Dvoy962JBEVVo1k9pXNlD8Y/view"
+    },
+    {
+      "title": "Stats 2 week-1 notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1KCVj8fyQRJFtouhGaXAZO0xSjc6MLN--/view"
+    },
+    {
+      "title": "Stats 2 week-6 Notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/10hHJAk30_JWjl2k0XRsLUz_iTaJdmYim/view"
+    },
+    {
+      "title": "Stats 2 week-5 Notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1exbOxNYp26NH1h7RGRa-MzqmCjvXYJqJ/view"
+    },
+    {
+      "title": "Stats 2 week-12 Notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1W8g9HWweMCV2jREIfXSY2GJ-M4-6LBTd/view"
+    },
+    {
+      "title": "Stats 2 week-11 Notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/17YvdGP0yl-NwHZDIYUB-yf8RfY3o7vL1/view"
+    },
+    {
+      "title": "Stats 2 week 10 Notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1nGlmZJxB8sJ9DHFY4g0GogEGuR8LZtjp/view"
+    },
+    {
+      "title": "Stats 2 week 9 notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1lkcy6QhXNvuSRc4hmGiRpmhpm4tkbO2N/view"
+    },
+    {
+      "title": "Stats 2 week 8 notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1GC7tg3j1ugnN-diawHMD8bIJtPbY9lmD/view"
+    },
+    {
+      "title": "Stats-2 week 7 notes (by ASHISH RAJ)",
+      "link": "https://drive.google.com/file/d/1XLfsIo506sjNPu97UqfxaKpeJ-1MmfWj/view"
+    },
+    {
+      "title": "Statistics 2 Week 0 to 9 Handwritten notes (by Parampreet Singh)",
+      "link": "https://drive.google.com/drive/folders/13Lz5jXGQTG_NlD1L9A4C-N6y1XH71qKe?usp=sharing"
+    },
+    {
+      "title": "Week 12 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1mRSvSCPvtV26PYA2hZgz6tSp3qalxjuO/view"
+    },
+    {
+      "title": "Week 11 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1aTN-kCoQqvvi7NDL3QgRNQZWbKBNwqhb/view"
+    },
+    {
+      "title": "Week 10 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1fuw7i1kczU7z4CP0PHAX2BmuBsnymQma/view"
+    },
+    {
+      "title": "Week 9 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1rf9dafdbpsAub6kEolvcFoedAaBnfckv/view"
+    },
+    {
+      "title": "Week 8 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1fkW74vE9M2SfTTayvbYWGs_ssE1N6nYY/view"
+    },
+    {
+      "title": "Week 7 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1PaIxXsuPW4ZXcmBdMgnyVt0yerBkXO4I/view"
+    },
+    {
+      "title": "Week 6 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/183tP6CfNgphU3myqkwphvjHmELOvJSV7/view"
+    },
+    {
+      "title": "Week 5 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1pbyLK1UBRLIQ7SXCMZnJWsUXlRzb_AM2/view"
+    },
+    {
+      "title": "Week 4 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1eaI2OmwcUVljJ-AC1wo8HQ6uyit182RM/view"
+    },
+    {
+      "title": "Week 3 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/15L9EsdODn42HNkBIY2R-gFMc-_1wgPwQ/view"
+    },
+    {
+      "title": "Week 2 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1Z0fsJ6scUc05cm-Z0QV2hkiNxo-mOxos/view"
+    },
+    {
+      "title": "Week 1 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/18KGOK3GliUWONV3zLM4_b7UsD5lH6dou/view"
+    },
+    {
+      "title": "Week 0 Notes (by Vehaan Handa)",
+      "link": "https://drive.google.com/file/d/1Lqgkg_gRuTBlzrwZvHH_QDcWJM_0E3ma/view"
+    },
+    {
+      "title": "STATISTICS-2 NOTES BY DEV (by Dev bhatnagar)",
+      "link": "https://drive.google.com/file/d/1MdBI5IuaByxutW1utQjzp1IbxE3BTliE/view"
+    },
+    {
+      "title": "Stats 2 Part 3 (by Sejal Anand)",
+      "link": "https://drive.google.com/file/d/1DpJKmjzXhrAm8WkKyRSwBAwj9JHe3q-H/view"
+    },
+    {
+      "title": "Stats 2 Part 2 (by Sejal Anand)",
+      "link": "https://drive.google.com/file/d/156vo3lMs7N0I7qSTRSqxAMZzm8Eynjxe/view"
+    },
+    {
+      "title": "Stats 2 Part 1 (by Sejal Anand)",
+      "link": "https://drive.google.com/file/d/1JW9TF1TD61DIrcq5Ls-_aLfvTM8RcJIz/view"
+    },
+    {
+      "title": "stats 2 week 5,6and8 (by Puneet Prasar)",
+      "link": "https://drive.google.com/file/d/17M88a_50sOOaL4FZfGp1LeWIYkyAlj0m/view"
+    },
+    {
+      "title": "stats 2 week 1-4 (by Puneet Prasar)",
+      "link": "https://drive.google.com/file/d/1IgeKPtg7U7WfTj6zl9NYs2ncGkf625iZ/view"
+    },
+    {
+      "title": "WEEK O part 1,2,3 (by Puneet Prasar)",
+      "link": "https://drive.google.com/file/d/1dyiIeggssr2APaLtRMMBumzciKgAorBW/view"
+    },
+    {
+      "title": "IITM NOTES W1-12 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1KW5VvS0ThvQGdiiwhAm4OMDn3Sva4OkT/view"
+    },
+    {
+      "title": "Stats-2 Notes (by Dev bhatnagar)",
+      "link": "https://drive.google.com/file/d/1Bt4RwB931v_a8IdTtlBjBOkeFW3MqonL/view?usp=sharing"
+    },
+    {
+      "title": "SOLUTION W6 T3 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1Sttn0X7Ak9z5N10BXhkY6rsMmn_TB0Gb/view"
+    },
+    {
+      "title": "STATISTICS-2 W5 NOTES (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1fyKL7sP05Zap4Na-I1i3-viEw_xyewXa/view"
+    },
+    {
+      "title": "Week 5 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/10Q62v9hzM8AR5rFS6r5yRobemR2urhAE/view"
+    },
+    {
+      "title": "Week 4 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1-WJJderCZBawClouDQ7_Ry5Vpx_c8n8m/view"
+    },
+    {
+      "title": "STATISTICS-2 W4 NOTES (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1VMxmK9E56Rwuf1hzsx0UfN4Kn9bW7E2Z/view"
+    },
+    {
+      "title": "Week 3 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1EnStSobp-1z3wOehmWEt0sO4fytJeJ35/view"
+    },
+    {
+      "title": "Week 2 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1K2P9oqxTSxLtCuSP3O12MTh_TM9sXu_K/view"
+    },
+    {
+      "title": "Week 1 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1dRE6IzQIalgXDuihFJUZ5dmj-w2DTZii/view"
+    },
+    {
+      "title": "Week 0 Part - 3 IITM Notes (by TALLAM VISIST)",
+      "link": "https://drive.google.com/file/d/1Oa5VzDfrz9KsPZGXzjtkk-hKiVF3ukR7/view"
+    },
+    {
+      "title": "Week 0 Part - 2 IITM Notes (by TALLAM VISIST)",
+      "link": "https://drive.google.com/file/d/1qzWk5BR2Voh4Takm2GPXpbRXzoh0CVhp/view"
+    },
+    {
+      "title": "STATISTICS-2 W2 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1AE1ezhcLzGYcuQudT3Cbe2-G3S9WN1bB/view"
+    },
+    {
+      "title": "STATISTICS-2 W1 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1q_oGF3SBMC8q_dd-VTt4LSR5_eRJtkBw/view"
+    },
+    {
+      "title": "STATISTICS-2 W3 NOTES (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1RPlMioGOc30RWJm2mVdEvG1NCywWdXdE/view"
+    },
+    {
+      "title": "Stats 2 Week 3 (by Nikhilesh Maddheshiya)",
+      "link": "https://drive.google.com/file/d/1K2OVrP8DzhPdQcX1jv3zhUhRjimr3Nzr/view"
+    },
+    {
+      "title": "Stats 2 Week 2 (by Nikhilesh Maddheshiya)",
+      "link": "https://drive.google.com/file/d/1itCbyi7vWGCsE1Fg9ZQt5sAXnWw_giMn/view"
+    },
+    {
+      "title": "Stats 2 Week 1 (by Nikhilesh Maddheshiya)",
+      "link": "https://drive.google.com/file/d/1T-TZnXobjmOXeaoANRATXSqM4GEZgwsl/view"
+    },
+    {
+      "title": "Stats 2 Week 0 (by Nikhilesh Maddheshiya)",
+      "link": "https://drive.google.com/file/d/1LXh35It-IFVXP_0TEZb9KmPy0VK-ULUT/view"
+    },
+    {
+      "title": "STATISTICS-2 W0 NOTES (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1G9TOAfHfa1hLw_nRrINcDMNf2Xweg_1I/view"
+    },
+    {
+      "title": "WEEK 0 (part 1,2,3) Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1GnRJpH0wdoK6zg_twldKTPfEPIYrmwPS/view"
+    },
+    {
+      "title": "thinkstats2  Allen B. Downey (by Nikhilesh Maddheshiya)",
+      "link": "https://drive.google.com/file/d/1h-p0b3XNEM8sZmANy018D9Oc9hgY7eQ2/view"
+    },
+    {
+      "title": "Probability and Statistics with Examples using R Siva Athreya, Deepayan Sarkar, and Steve Tanner (by Nikhilesh Maddheshiya)",
+      "link": "https://drive.google.com/file/d/13zGGCGyIOH5L-444ThSYLsfafvy7MHwY/view"
+    },
+    {
+      "title": "Hypothesis Testing Compilation (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/1flFPge6LxIfm-arVcGGQ3P8ZA6YscJxA/view"
+    },
+    {
+      "title": "STATS-2 W9 & W10 (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/1ZsbGkxQ5Xw2NSYqJOq_bqzXL_dbV9sOc/view"
+    },
+    {
+      "title": "STATS-2 Week 8 (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/1qwtDBOkYkA_QVl7uBhUwPhGpUQfWxpNc/view"
+    },
+    {
+      "title": "STATS-2 Week 7 (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/1VFHLNmqtIkvj1cdEzReWNJ--KXwAULce/view"
+    },
+    {
+      "title": "Important Formulas and Results (PDF, CDF, E[X], Var(X)) (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1y1YOLss2qE83eMVhK0r1WSVt5P2N5yrv/view"
+    },
+    {
+      "title": "Statistics-2 Week 1-8 Notes (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1vGJQLaHCX6YDeUvtgWPChZoUWvzSdsW6/view"
+    },
+    {
+      "title": "Week 6 (Anonymous) (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/13cqvXqaXuPwictdjFn6MlywHvjVMkOUD/view"
+    },
+    {
+      "title": "Week 5 (Anonymous) (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1mJwbLI8aFAfGqBULAn6MzY_06jBHp99r/view"
+    },
+    {
+      "title": "Week 4 (Anonymous) (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1h7qIU6An4HA23PJrq8rqAi70HtPvJDCF/view"
+    },
+    {
+      "title": "Week 1-3 (Anonymous) (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1BldwIdurDnbBJp-dY3hEITopL_1WGlJ4/view"
+    },
+    {
+      "title": "Week 6 Important Formulas (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/13pflM6KYoldkT4z43HG4WZY1GTlpIXb-/view"
+    },
+    {
+      "title": "Week 5 Important Formulas (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1nW73zq1m1LvR96NnEVrICl4cONzJX6KB/view"
+    },
+    {
+      "title": "Week 4 Important Formulas (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1v1nw-WsvyrdWexvNuOZSqC5Px2as7BO-/view"
+    },
+    {
+      "title": "Stats 2 Week 5 notes (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/1UoaCo13jrmzGn7ywzLvBcgAS816rsoOC/view"
+    },
+    {
+      "title": "Stats 2 Week 4 notes (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/1y6cQnwjS20TA1ekudAdGQT30mz6Rftla/view"
+    },
+    {
+      "title": "Week 3 Important Formulas (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1io2Zhs7J2hoFNTLjTVDFvC5jF7IecYKf/view"
+    },
+    {
+      "title": "Week 2 Important Formulas (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/12FgIK4xoOmn9vgqb7fI9xgKLgkH-GMnB/view"
+    },
+    {
+      "title": "Statistics Week 1 Important Formulas (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1zO2Eh5OPt9YxeEEf3CDrbfQHg6OPq5FH/view"
+    },
+    {
+      "title": "Notes Github Repository (by Anand Iyer)",
+      "link": "https://github.com/ananddotiyer/IIT-M/tree/main/My%20Notes/Statistics-II"
+    },
+    {
+      "title": "Week 3 Notes (by Utkarsh)",
+      "link": "https://drive.google.com/file/d/1dbBgIgXICCFFT72WnpCjl2EgOF6tT0Bn/view"
+    },
+    {
+      "title": "Week 2 Notes (by Utkarsh)",
+      "link": "https://drive.google.com/file/d/1WZcVt0D0F83cXE_4frcOym85c6kSVkqu/view"
+    },
+    {
+      "title": "Week 1 Notes (by Utkarsh)",
+      "link": "https://drive.google.com/file/d/18rBcNTluMIXKMLoas_Lh4pPrnpcOMJO2/view"
+    },
+    {
+      "title": "Prescribed Book Link (by Anonymous)",
+      "link": "https://www.isibang.ac.in/~athreya/psweur/"
+    },
+    {
+      "title": "Prescribed Book PDF (by Anonymous)",
+      "link": "https://drive.google.com/file/d/1hgHMYuqZD3rR8mNTCRYMoQTut_VEY51f/view"
+    },
+    {
+      "title": "Video Lectures Playlist (by IITM BSc)",
+      "link": "https://youtube.com/playlist?list=PLZ2ps__7DhBbLZ6RdNTIXvFdaMpvqagt0"
+    }
+  ],
+  "pyqs": [
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1boXawx2FBZ1g77B7gvMMRsibKL20H9IR/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPB2",
+      "link": "https://drive.google.com/file/d/1ekBDwflr_HqSrDXNi7b929b4OOhXhmY_/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPG2",
+      "link": "https://drive.google.com/file/d/1V4w84JPIuLCNDJTu4Vc7hgkh-lCQJwI8/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM AN2",
+      "link": "https://drive.google.com/file/d/17vtd5Hpkk5TKdDLplkOUxRJ0w3Q-6K9y/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPB2",
+      "link": "https://drive.google.com/file/d/1gjg0nO7_YgwErKpY-kJc3dG4u3djyv-l/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier January 2022 Term Paper 2",
+      "link": "https://drive.google.com/file/d/1f6sk3Rn2zvFzMKdNdFuJiLNP4BHm0zue/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPB1",
+      "link": "https://drive.google.com/file/d/1aMVgpJwjRqYSLw95WKHxkVmgW89cdxN1/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPD1",
+      "link": "https://drive.google.com/file/d/1anNmNLiTr8ZzOaPqWAJ1chvwik2GreNu/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPA1",
+      "link": "https://drive.google.com/file/d/1T2QJJH0JcoAmIKNjMfJoJjVv7epIR2Oi/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPG1",
+      "link": "https://drive.google.com/file/d/1V4w84JPIuLCNDJTu4Vc7hgkh-lCQJwI8/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM AN1",
+      "link": "https://drive.google.com/file/d/19lDX_r-zIQHirmFDZF9xied_6z56RWxR/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPD2",
+      "link": "https://drive.google.com/file/d/1vsRx3YAAFBWtnNQmjd5lhmwC5RuPH6Ne/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPB1",
+      "link": "https://drive.google.com/file/d/1BZa1_71MnQjWfqpCzXghalH_suTtHL58/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 May 2021 Term FN Set B",
+      "link": "https://drive.google.com/file/d/1zWnigaB6sPm-sXiY-sC-h6xCPLKBLiE2/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP3",
+      "link": "https://drive.google.com/file/d/1vB6xnAPFPEhiJVVj6UWFOTbdv56iiZ6G/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPF1",
+      "link": "https://drive.google.com/file/d/1GBS3i8A0sW4vGCxqU26T7BlHek0bBQRC/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM FN2",
+      "link": "https://drive.google.com/file/d/1_ctTxKPNkWNmWlmk2KOLtQ3QFkI2C015/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPD1",
+      "link": "https://drive.google.com/file/d/1Pq2MgrAh_x2N8Y2MBpp6F8mj79ABDKgM/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier January 2022 Term Paper 1",
+      "link": "https://drive.google.com/file/d/1zXHpBoQO0H5uKbgMmu58NkN0kPXOVvhP/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier January 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1_xpRgXW9k0cD5Z_T3tqO4_lec3gDubDw/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 1 / Qualifier May 2021 Term AN Set A",
+      "link": "https://drive.google.com/file/d/15F9AYIGAKfetSA6pCGfpMs29Q0VAs5Mb/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 May 2021 Term AN Set B",
+      "link": "https://drive.google.com/file/d/1ziF1TpS6-6bz3JZ3PALw7pMCqPGUPG40/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 September 2021 Term Set A",
+      "link": "https://drive.google.com/file/d/1SItfh4rSP5u3QbcyyD_HASEFLmJr-UUG/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 September 2021 Term Set B",
+      "link": "https://drive.google.com/file/d/17LyxTedxKT6utrfO6HJA0zvwDDFg78LD/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPB2",
+      "link": "https://drive.google.com/file/d/1ajQb70y4p_qr9tAiR0BqimzaSadqeTfw/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPC1",
+      "link": "https://drive.google.com/file/d/1tTdFWhOlPYeiyz6DGEzOgyphKMymMd9y/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1_F68mGykDSzwFh-H_N9_SHD1HV0B1nux/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP4",
+      "link": "https://drive.google.com/file/d/1DeVeTDc-dFX1Qcnp6IYQnWjJHmTzBfdj/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPA2",
+      "link": "https://drive.google.com/file/d/1PVhayNQPZjvUoK-MBldigqWOZ944Fbzy/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPB1",
+      "link": "https://drive.google.com/file/d/1fc-izN1f-yAizngR_2Ml0brNNslFGqYS/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPF2",
+      "link": "https://drive.google.com/file/d/1h5tAqetK77d0dIPMz94fiU54bRtgZw6W/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM FN1",
+      "link": "https://drive.google.com/file/d/1_ei5Aj60UAUuv6GrZ0YEJ7YvhLjmaAP5/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier September 2021 Term",
+      "link": "https://drive.google.com/file/d/1OoxU0L3F68vVSUWPYkdWU_FEtzgchZVU/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier January 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1id-4LwZMS3uzeVCUc0MEeObnCxfKYtGR/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 May 2021 Term FN Set A",
+      "link": "https://drive.google.com/file/d/1UzWj-KJzXgQsEq1KoYo3BDpSh_qZoi92/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPC2",
+      "link": "https://drive.google.com/file/d/1YXgPslnB_IwnwR5r1pLZsRdVCXgtjscN/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPD2",
+      "link": "https://drive.google.com/file/d/1Ngh8X_3LDFJlniDbWkmern4CZaGEC-wH/view?usp=sharing"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DAD DIPLOMA QUIZ1 EXAM QPD1",
+      "link": "https://drive.google.com/file/d/1-xtwdYNxktFZPBB4z9xW-XUQ98Ccjts5/view?usp=share_link"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DAD DIPLOMA QUIZ1 EXAM QPD2",
+      "link": "https://drive.google.com/file/d/1BDBNEaSvB1kMvTpIa9urnDNkeFM91KBA/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPE1",
+      "link": "https://drive.google.com/file/d/1jhBhMuMVRK7baIw9KPAHc1-NXphjLH1n/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPE2",
+      "link": "https://drive.google.com/file/d/1r_6vU8etBLHpjd-6Ymmr1tLDX1DdCMgc/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPA2",
+      "link": "https://drive.google.com/file/d/10lhp4OiBNzB5qQdc3osACEPfKBrmYZna/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPA3",
+      "link": "https://drive.google.com/file/d/166v197GwAnHei-bCUqdpl0bM1_J2aWqS/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPB3",
+      "link": "https://drive.google.com/file/d/1ZTtIbJF2v-_10U5U4R46z8wTNJVPSxiC/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPB4",
+      "link": "https://drive.google.com/file/d/1KEYC9PIjaTOlwFL9eLm6eoY2xlvtDejo/view?usp=sharing"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DIPLOMA QUIZ1 EXAM QPB2",
+      "link": "https://drive.google.com/file/d/1284AQagqhMsJ04N25RjEeXs9qLCVZMU_/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1Js38a4a1Q7ad585XBdbBUsIbBSPre9ih/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 September 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1kBdgmx0Vwps2QlnkAXj1qNH7sbi176DQ/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPF2",
+      "link": "https://drive.google.com/file/d/1PXkx2pa5qjQVcAABTjFUKj20BE-qRL7h/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPG1",
+      "link": "https://drive.google.com/file/d/1nrTl1gpf4OFS8BHY4SJhSdP_gmVcgjTi/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPG2",
+      "link": "https://drive.google.com/file/d/1zDXCNI25ESprMY-ogFDXjkl706CBUcSJ/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 -  FOUNDATION QUIZ2 EXAM QPB1",
+      "link": "https://drive.google.com/file/d/112g7KOkKxDmJzcPf7klIg3JLVlrbC80M/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPA4",
+      "link": "https://drive.google.com/file/d/1cINXOupFe69cVfW-YW1dSbN9tEYjMlFH/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPB2",
+      "link": "https://drive.google.com/file/d/1b9LBicFZTtr5BQiZhFyG3FfilDLjquEn/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1Gktc4X9tXNdkYwXYBQYtuOFue2M6hBCP/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPF1",
+      "link": "https://drive.google.com/file/d/1tFHVtoDIKh6_V1wfo155OUmGnmGr4DIw/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 -  FOUNDATION QUIZ2 EXAM QPC1",
+      "link": "https://drive.google.com/file/d/1YwRCXUGoEcReVFsa2TGbflWPRkeRrw5b/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 3 January 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1JiZcl8AfQnl56VtrDM_nFwYq-txu8UD-/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 January 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1aLRec8krfJxXou1YxCDA__EitDVsUvzt/view?usp=sharing"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DIPLOMA QUIZ1 EXAM QPB1",
+      "link": "https://drive.google.com/file/d/1yUuk2f6rA603kNi3n3iNNUq7QUOkNV7A/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 2 September 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1AVY59y3oTgRLO2u3WD89MZrqANEf52kc/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 -  FOUNDATION QUIZ2 EXAM QPD1",
+      "link": "https://drive.google.com/file/d/1YlqqciqcjsuwgBSLBkZuURtpBioasqvz/view?usp=share_link"
+    },
+    {
+      "title": "Foundation January 2023 Term",
+      "link": "https://drive.google.com/file/d/1Bu0Bw4q_8OB42wW4IW5xerNkvuaYilmJ/view?usp=sharing"
+    },
+    {
+      "title": "Foundation May 2023 Term",
+      "link": "https://drive.google.com/file/d/1XoeqieDGaLHHf85XZ4KY4Er9A1KoVC5k/view?usp=sharing"
+    },
+    {
+      "title": "Foundation May 2023 AN",
+      "link": "https://drive.google.com/file/d/1NR7gPH2A8DlhtowuHIApjkL01wi932Eo/view?usp=sharing"
+    },
+    {
+      "title": "Foundation January 2023 FN",
+      "link": "https://drive.google.com/file/d/1hLfJmZWFyy_dETPRAUHSAC9SbX2H-PVy/view?usp=sharing"
+    },
+    {
+      "title": "Foundation January 2023 AN",
+      "link": "https://drive.google.com/file/d/1cnXyy6DUDNnXsrWmQFkqpGCb8xV9Fdyf/view?usp=sharing"
+    },
+    {
+      "title": "Foundation May 2023 FN",
+      "link": "https://drive.google.com/file/d/1s8pOR6GcdvLI79qFF__BlCU-by27jWf-/view?usp=sharing"
+    },
+    {
+      "title": "DS Foundation Quiz 1 September 2023",
+      "link": "https://drive.google.com/file/d/1CVVeQsr-7KnQ2IDvv5fE3ZK1hrQOsS9N/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation Quiz 1 January 2024",
+      "link": "https://drive.google.com/file/d/1_7Rqy8KBzeJDbL2W2tCRkndPoEHHaGoM/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term January 2024 FN",
+      "link": "https://drive.google.com/file/d/16PIk4cMr3zQgH2CL3r_wsDuame5GW9Tw/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term January 2024 AN",
+      "link": "https://drive.google.com/file/d/1hKJzFjvjyjOHUnJxbSYD82EvMGOIZEI4/view?usp=drive_link"
+    },
+    {
+      "title": "May 2024 Term Quiz 1 Foundational",
+      "link": "https://drive.google.com/file/d/1arCRACU0Oi9n1z7_7LTZtHERXcb8mt9i/view?usp=drive_link"
+    },
+    {
+      "title": "Foundation May 2024 Term",
+      "link": "https://drive.google.com/file/d/1TEIjXwwmeufRDGGBljJmfrmocBMaO73r/view?usp=drive_link"
+    },
+    {
+      "title": "Foundation Jan 2024 Term",
+      "link": "https://drive.google.com/file/d/1l0VZ05LqJkT6I20bjy4nGxCVQrQ0pdfX/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation Quiz 1 Sep 2024",
+      "link": "https://drive.google.com/file/d/1FsFPd_Ohk5ek2RsTwci2CWQnyX3VWN5g/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation Quiz 2 Sep 2024",
+      "link": "https://drive.google.com/file/d/1QDyscJs9s00H3m2VMVciNCSgZSspuh6_/view?usp=sharing"
+    },
+    {
+      "title": "DS Foundation End Term FN Sep 2024",
+      "link": "https://drive.google.com/file/d/160X5T3IYA_c-D8MIWYhWwCdqqj-NML-6/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term AN Sep 2024",
+      "link": "https://drive.google.com/file/d/1vsznp-JcfW_FBpJlRqhMsvvFyOlIhkpl/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term FN May 2024",
+      "link": "https://drive.google.com/file/d/1oDuoIm9ieun79_FSdoM_u5qz27OrrV9I/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term AN May 2024",
+      "link": "https://drive.google.com/file/d/1lOd_X3sinhraoHHqa1aWp_j2eCZ91Whf/view?usp=drive_link"
+    }
+  ]
+}
