@@ -1,6 +1,10 @@
-<!-- A path that goes nowhere: say so, and offer the five places that exist. -->
+<!--
+  A path that goes nowhere: a boatman adrift with his lantern up, looking for the channel, then the
+  five places that exist.
+-->
 <template>
   <main class="wrap">
+    <PatArt class="art rise" style="--i: 0" :fig="ART.lost" name="lost" />
     <p class="code mono rise" style="--i: 0" aria-hidden="true">404</p>
     <h1 class="rise" style="--i: 1">This channel runs dry</h1>
     <p class="sub rise" style="--i: 2">
@@ -18,6 +22,8 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import LineIcon from '../components/site/LineIcon.vue';
+import PatArt from '../components/site/PatArt.vue';
+import { ART } from '../lib/art.js';
 
 const route = useRoute();
 const WAYS = [
@@ -39,9 +45,13 @@ const WAYS = [
   padding: 40px 24px;
   text-align: center;
 }
+.art {
+  width: min(460px, 88vw);
+  margin-bottom: -8px;
+}
 .code {
   margin: 0;
-  font-size: clamp(64px, 12vw, 120px);
+  font-size: clamp(40px, 7vw, 64px);
   font-weight: 700;
   line-height: 1;
   color: var(--mari);

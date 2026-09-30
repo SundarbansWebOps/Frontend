@@ -7,6 +7,7 @@
   <main class="wrap">
     <section class="door rise" style="--i: 0" aria-labelledby="login-h">
       <i class="glow" aria-hidden="true" />
+      <PatArt class="art" :fig="ART.login" name="login" />
       <p class="kicker"><LineIcon name="door" /> Members’ lounge</p>
       <h1 id="login-h">Sign-in is coming soon</h1>
       <p class="sub">
@@ -25,6 +26,8 @@
 
 <script setup>
 import LineIcon from '../components/site/LineIcon.vue';
+import PatArt from '../components/site/PatArt.vue';
+import { ART } from '../lib/art.js';
 </script>
 
 <style scoped>
@@ -92,6 +95,12 @@ import LineIcon from '../components/site/LineIcon.vue';
     opacity: 0.55;
     transform: scale(0.94);
   }
+}
+/* The ghat gate, lamp lit, on the night paper; a faint warm rim keeps its figures reading. */
+.art {
+  width: min(340px, 78%);
+  margin: -8px auto 14px;
+  filter: drop-shadow(0 0 1px rgb(255 222 170 / 0.45)) drop-shadow(0 0 22px rgb(255 190 110 / 0.14));
 }
 .kicker {
   display: inline-flex;

@@ -125,6 +125,8 @@ function untilt() {
 .front {
   position: relative;
   display: grid;
+  /* minmax(0, …): an auto column grows to the unwrapped name, so fit.js saw no overflow. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   height: 100%;
   overflow: hidden;
@@ -236,6 +238,7 @@ function untilt() {
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .big .name {
   font-size: 20px;

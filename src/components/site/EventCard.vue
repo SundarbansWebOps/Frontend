@@ -93,6 +93,11 @@ const loaded = ref(false);
     0 0 0 2px var(--w),
     var(--shadow);
 }
+/* A painted fallback poster's figure lifts with the card (TypePoster). */
+.card:hover .poster :deep(.fig),
+.card.hot .poster :deep(.fig) {
+  transform: translateY(-3px) rotate(-1deg) scale(1.03);
+}
 .poster img {
   position: absolute;
   inset: 0;
