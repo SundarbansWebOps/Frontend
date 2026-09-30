@@ -34,6 +34,9 @@ jobs:
       - name: Study data check
         run: npm run check:study
 
+      - name: Design check
+        run: npm run check:design
+
       - name: Build
         run: npm run build
 
@@ -42,6 +45,17 @@ jobs:
 
       - name: Route smoke tests
         run: npm run test:smoke
+
+      - name: Screenshots and phone overflow check
+        run: npm run shots
+
+      - name: Upload screenshots for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: test-results/shots/
+          if-no-files-found: ignore
 
   # Team PRs may change only the course data files; the maintainers listed here are exempt.
   # Keeps an AI-assisted data PR from touching code, config or this workflow.
