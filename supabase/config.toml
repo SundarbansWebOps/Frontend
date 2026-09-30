@@ -384,12 +384,6 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
-# The Sheet→Supabase roster sync is called by Google Apps Script with a shared
-# secret header, not a Supabase JWT, so JWT verification is off for it. The
-# function still rejects any request that does not carry the secret.
-[functions.members-sync]
-verify_jwt = false
-
 [analytics]
 enabled = true
 port = 54427

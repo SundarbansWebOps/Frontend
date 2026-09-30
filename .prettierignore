@@ -26,3 +26,6 @@ src/data/scData_generated.js
 *.webp
 *.ico
 *.csv
+
+# Edge Functions mirror the deployed cloud source byte-for-byte (supabase functions download).
+supabase/functions/

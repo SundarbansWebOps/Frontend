@@ -1,7 +1,7 @@
 // Adapts the real Study Corner dump into course-shaped data.
 // Notes and PYQs are the real Drive links. Lecture entries are dropped: every one is a
-// "#" placeholder. Term dates below are SAMPLE data until the Supabase
-// important_dates table is wired in.
+// "#" placeholder. Term dates below are SAMPLE data until Supabase
+// has a table for them.
 import raw from '../data/scData_generated.js';
 
 const META = {
@@ -150,7 +150,7 @@ for (const [level, list] of Object.entries(raw)) {
 
 export const byCode = Object.fromEntries(courses.map((c) => [c.code, c]));
 
-// ---- SAMPLE term calendar (Sep 2026 term). Replace with Supabase important_dates. ----
+// ---- SAMPLE term calendar (Sep 2026 term). Replace with Supabase data (no table for term dates yet). ----
 export const TODAY = new Date('2026-09-27T10:00:00+05:30');
 export const TERM = {
   label: 'Sep 2026 term',
