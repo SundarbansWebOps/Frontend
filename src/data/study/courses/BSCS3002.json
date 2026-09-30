@@ -1,0 +1,133 @@
+{
+  "code": "BSCS3002",
+  "subject": "Software Testing",
+  "description": "Core — unit & automation testing",
+  "notes": [
+    {
+      "title": "Software Testing Notes (All Weeks) (by Rishabh Indoria)",
+      "link": "https://drive.google.com/file/d/1PTMw4oDJOJ1sMUgx35Mmaqn1BeGQD4Qe/view"
+    },
+    {
+      "title": "Week 5 (by Sejal Anand)",
+      "link": "https://sejal23.notion.site/Week-5-2600338b6e9c421185f36334ee0bae49"
+    },
+    {
+      "title": "Week 4 (by Sejal Anand)",
+      "link": "https://sejal23.notion.site/Week-4-11f4b469d8aa49b2b83c857804892885"
+    },
+    {
+      "title": "Week 3 (by Sejal Anand)",
+      "link": "https://sejal23.notion.site/Week-3-0baa3adbce24464db33ee01537a9c6fa"
+    },
+    {
+      "title": "Week 2 (by Sejal Anand)",
+      "link": "https://sejal23.notion.site/Week-2-ee47f66deeb34f78b3dd14308d6b29a5"
+    },
+    {
+      "title": "Week 1 (by Sejal Anand)",
+      "link": "https://sejal23.notion.site/Week-1-af252c0150ee4890bc7a075d30598a10"
+    },
+    {
+      "title": "Video Lectures Playlist (by Kunal Chaturvedi)",
+      "link": "https://www.youtube.com/playlist?list=PLZ2ps__7DhBai6Crbq3wSw5dG-Ro1CJvT"
+    }
+  ],
+  "pyqs": [
+    {
+      "title": "SEP 22 - DEGREE QUIZ1 EXAM QPF1",
+      "link": "https://drive.google.com/file/d/1fs6gJ9iydHGa4-SRIWYAeAgkiMrQZfFf/view?usp=share_link"
+    },
+    {
+      "title": "SEP 22 - DEGREE QUIZ1 EXAM QPF2",
+      "link": "https://drive.google.com/file/d/1picKVhnj_Z-vQUIqFHd3IibmdjEGGZqY/view?usp=share_link"
+    },
+    {
+      "title": "Degree May 2023",
+      "link": "https://drive.google.com/file/d/1WmXtxJFPuAtvD4h5cf936i7oviKexZB2/view?usp=sharing"
+    },
+    {
+      "title": "Degree September 2023",
+      "link": "https://drive.google.com/file/d/1QW38lfKjR8vpCTkZTebD5cS5gSxWoba0/view?usp=sharing"
+    },
+    {
+      "title": "Degree January 2023",
+      "link": "https://drive.google.com/file/d/1Y9JhdGtQz1NgLQxDo2IiNOs8Gd-vMKsT/view?usp=sharing"
+    },
+    {
+      "title": "Degree January 2023 AN",
+      "link": "https://drive.google.com/file/d/1MrYU0rZ09Ce2sVJV5y1rRsWB5SQ9D91t/view?usp=sharing"
+    },
+    {
+      "title": "Degree May 2023 FN",
+      "link": "https://drive.google.com/file/d/1QydTw-oPuNj0ngvbC55hwI4exAT_xK9E/view?usp=sharing"
+    },
+    {
+      "title": "Degree January 2023 FN",
+      "link": "https://drive.google.com/file/d/15ugfSoB6baaOcUvn1JaPZ90H7xajS6Nq/view?usp=sharing"
+    },
+    {
+      "title": "Degree May 2023 AN",
+      "link": "https://drive.google.com/file/d/1r7UB-51zg00AGxG9eAhvWE4wSiM_IH-Z/view?usp=sharing"
+    },
+    {
+      "title": "Degree Quiz 1 September 2023",
+      "link": "https://drive.google.com/file/d/17tY34-cdROw4_M7lEfolnwk2rumCi4WR/view?usp=sharing"
+    },
+    {
+      "title": "Degree Quiz 2 September 2023",
+      "link": "https://drive.google.com/file/d/1hBw-Kx766hfogqHA3Rw9TByfJNDcgL0g/view?usp=drive_link"
+    },
+    {
+      "title": "Degree FN ET September 2023",
+      "link": "https://drive.google.com/file/d/1qr8kZ1xWVH0PKABra-YpiVirNGkuYufm/view?usp=drive_link"
+    },
+    {
+      "title": "Degree AN ET September 2023",
+      "link": "https://drive.google.com/file/d/1KpD-flozEngSN21MPf4UhsgBF8NTgEv2/view?usp=drive_link"
+    },
+    {
+      "title": "Degree Quiz 1 January 2024",
+      "link": "https://drive.google.com/file/d/1lecPaJZTOuolQxEHeNLJygwA817DoQ4Q/view?usp=drive_link"
+    },
+    {
+      "title": "DS Degree End Term January 2024 FN",
+      "link": "https://drive.google.com/file/d/1r0hNYxTmPkZhXjYiJ8-1vqKQrsj3agyX/view?usp=drive_link"
+    },
+    {
+      "title": "DS Degree End Term January 2024 AN",
+      "link": "https://drive.google.com/file/d/10jBPerZ-1754IEdGIJWnDWuUamU0wkbC/view?usp=drive_link"
+    },
+    {
+      "title": "May 2024 Term Quiz 1 Degree",
+      "link": "https://drive.google.com/file/d/1XkvnxEttb8gQGCuFc-ZUUCQcKPHs-0N3/view?usp=drive_link"
+    },
+    {
+      "title": "Degree May 2024 Term",
+      "link": "https://drive.google.com/file/d/1qwH9ZVTQf_x6KaHJMsAk5Q52x_7ZOsGt/view?usp=sharing"
+    },
+    {
+      "title": "Degree Quiz 2 Jan 2024",
+      "link": "https://drive.google.com/file/d/1YS414lUuwjoQSeAXQ47lORilOXBPTxmh/view?usp=drive_link"
+    },
+    {
+      "title": "DS Degree Quiz 1 Sep 2024",
+      "link": "https://drive.google.com/file/d/1h-GTgi118Wxfv41Y1_TpH20d6r2HOhVg/view?usp=sharing"
+    },
+    {
+      "title": "DS Degree Quiz 2 Sep 2024",
+      "link": "https://drive.google.com/file/d/1spJNvGSK8FLMMLwj3qEolBjdc2alhFBz/view?usp=sharing"
+    },
+    {
+      "title": "DS Degree End Term FN Sep 2024",
+      "link": "https://drive.google.com/file/d/1gV4dm-L2PTVjgZYwHiXG3wFiQuUyqEFj/view?usp=drive_link"
+    },
+    {
+      "title": "DS Degree End Term AN Sep 2024",
+      "link": "https://drive.google.com/file/d/1-6jL9hQJUQwIiUfYsvSTKoxN05J1bh0g/view?usp=drive_link"
+    },
+    {
+      "title": "DS Degree End Term FN May 2024",
+      "link": "https://drive.google.com/file/d/1xbL6Hz-UoL2x8SMmO3-2JTU2rTDSFHK0/view?usp=drive_link"
+    }
+  ]
+}

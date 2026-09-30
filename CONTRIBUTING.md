@@ -3,6 +3,22 @@
 Thanks for contributing. This file is the whole onboarding path — clone, run, change, PR — read it
 top to bottom and you should be able to open a green PR without asking anyone anything.
 
+## Adding notes and past papers (no coding needed)
+
+Study Corner data lives in `src/data/study/courses/`, one JSON file per course. To add notes or
+PYQs:
+
+1. Do **1. Prerequisites** and **2. Setup** below once.
+2. Upload the PDFs to Google Drive and share them as "Anyone with the link can view".
+3. Open the repo in your AI coding tool (Claude Code, Codex, Gemini CLI, OpenCode, Cursor, …) and
+   say: _"Use the add-study-resources skill to add these to <course>:"_, then paste each title and
+   link. Tools that don't load skills still find it through `AGENTS.md`; you can also point them at
+   `.agents/skills/add-study-resources/SKILL.md`.
+4. The tool edits the course file, runs `npm run check:study`, and opens a pull request.
+
+A pull request from a team member may change only files in `src/data/study/courses/`; CI fails
+anything else, and every pull request needs a maintainer's approval before it merges.
+
 ## 0. Read this first
 
 Before writing any code, read **`docs/STATE.md`** in this repo. It has the current status,

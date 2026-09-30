@@ -1,5 +1,8 @@
 # Agent entry — Sundarbans House
 
+**Adding or fixing notes or past papers (PYQs)?** Follow `.agents/skills/add-study-resources/SKILL.md`
+and nothing else in this file.
+
 BEFORE doing anything in this repo:
 1. Read `docs/STATE.md` — the current state of the project (what's done, what's in progress, gotchas).
 2. Skim `docs/INDEX.md` — the map of every doc and what it's for.

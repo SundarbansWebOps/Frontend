@@ -9,6 +9,7 @@
   - Pages live in `src/pages/` and are named `*Page.vue`; their components in `src/components/site/`; shared state and data adapters in `src/lib/` (`store.js`, `events.js`, `house.js`, `courses.js`, `theme.js`).
   - All routes are declared in one file: `src/router/index.js` (lazy `import()` per page — keep paths as literal strings for Vite chunking).
   - `src/assets/` = assets processed/bundled by Vite (import them); `public/` = served as-is at the root URL.
+  - Study Corner notes/PYQs: one JSON per course in `src/data/study/courses/`, order in `src/data/study/levels.js`; `npm run check:study` validates them (CI too). Team members add them via `.agents/skills/add-study-resources/`.
   - Static data as JSON/CSV/JS in `src/data/`, `public/data/`, and per-region meetup exports in `src/data/meetups/json/`. No committed members roster.
   - Certificates live on Google Drive (URLs in code/data), not under `public/certificates/`.
   - Display images live on Cloudinary (delivery transforms in URL). Dump new files in `media/` and run `npm run media:sync`; copy URLs from `media/manifest.json`. Hero frames stay in `public/assets/frames/`.

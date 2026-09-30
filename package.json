@@ -11,6 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:smoke": "playwright test",
+    "check:study": "node scripts/check-study-data.mjs",
     "media:sync": "node scripts/media-sync.mjs",
     "media:migrate-repo": "node scripts/media-migrate-repo.mjs"
   },

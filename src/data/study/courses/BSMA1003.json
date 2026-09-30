@@ -1,0 +1,489 @@
+{
+  "code": "BSMA1003",
+  "subject": "Mathematics for Data Science II",
+  "description": "Advanced calculus, linear algebra",
+  "notes": [
+    {
+      "title": "Maths 2 Week 8 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-8-8f995ae2a6324292a0f095bd5af56669"
+    },
+    {
+      "title": "Maths 2 Week 7 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-7-cf4a3f2c75fc416a9c11ccfa198f4968"
+    },
+    {
+      "title": "Maths 2 Week 6 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-6-46f851acc2b643cc830e3fbdd3e9304d"
+    },
+    {
+      "title": "Maths 2 Week 5 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-5-403b8f5b50244bde96e63a6311f1d58c"
+    },
+    {
+      "title": "Maths 2 Week 4 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-4-85d9d30a1bcd4196856216a871a48337"
+    },
+    {
+      "title": "Maths 2 Week 3 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-3-047baf2997314d9c8451bad234ea0adf"
+    },
+    {
+      "title": "Maths 2 Week 2 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-2-d9278ef2939d42bf89cca8aa05939d77"
+    },
+    {
+      "title": "Maths 2 Week 1 (by KaLyan Dath)",
+      "link": "https://kalyandath18.notion.site/Week-1-4a7351a92d5c4e66848936c029d2901d"
+    },
+    {
+      "title": "Maths 2 ( Week 9-11 ) By MyCampus (by Rishu Raj Gautam)",
+      "link": "https://drive.google.com/file/d/1BrODs28Z7hJgIMF8n2RCJkjerymiHacc/view"
+    },
+    {
+      "title": "Maths 2 (Week 3-8) by MyCampus (by Rishu Raj Gautam)",
+      "link": "https://drive.google.com/file/d/19K0MRcY8dxp5j8hUtEgPfo5ml6vvde6K/view"
+    },
+    {
+      "title": "Maths 2 ( Week 5-7 ) (by Rishu Raj Gautam)",
+      "link": "https://drive.google.com/file/d/1hWy5XQLeuwXVaX9j59PTiciVNEbcXF-d/view"
+    },
+    {
+      "title": "Maths 2 Week 1 to 9 notes + Formula Cheat Sheets (by Parampreet Singh)",
+      "link": "https://drive.google.com/drive/folders/13IBIpmulq9f-vUHPDXHFyW-leH8AE8M7?usp=sharing"
+    },
+    {
+      "title": "Math 2 Part 3 (by Sejal Anand)",
+      "link": "https://drive.google.com/file/d/12el71NkSDxd43pseSxxuz7LLX4Bddv61/view"
+    },
+    {
+      "title": "Math 2 Part 2 (by Sejal Anand)",
+      "link": "https://drive.google.com/file/d/16O-1BhXB_kzId2vCCSQ5EWxEuaihZUn1/view"
+    },
+    {
+      "title": "Math 2 Part 1 (by Sejal Anand)",
+      "link": "https://drive.google.com/file/d/1gkUKDDJACQ2JRQWnA_K8fccQIaR_oMQC/view"
+    },
+    {
+      "title": "Week 1-11 Maths 2 notes (by Padmaja Sharma)",
+      "link": "https://drive.google.com/file/d/18SlsvRaqLOBfO2LjEYXPwFS4EfPadaAo/view"
+    },
+    {
+      "title": "maths 2 week 5-7 (by Puneet Prasar)",
+      "link": "https://drive.google.com/file/d/1POuAaTkI6vBpbwDYDpAhXzJuOyDkKn06/view"
+    },
+    {
+      "title": "Week 5 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1CrgRgOtMvVWCa-cASbtDbzF9DGQDKowA/view?usp=sharing"
+    },
+    {
+      "title": "Week 4 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1CqTuDCaMM-qjBCvQLJq4BsPiEH5phXja/view?usp=sharing"
+    },
+    {
+      "title": "Maths 2 week 5 notes (by Puneet Prasar)",
+      "link": "https://drive.google.com/file/d/1XfF8Gp1nt_EO24p3ul7nl44p8U3WOFYV/view"
+    },
+    {
+      "title": "MATHS 2 WEEK 1-4 NOTES (by Puneet Prasar)",
+      "link": "https://drive.google.com/file/d/1dc08F2V5drxkyyG4E8K11NeBJzfZFMzC/view"
+    },
+    {
+      "title": "Week 2 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/14DFObZrDkd6J5K4uRvWGh8Cy6jhIcVCb/view?usp=sharing"
+    },
+    {
+      "title": "Week 1 Notes (by Gagneet Kaur)",
+      "link": "https://drive.google.com/file/d/1rY8a5XK_ZHWua3apBHXWrB9sPLaRpsW6/view?usp=sharing"
+    },
+    {
+      "title": "MATHS-2 NOTES W11 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1xlhGKQe-pTXjpXwecVYKxaLa5bvccxMD/view"
+    },
+    {
+      "title": "MATHS-2 NOTES W10 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1QwiAIENX0xXS_x_cr8hHNwzYGqtPhir-/view"
+    },
+    {
+      "title": "MATHS-2 NOTES W8-9 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1NsXwN5TAoeIg7DHg4n0dkD87DBzKGh0G/view"
+    },
+    {
+      "title": "Maths 2 Week 1-8 Notes (by Kunal Chaturvedi)",
+      "link": "https://drive.google.com/file/d/1yzNkAR-4IDhJpz6Oe-I7EztqCj_Gp98v/view"
+    },
+    {
+      "title": "MATHS 2 NOTES W6-7 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1QoDgdHF32IXL8_RLQ_HbSCp1STcnVcMa/view"
+    },
+    {
+      "title": "Math-2 Week 6 notes (by Aarthi A)",
+      "link": "https://drive.google.com/file/d/1eYhAwmH3IHlT5u3fi5sR19dPTntTjRXC/view"
+    },
+    {
+      "title": "MATHS-2 NOTES W4-5 (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1mzTvQHzxaFdKADLfMQ96bC7V3HV6e8bN/view"
+    },
+    {
+      "title": "Github Repository (by Anand Iyer)",
+      "link": "https://github.com/ananddotiyer/IIT-M/tree/main/My%20Notes/Mathematics-II"
+    },
+    {
+      "title": "Week 1-3 Notes (by Aditya Dwivedi)",
+      "link": "https://drive.google.com/file/d/1lZ4Xr63XIHbcrCi8mn7bmuWL-e9L4BTu/view"
+    },
+    {
+      "title": "Week 3 Notes (by Utkarsh)",
+      "link": "https://drive.google.com/file/d/1iAR1wSlimJ-je1XlmRtr7mjSTr_P5dap/view"
+    },
+    {
+      "title": "Week 2 Notes (by Utkarsh)",
+      "link": "https://drive.google.com/file/d/1za-vhnmlsOZm7CO3VmzaIOBmMxUfX70n/view"
+    },
+    {
+      "title": "Week 1 Notes (by Utkarsh)",
+      "link": "https://drive.google.com/file/d/195hT4ClRiNe8DfJyRZRgV73xe1UUgqu5/view"
+    },
+    {
+      "title": "Week 4 Notes (by Amisha Das)",
+      "link": "https://drive.google.com/file/d/1_A9ZtcYDaSyFMJcDL4Ix21wOxO5XO-Nv/view"
+    },
+    {
+      "title": "Prescribed Book (Vector Calculus) (by Anonymous)",
+      "link": "https://drive.google.com/file/d/1dmQRxhopwQd8Uvfn18uyVl6dKVJxN58X/view"
+    },
+    {
+      "title": "Prescribed Book (Mathematics for ML) (by Anonymous)",
+      "link": "https://drive.google.com/file/d/1QbZ8GdrVWQ5MxBLfp5pnbkaCh2MGKaGf/view"
+    },
+    {
+      "title": "Video Lectures Playlist (by IITM BSc)",
+      "link": "https://www.youtube.com/playlist?list=PLZ2ps__7DhBboGlwPVSsWP8loAJCLrKc8"
+    }
+  ],
+  "pyqs": [
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1boXawx2FBZ1g77B7gvMMRsibKL20H9IR/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPB2",
+      "link": "https://drive.google.com/file/d/1ekBDwflr_HqSrDXNi7b929b4OOhXhmY_/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPG2",
+      "link": "https://drive.google.com/file/d/1V4w84JPIuLCNDJTu4Vc7hgkh-lCQJwI8/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM AN2",
+      "link": "https://drive.google.com/file/d/17vtd5Hpkk5TKdDLplkOUxRJ0w3Q-6K9y/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPB2",
+      "link": "https://drive.google.com/file/d/1gjg0nO7_YgwErKpY-kJc3dG4u3djyv-l/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier January 2022 Term Paper 2",
+      "link": "https://drive.google.com/file/d/1f6sk3Rn2zvFzMKdNdFuJiLNP4BHm0zue/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPB1",
+      "link": "https://drive.google.com/file/d/1aMVgpJwjRqYSLw95WKHxkVmgW89cdxN1/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPD1",
+      "link": "https://drive.google.com/file/d/1anNmNLiTr8ZzOaPqWAJ1chvwik2GreNu/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPA1",
+      "link": "https://drive.google.com/file/d/1T2QJJH0JcoAmIKNjMfJoJjVv7epIR2Oi/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPG1",
+      "link": "https://drive.google.com/file/d/1V4w84JPIuLCNDJTu4Vc7hgkh-lCQJwI8/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM AN1",
+      "link": "https://drive.google.com/file/d/19lDX_r-zIQHirmFDZF9xied_6z56RWxR/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPD2",
+      "link": "https://drive.google.com/file/d/1vsRx3YAAFBWtnNQmjd5lhmwC5RuPH6Ne/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPB1",
+      "link": "https://drive.google.com/file/d/1BZa1_71MnQjWfqpCzXghalH_suTtHL58/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 May 2021 Term FN Set B",
+      "link": "https://drive.google.com/file/d/1zWnigaB6sPm-sXiY-sC-h6xCPLKBLiE2/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP3",
+      "link": "https://drive.google.com/file/d/1vB6xnAPFPEhiJVVj6UWFOTbdv56iiZ6G/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPF1",
+      "link": "https://drive.google.com/file/d/1GBS3i8A0sW4vGCxqU26T7BlHek0bBQRC/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM FN2",
+      "link": "https://drive.google.com/file/d/1_ctTxKPNkWNmWlmk2KOLtQ3QFkI2C015/view?usp=share_link"
+    },
+    {
+      "title": "MAY 22 - FOUNDATION DIPLOMA ENDTERM QPD1",
+      "link": "https://drive.google.com/file/d/1Pq2MgrAh_x2N8Y2MBpp6F8mj79ABDKgM/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier January 2022 Term Paper 1",
+      "link": "https://drive.google.com/file/d/1zXHpBoQO0H5uKbgMmu58NkN0kPXOVvhP/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier January 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1_xpRgXW9k0cD5Z_T3tqO4_lec3gDubDw/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 1 / Qualifier May 2021 Term AN Set A",
+      "link": "https://drive.google.com/file/d/15F9AYIGAKfetSA6pCGfpMs29Q0VAs5Mb/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 May 2021 Term AN Set B",
+      "link": "https://drive.google.com/file/d/1ziF1TpS6-6bz3JZ3PALw7pMCqPGUPG40/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 September 2021 Term Set A",
+      "link": "https://drive.google.com/file/d/1SItfh4rSP5u3QbcyyD_HASEFLmJr-UUG/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 September 2021 Term Set B",
+      "link": "https://drive.google.com/file/d/17LyxTedxKT6utrfO6HJA0zvwDDFg78LD/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPB2",
+      "link": "https://drive.google.com/file/d/1ajQb70y4p_qr9tAiR0BqimzaSadqeTfw/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPC1",
+      "link": "https://drive.google.com/file/d/1tTdFWhOlPYeiyz6DGEzOgyphKMymMd9y/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1_F68mGykDSzwFh-H_N9_SHD1HV0B1nux/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term 2 May 2021 Term QP4",
+      "link": "https://drive.google.com/file/d/1DeVeTDc-dFX1Qcnp6IYQnWjJHmTzBfdj/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPA2",
+      "link": "https://drive.google.com/file/d/1PVhayNQPZjvUoK-MBldigqWOZ944Fbzy/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPB1",
+      "link": "https://drive.google.com/file/d/1fc-izN1f-yAizngR_2Ml0brNNslFGqYS/view?usp=sharing"
+    },
+    {
+      "title": "Foundational End Term September 2021 Term QPF2",
+      "link": "https://drive.google.com/file/d/1h5tAqetK77d0dIPMz94fiU54bRtgZw6W/view?usp=sharing"
+    },
+    {
+      "title": "JAN 22 - FOUNDATION DIPLOMA ENDTERM FN1",
+      "link": "https://drive.google.com/file/d/1_ei5Aj60UAUuv6GrZ0YEJ7YvhLjmaAP5/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Qualifier September 2021 Term",
+      "link": "https://drive.google.com/file/d/1OoxU0L3F68vVSUWPYkdWU_FEtzgchZVU/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier January 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1id-4LwZMS3uzeVCUc0MEeObnCxfKYtGR/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 May 2021 Term FN Set A",
+      "link": "https://drive.google.com/file/d/1UzWj-KJzXgQsEq1KoYo3BDpSh_qZoi92/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPC2",
+      "link": "https://drive.google.com/file/d/1YXgPslnB_IwnwR5r1pLZsRdVCXgtjscN/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Qualifier / Quiz 1 January 2022 Term QPD2",
+      "link": "https://drive.google.com/file/d/1Ngh8X_3LDFJlniDbWkmern4CZaGEC-wH/view?usp=sharing"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DAD DIPLOMA QUIZ1 EXAM QPD1",
+      "link": "https://drive.google.com/file/d/1-xtwdYNxktFZPBB4z9xW-XUQ98Ccjts5/view?usp=share_link"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DAD DIPLOMA QUIZ1 EXAM QPD2",
+      "link": "https://drive.google.com/file/d/1BDBNEaSvB1kMvTpIa9urnDNkeFM91KBA/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPE1",
+      "link": "https://drive.google.com/file/d/1jhBhMuMVRK7baIw9KPAHc1-NXphjLH1n/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPE2",
+      "link": "https://drive.google.com/file/d/1r_6vU8etBLHpjd-6Ymmr1tLDX1DdCMgc/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPA2",
+      "link": "https://drive.google.com/file/d/10lhp4OiBNzB5qQdc3osACEPfKBrmYZna/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPA3",
+      "link": "https://drive.google.com/file/d/166v197GwAnHei-bCUqdpl0bM1_J2aWqS/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPB3",
+      "link": "https://drive.google.com/file/d/1ZTtIbJF2v-_10U5U4R46z8wTNJVPSxiC/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPB4",
+      "link": "https://drive.google.com/file/d/1KEYC9PIjaTOlwFL9eLm6eoY2xlvtDejo/view?usp=sharing"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DIPLOMA QUIZ1 EXAM QPB2",
+      "link": "https://drive.google.com/file/d/1284AQagqhMsJ04N25RjEeXs9qLCVZMU_/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1Js38a4a1Q7ad585XBdbBUsIbBSPre9ih/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 September 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1kBdgmx0Vwps2QlnkAXj1qNH7sbi176DQ/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPF2",
+      "link": "https://drive.google.com/file/d/1PXkx2pa5qjQVcAABTjFUKj20BE-qRL7h/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPG1",
+      "link": "https://drive.google.com/file/d/1nrTl1gpf4OFS8BHY4SJhSdP_gmVcgjTi/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPG2",
+      "link": "https://drive.google.com/file/d/1zDXCNI25ESprMY-ogFDXjkl706CBUcSJ/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 -  FOUNDATION QUIZ2 EXAM QPB1",
+      "link": "https://drive.google.com/file/d/112g7KOkKxDmJzcPf7klIg3JLVlrbC80M/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPA4",
+      "link": "https://drive.google.com/file/d/1cINXOupFe69cVfW-YW1dSbN9tEYjMlFH/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 September 2021 Term QPB2",
+      "link": "https://drive.google.com/file/d/1b9LBicFZTtr5BQiZhFyG3FfilDLjquEn/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1Gktc4X9tXNdkYwXYBQYtuOFue2M6hBCP/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 2 January 2022 Term QPF1",
+      "link": "https://drive.google.com/file/d/1tFHVtoDIKh6_V1wfo155OUmGnmGr4DIw/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 -  FOUNDATION QUIZ2 EXAM QPC1",
+      "link": "https://drive.google.com/file/d/1YwRCXUGoEcReVFsa2TGbflWPRkeRrw5b/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 3 January 2021 Term QP1",
+      "link": "https://drive.google.com/file/d/1JiZcl8AfQnl56VtrDM_nFwYq-txu8UD-/view?usp=sharing"
+    },
+    {
+      "title": "Foundational Quiz 3 January 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1aLRec8krfJxXou1YxCDA__EitDVsUvzt/view?usp=sharing"
+    },
+    {
+      "title": "SEP 22 - FOUNDATION DIPLOMA QUIZ1 EXAM QPB1",
+      "link": "https://drive.google.com/file/d/1yUuk2f6rA603kNi3n3iNNUq7QUOkNV7A/view?usp=share_link"
+    },
+    {
+      "title": "Foundational Quiz 2 September 2021 Term QP2",
+      "link": "https://drive.google.com/file/d/1AVY59y3oTgRLO2u3WD89MZrqANEf52kc/view?usp=sharing"
+    },
+    {
+      "title": "MAY 22 -  FOUNDATION QUIZ2 EXAM QPD1",
+      "link": "https://drive.google.com/file/d/1YlqqciqcjsuwgBSLBkZuURtpBioasqvz/view?usp=share_link"
+    },
+    {
+      "title": "Foundation January 2023 Term",
+      "link": "https://drive.google.com/file/d/1Bu0Bw4q_8OB42wW4IW5xerNkvuaYilmJ/view?usp=sharing"
+    },
+    {
+      "title": "Foundation May 2023 Term",
+      "link": "https://drive.google.com/file/d/1XoeqieDGaLHHf85XZ4KY4Er9A1KoVC5k/view?usp=sharing"
+    },
+    {
+      "title": "Foundation May 2023 AN",
+      "link": "https://drive.google.com/file/d/1NR7gPH2A8DlhtowuHIApjkL01wi932Eo/view?usp=sharing"
+    },
+    {
+      "title": "Foundation January 2023 FN",
+      "link": "https://drive.google.com/file/d/1hLfJmZWFyy_dETPRAUHSAC9SbX2H-PVy/view?usp=sharing"
+    },
+    {
+      "title": "Foundation January 2023 AN",
+      "link": "https://drive.google.com/file/d/1cnXyy6DUDNnXsrWmQFkqpGCb8xV9Fdyf/view?usp=sharing"
+    },
+    {
+      "title": "Foundation May 2023 FN",
+      "link": "https://drive.google.com/file/d/1s8pOR6GcdvLI79qFF__BlCU-by27jWf-/view?usp=sharing"
+    },
+    {
+      "title": "DS Foundation Quiz 1 September 2023",
+      "link": "https://drive.google.com/file/d/1CVVeQsr-7KnQ2IDvv5fE3ZK1hrQOsS9N/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation Quiz 1 January 2024",
+      "link": "https://drive.google.com/file/d/1_7Rqy8KBzeJDbL2W2tCRkndPoEHHaGoM/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term January 2024 FN",
+      "link": "https://drive.google.com/file/d/16PIk4cMr3zQgH2CL3r_wsDuame5GW9Tw/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term January 2024 AN",
+      "link": "https://drive.google.com/file/d/1hKJzFjvjyjOHUnJxbSYD82EvMGOIZEI4/view?usp=drive_link"
+    },
+    {
+      "title": "May 2024 Term Quiz 1 Foundational",
+      "link": "https://drive.google.com/file/d/1arCRACU0Oi9n1z7_7LTZtHERXcb8mt9i/view?usp=drive_link"
+    },
+    {
+      "title": "Foundation May 2024 Term",
+      "link": "https://drive.google.com/file/d/1TEIjXwwmeufRDGGBljJmfrmocBMaO73r/view?usp=drive_link"
+    },
+    {
+      "title": "Foundation Jan 2024 Term",
+      "link": "https://drive.google.com/file/d/1l0VZ05LqJkT6I20bjy4nGxCVQrQ0pdfX/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation Quiz 1 Sep 2024",
+      "link": "https://drive.google.com/file/d/1FsFPd_Ohk5ek2RsTwci2CWQnyX3VWN5g/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation Quiz 2 Sep 2024",
+      "link": "https://drive.google.com/file/d/1QDyscJs9s00H3m2VMVciNCSgZSspuh6_/view?usp=sharing"
+    },
+    {
+      "title": "DS Foundation End Term FN Sep 2024",
+      "link": "https://drive.google.com/file/d/160X5T3IYA_c-D8MIWYhWwCdqqj-NML-6/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term AN Sep 2024",
+      "link": "https://drive.google.com/file/d/1vsznp-JcfW_FBpJlRqhMsvvFyOlIhkpl/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term FN May 2024",
+      "link": "https://drive.google.com/file/d/1oDuoIm9ieun79_FSdoM_u5qz27OrrV9I/view?usp=drive_link"
+    },
+    {
+      "title": "DS Foundation End Term AN May 2024",
+      "link": "https://drive.google.com/file/d/1lOd_X3sinhraoHHqa1aWp_j2eCZ91Whf/view?usp=drive_link"
+    }
+  ]
+}
