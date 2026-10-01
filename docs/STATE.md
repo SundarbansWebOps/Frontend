@@ -1,5 +1,5 @@
 # Sundarbans House - State
-> IITM BS Sundarbans House frontend and backend work · Last checkpoint: 2026-09-30
+> IITM BS Sundarbans House frontend and backend work · Last checkpoint: 2026-10-01
 
 ## In progress / next
 - **The prototype is the live site in `src/`**, committed on `feat/prototype-site-delta` (latest `0a7ea4c`; not pushed, no PR). Next: Raja reviews in the browser (`npm run dev`), then decides on push/PR.
@@ -7,6 +7,8 @@
 - Old site deleted; meetup JSON lives in `src/data/meetups/json/`.
 - Not ported (were on old /study): doubts board, student tools, exam cities, contribute cards. Grade calculator and exam cities show "coming soon" in Resources tools.
 - **Backend = cloud Supabase "Website Backend"** (`bqoejoznqudcyeaebmsm`, org "Sundarbans IITM", Mumbai, Postgres 17), the source of truth since 2026-09-30. Branch `refactor/backend-cloud-source-of-truth` (uncommitted) replaces the old local-only v1 with the cloud's 24 migrations + 3 Edge Functions, pulled read-only; repo is `supabase link`ed; `supabase migration list --linked` = 24/24 in sync. Next: Raja plans the Lounge features, then wire `src/` to the cloud (supabase-js, Google sign-in, `get_my_dashboard`).
+- **2026-10-01 cloud go-live** (branch `chore/sync-cloud-migrations-2026-10-01`): 7 migrations applied to the cloud were mirrored here under their cloud versions (31/31): RLS placeholder (12b), regions + communities as data, signed-out read of `regions`/`communities`/`public_events`, sign-up limited to `ds.study.iitm.ac.in`, 3 Super Admins, all fake/test users deleted, real region names. The cloud now holds real accounts only.
+- **Before wiring `src/` to Supabase, decide:** (1) sign-in: the DB's sign-up trigger needs `full_name`, E.164 `phone` and `region_code` in the user metadata, so plain Google OAuth sign-up fails ("Database error saving new user"); use email sign-up/OTP with `options.data`, or ask for a DB change that lets Google users finish a profile after sign-in. (2) roster: CONTEXT.md says the Lounge is gated by the council Sheet roster, but the cloud has no Sheet sync; any `ds.study.iitm.ac.in` address can sign up and becomes an `active` member. (3) events: `public_events` has name, description, registration_link, starts_at/ends_at, community_id, status; the site's events also use poster image + size, type, attendees and location, and wing `tech` (DB code `technical`); posters need new columns or stay static.
 - Council agenda (certificates, winners, rosters, meetup photos, lounge rooms): `docs/council-questions.md`.
 
 ## Status
@@ -23,7 +25,7 @@
 - Snapshots/data -> `src/data/{events.data.js,house.data.js,teams.js}`; Pat plates -> `src/assets/pat/`; tokens -> `src/assets/tokens.css`
 - Scroll/anchors/view transitions -> `scrollBehavior` + `beforeResolve` in `src/router/index.js`
 - Prototype (Synchrony/Current variants remain here only) -> `prototype/resource-hub/`
-- Backend (cloud mirror) -> `supabase/migrations/` (24 files, fetched from cloud), `supabase/functions/{apply-account-status,change-member-contact,hard-delete-member,_shared}`; `src/` does not call it yet
+- Backend (cloud mirror) -> `supabase/migrations/` (31 files, same versions as the cloud), `supabase/functions/{apply-account-status,change-member-contact,hard-delete-member,_shared}`; `src/` does not call it yet
 - Glossary -> `CONTEXT.md` · Decisions -> `docs/decisions.md` · Conventions -> `docs/conventions.md`
 
 ## Stack & run
@@ -45,6 +47,9 @@
 - Overlays that push history must keep vue-router's state: use `router.push({ query, state })` or spread `history.state` (see `PhotoViewer.vue`).
 - Ports 5432x belong to another local Supabase project (`supabase_*_backend` containers); `supabase/config.toml` uses 5442x. Never stop their containers.
 - Never commit Supabase secret keys, the DB password, or member data. Edge Functions need `ALLOWED_ORIGINS` set as a function secret or browsers get no CORS headers.
+- Region codes are `region_01`…`region_09` in the order of `REGION_DEFS` in `src/lib/house.js` (Patna … Chennai); names match the site's display names exactly. Sign-up sends the code.
+- Supabase Auth redirects + hash router: create the client with `auth: { flowType: 'pkce' }` (supabase-js defaults to implicit; PKCE returns `?code=`) and redirect to the site root, not to a `#/` route; implicit flow puts tokens in the `#` and collides with hash history.
+- Signed-out site reads only `regions`, `communities` and the `public_events` view (publishable key). Everything else needs a signed-in member.
 - Cloud schema has `events` but no meetups or important dates tables; `src/data/*` and the sample term calendar in `src/lib/courses.js` stay static until tables exist.
 - Edge Function comments cite a "spec §10–§16 / Q7" that is not in this repo.
 - Meetup photos use original Google delivery URLs; rewriting size/flags broke loads. Each retries once, then drops.
