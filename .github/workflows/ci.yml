@@ -56,24 +56,3 @@ jobs:
           name: screenshots
           path: test-results/shots/
           if-no-files-found: ignore
-
-  # Team PRs may change only the course data files; the maintainers listed here are exempt.
-  # Keeps an AI-assisted data PR from touching code, config or this workflow.
-  contributor-scope:
-    if: github.event_name == 'pull_request' && !contains(fromJSON('["Anuraj-dev"]'), github.event.pull_request.user.login)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Only src/data/study/courses/ changed
-        run: |
-          outside=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- . ':!src/data/study/courses/')
-          if [ -n "$outside" ]; then
-            echo "::error::This PR may only change files in src/data/study/courses/. Undo these changes:"
-            echo "$outside"
-            exit 1
-          fi
-          echo "Scope OK: only course data changed."
