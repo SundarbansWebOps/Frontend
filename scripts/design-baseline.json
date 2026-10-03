@@ -1,0 +1,126 @@
+{
+  "src/components/site/BoardRoom.vue": {
+    "colors": 6,
+    "important": 0
+  },
+  "src/components/site/CertRoom.vue": {
+    "colors": 27,
+    "important": 0
+  },
+  "src/components/site/CouncilTrio.vue": {
+    "colors": 1,
+    "important": 0
+  },
+  "src/components/site/CourseSheet.vue": {
+    "colors": 1,
+    "important": 0
+  },
+  "src/components/site/CourseTicket.vue": {
+    "colors": 4,
+    "important": 0
+  },
+  "src/components/site/EventSheet.vue": {
+    "colors": 1,
+    "important": 0
+  },
+  "src/components/site/GroupsRoom.vue": {
+    "colors": 6,
+    "important": 0
+  },
+  "src/components/site/HouseFlow.vue": {
+    "colors": 2,
+    "important": 0
+  },
+  "src/components/site/LiveRoom.vue": {
+    "colors": 7,
+    "important": 0
+  },
+  "src/components/site/LoungeDoor.vue": {
+    "colors": 33,
+    "important": 0
+  },
+  "src/components/site/MangroveArt.vue": {
+    "colors": 3,
+    "important": 0
+  },
+  "src/components/site/OwlRoom.vue": {
+    "colors": 11,
+    "important": 0
+  },
+  "src/components/site/PatFigure.vue": {
+    "colors": 1,
+    "important": 2
+  },
+  "src/components/site/PatPosters.vue": {
+    "colors": 1,
+    "important": 0
+  },
+  "src/components/site/PatSearch.vue": {
+    "colors": 1,
+    "important": 0
+  },
+  "src/components/site/PersonCard.vue": {
+    "colors": 6,
+    "important": 0
+  },
+  "src/components/site/PhotoViewer.vue": {
+    "colors": 18,
+    "important": 0
+  },
+  "src/components/site/RegionPanel.vue": {
+    "colors": 2,
+    "important": 0
+  },
+  "src/components/site/RegionSky.vue": {
+    "colors": 4,
+    "important": 0
+  },
+  "src/components/site/SectionRail.vue": {
+    "colors": 6,
+    "important": 0
+  },
+  "src/components/site/SwellChart.vue": {
+    "colors": 4,
+    "important": 0
+  },
+  "src/components/site/TeamCards.vue": {
+    "colors": 2,
+    "important": 0
+  },
+  "src/components/site/TopNav.vue": {
+    "colors": 23,
+    "important": 0
+  },
+  "src/components/site/TypePoster.vue": {
+    "colors": 9,
+    "important": 0
+  },
+  "src/lib/theme.js": {
+    "colors": 2,
+    "important": 0
+  },
+  "src/pages/EventsPage.vue": {
+    "colors": 0,
+    "important": 3
+  },
+  "src/pages/HomePage.vue": {
+    "colors": 68,
+    "important": 0
+  },
+  "src/pages/LoginPage.vue": {
+    "colors": 20,
+    "important": 0
+  },
+  "src/pages/LoungePage.vue": {
+    "colors": 29,
+    "important": 0
+  },
+  "src/pages/ResourcesPage.vue": {
+    "colors": 0,
+    "important": 1
+  },
+  "src/router/index.js": {
+    "colors": 1,
+    "important": 0
+  }
+}

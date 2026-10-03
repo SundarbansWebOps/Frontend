@@ -1,5 +1,6 @@
 <!--
-  The communities and the crew. Each card's three-word motto stamps in as it
+  The communities and the crew. Each card opens on its own painted pat plate, which paints
+  itself in and then keeps moving while on screen; the three-word motto stamps in as it
   arrives. Rosters are empty seats until the 2026–27 names and photos are added in teams.js
   (no stand-in faces); a community links to its events on the Events page.
 -->
@@ -13,6 +14,7 @@
       :style="{ '--i': i, '--c': t.wing ? `var(--w-${t.wing})` : 'var(--mari-ink)' }"
     >
       <i class="tide" aria-hidden="true" />
+      <PatArt v-if="ART[t.id]" class="art" :fig="ART[t.id]" :name="t.id" />
       <p class="tag" aria-hidden="true">
         <span v-for="(w, k) in t.tag" :key="k" :style="{ '--k': k }">{{ w }}</span>
       </p>
@@ -45,6 +47,8 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import LineIcon from './LineIcon.vue';
+import PatArt from './PatArt.vue';
+import { ART } from '../../lib/art.js';
 import { ev } from '../../lib/events.js';
 import { portrait } from '../../lib/house.js';
 import { nav } from '../../lib/store.js';
@@ -120,6 +124,33 @@ onBeforeUnmount(() => io.disconnect());
 }
 .team > :not(.tide) {
   position: relative;
+}
+/* The plate hangs on a strip of pat paper with a dotted border, in both themes: a pat is
+   always painted on paper. */
+.art {
+  display: grid;
+  place-items: end center;
+  height: clamp(190px, 17vw, 230px);
+  overflow: hidden;
+  margin: -20px -20px 10px;
+  padding: 16px 18px 10px;
+  background:
+    radial-gradient(
+      120% 90% at 50% 100%,
+      color-mix(in srgb, var(--c) 16%, transparent),
+      transparent 70%
+    ),
+    #f6ecd8;
+  border-bottom: 3px dotted color-mix(in srgb, var(--c) 70%, #1d1915);
+}
+/* Every plate fits the same strip: its height is the strip's, its width follows. */
+.art :deep(.fig) {
+  width: auto;
+  height: 100%;
+  transition: transform 0.6s var(--ease-spring);
+}
+.team:hover .art :deep(.fig) {
+  transform: translateY(-4px) scale(1.03);
 }
 .tag {
   display: flex;

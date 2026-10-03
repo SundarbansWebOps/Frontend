@@ -405,6 +405,154 @@ onBeforeUnmount(() => {
   }
 }
 
+/* ---- Plates beyond Home (art.js): Teams, event posters, Night Owl, 404, sign-in ---- */
+/* Baul: the ektara sways over his head. */
+.pt-ektara {
+  animation: ektara 1.6s ease-in-out infinite alternate;
+}
+@keyframes ektara {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(6deg);
+  }
+}
+/* Speaker: the open hand makes its point. */
+.pt-gesture {
+  animation: gesture 2.6s ease-in-out infinite;
+}
+@keyframes gesture {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  30% {
+    transform: rotate(-8deg);
+  }
+  55% {
+    transform: rotate(3deg);
+  }
+}
+/* Maker: the gear turns, slowly, forever. */
+.pt-gear {
+  animation: gear 9s linear infinite;
+}
+@keyframes gear {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Players: the knight goes up in triumph, again and again. */
+.pt-knight {
+  animation: knight 2.2s cubic-bezier(0.3, 0, 0.3, 1) infinite;
+}
+@keyframes knight {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  30% {
+    transform: rotate(-7deg) translateY(-3%);
+  }
+  45% {
+    transform: rotate(-5deg) translateY(-2%);
+  }
+}
+/* Chai: the kettle tips to pour, holds, rights itself. Small: the stream is painted on the base. */
+.pt-kettle {
+  animation: pour 4.2s ease-in-out infinite;
+}
+@keyframes pour {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  35%,
+  60% {
+    transform: rotate(-4deg);
+  }
+}
+/* Crier: the leaflets flutter out behind him. */
+.pt-scroll {
+  animation: flutter 3.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -1.1s);
+}
+@keyframes flutter {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  50% {
+    transform: translate(-3%, -7%) rotate(-7deg);
+  }
+}
+/* Painter: the brush dabs the scroll. */
+.pt-brush {
+  animation: dab 1.9s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+}
+@keyframes dab {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  40% {
+    transform: rotate(9deg);
+  }
+  55% {
+    transform: rotate(7deg);
+  }
+}
+/* Lanterns swing from their hooks and glow. */
+.pt-lantern {
+  animation:
+    swing 3s ease-in-out infinite alternate,
+    glow 2.3s ease-in-out infinite;
+}
+@keyframes swing {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(5deg);
+  }
+}
+@keyframes glow {
+  50% {
+    filter: brightness(1.18) drop-shadow(0 0 10px rgb(255 196 92 / 0.55));
+  }
+}
+.pt-moon {
+  animation: glow 5s ease-in-out infinite;
+}
+.pt-lamp {
+  animation: flicker 1.7s linear infinite;
+}
+/* The lost oar drifts off and back on the current. */
+.pt-oar-float {
+  animation: drift-oar 6s ease-in-out infinite alternate;
+}
+@keyframes drift-oar {
+  from {
+    transform: translate(0, 0) rotate(-2deg);
+  }
+  to {
+    transform: translate(6%, 4%) rotate(3deg);
+  }
+}
+/* Boats ride the water; the owl and the speaker breathe. */
+.webops.done .color,
+.lost.done .color,
+.owl-hi.done .color {
+  transform-origin: 50% 90%;
+  animation: ride 3.8s ease-in-out infinite;
+}
+.owl-en.done .color,
+.talks.done .color {
+  transform-origin: 50% 95%;
+  animation: breathe 4.2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .part,
   .color {

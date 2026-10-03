@@ -17,3 +17,4 @@
 | specs/001-tickets.md | Spec 001 — ticket list + **live status board** (T-01…T-29) |
 | reports/sundarbans-rag-chatbot-audit-2026-09-03.md | Live RAG chatbot audit findings and probes |
 | sessions/ | One append-only log per day |
+| ../design/landing-concepts-2026-09-13/README.md | Five replacement homepage viewport concepts, exact imagegen prompts, corrected scope; awaiting selection |

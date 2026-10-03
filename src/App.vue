@@ -1,5 +1,15 @@
 <!-- Site shell: nav, the routed page, the course sheet any page can open, and toasts. -->
 <template>
+  <!-- #pat-ink, for every painted plate (PatFigure): keylines only — dark pixels stay as warm
+       ink, everything lighter drops to transparent. -->
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="pat-ink" color-interpolation-filters="sRGB">
+      <feColorMatrix
+        type="matrix"
+        values="0 0 0 0 .114  0 0 0 0 .098  0 0 0 0 .082  -2.691 -5.283 -1.026 12 -9.3"
+      />
+    </filter>
+  </svg>
   <TopNav />
   <RouterView />
   <SiteFooter />
@@ -20,6 +30,11 @@ const route = useRoute();
 </script>
 
 <style scoped>
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
 .toast {
   position: fixed;
   left: 50%;

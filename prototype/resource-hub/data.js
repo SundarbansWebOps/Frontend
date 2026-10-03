@@ -2,7 +2,7 @@
 // Notes and PYQs are the real Drive links. Lecture entries are dropped: every one is a
 // "#" placeholder. Term dates below are SAMPLE data until the Supabase
 // important_dates table is wired in.
-import raw from '../../src/data/scData_generated.js';
+import raw from '../../src/data/study/index.js';
 
 const META = {
   BSMA1001: { short: 'Maths 1', aliases: ['m1', 'ma1', 'maths1', 'math1', 'math 1'] },
@@ -130,8 +130,8 @@ for (const [level, list] of Object.entries(raw)) {
           : PROGRAMMING.includes(s.code)
             ? 'programming'
             : 'datascience';
-    const notes = (s.resources.notes ?? []).filter((n) => n.link && n.link !== '#').map(parseNote);
-    const pyqs = (s.resources.pyq ?? [])
+    const notes = s.notes.filter((n) => n.link && n.link !== '#').map(parseNote);
+    const pyqs = s.pyqs
       .filter((p) => p.link && p.link !== '#')
       .map(parsePyq)
       .sort((a, b) => (b.term?.sort ?? 0) - (a.term?.sort ?? 0));

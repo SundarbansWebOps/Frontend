@@ -99,8 +99,17 @@ onBeforeUnmount(() => io.disconnect());
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
+  /* Three in a row leave ~120px cards whose names can't fit; swipe them, one and a bit on screen. */
   .deck.big {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, 72%);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 0 -16px;
+    padding: 6px 16px 14px;
+    scrollbar-width: none;
+  }
+  .big .cc {
+    scroll-snap-align: center;
   }
 }
 </style>

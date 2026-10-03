@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <main class="home-page">
     <!-- ============ 1. Hero Section ============ -->
     <section class="hero-section" aria-labelledby="hero-title">
@@ -12,6 +13,16 @@
           <h1 id="hero-title" class="hero-title">
             The Academic &amp; Community Hub of Sundarbans House
           </h1>
+=======
+  <main
+    ref="root"
+    class="pat"
+    :class="{ rolling, ff, settled, rm: RM }"
+    :style="{ '--brush': `url(${ASSET.brush})`, '--brush-v': `url(${ASSET.brushV})` }"
+  >
+    <div ref="scrollEl" class="scroll" @animationend.self="unrolled">
+      <div class="rod" aria-hidden="true" />
+>>>>>>> 65cf33b98a9bba33876df45acfc2c677b5806e70
 
           <p class="hero-desc">
             Past papers, lecture notes, student events, and regional chapters for IIT Madras BS
@@ -921,6 +932,7 @@ onBeforeUnmount(() => {
   padding-bottom: 72px;
 }
 
+<<<<<<< HEAD
 /* ==========================================================================
    1. HERO SECTION
    ========================================================================== */
@@ -930,6 +942,102 @@ onBeforeUnmount(() => {
     ellipse 80% 50% at 50% -20%,
     color-mix(in srgb, var(--mari) 12%, transparent),
     transparent
+=======
+/* ---- Scroll palette: pigments on paper. The painting ignores the site theme; only the nav follows it. ---- */
+.pat {
+  --pp: #efdfc4;
+  --pcard: #f7ecd8;
+  --pi: #1d1915;
+  --pi2: #54483c;
+  --pv: #a52d16;
+  --pmari: #eaa53c;
+  --pmari-soft: #f6dcae;
+  --art-filter: none;
+  --beat: 0.7s;
+  --stroke: 2.4s;
+  --edge-w: 14px;
+  --tab-h: 0px;
+  --rod-h: 22px;
+  --roll-h: 46px;
+  --band-h: 22px;
+  --col: 100%;
+  --panel-gut: clamp(36px, 6vw, 120px);
+  --hero-h: max(520px, calc(100svh - var(--nav-h) - var(--tab-h) - var(--rod-h)));
+  position: relative;
+  padding: 0 0 36px;
+  overflow-x: clip;
+  background: var(--paper);
+}
+.scroll {
+  position: relative;
+  width: var(--col);
+  margin: 0 auto;
+  padding-top: 0;
+}
+
+/* ---- Paper: colour, grain and the lotus borders, all under the lamp filter in dark ---- */
+.paper {
+  position: relative;
+  isolation: isolate;
+  color: var(--pi);
+}
+.paper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    url('../assets/pat/edge.webp') left top / var(--edge-w) auto repeat-y,
+    url('../assets/pat/edge.webp') right top / var(--edge-w) auto repeat-y,
+    url('../assets/pat/grain.webp') 0 0 / 512px 512px,
+    var(--pp);
+  background-blend-mode: normal, normal, multiply, normal;
+  filter: var(--art-filter);
+}
+.rolling .paper {
+  clip-path: inset(0 -40px calc(100% - var(--u)) -40px);
+}
+.rolling .scroll {
+  animation: unroll 1.45s cubic-bezier(0.55, 0.02, 0.25, 1) both;
+}
+@keyframes unroll {
+  0% {
+    --u: 0px;
+  }
+  82% {
+    --u: calc(var(--hero-h) + 10px);
+  }
+  100% {
+    --u: var(--hero-h);
+  }
+}
+
+.band {
+  height: var(--band-h);
+  margin: 0 var(--edge-w);
+  background: url('../assets/pat/band.webp') center / auto 100% repeat-x;
+  filter: var(--art-filter);
+}
+
+/* ---- The rod at the top and the roll that carries the rest of the scroll ---- */
+.rod,
+.roll {
+  position: relative;
+  z-index: 4;
+  margin: 0;
+  border-radius: 99px;
+  filter: var(--art-filter);
+}
+.rod {
+  height: var(--rod-h);
+  background: linear-gradient(
+    #3a2412 0,
+    #8a4b1c 18%,
+    #d99a4a 40%,
+    #f3c47b 50%,
+    #b8702c 72%,
+    #5a3214 100%
+>>>>>>> 65cf33b98a9bba33876df45acfc2c677b5806e70
   );
 }
 

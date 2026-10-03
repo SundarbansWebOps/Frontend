@@ -1,8 +1,8 @@
-// Adapts the real Study Corner dump into course-shaped data.
-// Notes and PYQs are the real Drive links. Lecture entries are dropped: every one is a
-// "#" placeholder. Term dates below are SAMPLE data until the Supabase
-// important_dates table is wired in.
-import raw from '../data/scData_generated.js';
+// Adapts the Study Corner data (src/data/study/) into course-shaped data.
+// Notes and PYQs are real links, checked by `npm run check:study`. Term dates below are
+// SAMPLE data until Supabase has a table for them.
+import raw from '../data/study/index.js';
+import { parseExam, parseTerm } from './pyq-title.js';
 
 const META = {
   BSMA1001: { short: 'Maths 1', aliases: ['m1', 'ma1', 'maths1', 'math1', 'math 1'] },
@@ -32,61 +32,6 @@ const META = {
 
 // Diploma splits into two real programmes; the delta map draws them as two channels.
 const PROGRAMMING = ['BSCS2001', 'BSCS2002', 'BSCS2003', 'BSCS2005', 'BSCS2006', 'BSSE2001'];
-
-const MONTHS = {
-  jan: 1,
-  feb: 2,
-  mar: 3,
-  march: 3,
-  apr: 4,
-  may: 5,
-  jun: 6,
-  jul: 7,
-  aug: 8,
-  sep: 9,
-  sept: 9,
-  september: 9,
-  oct: 10,
-  nov: 11,
-  dec: 12,
-  january: 1,
-};
-const MONTH_NAME = [
-  '',
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-function parseTerm(title) {
-  const m = title.match(
-    /\b(jan(?:uary)?|feb|march|mar|apr|may|jun|jul|aug|sept(?:ember)?|sep|oct|nov|dec)[a-z]*\.?\s*[-']?\s*(20\d{2}|\d{2})\b/i
-  );
-  if (!m) return null;
-  const month = MONTHS[m[1].toLowerCase()] ?? MONTHS[m[1].slice(0, 3).toLowerCase()];
-  let year = Number(m[2]);
-  if (year < 100) year += 2000;
-  return { month, year, label: `${MONTH_NAME[month]} ${year}`, sort: year * 100 + month };
-}
-
-function parseExam(title) {
-  const t = title.toLowerCase();
-  if (/oppe/.test(t)) return 'OPPE';
-  if (/quiz\s*-?\s*2|qz\s*2|\bq2\b/.test(t)) return 'Quiz 2';
-  if (/quiz\s*-?\s*1|qz\s*1|\bq1\b/.test(t)) return 'Quiz 1';
-  if (/qualifier/.test(t)) return 'Qualifier';
-  if (/end\s*-?\s*term|endterm|\bet\b/.test(t)) return 'End term';
-  return 'Other';
-}
 
 function parseSet(title) {
   const m = title.match(/\b(QP\s?[A-Z]?\d?|AN\d|Set \d|Paper \d)\b/i);
@@ -130,11 +75,8 @@ for (const [level, list] of Object.entries(raw)) {
           : PROGRAMMING.includes(s.code)
             ? 'programming'
             : 'datascience';
-    const notes = (s.resources.notes ?? []).filter((n) => n.link && n.link !== '#').map(parseNote);
-    const pyqs = (s.resources.pyq ?? [])
-      .filter((p) => p.link && p.link !== '#')
-      .map(parsePyq)
-      .sort((a, b) => (b.term?.sort ?? 0) - (a.term?.sort ?? 0));
+    const notes = s.notes.map(parseNote);
+    const pyqs = s.pyqs.map(parsePyq).sort((a, b) => (b.term?.sort ?? 0) - (a.term?.sort ?? 0));
     courses.push({
       code: s.code,
       name: s.subject,
@@ -150,8 +92,13 @@ for (const [level, list] of Object.entries(raw)) {
 
 export const byCode = Object.fromEntries(courses.map((c) => [c.code, c]));
 
+<<<<<<< HEAD
 // ---- Sep 2026 Term Calendar from Official Student Grading Document ----
 export const TODAY = new Date('2026-09-30T10:00:00+05:30');
+=======
+// ---- SAMPLE term calendar (Sep 2026 term). Replace with Supabase data (no table for term dates yet). ----
+export const TODAY = new Date('2026-09-27T10:00:00+05:30');
+>>>>>>> 65cf33b98a9bba33876df45acfc2c677b5806e70
 export const TERM = {
   label: 'Sep 2026 term',
   start: new Date('2026-09-28T00:00:00+05:30'),

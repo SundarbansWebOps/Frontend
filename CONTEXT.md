@@ -21,6 +21,15 @@ A regional operator who manages meetups and region-specific updates for an assig
 **Public visitor**:
 Any student or visitor using the public site without signing in.
 
+**Member**:
+A person on the active member roster. Membership grants access to the Members Lounge; it is not a council operator role.
+
+**Member roster**:
+The council-maintained list of members, kept in the council's Google Sheet. The Sheet is the roster's source of truth; the backend holds only a synced copy.
+
+**Members Lounge**:
+The members-only area of the site, entered by signing in with a Google account whose email is on the active member roster. Its content is not yet decided; only the access gate exists.
+
 ## Content lifecycle
 
 **Public content**:
