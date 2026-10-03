@@ -95,3 +95,7 @@
 
 ## 2026-09-30 — Cloud Supabase is the backend source of truth; repo backend v1 deleted
 **Why:** A cloud project ("Website Backend", `bqoejoznqudcyeaebmsm`, Mumbai) was built on 2026-09-28 with a different, larger member-management design (members + account status, admin assignments, super-admin allowlist, approval requests, blacklist, audit log, registrations, events; 3 Super-Admin Edge Functions). The repo's local-only v1 (2026-09-05 entry above) was never pushed. Raja chose the cloud as truth: its 24 migrations and function sources were fetched into `supabase/` (read-only, no remote writes) and the old migration, seed, `members-sync`, Apps Script sync and `backend/` tests were removed. Rejected: pushing v1 over the cloud, or maintaining both.
+
+## 2026-10-01 — Cloud backend goes live; repo mirrors all 31 cloud migrations
+**Why:** The cloud project was made production-ready: regions/communities became migration data (a rebuilt project could not sign anyone up before), the sign-up form and public Events page can read regions, communities and a `public_events` view signed-out (no `gmail_link`, no member ids), sign-up is limited to `ds.study.iitm.ac.in`, 3 Super Admins were added, all fake/test accounts were deleted, and the 9 regions got their real names. The 7 new migrations are committed under their cloud versions so `supabase migration list --linked` stays in sync and `db push` never re-runs them. Rejected: keeping test users on the live project; using local file timestamps (would make `db push` re-apply them).
+
