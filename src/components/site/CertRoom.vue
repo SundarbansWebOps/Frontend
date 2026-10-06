@@ -48,7 +48,7 @@
         <img :src="CREST" alt="" width="40" height="40" />
         <span>
           <b>Sundarbans House</b>
-          <small>IIT Madras BS degree</small>
+          <small>IIT Madras BS</small>
         </span>
       </header>
       <p class="kind">Certificate of participation</p>

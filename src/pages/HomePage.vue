@@ -88,7 +88,7 @@
                   d="M24 3 H276 A20 20 0 0 1 276 43 H24 A20 20 0 0 1 24 3 Z"
                 />
               </svg>
-              <span>IIT Madras BS degree <i aria-hidden="true" /> since 2021</span>
+              <span>IIT Madras BS <i aria-hidden="true" /> since 2021</span>
             </p>
             <p class="line">Notes, past papers, events and people, all in one place.</p>
           </div>
@@ -302,7 +302,7 @@
       <a :href="PORTAL.href" target="_blank" rel="noopener">
         <LineIcon :name="PORTAL.icon" /> IITM student portal
       </a>
-      <small>Sundarbans House · IIT Madras BS degree</small>
+      <small>Sundarbans House · IIT Madras BS</small>
     </footer>
   </main>
 </template>
