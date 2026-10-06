@@ -1,7 +1,7 @@
 // House: the council, the regions and their meetups, adapted from data already
 // on the live site. Each Lower House coordinator belongs to a region, so regions carry them.
 import { reactive } from 'vue';
-import { COUNCIL, REGION_BLURB } from '../data/house.data.js';
+import { COUNCIL, RECRUITING, REGION_BLURB } from '../data/house.data.js';
 import { MONTH, parseDate, slug } from './events.js';
 import bengaluru from '../data/meetups/json/bengaluru_region.json';
 import chandigarh from '../data/meetups/json/chandigarh_region.json';
@@ -115,6 +115,7 @@ export const regions = REGION_DEFS.map(([id, name, file, lat, lon]) => {
     items,
     blurb: REGION_BLURB[BLURB_KEY[id] ?? name] ?? '',
     coordinators: lower.filter((p) => p.region === cr),
+    recruiting: RECRUITING.includes(cr),
     people: items.reduce((n, m) => n + (m.people ?? 0), 0),
     last: items.find((m) => m.at) ?? null,
   };

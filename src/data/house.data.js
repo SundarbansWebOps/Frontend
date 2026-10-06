@@ -1,5 +1,8 @@
 // GENERATED snapshot of the 2026–27 council (src/views/TeamsView.vue) and the
 // region blurbs (src/views/meetups/regionConfigs.js). Regenerate or replace with Supabase.
+// Regions whose coordinator seat is open while the house recruits for it.
+export const RECRUITING = ['Lucknow'];
+
 export const COUNCIL = [
   {
     name: 'Divya Prakash',
@@ -15,12 +18,17 @@ export const COUNCIL = [
     ],
   },
   {
-    name: 'Aditri Bordoloi',
+    name: 'Ansh Kumar',
     role: 'Deputy Secretary',
-    region: 'Bengaluru',
+    region: 'Lucknow',
     house: 'UHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444111/sundarbans/teams/aditri.webp',
-    links: [],
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444112/sundarbans/teams/ansh_kumar.jpg',
+    links: [
+      {
+        kind: 'LinkedIn',
+        href: 'https://www.linkedin.com/in/ansh-kumar-60113037b/',
+      },
+    ],
   },
   {
     name: 'Anuraj Jit Saikia',
@@ -122,19 +130,6 @@ export const COUNCIL = [
       {
         kind: 'LinkedIn',
         href: 'https://www.linkedin.com/in/faizan7457/',
-      },
-    ],
-  },
-  {
-    name: 'Ansh Kumar',
-    role: 'Regional Coordinator',
-    region: 'Lucknow',
-    house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444112/sundarbans/teams/ansh_kumar.jpg',
-    links: [
-      {
-        kind: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/ansh-kumar-60113037b/',
       },
     ],
   },
