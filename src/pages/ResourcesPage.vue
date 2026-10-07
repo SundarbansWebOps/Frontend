@@ -1,39 +1,49 @@
 <!-- Resources — "Delta": the course map is the navigator. -->
 <template>
-  <main class="wrap">
+  <BranchPicker v-if="!branch" @pick="branch = $event" />
+  <main v-else class="wrap">
+    <button class="branch-chip" type="button" @click="branch = null">
+      {{ BRANCHES[branch].short }} · switch branch
+    </button>
+
     <div class="bar">
-      <SearchBar v-model="q" class="rise" style="--i: 0" />
-      <TideLine class="rise" style="--i: 1" @pick="pick" />
-    </div>
-
-    <section class="mine rise" style="--i: 2" aria-labelledby="mine-h">
-      <h2 id="mine-h" class="eyebrow">
-        My courses <span v-if="store.mine.length" class="mono">{{ store.mine.length }}</span>
-      </h2>
-      <TransitionGroup name="tix" tag="div" class="tix">
-        <CourseTicket v-for="code in store.mine" :key="code" :code="code" />
-        <p v-if="!store.mine.length" key="empty" class="hint">
-          <span class="dot" /> Tap your courses on the map below and pin them. Next time the site
-          opens straight to them.
-        </p>
-      </TransitionGroup>
-    </section>
-
-    <section class="map rise" style="--i: 3" aria-labelledby="map-h">
-      <div class="map-head">
-        <h2 id="map-h" class="eyebrow">Every course, as the degree flows</h2>
-        <p class="legend">
-          <span><i class="k-mine" /> yours</span>
-          <span class="only-h"><i class="k-trail" /> hover to trace the route</span>
-        </p>
+        <SearchBar v-model="q" class="rise" style="--i: 1" />
+        <TideLine class="rise" style="--i: 2" @pick="pick" />
       </div>
-      <DeltaMap :mine="store.mine" :match="match" @open="(c, e) => openCourse(c, parsed, e)" />
-    </section>
 
-    <section class="rise" style="--i: 4" aria-labelledby="tools-h">
-      <h2 id="tools-h" class="eyebrow">Quick links</h2>
-      <ToolLinks />
-    </section>
+      <section class="mine rise" style="--i: 3" aria-labelledby="mine-h">
+        <h2 id="mine-h" class="eyebrow">
+          My courses <span v-if="store.mine.length" class="mono">{{ store.mine.length }}</span>
+        </h2>
+        <TransitionGroup name="tix" tag="div" class="tix">
+          <CourseTicket v-for="code in store.mine" :key="code" :code="code" />
+          <p v-if="!store.mine.length" key="empty" class="hint">
+            <span class="dot" /> Tap your courses on the map below and pin them. Next time the site
+            opens straight to them.
+          </p>
+        </TransitionGroup>
+      </section>
+
+      <section class="map rise" style="--i: 4" aria-labelledby="map-h">
+        <div class="map-head">
+          <h2 id="map-h" class="eyebrow">Every course, as the degree flows</h2>
+          <p class="legend">
+            <span><i class="k-mine" /> yours</span>
+            <span class="only-h"><i class="k-trail" /> hover to trace the route</span>
+          </p>
+        </div>
+        <DeltaMap
+          :mine="store.mine"
+          :match="match"
+          :branch="branch"
+          @open="open"
+        />
+      </section>
+
+      <section class="rise" style="--i: 5" aria-labelledby="tools-h">
+        <h2 id="tools-h" class="eyebrow">Quick links</h2>
+        <ToolLinks />
+      </section>
   </main>
 </template>
 
@@ -44,10 +54,18 @@ import TideLine from '../components/site/TideLine.vue';
 import DeltaMap from '../components/site/DeltaMap.vue';
 import CourseTicket from '../components/site/CourseTicket.vue';
 import ToolLinks from '../components/site/ToolLinks.vue';
+import BranchPicker from '../components/site/BranchPicker.vue';
 import { openCourse, search, store } from '../lib/store.js';
+import { byCode } from '../lib/courses.js';
+import { BRANCHES, courseUrl } from '../data/branches.js';
 
 const q = ref(store.q);
+const branch = ref(null);
 store.q = '';
+function open(code, e) {
+  if (byCode[code]) openCourse(code, parsed.value, e);
+  else window.open(courseUrl(branch.value, code), '_blank');
+}
 const res = computed(() => search(q.value));
 const parsed = computed(() => ({
   tab: res.value.parsed.tab ?? 'pyqs',
@@ -144,6 +162,20 @@ function pick(d) {
   to {
     clip-path: inset(0 0 0 0);
   }
+}
+.branch-chip {
+  position: sticky;
+  top: 14px;
+  justify-self: end;
+  z-index: 5;
+  padding: 6px 12px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--bg, #fff);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
 }
 .map {
   margin: 0 -8px;
