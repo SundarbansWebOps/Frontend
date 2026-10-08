@@ -58,6 +58,10 @@ for (const viewport of [
 
 test('sign-in fades slowly and cannot navigate after leaving the page', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
+  // Without View Transitions the sign-in takes its timed fade instead of the cross-dissolve.
+  await page.addInitScript(() => {
+    document.startViewTransition = undefined;
+  });
   await page.clock.install();
   await page.goto('/#/login');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
@@ -86,15 +90,13 @@ test('sign-in fades slowly and cannot navigate after leaving the page', async ({
   );
 });
 
-test('normal-motion sign-in fades into the painted tour', async ({ page }) => {
+test('normal-motion sign-in cross-dissolves into the painted tour', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/#/login');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.locator('.sign-in')).toHaveClass(/leaving/);
   await expect(page.locator('.tour')).toBeVisible();
-  await expect(page.locator('.tour')).toHaveCSS('animation-name', 'sign-in-arrive');
-  await expect(page.locator('.tour')).toHaveCSS('animation-duration', '0.9s');
-  await expect(page.locator('html')).not.toHaveClass(/sign-in-arrival/);
+  await expect(page.locator('.sign-in')).toHaveCount(0);
+  await expect(page.locator('html')).not.toHaveClass(/sign-in-cross|sign-in-arrival/);
   await expect(page.locator('.tour')).toHaveCSS('opacity', '1');
   await expect(page.locator('.home')).toHaveCount(0);
 });

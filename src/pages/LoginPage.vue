@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, ref } from 'vue';
+import { nextTick, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import LoungeDoor from '../components/site/LoungeDoor.vue';
 import LineIcon from '../components/site/LineIcon.vue';
@@ -27,6 +27,8 @@ const leaving = ref(false);
 const error = ref('');
 let disposed = false;
 let fadeTimer;
+
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 async function signIn() {
   if (busy.value) return;
@@ -40,21 +42,47 @@ async function signIn() {
       import('../components/lounge/state.js'),
     ]);
     if (disposed) return;
-    leaving.value = true;
-    const enter = async () => {
-      // Deliberately replay on every sign-in until the backend owns the seen flag.
-      state.resetTour();
-      try {
-        await router.push({ path: '/lounge', state: { signIn: true } });
-      } catch {
-        if (!disposed) fail();
-      }
-    };
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) await enter();
-    else fadeTimer = setTimeout(enter, 900);
+    // Deliberately replay on every sign-in until the backend owns the seen flag.
+    state.resetTour();
+    if (document.startViewTransition && !reducedMotion()) await crossfadeToLounge();
+    else await fadeToLounge();
   } catch {
     if (!disposed) fail();
   }
+}
+
+// The door and the lounge's first frame cross-dissolve in one 900ms overlap. Fading the sign-in
+// out first would leave a dark gap before the tour could appear.
+async function crossfadeToLounge() {
+  const root = document.documentElement;
+  root.classList.add('sign-in-cross');
+  try {
+    const transition = document.startViewTransition(() =>
+      router.push({ path: '/lounge' }).then(() => nextTick())
+    );
+    // A transition skipped by a hidden tab or a quick second navigation still swaps the page.
+    transition.ready.catch(() => {});
+    await transition.finished;
+  } catch {
+    if (!disposed) fail();
+  } finally {
+    root.classList.remove('sign-in-cross');
+  }
+}
+
+// No View Transitions (or reduced motion): fade the sign-in out, then arrive with the lounge's
+// own fade-in.
+async function fadeToLounge() {
+  leaving.value = true;
+  const enter = async () => {
+    try {
+      await router.push({ path: '/lounge', state: { signIn: true } });
+    } catch {
+      if (!disposed) fail();
+    }
+  };
+  if (reducedMotion()) await enter();
+  else fadeTimer = setTimeout(enter, 900);
 }
 
 function fail() {
@@ -108,10 +136,14 @@ h1 {
   color: #1d1915;
   font-size: 17px;
   font-weight: 700;
-  transition: background 180ms ease-out;
+  box-shadow: 0 0 0 0 rgb(242 169 59 / 0.5);
+  transition:
+    box-shadow 0.4s,
+    transform 0.3s var(--ease-spring);
 }
 .enter:hover:not(:disabled) {
-  background: #ffd488;
+  box-shadow: 0 0 0 8px rgb(242 169 59 / 0.16);
+  transform: translateY(-1px);
 }
 .enter:disabled {
   cursor: wait;
@@ -123,6 +155,10 @@ h1 {
 .enter :deep(svg) {
   width: 20px;
   height: 20px;
+  transition: transform 0.3s var(--ease-spring);
+}
+.enter:hover:not(:disabled) :deep(svg) {
+  transform: translateX(3px);
 }
 .error {
   max-width: 28ch;
@@ -142,5 +178,14 @@ h1 {
   .sign-in {
     transition: none;
   }
+}
+</style>
+
+<style>
+/* The sign-in → lounge cross-dissolve; the same 900ms as the fallback fade. */
+:root.sign-in-cross::view-transition-old(root),
+:root.sign-in-cross::view-transition-new(root) {
+  animation-duration: 900ms;
+  animation-timing-function: ease-in-out;
 }
 </style>
