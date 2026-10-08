@@ -100,3 +100,17 @@ test('normal-motion sign-in cross-dissolves into the painted tour', async ({ pag
   await expect(page.locator('.tour')).toHaveCSS('opacity', '1');
   await expect(page.locator('.home')).toHaveCount(0);
 });
+
+test('sign out returns to the sign-in door', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.addInitScript(() => {
+    localStorage.setItem('lounge-e-tour-seen', '1');
+    localStorage.setItem('lounge-e-preferred-name', 'Riya');
+    localStorage.setItem('lounge-e-cert-name', 'Riya');
+  });
+  await page.goto('/#/lounge');
+  await page.getByRole('button', { name: /Your profile/ }).click();
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await expect(page).toHaveURL(/#\/login$/);
+  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+});

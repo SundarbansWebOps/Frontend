@@ -82,14 +82,12 @@
           </button>
         </li>
         <li>
-          <button type="button" class="pm-out" @click="signedOutNote = true">
+          <button type="button" class="pm-out" @click="signOut">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
               <path d="M10 8 6 12l4 4M6 12h10" />
             </svg>
-            <span>{{
-              signedOutNote ? 'Sign out does nothing in this prototype' : 'Sign out'
-            }}</span>
+            <span>Sign out</span>
           </button>
         </li>
       </ul>
@@ -99,6 +97,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import CREST from '../../assets/crest.webp';
 import LoungeDialog from './LoungeDialog.vue';
 import * as ev from './events.js';
@@ -106,11 +105,26 @@ import { member } from './fixtures.js';
 import { callName, initialsOf, theme } from './state.js';
 
 const emit = defineEmits(['close', 'edit', 'certs', 'tour', 'theme']);
+const router = useRouter();
 const dlg = ref(null);
-const signedOutNote = ref(false);
 
 const initials = computed(() => initialsOf(callName.value));
 const certCount = computed(() => ev.certificates?.length ?? 0);
+
+/* Sign out has no session yet: it returns to the sign-in door, which is how a signed-out
+   visitor sees the Lounge. Closing the menu from the UI pops its history entry (layers.js)
+   asynchronously; a push made before that Back lands would be cancelled by it. */
+async function signOut() {
+  const backDone = history.state?.loungeLayer
+    ? new Promise((done) => {
+        addEventListener('popstate', done, { once: true });
+        setTimeout(done, 800);
+      })
+    : null;
+  await dlg.value?.close();
+  await backDone;
+  router.push({ path: '/login' });
+}
 
 /* Edit and My certificates replace this menu (same Back entry); tour and theme close it. */
 async function go(what) {
