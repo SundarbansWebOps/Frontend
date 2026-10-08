@@ -75,7 +75,8 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import LineIcon from '../components/site/LineIcon.vue';
 
 const certificateId = ref('');
@@ -83,6 +84,18 @@ const loading = ref(false);
 const result = ref(null);
 const errorMsg = ref('');
 const missTitle = ref('');
+const route = useRoute();
+let request = 0;
+
+// The printed link opens this hash route with its ID already checked.
+watch(
+  () => route.query.id,
+  (id) => {
+    certificateId.value = typeof id === 'string' ? id : '';
+    verify();
+  },
+  { immediate: true }
+);
 
 // certificates.json does not store an explicit "type" field.
 // Infer it from which fields are actually present on the record,
@@ -140,17 +153,21 @@ function certificateDownloadUrl(cert) {
 }
 
 async function verify() {
+  const mine = ++request;
   const id = certificateId.value.trim().toUpperCase();
-  if (!id) return;
-
   result.value = null;
   errorMsg.value = '';
+  if (!id) {
+    loading.value = false;
+    return;
+  }
   loading.value = true;
 
   try {
     const res = await fetch('/data/certificates.json');
     if (!res.ok) throw new Error('Failed to load certificate database');
     const db = await res.json();
+    if (mine !== request) return;
     const cert = db[id];
     if (cert) {
       result.value = cert;
@@ -159,11 +176,12 @@ async function verify() {
       errorMsg.value = `We couldn’t find “${id}”. Check the ID printed on your certificate and try again.`;
     }
   } catch {
+    if (mine !== request) return;
     missTitle.value = 'Couldn’t check right now';
     errorMsg.value = 'The certificate records didn’t load. Check your connection and try again.';
   }
 
-  loading.value = false;
+  if (mine === request) loading.value = false;
 }
 </script>
 
