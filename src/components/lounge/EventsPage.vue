@@ -5,7 +5,7 @@
   Certificate button that opens the certificate viewer. Countdowns read in minutes.
 -->
 <template>
-  <div class="evp" :class="{ 'boat-arrived': boatArrived }">
+  <div class="evp">
     <section v-loop class="ev-hero" aria-labelledby="ev-h">
       <!-- The band is a window onto Home's scene: `.stage` lays out the same plate Home uses,
            at Home's hero size, shifted up so the window shows the far bank and the river.
@@ -23,8 +23,8 @@
           </picture>
         </div>
         <!-- The boat: the one thing that travels between views (it carries
-             view-transition-name: boat). On arrival it glides 24px on, then rides the river.
-             Its lamp was lit on Home, so it doesn't catch again here. -->
+             view-transition-name: boat). The page transition leaves it where it lands and
+             it rides the river from there. Its lamp was lit on Home, so it doesn't catch again here. -->
         <div class="ev-boat">
           <RiverBoat :catch-lamp="false" />
         </div>
@@ -288,11 +288,8 @@ import { MOORED, PLATE } from './home/art.js';
 import { vLoop } from './home/motion.js';
 import RiverBoat from './home/RiverBoat.vue';
 import { mode } from './state.js';
-import { afterSwitch } from './tide.js';
 
 const emit = defineEmits(['cert']);
-const boatArrived = ref(false);
-let unmounted = false;
 
 /* The band's art is Home's (home/art.js: PLATE, and BOAT inside RiverBoat), so the r6 swap
    happens there once. The plate box is the viewport wide, or 840px on phones. */
@@ -349,11 +346,6 @@ watch(tab, () => nextTick(placeRule));
 /* Measured again once the web font lands (chips and tabs change width) and on resize. */
 let ro = null;
 onMounted(() => {
-  /* The page transition carries the boat to this spot. Its own glide starts after
-     that journey, so it cannot pull the transition's destination out from under it. */
-  afterSwitch().then(() => {
-    if (!unmounted) boatArrived.value = true;
-  });
   chipEdges();
   placeRule();
   document.fonts?.ready.then(() => {
@@ -371,7 +363,6 @@ onMounted(() => {
   tabsEl.value.querySelectorAll('.ev-tab').forEach((t) => ro.observe(t));
 });
 onBeforeUnmount(() => {
-  unmounted = true;
   ro?.disconnect();
 });
 

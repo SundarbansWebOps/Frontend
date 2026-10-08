@@ -50,23 +50,13 @@
   max-width: none;
 }
 
-/* The boat rides the band's river, right of the title, bow toward the page's right. On
-   arrival it glides 24px to the right (the view transition has just carried it here). */
+/* The boat rides the band's river, right of the title, bow toward the page's right. The page
+   transition lands it here; nothing moves it after that. */
 :where(html.lounge-active) .ev-hero .ev-boat {
   position: absolute;
   right: 14%;
   top: calc(var(--band-h) * 0.56);
   width: clamp(170px, 14vw, 210px);
-}
-
-:where(html.lounge-active) .boat-arrived .ev-boat {
-  animation: ev-glide 1.6s var(--ease-out) both;
-}
-
-@keyframes ev-glide {
-  from {
-    transform: translate3d(-24px, 0, 0);
-  }
 }
 
 :where(html.lounge-active) .ev-title {
@@ -880,7 +870,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :where(html.lounge-active) .ev-hero .ev-boat,
   :where(html.lounge-active) .ev-panel,
   :where(html.lounge-active) .er,
   :where(html.lounge-active) .ev-empty,

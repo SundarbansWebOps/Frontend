@@ -50,14 +50,6 @@ function own(vt) {
 }
 const reduced = () => boot.reduce || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Resolves when no view transition is on screen (now, if none). A view that starts its own
-   entrance motion on mount (the Events band's boat glide) awaits this, so it never moves an
-   element the page switch is still morphing. */
-export async function afterSwitch() {
-  await Promise.resolve();
-  while (active) await settled;
-}
-
 /* Theme art on the page: painted scenes (.scene img) and sprites marked data-art. */
 const themeImgs = () => [...document.querySelectorAll('.scene img, img[data-art]')];
 
