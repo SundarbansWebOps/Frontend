@@ -41,10 +41,10 @@ export const FIGS = {
     h: 1254,
     view: [0.02, 0.98],
     parts: [
-      p('reader-rays.webp', { x: 76.32, y: 60.37, w: 12.28, h: 12.36, ox: 48.7, oy: 60 }, 'rays'),
+      p('reader-rays.webp', { x: 76.32, y: 65.37, w: 12.28, h: 12.36, ox: 48.7, oy: 60 }, 'rays'),
       p(
         'reader-flame.webp',
-        { x: 79.35, y: 61.72, w: 6.22, h: 11.64, ox: 47.44, oy: 98.63 },
+        { x: 79.35, y: 66.72, w: 6.22, h: 11.64, ox: 47.44, oy: 98.63 },
         'flame'
       ),
       p(
@@ -54,7 +54,7 @@ export const FIGS = {
       ),
       p(
         'reader-paper-b.webp',
-        { x: 89.63, y: 70.18, w: 8.61, h: 7.34, ox: 0.93, oy: 54.35 },
+        { x: 89.63, y: 75.18, w: 8.61, h: 7.34, ox: 0.93, oy: 54.35 },
         'leaf-b'
       ),
       p(
