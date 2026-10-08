@@ -80,8 +80,8 @@ export function read(key) {
 }
 
 /* Welcome tour is seen once per member ever (backend: a per-member seen flag). Enter the
-   Lounge or "Not now" at the ghat marks it seen; closing mid-tour does not. Only the
-   profile's "Retake the tour" (resetTour) shows it again. */
+   Lounge or "Not now" at the ghat marks it seen; closing mid-tour does not. For now, sign-in and the
+   profile's "Retake the tour" reset it; the backend will own once-only gating later. */
 export const TOUR_KEY = 'lounge-e-tour-seen';
 export const tourSeen = ref(read(TOUR_KEY) === '1');
 export function markTourSeen() {

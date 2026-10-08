@@ -1,11 +1,11 @@
 <!--
   The members' lounge, seen from outside. The door swings open as it scrolls in
   and warm light spills onto the floor; the rooms inside are listed beside it. On House it is
-  a teaser that leads to the Lounge tab; on the Lounge tab it is the page's opening.
+  a teaser that leads to sign-in; entry mode keeps only the door and centered actions.
 -->
 <template>
-  <div ref="root" class="lounge" :class="{ open }">
-    <div class="copy">
+  <div ref="root" class="lounge" :class="{ open, entry }">
+    <div v-if="!entry" class="copy">
       <p class="eyebrow mono">Members only</p>
       <component :is="teaser ? 'h2' : 'h1'" id="lounge-h">The lounge</component>
       <p class="lede">
@@ -33,11 +33,7 @@
           Take the tour
           <LineIcon name="arrow" />
         </button>
-        <button
-          type="button"
-          :class="teaser ? 'ghost' : 'enter'"
-          @click="toast('Members’ sign-in is coming soon')"
-        >
+        <button type="button" :class="teaser ? 'ghost' : 'enter'" @click="nav.go('login')">
           Sign in with IITM email
           <LineIcon v-if="!teaser" name="arrow" />
         </button>
@@ -57,15 +53,16 @@
       </div>
       <div class="spill" />
     </div>
+    <div v-if="entry" class="entry-actions"><slot /></div>
   </div>
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import LineIcon from './LineIcon.vue';
-import { nav, toast } from '../../lib/store.js';
+import { nav } from '../../lib/store.js';
 
-defineProps({ teaser: Boolean });
+defineProps({ teaser: Boolean, entry: Boolean });
 
 const ROOMS = [
   { key: 'live', icon: 'live', title: 'Live events', desc: 'This week’s schedule and join links' },
@@ -99,17 +96,21 @@ const MOTES = Array.from({ length: 16 }, (_, k) => ({
 
 const root = ref(null);
 const open = ref(false);
+let openTimer;
 const io = new IntersectionObserver(
   ([en]) => {
     if (en.isIntersecting) {
-      setTimeout(() => (open.value = true), 250);
+      openTimer = setTimeout(() => (open.value = true), 250);
       io.disconnect();
     }
   },
   { threshold: 0.4 }
 );
 onMounted(() => io.observe(root.value));
-onBeforeUnmount(() => io.disconnect());
+onBeforeUnmount(() => {
+  io.disconnect();
+  clearTimeout(openTimer);
+});
 </script>
 
 <style scoped>
@@ -129,9 +130,29 @@ onBeforeUnmount(() => io.disconnect());
   color: var(--l-ink);
   overflow: hidden;
 }
-:root[data-theme='dark'] .lounge {
+:root[data-theme='dark'] .lounge:not(.entry) {
   --l-bg: #0b0907;
   box-shadow: inset 0 0 0 1px #2e271f;
+}
+.lounge.entry {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+.entry .arch,
+.entry .spill {
+  width: clamp(150px, 24vh, 210px);
+}
+.entry .spill {
+  height: 60px;
+}
+.entry-actions {
+  display: grid;
+  justify-items: center;
+  text-align: center;
 }
 .eyebrow {
   display: inline-flex;

@@ -11,7 +11,7 @@ const routes = [
   { path: '/house', component: () => import('../pages/HousePage.vue') },
   { path: '/teams', component: () => import('../pages/TeamsPage.vue') },
   { path: '/lounge', name: 'Lounge', component: () => import('../pages/LoungePage.vue') },
-  { path: '/login', component: () => import('../pages/LoginPage.vue') },
+  { path: '/login', name: 'Login', component: () => import('../pages/LoginPage.vue') },
   { path: '/verify-certificate', component: () => import('../pages/VerifyPage.vue') },
 
   // Links from the previous site (shared on WhatsApp, bookmarked) land on the page that

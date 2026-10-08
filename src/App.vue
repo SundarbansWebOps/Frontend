@@ -12,7 +12,7 @@
   </svg>
   <TopNav v-if="!isLounge" />
   <RouterView />
-  <SiteFooter v-if="route.path !== '/' && !isLounge" />
+  <SiteFooter v-if="route.path !== '/' && !isStandalone" />
   <CourseSheet />
   <Transition name="toast">
     <div v-if="store.toast" class="toast" role="status">{{ store.toast }}</div>
@@ -32,6 +32,14 @@ const isLounge = computed(
   () =>
     route.name === 'Lounge' ||
     (!route.matched.length && document.documentElement.classList.contains('lounge-active'))
+);
+const isStandalone = computed(
+  () =>
+    route.name === 'Lounge' ||
+    route.name === 'Login' ||
+    (!route.matched.length &&
+      (document.documentElement.classList.contains('lounge-active') ||
+        document.documentElement.classList.contains('sign-in-active')))
 );
 </script>
 

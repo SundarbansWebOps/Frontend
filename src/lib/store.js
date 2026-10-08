@@ -41,7 +41,8 @@ const PATHS = {
   events: '/events',
   house: '/house',
   teams: '/teams',
-  lounge: '/lounge',
+  lounge: '/login',
+  login: '/login',
 };
 export const nav = {
   go(page, anchor = null) {

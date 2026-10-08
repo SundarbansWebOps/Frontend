@@ -37,6 +37,8 @@
     <script>
       (() => {
         const lounge = /^#\/lounge\/?(?:[?#]|$)/i.test(location.hash);
+        if (/^#\/login\/?(?:[?#]|$)/i.test(location.hash))
+          document.documentElement.classList.add('sign-in-active');
         let t = null;
         try {
           t = localStorage.getItem(lounge ? 'lounge-e-theme' : 'sundarbans-theme');
@@ -59,6 +61,11 @@
           document.querySelector('meta[name="theme-color"]').setAttribute('content', '#15120e');
       })();
     </script>
+    <style>
+      html.sign-in-active body {
+        background: #15120e;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
