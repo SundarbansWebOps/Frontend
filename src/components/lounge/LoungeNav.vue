@@ -66,6 +66,18 @@
     </div>
   </header>
 
+  <!-- Phones: the same two places as a bottom tab bar, as on the public site (TopNav.vue). -->
+  <nav class="lnav-tabs" aria-label="Main">
+    <a href="#/lounge" :aria-current="view === 'home' ? 'page' : undefined">
+      <LineIcon name="house" />
+      <span>Home</span>
+    </a>
+    <a href="#/lounge?view=events" :aria-current="view === 'events' ? 'page' : undefined">
+      <LineIcon name="cal" />
+      <span>Events</span>
+    </a>
+  </nav>
+
   <div v-if="strip" class="lnav-strip" role="region" aria-label="New notice">
     <button type="button" class="lnav-strip-open" @click="emit('notices', strip.id)">
       <span class="lnav-strip-k">Notice</span>
@@ -87,6 +99,7 @@
 <script setup>
 import { computed, onBeforeUnmount, watchEffect } from 'vue';
 import CREST from '../../assets/crest.webp';
+import LineIcon from '../site/LineIcon.vue';
 import * as ev from './events.js';
 import { callName, initialsOf, theme } from './state.js';
 import * as tide from './tide.js';
@@ -390,9 +403,18 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
   outline-offset: -2px;
 }
 
-/* Page switch (tide.js adds html.vt-page): the header and strip hold still. */
+/* The bottom tab bar is hidden on desktop; the header's links are hidden on phones. */
+:where(html.lounge-active) .lnav-tabs {
+  display: none;
+}
+
+/* Page switch (tide.js adds html.vt-page): the header, bar and strip hold still. */
 html:where(.lounge-active).vt-page .lnav {
   view-transition-name: lounge-nav;
+}
+
+html:where(.lounge-active).vt-page .lnav-tabs {
+  view-transition-name: lounge-tabs;
 }
 
 html:where(.lounge-active).vt-page .lnav-strip {
@@ -400,18 +422,58 @@ html:where(.lounge-active).vt-page .lnav-strip {
 }
 
 @media (max-width: 759px) {
+  :where(html.lounge-active) {
+    --tab-h: 64px;
+  }
+
+  :where(html.lounge-active) main#main {
+    padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  }
+
   :where(html.lounge-active) .lnav {
     gap: 6px;
     padding: 0 16px;
   }
 
-  :where(html.lounge-active) .lnav-links a {
-    padding: 8px 10px;
+  :where(html.lounge-active) .lnav-links {
+    display: none;
   }
 
-  :where(html.lounge-active) .lnav-links a[aria-current='page']::after {
-    left: 10px;
-    right: 10px;
+  /* Same look as the site's tab bar (TopNav.vue .tabbar): fixed to the bottom, icon over label,
+     the current page on a soft marigold tile. */
+  :where(html.lounge-active) .lnav-tabs {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid color-mix(in srgb, var(--keyline) 55%, transparent);
+  }
+
+  :where(html.lounge-active) .lnav-tabs a {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    padding: 6px 0;
+    border-radius: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--t-2);
+    text-decoration: none;
+  }
+
+  :where(html.lounge-active) .lnav-tabs a[aria-current='page'] {
+    color: var(--t-1);
+    background: var(--mari-soft);
+  }
+
+  :where(html.lounge-active) .lnav-tabs svg {
+    width: 22px;
+    height: 22px;
   }
 
   :where(html.lounge-active) .lnav-acts {
