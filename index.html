@@ -36,15 +36,25 @@
     <!-- Theme before first paint (same rule as src/lib/theme.js): saved choice, else system. -->
     <script>
       (() => {
+        const lounge = /^#\/lounge\/?(?:[?#]|$)/i.test(location.hash);
         let t = null;
         try {
-          t = localStorage.getItem('sundarbans-theme');
+          t = localStorage.getItem(lounge ? 'lounge-e-theme' : 'sundarbans-theme');
         } catch {
           /* storage blocked */
         }
         if (t !== 'light' && t !== 'dark')
           t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         document.documentElement.dataset.theme = t;
+        if (lounge) {
+          // Match the approved Lounge's canvas before its lazy route arrives.
+          document.documentElement.classList.add('lounge-active');
+          const canvas = t === 'dark' ? '#110c0a' : '#f8e8c8';
+          document.documentElement.style.backgroundColor = canvas;
+          const clearCanvas = () =>
+            document.documentElement.style.removeProperty('background-color');
+          window.addEventListener('lounge-ready', clearCanvas, { once: true });
+        }
         if (t === 'dark')
           document.querySelector('meta[name="theme-color"]').setAttribute('content', '#15120e');
       })();

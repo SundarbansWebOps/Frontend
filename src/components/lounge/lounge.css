@@ -1,0 +1,823 @@
+/* Lounge Home styles, the page switch (Home <-> Events) and the theme circle's view
+   transition. Owner: motion designer. Palette tokens come from tokens.css (shell); motion
+   tokens and shared keyframes from motion.css. Spec: _notes/motion.md. Components in home/
+   style themselves; this file lays them out on the hero and runs the choreography. */
+
+html:where(.lounge-active) {
+  scroll-behavior: smooth;
+}
+
+:where(html.lounge-active) body {
+  overflow-x: hidden;
+}
+
+/* ---------- Shared with the Events band (kept from D) ---------- */
+
+/* A painted scene, clipped to its own box, so its page-switch snapshot is exactly that box. */
+:where(html.lounge-active) .scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--scene-bg);
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .ly {
+  position: absolute;
+  display: block;
+}
+
+:where(html.lounge-active) .ly img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Home ---------- */
+
+:where(html.lounge-active) .home {
+  /* Text on the river (the groups section), where there is no paper behind it. */
+  --h-on-water: var(--t-1);
+  --h-on-water-2: var(--t-2);
+  --h-accent-on-water: var(--accent);
+  --h-spray: rgb(255 248 230 / 0.9);
+  position: relative;
+  padding-top: calc(var(--nav-h) + var(--banner-h));
+  background: var(--water-0);
+}
+
+:root:where(.lounge-active)[data-theme='light'] .home {
+  --h-on-water: #2a1a0f;
+  --h-on-water-2: #3d2717;
+  --h-accent-on-water: #5e3109;
+  --h-spray: rgb(255 251 236 / 0.95);
+}
+
+:root:where(.lounge-active)[data-theme='dark'] .home {
+  --h-spray: rgb(200 220 255 / 0.75);
+}
+
+:where(html.lounge-active) .hero {
+  position: relative;
+  height: max(600px, calc(100svh - var(--nav-h) - var(--banner-h)));
+  overflow: clip;
+  isolation: isolate;
+}
+
+:where(html.lounge-active) .home .scene {
+  pointer-events: auto;
+  background: var(--sky-0);
+}
+
+/* The bottom of the hero melts into the river the groups are moored on. */
+:where(html.lounge-active) .h-fade {
+  position: absolute;
+  inset: auto 0 0;
+  height: 22%;
+  background: linear-gradient(transparent, var(--water-0));
+  pointer-events: none;
+}
+
+/* Your lantern (night) / kite (day). By day it flies straight up from where the lantern
+   floats: one object rising, played live inside the theme circle. */
+:where(html.lounge-active) .h-mine {
+  /* Width, resting centre (before --lift) and the day lift: the load's rise to the middle of
+     the screen and the theme switch's travel are both measured from these. */
+  --mw: clamp(200px, 17.5vw, 260px);
+  --mcx: calc(var(--hw, 100vw) * 0.27 + var(--mw) / 2);
+  --mcy: calc(var(--hh, 700px) * 0.3 + var(--mw) * 0.647);
+  --lift: 0px;
+  --rise-s: 1.45;
+  position: absolute;
+  z-index: 2;
+  left: 27%;
+  top: 30%;
+  width: var(--mw);
+  --str-w: 19vw;
+  --str-h: calc(var(--hh, 700px) * 0.8);
+  transform: translate3d(0, var(--lift), 0);
+}
+
+/* Only during a theme switch (html.theme-move, tide.js): at load the hero size arrives after
+   first paint, and a standing transition would slide the kite in from its fallback spot.
+   B's travel: long and swung, a beat after the paper starts to turn. */
+html:where(.lounge-active).theme-move .h-mine {
+  transition: transform 2100ms var(--ease-swing) 250ms;
+}
+
+:root:where(.lounge-active)[data-theme='light'] .h-mine {
+  --lift: calc(34px - var(--hh, 700px) * 0.3);
+}
+
+:where(html.lounge-active) .h-mine-in {
+  position: relative;
+}
+
+/* Three dashes of lamplight on the water under the lantern (night). */
+:where(html.lounge-active) .h-refl {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 64px;
+  margin: 8px 0 0 -32px;
+  transition: opacity 600ms linear 800ms;
+}
+
+:where(html.lounge-active) .h-refl i {
+  display: block;
+  height: 3px;
+  margin: 0 auto 7px;
+  border-radius: 2px;
+  background: var(--lamp);
+  animation: m-shimmer 3.6s ease-in-out infinite alternate;
+}
+
+:where(html.lounge-active) .h-refl i:nth-child(1) {
+  width: 80%;
+  opacity: 0.4;
+  --shimmer-lo: 0.18;
+}
+
+:where(html.lounge-active) .h-refl i:nth-child(2) {
+  width: 52%;
+  opacity: 0.3;
+  --shimmer-lo: 0.13;
+  animation-duration: 4.4s;
+  animation-delay: -1.4s;
+}
+
+:where(html.lounge-active) .h-refl i:nth-child(3) {
+  width: 30%;
+  opacity: 0.22;
+  --shimmer-lo: 0.1;
+  animation-duration: 5.2s;
+  animation-delay: -2.6s;
+}
+
+:root:where(.lounge-active)[data-theme='light'] .h-refl {
+  opacity: 0;
+  transition-duration: 200ms;
+  transition-delay: 0s;
+}
+
+:root:where(.lounge-active)[data-theme='light'] .h-refl i,
+:root:where(.lounge-active).lite .h-refl i {
+  animation: none;
+}
+
+:where(html.lounge-active) .h-boat {
+  position: absolute;
+  z-index: 1;
+  left: 2%;
+  top: 60%;
+  width: clamp(240px, 24vw, 340px);
+  transform-origin: 0 0;
+}
+
+:where(html.lounge-active) .h-mangrove {
+  position: absolute;
+  z-index: 1;
+  right: -44px;
+  bottom: 48px; /* its mud bank (Mangrove.vue) meets the water just above the scene's foot */
+  width: 270px;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .h-ripples {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .h-ripples i {
+  position: absolute;
+  width: 120px;
+  height: 26px;
+  margin: -13px 0 0 -60px;
+  border: 1.5px solid rgb(255 245 220 / 0.7);
+  border-radius: 50%;
+}
+
+:root:where(.lounge-active)[data-theme='dark'] .h-ripples i {
+  border-color: rgb(200 215 255 / 0.45);
+}
+
+/* The live ticket: beside your lantern on desktop. */
+:where(html.lounge-active) .h-ticket {
+  position: absolute;
+  z-index: 3;
+  left: 56%;
+  top: calc(var(--nav-h) + var(--banner-h) + var(--hh, 700px) * 0.33);
+  width: min(380px, 30vw);
+}
+
+:where(html.lounge-active) .h-cue {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 16px 7px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--t-1);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  border: var(--kw) solid var(--keyline);
+  box-shadow: 0 2px 0 var(--under);
+}
+
+:where(html.lounge-active) .h-cue span {
+  display: inline-block;
+}
+
+:where(html.lounge-active) .h-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 16px 28px;
+  background: var(--bg);
+  color: var(--t-3);
+  font-size: 13px;
+}
+
+:where(html.lounge-active) .h-foot p {
+  margin: 0;
+}
+
+:where(html.lounge-active) .h-foot b {
+  color: var(--t-1);
+}
+
+/* The name in flight (built by LoungeHome): the face's own text, flown onto the face. */
+/* The boat in flight from the tour (built by LoungeHome). Both flights sit above the tour
+   overlay (z 60), which is still fading out while they travel. */
+:where(html.lounge-active) .boat-flight {
+  position: fixed;
+  z-index: 70;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .name-flight {
+  position: fixed;
+  z-index: 71;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  font-family: var(--font);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: #2a1a0f;
+  pointer-events: none;
+}
+
+/* ---------- Choreography: a fresh load (.intro), first arrival (.arrive) ----------
+   Build: every page load starts from an empty screen and the Lounge assembles itself, one
+   layer at a time. Timeline (ms): the painted river 0-1300 (HomeWorld .is-intro: plate, then
+   sky body 500, stars 700, water light 1100, everyone else's lanterns from 1800); your lantern
+   or kite rises from below to the middle of the screen 200-920, turns there 900-2200, holds
+   while the river builds, then sails to its place 2200-4200 (B's arrival); the boat 1700;
+   mangrove 2000; the header 2300 and the notice 2500 (html.building, set before first paint in
+   index.html); the ticket 3300; the cue and the lamplight under your lantern 3900; the test
+   panel 3300. Calm by 5s. Opacity/transform only; everything ends when the class is removed. */
+
+/* Until the header arrives, the strip it covers is page paper, not river. The header is
+   opaque from 3s, so this goes unseen when the class drops at 4s. */
+:where(html.lounge-active) .intro::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--nav-h) + var(--banner-h));
+  background: var(--bg);
+}
+
+/* B's arrival: your lantern (or kite) rises from below the screen to its middle, large,
+   turns once while it hangs there and the river builds behind it, then sails to its place. */
+:where(html.lounge-active) .intro .h-mine-in {
+  animation: h-rise 4000ms 200ms cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+
+/* The turn is a real one, in depth: a full revolution about the upright, the paper's far
+   side passing in front with your name hidden on it (it never reads mirrored). */
+:where(html.lounge-active) .intro .h-mine .nb-spin {
+  animation: h-beacon-turn 1300ms 900ms var(--ease-swing) backwards;
+}
+
+:where(html.lounge-active) .intro .h-mine .nb-spin,
+:where(html.lounge-active) .intro .h-mine .nb-paper {
+  transform-style: preserve-3d;
+}
+
+:where(html.lounge-active) .intro .h-mine .nb-face,
+:where(html.lounge-active) .intro .h-mine .nb-crest {
+  backface-visibility: hidden;
+}
+
+@keyframes h-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(
+        calc(var(--hw, 100vw) * 0.5 - var(--mcx)),
+        calc(var(--hh, 700px) * 1.05 - var(--mcy) - var(--lift)),
+        0
+      )
+      scale(var(--rise-s));
+  }
+
+  18% {
+    opacity: 1;
+    transform: translate3d(
+        calc(var(--hw, 100vw) * 0.5 - var(--mcx)),
+        calc(var(--hh, 700px) * 0.47 - var(--mcy) - var(--lift)),
+        0
+      )
+      scale(var(--rise-s));
+  }
+
+  50% {
+    transform: translate3d(
+        calc(var(--hw, 100vw) * 0.5 - var(--mcx)),
+        calc(var(--hh, 700px) * 0.47 - var(--mcy) - var(--lift)),
+        0
+      )
+      scale(var(--rise-s));
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes h-beacon-turn {
+  from {
+    transform: perspective(1100px) rotateY(0deg);
+  }
+  to {
+    transform: perspective(1100px) rotateY(360deg);
+  }
+}
+
+:where(html.lounge-active) .intro .h-refl {
+  animation: m-fade-in 900ms 3900ms linear backwards;
+}
+
+:where(html.lounge-active) .intro .h-boat-in {
+  animation: h-drift 1100ms 1700ms var(--ease-out) backwards;
+}
+
+:where(html.lounge-active) .intro .h-mangrove {
+  animation: m-fade-in 1000ms 2000ms linear backwards;
+}
+
+:where(html.lounge-active) .intro .h-ticket {
+  animation: h-ticket-in 700ms 3300ms var(--ease-out) backwards;
+}
+
+:where(html.lounge-active) .intro .h-cue,
+:where(html.lounge-active) .intro > .moor,
+:where(html.lounge-active) .intro > .h-foot {
+  animation: m-fade-in 600ms 3900ms linear backwards;
+}
+
+:where(html.lounge-active) .intro .h-cue span {
+  animation: h-nudge 1000ms 3900ms ease-in-out;
+}
+
+html:where(.lounge-active).building .lnav {
+  animation: h-from-top 700ms 2300ms var(--ease-out) backwards;
+}
+
+html:where(.lounge-active).building .lnav-strip {
+  animation: h-from-top 600ms 2500ms var(--ease-out) backwards;
+}
+
+html:where(.lounge-active).building .lab {
+  animation: m-fade-in 500ms 3300ms linear backwards;
+}
+
+@keyframes h-drift {
+  from {
+    opacity: 0;
+    transform: translate3d(-16px, 0, 0);
+  }
+}
+
+@keyframes h-from-top {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes h-ticket-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -26px, 0) rotate(-2.5deg);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translate3d(0, 4px, 0) rotate(0.8deg);
+  }
+}
+
+@keyframes h-glide {
+  from {
+    opacity: 0;
+    transform: translate3d(-40px, 0, 0);
+  }
+
+  30% {
+    opacity: 1;
+  }
+}
+
+@keyframes h-nudge {
+  50% {
+    transform: translate3d(0, 4px, 0);
+  }
+
+  0%,
+  100% {
+    transform: none;
+  }
+}
+
+/* First arrival: the unlit lantern appears (350), the name lands (1250), it catches
+   (1300), then lifts 18px into its bob (1700-2600); others join one by one from 1900. */
+:where(html.lounge-active) .arrive .h-mine-in {
+  animation: h-arrive 2600ms linear backwards;
+}
+
+:where(html.lounge-active) .arrive .h-boat-in {
+  animation: h-glide 1000ms 350ms var(--ease-out) backwards;
+}
+
+/* The tour's boat has a measured flight; adding the generic load glide would
+   move it twice and briefly hide the element that should carry the handoff. */
+:where(html.lounge-active) .arrive.boat-handoff .h-boat-in {
+  animation: none;
+}
+
+:where(html.lounge-active) .arrive .h-ticket {
+  animation: m-paper-in 420ms 2100ms var(--ease-out) backwards;
+}
+
+:where(html.lounge-active) .arrive .h-mangrove {
+  animation: m-fade-in 900ms 1900ms linear backwards;
+}
+
+:where(html.lounge-active) .arrive .h-refl {
+  animation: m-fade-in 900ms 1300ms linear backwards;
+}
+
+:where(html.lounge-active) .arrive .h-cue {
+  animation: m-fade-in 600ms 2600ms linear backwards;
+}
+
+@keyframes h-arrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  13.5% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  25% {
+    opacity: 1;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  65% {
+    transform: translate3d(0, 18px, 0);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Theme switch: B's circle (tide.js toggleTheme) ----------
+   The new snapshot is live and is revealed by a circle growing from the sun or moon; the old
+   one holds still outside it. Everything, the paper objects included, is inside the root
+   snapshot: inside the circle you see the new theme's choreography already playing. */
+
+html:where(.lounge-active).vt-theme::view-transition-group(root) {
+  animation: none;
+}
+
+html:where(.lounge-active).vt-theme::view-transition-old(root),
+html:where(.lounge-active).vt-theme::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ---------- Page switch: Home <-> Events (tide.js switchPage) ----------
+   One view transition in three beats: Home's content fades, the scene window shrinks into
+   the Events band (or grows back) while the boat sails between its two spots, then the
+   other page's content rises in. Names exist only while html.vt-page is set (the nav, the
+   notice strip and the test panel name themselves: lounge-nav, lounge-notice, lounge-lab). */
+
+html:where(.lounge-active).vt-page #main .scene {
+  view-transition-name: scene;
+}
+
+/* The boat: the one thing that travels between views (one RiverBoat per view). */
+html:where(.lounge-active).vt-page #main .rb {
+  view-transition-name: boat;
+}
+
+html:where(.lounge-active).vt-page .h-mine {
+  view-transition-name: home-1;
+}
+
+html:where(.lounge-active).vt-page .h-ticket {
+  view-transition-name: home-2;
+}
+
+html:where(.lounge-active).vt-page .h-cue {
+  view-transition-name: home-3;
+}
+
+html:where(.lounge-active).vt-page .ev-title {
+  view-transition-name: ev-1;
+}
+
+html:where(.lounge-active).vt-page .ev-tabs {
+  view-transition-name: ev-2;
+}
+
+html:where(.lounge-active).vt-page .ev-chips {
+  view-transition-name: ev-3;
+}
+
+html:where(.lounge-active).vt-page .ev-panel {
+  view-transition-name: ev-4;
+}
+
+html:where(.lounge-active).vt-page .ev-note {
+  view-transition-name: ev-5;
+}
+
+/* The header, notice strip and test panel hold still above everything. */
+html:where(.lounge-active).vt-page::view-transition-group(lounge-nav),
+html:where(.lounge-active).vt-page::view-transition-group(lounge-notice),
+html:where(.lounge-active).vt-page::view-transition-group(lounge-lab) {
+  z-index: 4;
+  animation: none;
+}
+
+html:where(.lounge-active).vt-page::view-transition-old(lounge-nav),
+html:where(.lounge-active).vt-page::view-transition-old(lounge-notice),
+html:where(.lounge-active).vt-page::view-transition-old(lounge-lab) {
+  display: none;
+}
+
+html:where(.lounge-active).vt-page::view-transition-new(lounge-nav),
+html:where(.lounge-active).vt-page::view-transition-new(lounge-notice),
+html:where(.lounge-active).vt-page::view-transition-new(lounge-lab) {
+  animation: none;
+}
+
+/* The rest of the page: the old one holds, the new one covers it as the scene moves. */
+html:where(.lounge-active).vt-page::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html:where(.lounge-active).vt-page::view-transition-new(root) {
+  animation: vt-page-fade 200ms linear 170ms both;
+  mix-blend-mode: normal;
+}
+
+/* The scene: the window animates between the two boxes (120-620ms); both snapshots stay
+   unscaled at one shared position (--vt-p from tide.js), so the picture never squashes, and
+   the band fades over the full scene in the middle, where the two already line up. */
+html:where(.lounge-active).vt-page::view-transition-group(scene) {
+  z-index: 1;
+  overflow: clip;
+  animation-delay: 120ms;
+  animation-duration: 500ms;
+  animation-timing-function: var(--ease-inout);
+  animation-fill-mode: both;
+}
+
+html:where(.lounge-active).vt-page::view-transition-image-pair(scene) {
+  isolation: isolate;
+}
+
+html:where(.lounge-active).vt-page::view-transition-old(scene),
+html:where(.lounge-active).vt-page::view-transition-new(scene) {
+  height: 100%;
+  object-fit: none;
+  object-position: 50% var(--vt-p, 50%);
+  mix-blend-mode: normal;
+  animation-delay: 120ms;
+  animation-duration: 500ms;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+html:where(.lounge-active).vt-page::view-transition-old(scene) {
+  animation-name: none;
+}
+
+html:where(.lounge-active).vt-page::view-transition-new(scene) {
+  animation-name: vt-scene-in;
+}
+
+html:where(.lounge-active).vt-page.vt-grow::view-transition-old(scene) {
+  z-index: 1;
+  animation-name: vt-scene-out;
+}
+
+html:where(.lounge-active).vt-page.vt-grow::view-transition-new(scene) {
+  animation-name: none;
+}
+
+/* The boat sails from its Home spot onto the band (or back): 100-700ms. Same art on both
+   sides, so the default plus-lighter crossfade keeps it solid. */
+html:where(.lounge-active).vt-page::view-transition-group(boat) {
+  z-index: 2;
+  animation-delay: 100ms;
+  animation-duration: 600ms;
+  animation-timing-function: var(--ease-inout);
+  animation-fill-mode: both;
+}
+
+html:where(.lounge-active).vt-page::view-transition-old(boat),
+html:where(.lounge-active).vt-page::view-transition-new(boat) {
+  animation-delay: 100ms;
+  animation-duration: 600ms;
+  animation-fill-mode: both;
+}
+
+/* Content: out first (0-200ms, no stagger), in last (480-800ms, 40ms stagger). */
+html:where(.lounge-active).vt-page::view-transition-group(home-1),
+html:where(.lounge-active).vt-page::view-transition-group(home-2),
+html:where(.lounge-active).vt-page::view-transition-group(home-3),
+html:where(.lounge-active).vt-page::view-transition-group(ev-1),
+html:where(.lounge-active).vt-page::view-transition-group(ev-2),
+html:where(.lounge-active).vt-page::view-transition-group(ev-3),
+html:where(.lounge-active).vt-page::view-transition-group(ev-4),
+html:where(.lounge-active).vt-page::view-transition-group(ev-5) {
+  z-index: 3;
+  animation: none;
+}
+
+html:where(.lounge-active).vt-page::view-transition-old(home-1),
+html:where(.lounge-active).vt-page::view-transition-old(home-2),
+html:where(.lounge-active).vt-page::view-transition-old(home-3),
+html:where(.lounge-active).vt-page::view-transition-old(ev-1),
+html:where(.lounge-active).vt-page::view-transition-old(ev-2),
+html:where(.lounge-active).vt-page::view-transition-old(ev-3),
+html:where(.lounge-active).vt-page::view-transition-old(ev-4),
+html:where(.lounge-active).vt-page::view-transition-old(ev-5) {
+  animation: m-fade-out 200ms var(--ease-in) both;
+}
+
+html:where(.lounge-active).vt-page::view-transition-new(home-1),
+html:where(.lounge-active).vt-page::view-transition-new(home-2),
+html:where(.lounge-active).vt-page::view-transition-new(home-3),
+html:where(.lounge-active).vt-page::view-transition-new(ev-1),
+html:where(.lounge-active).vt-page::view-transition-new(ev-2),
+html:where(.lounge-active).vt-page::view-transition-new(ev-3),
+html:where(.lounge-active).vt-page::view-transition-new(ev-4),
+html:where(.lounge-active).vt-page::view-transition-new(ev-5) {
+  animation: vt-page-rise 320ms var(--ease-out) 480ms both;
+}
+
+html:where(.lounge-active).vt-page::view-transition-new(home-2),
+html:where(.lounge-active).vt-page::view-transition-new(ev-2) {
+  animation-delay: 520ms;
+}
+
+html:where(.lounge-active).vt-page::view-transition-new(home-3),
+html:where(.lounge-active).vt-page::view-transition-new(ev-3) {
+  animation-delay: 560ms;
+}
+
+html:where(.lounge-active).vt-page::view-transition-new(ev-4),
+html:where(.lounge-active).vt-page::view-transition-new(ev-5) {
+  animation-delay: 600ms;
+}
+
+@keyframes vt-page-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-page-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
+@keyframes vt-scene-out {
+  0%,
+  35% {
+    opacity: 1;
+  }
+
+  85%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-scene-in {
+  0%,
+  35% {
+    opacity: 0;
+  }
+
+  85%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 760px) {
+  :where(html.lounge-active) .hero {
+    height: 560px;
+  }
+
+  :where(html.lounge-active) .h-mine {
+    --mw: 176px;
+    --mcx: calc(var(--hw, 100vw) / 2);
+    --mcy: calc(150px + 176px * 0.647);
+    --rise-s: 1.3;
+    left: calc(50% - 88px);
+    top: 150px;
+    --str-w: 30vw;
+    --str-h: 360px;
+  }
+
+  :root:where(.lounge-active)[data-theme='light'] .h-mine {
+    --lift: -110px;
+  }
+
+  :where(html.lounge-active) .h-boat {
+    left: -28px;
+    top: 395px;
+    width: 190px;
+  }
+
+  /* Its bank stays clear of the ticket that overlaps the scene's foot. */
+  :where(html.lounge-active) .h-mangrove {
+    right: -72px;
+    bottom: 84px;
+    width: 160px;
+  }
+
+  /* The ticket overlaps the bottom of the scene, then the groups follow. */
+  :where(html.lounge-active) .h-ticket {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    margin: -64px 16px 0;
+  }
+
+  :where(html.lounge-active) .h-cue {
+    display: none;
+  }
+}
+
+/* ---------- Reduced motion: end states at once, no loops ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html:where(.lounge-active) {
+    scroll-behavior: auto;
+  }
+
+  :where(html.lounge-active) .home .h-mine,
+  :where(html.lounge-active) .home .h-refl {
+    transition: none;
+  }
+
+  :where(html.lounge-active) .intro *,
+  :where(html.lounge-active) .arrive *,
+  :where(html.lounge-active) .h-refl i {
+    animation: none !important;
+  }
+}

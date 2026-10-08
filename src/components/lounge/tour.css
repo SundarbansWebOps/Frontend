@@ -1,0 +1,2027 @@
+/* Welcome tour: D's river tour in B's world (palette tokens.css, cards cards.css, motion
+   tokens motion.css; spec _notes/motion.md). Motion is transform and opacity only:
+   scroll-linked transforms set from one frame, one-shot transitions and single-run
+   animations, and a few slow sky loops (stars, sun rays, sun glints, the boat's idle bob)
+   that pause in a hidden tab (html.m-hidden) and stop under reduced motion.
+   This file loads before cards.css, so rules that restyle a .gp card are scoped under .tour. */
+
+:where(html.lounge-active) .tour {
+  position: relative;
+  background: var(--bg);
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .tour.leaving {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  height: 100vh !important;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .tour .t-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--water-1);
+}
+
+/* ---------- Depth layers ---------- */
+
+:where(html.lounge-active) .tour .t-sky {
+  position: absolute;
+  left: -3%;
+  right: -3%;
+  top: 0;
+  overflow: hidden;
+  background: linear-gradient(var(--sky-0), var(--sky-1));
+}
+
+:where(html.lounge-active) .tour .t-sky picture,
+:where(html.lounge-active) .tour .t-sky > picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+:where(html.lounge-active) .tour .t-sky > picture img {
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+
+:where(html.lounge-active) .tour .t-tile {
+  position: absolute;
+  left: 0;
+  will-change: transform;
+}
+
+/* Alternate original and mirrored spans: both sides of each join use the same pixels.
+   Scroll translates the strip; neither paint nor background-position animates. */
+:where(html.lounge-active) .tour .t-span {
+  position: absolute;
+  top: 0;
+  display: block;
+  background-repeat: no-repeat;
+}
+:where(html.lounge-active) .tour .t-span.mirror {
+  transform: scaleX(-1);
+}
+:where(html.lounge-active) .tour .t-water {
+  mask-image: linear-gradient(transparent, #000 24%);
+  pointer-events: none;
+}
+:where(html.lounge-active) .tour .t-trees {
+  mask-image: linear-gradient(transparent, #000 36%);
+}
+:where(html.lounge-active) .tour .t-birds {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+:where(html.lounge-active) .tour .t-flock,
+:where(html.lounge-active) .tour .t-flock > span {
+  position: absolute;
+}
+:where(html.lounge-active) .tour .t-flock > span {
+  width: 28px;
+  aspect-ratio: 170 / 150;
+  overflow: hidden;
+}
+:where(html.lounge-active) .tour .t-flock img {
+  width: 200%;
+  max-width: none;
+  height: 100%;
+  animation: t-flap 0.5s steps(1) infinite;
+}
+@keyframes t-flap {
+  50% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+:where(html.lounge-active) .tour .t-far,
+:where(html.lounge-active) .tour .t-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+:where(html.lounge-active) .tour.leaving .t-far,
+:where(html.lounge-active) .tour.leaving .t-world,
+:where(html.lounge-active) .tour.leaving .t-tile {
+  will-change: auto;
+}
+
+/* Skip: the world dips out for a moment while the river jumps ahead; the boat stays. */
+:where(html.lounge-active) .tour .t-world,
+:where(html.lounge-active) .tour .t-far,
+:where(html.lounge-active) .tour .t-note,
+:where(html.lounge-active) .tour .t-cap {
+  transition: opacity 0.22s linear;
+}
+
+:where(html.lounge-active) .tour.skipping .t-world,
+:where(html.lounge-active) .tour.skipping .t-far,
+:where(html.lounge-active) .tour.skipping .t-note,
+:where(html.lounge-active) .tour.skipping .t-cap,
+:where(html.lounge-active) .tour.skipping .t-cue {
+  opacity: 0 !important;
+}
+
+:where(html.lounge-active) .tour .t-item {
+  position: absolute;
+  display: block;
+}
+
+:where(html.lounge-active) .tour .t-item > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Sky: stars and a rare shooting star (night), sun with rays (day) ---------- */
+
+:where(html.lounge-active) .tour .t-stars {
+  position: absolute;
+  inset: 0;
+}
+
+/* Plain dots, no glow; each twinkles on its own period (opacity only). */
+:where(html.lounge-active) .tour .t-stars i {
+  position: absolute;
+  width: var(--sz);
+  height: var(--sz);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff4dc 55%, rgb(255 244 220 / 0) 72%);
+  opacity: 0.9;
+  animation: m-twinkle var(--tw) ease-in-out var(--td) infinite alternate;
+}
+
+:where(html.lounge-active) .tour .t-stars .t-shoot {
+  width: 110px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #fff4dc);
+  transform-origin: 100% 50%;
+  opacity: 0;
+  animation: none;
+}
+
+:where(html.lounge-active) .tour .t-body {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .tour .t-body img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* The sun's rays: a ring of soft spokes turning very slowly behind it (one composited
+   layer, 90s a turn). */
+:where(html.lounge-active) .tour .t-rays {
+  position: absolute;
+  inset: -70%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(rgb(240 160 60 / 0.5) 0 4deg, transparent 4deg 15deg);
+  -webkit-mask: radial-gradient(closest-side, #000 34%, transparent 96%);
+  mask: radial-gradient(closest-side, #000 34%, transparent 96%);
+  animation: t-turn 90s linear infinite;
+}
+
+@keyframes t-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:where(html.lounge-active) .tour .t-moon {
+  transform: scale(0.78);
+}
+
+/* The sun's path on the water: four-point glints that turn in and out. */
+:where(html.lounge-active) .tour .t-sparks {
+  position: absolute;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .tour .t-sparks i {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  background: #fffbea;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  opacity: 0;
+  scale: var(--gs);
+  animation: m-glint var(--gl) ease-in-out var(--gd) infinite;
+}
+
+/* ---------- The far bank's lighthouse ---------- */
+
+:where(html.lounge-active) .tour .lighthouse > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+:where(html.lounge-active) .tour .lighthouse .l-lit {
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-out) 0.1s;
+}
+
+/* The lighthouse's light: a static halo that fades in (never pulses). */
+:where(html.lounge-active) .tour .l-glow {
+  position: absolute;
+  width: 52%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 220 150 / 0.34),
+    rgb(255 176 74 / 0.13) 42%,
+    rgb(255 176 74 / 0.04) 66%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-out);
+}
+
+:where(html.lounge-active) .tour.night .l-glow {
+  width: 80%;
+}
+
+:where(html.lounge-active) .tour .lighthouse.lit .l-lit,
+:where(html.lounge-active) .tour .lighthouse.lit .l-glow {
+  opacity: 1;
+}
+
+/* ---------- Those who rowed before you (one landing per year) ---------- */
+
+:where(html.lounge-active) .tour .bank.flip {
+  transform: scaleX(-1);
+}
+
+:where(html.lounge-active) .tour .landing .lintel {
+  position: absolute;
+  container-type: size;
+  display: grid;
+  place-items: center;
+}
+
+:where(html.lounge-active) .tour .landing .lintel b {
+  font-size: 66cqh;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: #9c2a14;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+:where(html.lounge-active) .tour.night .landing .lintel b {
+  color: #7d2412;
+}
+
+:where(html.lounge-active) .tour .niches {
+  position: absolute;
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+:where(html.lounge-active) .tour .niche {
+  display: grid;
+  justify-items: center;
+  gap: 5cqh;
+  margin: 0;
+}
+
+/* Name plates and picture frames are objects in the world: printed cream in both themes,
+   a little dimmer by moonlight so they never out-shine the lights. */
+:where(html.lounge-active) .tour {
+  --plate: var(--print);
+  --plate-ink: var(--print-ink);
+}
+
+:where(html.lounge-active) .tour.night {
+  --plate: #d8c9a8;
+}
+
+/* A plain picture frame: the house crest until a real photo replaces it. */
+:where(html.lounge-active) .tour .niche .ph {
+  display: grid;
+  place-items: center;
+  height: 64cqh;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 2px solid var(--plate-ink);
+  border-radius: 4px;
+  background: var(--plate);
+  box-shadow: 0 3px 0 var(--plate-ink);
+}
+
+:where(html.lounge-active) .tour .niche .ph img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+:where(html.lounge-active) .tour .niche .ph.crest img {
+  width: 62%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+:where(html.lounge-active) .tour .plate {
+  display: grid;
+  justify-items: center;
+  max-width: 48cqw;
+  padding: 3px 9px 4px;
+  background: var(--plate);
+  color: var(--plate-ink);
+  border: 1.5px solid var(--plate-ink);
+  border-radius: 4px;
+  box-shadow: 0 2px 0 var(--plate-ink);
+  text-align: center;
+  line-height: 1.12;
+}
+
+:where(html.lounge-active) .tour .plate b {
+  font-size: clamp(12px, 9cqh, 16px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+:where(html.lounge-active) .tour .plate small,
+:where(html.lounge-active) .tour .c-label small {
+  font-size: clamp(9.5px, 6.2cqh, 11px);
+  font-weight: 700;
+  font-stretch: 112.5%;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a2c14;
+  white-space: nowrap;
+}
+
+/* Phone: one landing fills the screen and its two niches stack. */
+:where(html.lounge-active) .tour .niches.stack {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 4cqh;
+  padding: 0 4cqw;
+}
+
+:where(html.lounge-active) .tour .niches.stack .niche {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-items: start;
+  gap: 10px;
+}
+
+:where(html.lounge-active) .tour .niches.stack .ph {
+  height: 42cqh;
+}
+
+:where(html.lounge-active) .tour .niches.stack .plate {
+  justify-items: start;
+  max-width: none;
+  text-align: left;
+}
+
+:where(html.lounge-active) .tour .niches.stack .plate b {
+  font-size: 15px;
+}
+
+:where(html.lounge-active) .tour .niches.stack .plate small {
+  font-size: 10.5px;
+}
+
+/* A branch hangs in front of each landing; when the boat arrives it swings up and
+   aside, once. */
+:where(html.lounge-active) .tour .branch {
+  transform-origin: 50% 0;
+  transform: scaleX(var(--dir));
+  transition: transform 0.9s var(--ease-out);
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .tour .branch.open {
+  transform: translate3d(calc(var(--dir) * -60%), -100%, 0) rotate(calc(var(--dir) * 38deg))
+    scaleX(var(--dir));
+}
+
+/* ---------- Council: painted characters and their thought bubbles ---------- */
+
+:where(html.lounge-active) .tour .council {
+  z-index: 1;
+}
+
+/* The open bubble draws over the neighbouring characters. */
+:where(html.lounge-active) .tour .council.open {
+  z-index: 2;
+}
+
+:where(html.lounge-active) .tour .c-who {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(html.lounge-active) .tour .c-char {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
+  transition: transform var(--t-hover) var(--ease-out);
+}
+
+:where(html.lounge-active) .tour .c-who:hover .c-char,
+:where(html.lounge-active) .tour .c-who:focus-visible .c-char {
+  transform: translateY(-3px);
+}
+
+/* Name plate under the feet: who the council is, even if nobody taps. */
+:where(html.lounge-active) .tour .c-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4px);
+  display: grid;
+  justify-items: center;
+  padding: 4px 11px 5px;
+  transform: translateX(-50%);
+  background: var(--plate);
+  color: var(--plate-ink);
+  border: 1.5px solid var(--plate-ink);
+  border-radius: 4px;
+  box-shadow: 0 2px 0 var(--plate-ink);
+  line-height: 1.12;
+  white-space: nowrap;
+}
+
+:where(html.lounge-active) .tour .c-label b {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+:where(html.lounge-active) .tour .c-label small {
+  font-size: 10.5px;
+}
+
+:where(html.lounge-active) .tour .c-who:focus {
+  outline: none;
+}
+
+:where(html.lounge-active) .tour .c-who:focus-visible .c-label {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* The one-time hint: a small "…" thought puff appears when the boat comes near, stays
+   still, and goes once that character has been opened. Staggered 180ms, no overshoot. */
+:where(html.lounge-active) .tour .c-nub {
+  position: absolute;
+  display: flex;
+  gap: 3px;
+  padding: 6px 8px;
+  background: var(--paper);
+  border: 1.5px solid var(--keyline);
+  border-radius: 999px 999px 999px 4px;
+  box-shadow: 0 2px 0 var(--under);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.7);
+  transform-origin: 0 100%;
+  transition:
+    opacity 0.26s var(--ease-out) calc(var(--i) * 0.18s + 0.15s),
+    transform 0.26s var(--ease-out) calc(var(--i) * 0.18s + 0.15s);
+}
+
+:where(html.lounge-active) .tour .c-nub i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--t-1);
+}
+
+:where(html.lounge-active) .tour .council.hint .c-nub {
+  opacity: 1;
+  transform: none;
+}
+
+:where(html.lounge-active) .tour .council.met .c-nub,
+:where(html.lounge-active) .tour .council.open .c-nub {
+  opacity: 0;
+  transform: scale(0.7);
+  transition-delay: 0s;
+}
+
+/* The thought bubble: a paper cloud over the head, with three dots trailing down to it.
+   It follows the theme: rice paper by day, indigo paper by night. */
+:where(html.lounge-active) .tour .c-say {
+  position: absolute;
+  z-index: 2;
+  translate: -50% 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear 0.25s;
+}
+
+:where(html.lounge-active) .tour .council.open .c-say {
+  pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+:where(html.lounge-active) .tour .c-cloud {
+  position: relative;
+  padding: 16px 18px 15px;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(0.94);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 0.2s ease-out,
+    transform var(--t-paper) var(--ease-out);
+}
+
+:where(html.lounge-active) .tour .council.open .c-cloud {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.08s;
+}
+
+/* The cloud's outline is the union of a rounded box and seven puffs: drawn once in the
+   keyline colour (outline layer), then again in paper on top (fill layer). */
+:where(html.lounge-active) .tour .puffs,
+:where(html.lounge-active) .tour .puffs i {
+  position: absolute;
+}
+
+:where(html.lounge-active) .tour .puffs {
+  inset: 0;
+  border-radius: 34px;
+}
+
+:where(html.lounge-active) .tour .puffs i {
+  border-radius: 50%;
+}
+
+:where(html.lounge-active) .tour .puffs.o,
+:where(html.lounge-active) .tour .puffs.o i {
+  background: var(--keyline);
+}
+
+:where(html.lounge-active) .tour .puffs.o {
+  box-shadow: 0 4px 0 var(--under);
+  outline: 2px solid var(--keyline);
+}
+
+:where(html.lounge-active) .tour .puffs.o i {
+  outline: 2px solid var(--keyline);
+}
+
+:where(html.lounge-active) .tour .puffs.f,
+:where(html.lounge-active) .tour .puffs.f i {
+  background: var(--paper);
+}
+
+:where(html.lounge-active) .tour .puffs i:nth-child(1) {
+  left: 4%;
+  top: -16px;
+  width: 30%;
+  aspect-ratio: 1.5;
+}
+:where(html.lounge-active) .tour .puffs i:nth-child(2) {
+  left: 28%;
+  top: -24px;
+  width: 30%;
+  aspect-ratio: 1.3;
+}
+:where(html.lounge-active) .tour .puffs i:nth-child(3) {
+  left: 54%;
+  top: -18px;
+  width: 28%;
+  aspect-ratio: 1.4;
+}
+:where(html.lounge-active) .tour .puffs i:nth-child(4) {
+  right: 3%;
+  top: -8px;
+  width: 22%;
+  aspect-ratio: 1.3;
+}
+:where(html.lounge-active) .tour .puffs i:nth-child(5) {
+  left: -14px;
+  top: 22%;
+  width: 18%;
+  aspect-ratio: 0.8;
+}
+:where(html.lounge-active) .tour .puffs i:nth-child(6) {
+  right: -14px;
+  top: 30%;
+  width: 18%;
+  aspect-ratio: 0.8;
+}
+:where(html.lounge-active) .tour .puffs i:nth-child(7) {
+  left: 30%;
+  bottom: -14px;
+  width: 40%;
+  aspect-ratio: 3.2;
+}
+
+:where(html.lounge-active) .tour .c-in {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  text-align: left;
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .tour .c-photo {
+  display: block;
+  width: 84px;
+  height: 105px;
+  object-fit: cover;
+  border: 1.5px solid var(--keyline);
+  border-radius: 4px;
+  background: var(--paper-2);
+}
+
+:where(html.lounge-active) .tour .c-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+:where(html.lounge-active) .tour .c-text b {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+:where(html.lounge-active) .tour .c-text .role {
+  font-size: 11.5px;
+  font-weight: 700;
+  font-stretch: 112.5%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .tour .c-text p {
+  margin: 5px 0 0;
+  font-size: 14.5px;
+  font-weight: 450;
+  line-height: 1.4;
+  color: var(--t-2);
+  text-wrap: pretty;
+}
+
+:where(html.lounge-active) .tour .c-trail {
+  position: absolute;
+  left: calc(50% + var(--tx, 0px));
+  top: 100%;
+  width: 0;
+  height: 44px;
+}
+
+:where(html.lounge-active) .tour .c-trail i {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid var(--keyline);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 0.15s ease-out,
+    transform 0.22s var(--ease-out);
+}
+
+:where(html.lounge-active) .tour .c-trail i:nth-child(1) {
+  left: -9px;
+  top: 14px;
+  width: 16px;
+  height: 13px;
+}
+:where(html.lounge-active) .tour .c-trail i:nth-child(2) {
+  left: -6px;
+  top: 28px;
+  width: 11px;
+  height: 9px;
+}
+:where(html.lounge-active) .tour .c-trail i:nth-child(3) {
+  left: -3px;
+  top: 38px;
+  width: 7px;
+  height: 7px;
+}
+
+:where(html.lounge-active) .tour .council.open .c-trail i {
+  opacity: 1;
+  transform: none;
+}
+
+:where(html.lounge-active) .tour .council.open .c-trail i:nth-child(3) {
+  transition-delay: 0s;
+}
+:where(html.lounge-active) .tour .council.open .c-trail i:nth-child(2) {
+  transition-delay: 0.04s;
+}
+:where(html.lounge-active) .tour .council.open .c-trail i:nth-child(1) {
+  transition-delay: 0.08s;
+}
+
+/* Short screens: the bubble opens beside the character, the trail runs back to the head. */
+:where(html.lounge-active) .tour .c-say.side {
+  translate: 0 0;
+}
+
+:where(html.lounge-active) .tour .c-say.side .c-cloud {
+  transform-origin: 0 30%;
+}
+
+:where(html.lounge-active) .tour .c-say.side .c-trail {
+  left: -40px;
+  top: 34px;
+  width: 40px;
+  height: 0;
+}
+
+:where(html.lounge-active) .tour .c-say.side .c-trail i:nth-child(1) {
+  left: 18px;
+  top: -6px;
+}
+:where(html.lounge-active) .tour .c-say.side .c-trail i:nth-child(2) {
+  left: 6px;
+  top: -2px;
+}
+:where(html.lounge-active) .tour .c-say.side .c-trail i:nth-child(3) {
+  left: -4px;
+  top: 2px;
+}
+
+/* While a bubble is open the chapter card steps up out of its way. */
+:where(html.lounge-active) .tour .t-cap {
+  transition:
+    translate 0.3s var(--ease-inout),
+    opacity 0.22s linear;
+}
+
+:where(html.lounge-active) .tour .t-cap.away {
+  translate: 0 calc(-100% - 12vh - 40px);
+}
+
+/* ---------- Islands ---------- */
+
+:where(html.lounge-active) .tour .island {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: transform var(--t-hover) var(--ease-out);
+}
+
+:where(html.lounge-active) .tour .island .land {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  /* The painted island carries its own strip of water; let the river show instead. */
+  -webkit-mask-image: linear-gradient(#000 74%, transparent 88%);
+  mask-image: linear-gradient(#000 74%, transparent 88%);
+}
+
+/* Calm, darker water around the island's waterline: it settles the island into the
+   river instead of riding on the painted waves. */
+:where(html.lounge-active) .tour .i-shade {
+  position: absolute;
+  left: -14%;
+  right: -14%;
+  top: 50%;
+  height: 56%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(120 58 20 / 0.42),
+    rgb(120 58 20 / 0.2) 60%,
+    transparent
+  );
+}
+
+:where(html.lounge-active) .tour.night .i-shade {
+  background: radial-gradient(closest-side, rgb(10 7 5 / 0.6), rgb(10 7 5 / 0.3) 60%, transparent);
+}
+
+:where(html.lounge-active) .tour .island .fig {
+  position: absolute;
+  z-index: 1;
+  height: auto;
+}
+
+/* A soft pool of light behind the figures lifts them off the far bank. By night it is
+   faint: the boatman's lamp stays the scene's main light. */
+:where(html.lounge-active) .tour .i-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 236 180 / 0.6),
+    rgb(255 210 130 / 0.22) 55%,
+    transparent
+  );
+}
+
+:where(html.lounge-active) .tour.night .i-glow {
+  background: radial-gradient(
+    closest-side,
+    rgb(255 200 120 / 0.2),
+    rgb(255 176 74 / 0.08) 55%,
+    transparent
+  );
+}
+
+/* Night: each island's lamp, the boatman's own, hung from a bamboo post at its open end. One
+   static halo and three dashes of lamplight on the water, as on the boat (RiverBoat.vue).
+   The box is the post's foot (or, .hung, the branch); --lw is the lamp's width, --s the
+   arm's side, --drop the distance down to the painted waterline. --ly is the lamp's top. */
+:where(html.lounge-active) .tour .i-lamp {
+  --post: calc(var(--lw) * 4.2);
+  --reach: calc(var(--lw) * 1.3);
+  --hang: calc(var(--s) * var(--reach));
+  --ly: calc(1px - var(--post));
+  position: absolute;
+  z-index: 1;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .tour .i-post,
+:where(html.lounge-active) .tour .i-arm {
+  position: absolute;
+  border-radius: 2px;
+  background: #5c3a22;
+  box-shadow: 0 0 0 1px #1c0f08;
+}
+
+:where(html.lounge-active) .tour .i-post {
+  left: -1.5px;
+  bottom: 0;
+  width: 3px;
+  height: var(--post);
+  background: repeating-linear-gradient(to top, #5c3a22 0 16px, #2a170d 16px 18px);
+}
+
+:where(html.lounge-active) .tour .i-arm {
+  left: 0;
+  bottom: calc(var(--post) - 3px);
+  width: var(--reach);
+  height: 3px;
+  transform: scaleX(var(--s));
+  transform-origin: 0 50%;
+}
+
+:where(html.lounge-active) .tour .i-lamp img {
+  position: absolute;
+  left: calc(var(--hang) - var(--lw) / 2);
+  top: var(--ly);
+  width: var(--lw);
+  height: auto;
+}
+
+/* Hung from a branch: no post, the arm becomes a short wire straight down to the lamp. */
+:where(html.lounge-active) .tour .i-lamp.hung {
+  --ly: calc(var(--lw) * 0.35);
+}
+
+:where(html.lounge-active) .tour .i-lamp.hung .i-post {
+  display: none;
+}
+
+:where(html.lounge-active) .tour .i-lamp.hung .i-arm {
+  left: -0.5px;
+  top: 0;
+  bottom: auto;
+  width: 1px;
+  height: calc(var(--ly) + 2px);
+  transform: none;
+  box-shadow: none;
+  background: #7a5236;
+}
+
+:where(html.lounge-active) .tour .i-lamp-halo {
+  position: absolute;
+  left: var(--hang);
+  top: calc(var(--ly) + var(--lw) * 1.2);
+  width: calc(var(--lw) * 8);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    closest-side,
+    rgb(255 220 150 / 0.48),
+    rgb(255 176 74 / 0.18) 42%,
+    rgb(255 176 74 / 0.05) 66%,
+    transparent
+  );
+}
+
+:where(html.lounge-active) .tour .i-lamp-refl {
+  position: absolute;
+  left: var(--hang);
+  top: var(--drop);
+  width: calc(var(--lw) * 1.7);
+  transform: translateX(-50%);
+}
+
+:where(html.lounge-active) .tour .i-lamp-refl i {
+  display: block;
+  height: 2.5px;
+  margin: 0 auto 6px;
+  border-radius: 2px;
+  background: #f5ae4b;
+  animation: m-shimmer 3.6s ease-in-out infinite alternate;
+}
+
+:where(html.lounge-active) .tour .i-lamp-refl i:nth-child(1) {
+  width: 80%;
+  opacity: 0.4;
+  --shimmer-lo: 0.18;
+}
+
+:where(html.lounge-active) .tour .i-lamp-refl i:nth-child(2) {
+  width: 52%;
+  opacity: 0.3;
+  --shimmer-lo: 0.13;
+  animation-duration: 4.3s;
+  animation-delay: -1.2s;
+}
+
+:where(html.lounge-active) .tour .i-lamp-refl i:nth-child(3) {
+  width: 30%;
+  opacity: 0.22;
+  --shimmer-lo: 0.1;
+  animation-duration: 5.1s;
+  animation-delay: -2.4s;
+}
+
+/* Lamplight: a warm pool from each lamp (WelcomeTour.vue, lampLight) masked to the painted
+   art underneath and dodged onto it, so lit faces and mud warm and brighten while the ink
+   lines stay black. Half strength, not a floodlight; the three opacities are the knobs. */
+:where(html.lounge-active) .tour {
+  --lamp-on-fig: 0.5;
+  --lamp-on-land: 0.3;
+  --lamp-on-char: 0.55;
+}
+
+:where(html.lounge-active) .tour .lamplit {
+  position: absolute;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  mix-blend-mode: color-dodge;
+  -webkit-mask-image: var(--art);
+  mask-image: var(--art);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+:where(html.lounge-active) .tour .lamplit.on-fig {
+  z-index: 1;
+  opacity: var(--lamp-on-fig);
+}
+
+/* The island art carries a strip of painted water that .land masks away; so does this. */
+:where(html.lounge-active) .tour .lamplit.on-land {
+  inset: 0;
+  opacity: var(--lamp-on-land);
+  -webkit-mask-image: var(--art), linear-gradient(#000 74%, transparent 88%);
+  mask-image: var(--art), linear-gradient(#000 74%, transparent 88%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+:where(html.lounge-active) .tour .lamplit.on-char {
+  inset: 0;
+  opacity: var(--lamp-on-char);
+  transform-origin: 50% 100%;
+  transition: transform var(--t-hover) var(--ease-out);
+}
+
+:where(html.lounge-active) .tour .c-who:hover .lamplit,
+:where(html.lounge-active) .tour .c-who:focus-visible .lamplit {
+  transform: translateY(-3px);
+}
+
+/* The council's lamps stand on the bank: a taller post, the lamp hung from its top, and a
+   pool of light on the mud at its foot instead of a reflection on water. */
+:where(html.lounge-active) .tour .c-lamp {
+  z-index: 1;
+}
+
+:where(html.lounge-active) .tour .i-lamp-pool {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--lw) * 7);
+  height: calc(var(--lw) * 1.6);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 190 110 / 0.34),
+    rgb(255 160 70 / 0.12) 55%,
+    transparent
+  );
+}
+
+/* The island's name: a paper tag with an arrow, so it reads as tappable. */
+:where(html.lounge-active) .tour .i-label {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px 6px 15px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--t-1);
+  border: var(--kw) solid var(--keyline);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 var(--under);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+:where(html.lounge-active) .tour .i-label::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 6px solid var(--accent);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  transition: transform var(--t-hover) var(--ease-out);
+}
+
+:where(html.lounge-active) .tour .island:hover,
+:where(html.lounge-active) .tour .island:focus-visible {
+  transform: translateY(-4px);
+}
+
+:where(html.lounge-active) .tour .island:hover .i-label::after,
+:where(html.lounge-active) .tour .island:focus-visible .i-label::after {
+  transform: translateX(3px);
+}
+
+/* When the islands arrive: one glint across each label and one sparkle over each group,
+   staggered. Single-run animations; nothing repeats. */
+:where(html.lounge-active) .tour .i-label::before {
+  content: '';
+  position: absolute;
+  inset: -4px auto -4px 0;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgb(255 246 216 / 0.7) 45%,
+    rgb(255 246 216 / 0.7) 55%,
+    transparent
+  );
+  transform: translateX(-120%) skewX(-18deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .tour .island.glint .i-label::before {
+  animation: t-glint 0.9s var(--ease-inout) calc(var(--i) * 0.22s + 0.2s) 1 backwards;
+}
+
+@keyframes t-glint {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(260%) skewX(-18deg);
+    opacity: 1;
+  }
+}
+
+:where(html.lounge-active) .tour .i-spark {
+  position: absolute;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  background: #fff6d8;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .tour .island.glint .i-spark {
+  animation: t-spark 0.8s ease-out calc(var(--i) * 0.22s + 0.45s) 1 backwards;
+}
+
+@keyframes t-spark {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.1) rotate(40deg);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.4) rotate(90deg);
+  }
+}
+
+:where(html.lounge-active) .tour .island:focus-visible {
+  outline: none;
+}
+
+:where(html.lounge-active) .tour .island:focus-visible .i-label {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* ---------- Ghat ---------- */
+
+/* The painted ghat comes with its own rectangle of water; drop it so the steps go down
+   into the river itself. */
+:where(html.lounge-active) .tour .ghat > img {
+  -webkit-mask-image: linear-gradient(#000 79%, transparent 84%);
+  mask-image: linear-gradient(#000 79%, transparent 84%);
+}
+
+/* Night: the diyas' flames (22.6% and 77.1% across, 31.8% down the ghat art) get a soft
+   halo, and their light on the pillars and steps is dodged onto the stone (.lamplit). */
+:where(html.lounge-active) .tour .lamplit.on-ghat {
+  inset: 0;
+  opacity: var(--lamp-on-land);
+  background:
+    radial-gradient(
+      circle at 22.6% 31.8%,
+      rgb(255 214 150),
+      rgb(255 172 84 / 0.6) 5%,
+      rgb(255 150 64 / 0.22) 12%,
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 77.1% 31.8%,
+      rgb(255 214 150),
+      rgb(255 172 84 / 0.6) 5%,
+      rgb(255 150 64 / 0.22) 12%,
+      transparent 20%
+    );
+}
+
+:where(html.lounge-active) .tour .ghat .diya {
+  position: absolute;
+  top: 31.8%;
+  width: 14%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 220 150 / 0.5),
+    rgb(255 176 74 / 0.18) 40%,
+    rgb(255 176 74 / 0.05) 66%,
+    transparent
+  );
+  animation: diya-flicker 2.8s ease-in-out infinite alternate;
+}
+
+:where(html.lounge-active) .tour .ghat .diya + .diya {
+  animation-duration: 3.4s;
+  animation-delay: -1.3s;
+}
+
+@keyframes diya-flicker {
+  50% {
+    opacity: 0.82;
+  }
+}
+
+:where(html.lounge-active) .tour .ghat .gate {
+  position: absolute;
+  container-type: size;
+  display: grid;
+  place-items: center;
+}
+
+/* The gate's nameplate: the whole name, shrunk (and condensed) to fit; never an ellipsis. */
+:where(html.lounge-active) .tour .ghat .gate span {
+  max-width: 94%;
+  white-space: nowrap;
+  font-size: min(56cqh, calc(176cqw / var(--len)));
+  font-weight: 700;
+  font-stretch: 87.5%;
+  letter-spacing: -0.01em;
+  color: var(--print-ink);
+}
+
+/* ---------- The boat ---------- */
+
+:where(html.lounge-active) .tour .t-boat {
+  position: absolute;
+  transform-origin: 55% 80%;
+}
+
+/* ---------- Overlays ---------- */
+
+:where(html.lounge-active) .tour .t-top {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+:where(html.lounge-active) .tour .t-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 15px;
+  background: var(--paper);
+  color: var(--t-1);
+  border: var(--kw) solid var(--keyline);
+  border-radius: 999px;
+  box-shadow: 0 2px 0 var(--under);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .tour .t-brand {
+  padding: 0 14px 0 5px;
+}
+
+:where(html.lounge-active) .tour .t-brand img {
+  border-radius: 50%;
+}
+
+:where(html.lounge-active) .tour .t-acts {
+  display: inline-flex;
+  gap: 8px;
+}
+
+:where(html.lounge-active) .tour .skip,
+:where(html.lounge-active) .tour .t-auto {
+  cursor: pointer;
+  transition: transform var(--t-press) var(--ease-out);
+}
+
+:where(html.lounge-active) .tour .skip:active,
+:where(html.lounge-active) .tour .t-auto:active {
+  transform: translateY(1px);
+}
+
+/* Row for me: the tour plays itself until the member scrolls, taps or presses a key. */
+:where(html.lounge-active) .tour .t-auto {
+  padding: 0 15px 0 12px;
+}
+
+:where(html.lounge-active) .tour .t-auto svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:where(html.lounge-active) .tour .t-auto.on {
+  background: var(--t-1);
+  color: var(--paper);
+  border-color: var(--t-1);
+}
+
+:where(html.lounge-active) .tour .skip:focus-visible,
+:where(html.lounge-active) .tour .t-auto:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+:where(html.lounge-active) .tour .t-note,
+:where(html.lounge-active) .tour .t-cap,
+:where(html.lounge-active) .tour .t-card {
+  position: absolute;
+  z-index: 3;
+}
+
+/* ---------- Chapter cards (ghat paper, lotus band both edges) ---------- */
+
+:where(html.lounge-active) .tour .t-note {
+  left: 50%;
+  top: max(70px, 9vh);
+  width: min(420px, calc(100% - 40px));
+  padding-inline: 22px;
+  transform: translateX(-50%);
+  text-align: left;
+}
+
+:where(html.lounge-active) .tour .t-note p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Crest and headline on one line. */
+:where(html.lounge-active) .tour .t-note .n-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: clamp(20px, 1.9vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+:where(html.lounge-active) .tour .t-note .n-title img {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--keyline);
+}
+
+:where(html.lounge-active) .tour .t-note .n-body {
+  margin-top: 9px;
+  font-size: 15px;
+  font-weight: 450;
+  line-height: 1.45;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .tour .t-note .n-pride {
+  margin-top: 7px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .tour .t-cap {
+  left: 50%;
+  top: max(70px, 9vh);
+  width: min(600px, calc(100% - 40px));
+  padding-inline: 24px;
+  transform: translateX(-50%);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+}
+
+:where(html.lounge-active) .tour .t-cap h2 {
+  margin: 4px 0 0;
+  font-size: clamp(22px, 2.6vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+:where(html.lounge-active) .tour .t-cap p.sub {
+  margin: 8px auto 0;
+  max-width: 460px;
+  font-size: 15px;
+  font-weight: 450;
+  line-height: 1.45;
+  color: var(--t-2);
+  text-wrap: pretty;
+}
+
+/* The lighthouse card: the year big, the line under it. */
+:where(html.lounge-active) .tour .t-cap.milestone .gp-kicker {
+  font-size: 28px;
+  font-stretch: 100%;
+  letter-spacing: 0;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .tour .t-cap.milestone p.sub {
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .tour .t-cap.milestone p.by {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-3);
+}
+
+/* "Scroll to row": nudges down twice, once, to show which way the river goes. */
+:where(html.lounge-active) .tour .t-cue {
+  position: absolute;
+  right: 20px;
+  bottom: 16vh;
+  z-index: 4;
+  margin: 0;
+  padding: 9px 16px;
+  background: var(--paper);
+  color: var(--t-1);
+  border: var(--kw) solid var(--keyline);
+  border-radius: 999px;
+  box-shadow: 0 2px 0 var(--under);
+  font-size: 15px;
+  font-weight: 700;
+  pointer-events: none;
+  animation: t-nudge 0.9s var(--ease-inout) 1.5s 2;
+}
+
+@keyframes t-nudge {
+  50% {
+    translate: 0 4px;
+  }
+}
+
+:where(html.lounge-active) .tour .t-cue.gone {
+  visibility: hidden;
+}
+
+/* ---------- The ghat card ---------- */
+
+:where(html.lounge-active) .tour .t-card {
+  left: max(4vw, 28px);
+  top: 76px;
+  width: min(420px, 38vw);
+  max-height: calc(100% - 88px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-inline: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.5s var(--ease-out),
+    visibility 0s linear 0.3s;
+}
+
+:where(html.lounge-active) .tour .t-card.in {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+/* Enter the Lounge: the card leaves first (250ms), then the world fades. */
+:where(html.lounge-active) .tour .t-card.in.out {
+  opacity: 0;
+  transform: translate3d(0, 6px, 0);
+  transition:
+    opacity 0.25s var(--ease-in),
+    transform 0.25s var(--ease-in);
+}
+
+:where(html.lounge-active) .tour .t-card:focus {
+  outline: none;
+}
+
+:where(html.lounge-active) .tour .t-card h2 {
+  margin: 4px 0 12px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+:where(html.lounge-active) .tour .who {
+  display: grid;
+  gap: 10px;
+}
+
+/* Kicker and heading on the left, the live lantern / kite preview on the right. */
+:where(html.lounge-active) .tour .f-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+:where(html.lounge-active) .tour .t-card .f-top h2 {
+  margin-bottom: 8px;
+}
+
+:where(html.lounge-active) .tour .f-name {
+  display: grid;
+  gap: 5px;
+}
+
+:where(html.lounge-active) .tour .f-name span,
+:where(html.lounge-active) .tour .f-k {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .tour .f-name small {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .tour .f-name input {
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 12px;
+  background: var(--paper-2);
+  color: var(--t-1);
+  border: var(--kw) solid var(--keyline);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+:where(html.lounge-active) .tour .f-name input::placeholder {
+  color: var(--t-3);
+  font-weight: 450;
+}
+
+:where(html.lounge-active) .tour .f-name input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* The live preview of the member's lantern (night) or kite (day): NameBeacon. */
+:where(html.lounge-active) .tour .f-preview {
+  flex: none;
+  width: 92px;
+  margin: -4px 4px -8px 0;
+}
+
+/* Roll and region: from the roster, not editable here. */
+:where(html.lounge-active) .tour .f-fixed {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  padding: 9px 11px;
+}
+
+:where(html.lounge-active) .tour .f-fixed > div {
+  display: grid;
+  gap: 1px;
+}
+
+:where(html.lounge-active) .tour .f-v {
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .tour .f-wrong {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .tour .f-cert {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .tour .f-help {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .tour .f-acts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+:where(html.lounge-active) .tour .f-acts .gp-btn {
+  flex: 1;
+}
+
+:where(html.lounge-active) .tour .edit {
+  min-height: 40px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+:where(html.lounge-active) .tour .edit {
+  min-height: 28px;
+  font-size: 14px;
+}
+
+:where(html.lounge-active) .tour .f-sum {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .tour .edit:focus-visible,
+:where(html.lounge-active) .tour .t-card .gp-btn:focus-visible,
+:where(html.lounge-active) .tour .sheet .x:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* ---------- Community sheet ---------- */
+
+:where(html.lounge-active) .tour .sheet-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: var(--scrim);
+  animation: m-fade-in 0.2s linear;
+}
+
+:where(html.lounge-active) .tour .sheet {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: min(420px, calc(100% - 32px));
+  overflow: auto;
+  padding: 30px 24px 26px;
+  animation: t-sheet-side var(--t-sheet) var(--ease-out);
+}
+
+@keyframes t-sheet-side {
+  from {
+    opacity: 0;
+    transform: translate3d(24px, 0, 0);
+  }
+}
+
+:where(html.lounge-active) .tour .sheet-wrap.closing {
+  animation: m-fade-out 0.18s linear both;
+}
+
+:where(html.lounge-active) .tour .sheet-wrap.closing .sheet {
+  animation: m-paper-out 0.18s var(--ease-in) both;
+}
+
+:where(html.lounge-active) .tour .sheet .x {
+  position: absolute;
+  top: 24px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: var(--kw) solid var(--keyline);
+  border-radius: 50%;
+  background: var(--paper-2);
+  color: var(--t-1);
+  cursor: pointer;
+}
+
+:where(html.lounge-active) .tour .sheet .x svg {
+  width: 18px;
+  height: 18px;
+}
+
+:where(html.lounge-active) .tour .s-fig {
+  display: block;
+  width: 86%;
+  margin: 8px auto 10px;
+}
+
+:where(html.lounge-active) .tour .sheet h3 {
+  margin: 2px 0 6px;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+:where(html.lounge-active) .tour .s-about {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .tour .sheet h4 {
+  margin: 20px 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  font-stretch: 112.5%;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .tour .sheet ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(html.lounge-active) .tour .sheet li {
+  display: grid;
+  gap: 2px;
+  padding: 10px 0;
+  border-top: 1px dotted var(--rule);
+}
+
+:where(html.lounge-active) .tour .sheet li:first-child {
+  border-top: 0;
+}
+
+:where(html.lounge-active) .tour .sheet li b {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+:where(html.lounge-active) .tour .sheet li span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .tour .s-join {
+  margin: 16px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--t-2);
+}
+
+/* Petals shed by the garland on Enter: a fixed layer on <body> that outlives the tour. */
+:where(html.lounge-active) .t-petals {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+:where(html.lounge-active) .t-petals img {
+  position: absolute;
+  height: auto;
+}
+
+/* ---------- Low-end devices and reduced motion ---------- */
+
+/* html.lite: the sky stays painted; only the one-shots move. */
+:where(html.lounge-active) .tour.lite .t-stars i,
+:where(html.lounge-active) .tour.lite .t-sparks i,
+:where(html.lounge-active) .tour.lite .t-rays {
+  animation: none;
+}
+
+:where(html.lounge-active) .tour.lite .t-sparks {
+  display: none;
+}
+
+:where(html.lounge-active) .tour.still .l-lit,
+:where(html.lounge-active) .tour.still .l-glow,
+:where(html.lounge-active) .tour.still .t-card,
+:where(html.lounge-active) .tour.still .island,
+:where(html.lounge-active) .tour.still .c-char,
+:where(html.lounge-active) .tour.still .c-nub,
+:where(html.lounge-active) .tour.still .c-say,
+:where(html.lounge-active) .tour.still .c-cloud,
+:where(html.lounge-active) .tour.still .c-trail i,
+:where(html.lounge-active) .tour.still .t-cap,
+:where(html.lounge-active) .tour.still .t-world,
+:where(html.lounge-active) .tour.still .t-far,
+:where(html.lounge-active) .tour.still .t-note,
+:where(html.lounge-active) .tour.still .branch {
+  transition: none;
+}
+
+:where(html.lounge-active) .tour.still .island.glint .i-label::before,
+:where(html.lounge-active) .tour.still .island.glint .i-spark,
+:where(html.lounge-active) .tour.still .i-lamp-refl i,
+:where(html.lounge-active) .tour.still .ghat .diya,
+:where(html.lounge-active) .tour.still .t-stars i,
+:where(html.lounge-active) .tour.still .t-sparks i,
+:where(html.lounge-active) .tour.still .t-rays,
+:where(html.lounge-active) .tour.still .t-cue,
+:where(html.lounge-active) .tour.still .sheet-wrap,
+:where(html.lounge-active) .tour.still .sheet {
+  animation: none;
+}
+
+:where(html.lounge-active) .tour.still .t-sparks i {
+  opacity: 0.7;
+  transform: scale(0.6) rotate(45deg);
+}
+
+/* Wide screens: chapter cards sit top-left, clear of the sun. */
+@media (min-width: 760px) {
+  :where(html.lounge-active) .tour .t-note,
+  :where(html.lounge-active) .tour .t-cap {
+    left: max(4vw, 28px);
+    width: min(520px, 44vw);
+    transform: none;
+    text-align: left;
+  }
+
+  :where(html.lounge-active) .tour .t-note {
+    width: min(420px, 33vw);
+    min-width: 360px;
+  }
+
+  :where(html.lounge-active) .tour .t-cap p.sub {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 759px) {
+  :where(html.lounge-active) .tour .t-note,
+  :where(html.lounge-active) .tour .t-cap {
+    top: 62px;
+    padding-inline: 18px;
+  }
+
+  :where(html.lounge-active) .tour .t-note .n-title {
+    font-size: 19px;
+  }
+
+  :where(html.lounge-active) .tour .t-note .n-title img {
+    width: 38px;
+    height: 38px;
+  }
+
+  :where(html.lounge-active) .tour .t-note .n-body {
+    margin-top: 7px;
+    font-size: 14px;
+  }
+
+  :where(html.lounge-active) .tour .t-note .n-pride {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+
+  :where(html.lounge-active) .tour .t-cap h2 {
+    font-size: 22px;
+  }
+
+  :where(html.lounge-active) .tour .t-cap p.sub {
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  :where(html.lounge-active) .tour .t-cap.milestone .gp-kicker {
+    font-size: 24px;
+  }
+
+  :where(html.lounge-active) .tour .t-cap.milestone p.sub {
+    font-size: 16px;
+  }
+
+  :where(html.lounge-active) .tour .t-card {
+    left: 12px;
+    right: 12px;
+    top: 60px;
+    width: auto;
+    max-height: calc(100% - 72px);
+    padding-inline: 16px;
+  }
+
+  :where(html.lounge-active) .tour .t-card h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+
+  :where(html.lounge-active) .tour .who {
+    gap: 8px;
+  }
+
+  :where(html.lounge-active) .tour .f-preview {
+    width: 76px;
+  }
+
+  :where(html.lounge-active) .tour .f-name input {
+    min-height: 44px;
+  }
+
+  :where(html.lounge-active) .tour .sheet {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 82vh;
+    border-bottom: 0;
+    border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+    animation: m-sheet-up var(--t-sheet) var(--ease-out);
+  }
+
+  :where(html.lounge-active) .tour .sheet-wrap.closing .sheet {
+    animation: m-sheet-down 0.24s var(--ease-in) both;
+  }
+
+  :where(html.lounge-active) .tour .s-fig {
+    width: 64%;
+  }
+
+  :where(html.lounge-active) .tour .t-cue {
+    bottom: 26vh;
+    right: 50%;
+    transform: translateX(50%);
+  }
+
+  :where(html.lounge-active) .tour .c-cloud {
+    padding: 14px 14px 13px;
+  }
+
+  :where(html.lounge-active) .tour .c-photo {
+    width: 68px;
+    height: 85px;
+  }
+
+  :where(html.lounge-active) .tour .c-text b {
+    font-size: 17px;
+  }
+
+  :where(html.lounge-active) .tour .c-text p {
+    font-size: 14px;
+  }
+}
+
+/* Small phones: the brand pill keeps only the crest so Row for me and Skip fit. */
+@media (max-width: 479px) {
+  :where(html.lounge-active) .tour .t-brand-name {
+    display: none;
+  }
+
+  :where(html.lounge-active) .tour .t-brand {
+    padding: 0 5px;
+  }
+
+  :where(html.lounge-active) .tour .t-auto,
+  :where(html.lounge-active) .tour .skip {
+    padding-inline: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(html.lounge-active) .tour *,
+  :where(html.lounge-active) .tour *::before,
+  :where(html.lounge-active) .tour *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
