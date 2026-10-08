@@ -1279,8 +1279,8 @@ h1 {
 }
 .art {
   position: relative;
-  width: 100%;
-  max-width: 680px;
+  width: 96%;
+  max-width: 650px;
   justify-self: center;
 }
 .copy {
