@@ -82,7 +82,7 @@
           </div>
           <div>
             <dt>Phone</dt>
-            <dd class="mono">{{ detail.member.phone }}</dd>
+            <dd class="mono">{{ detail.member.phone || '–' }}</dd>
           </div>
           <div>
             <dt>Region</dt>
@@ -195,11 +195,10 @@
           <input v-model="form.gender" class="adm-input" maxlength="50" />
         </label>
         <label class="adm-field">
-          <span>Phone</span>
+          <span>Phone (optional)</span>
           <input
             v-model="form.phone"
             class="adm-input"
-            required
             inputmode="tel"
             placeholder="+919876543210"
           />

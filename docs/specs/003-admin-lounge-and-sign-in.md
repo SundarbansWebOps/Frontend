@@ -1,8 +1,8 @@
 # Spec 003 — Google sign-in, the roster and the admin lounge
 
 > Status: built 2026-10-08 on `feat/admin-panel-supabase`. Backend: migrations
-> `…_admin_request_types.sql` and `…_admin_panel_backend.sql` (applied to the cloud project).
-> Tests: `supabase/tests/010_admin_panel_test.sql` (33 checks), `e2e/admin.spec.js`.
+> `…_admin_request_types.sql`, `…_admin_panel_backend.sql` and `…_optional_phone.sql` (applied to the cloud project).
+> Tests: `supabase/tests/010_admin_panel_test.sql` (42 checks), `e2e/admin.spec.js`.
 
 ## Who gets in
 
@@ -10,6 +10,9 @@
   on the **roster**. A first Google sign-in with a rostered email creates the member from the roster
   row (name, phone, region) and removes the row. Anyone else is refused by the database; the sign-in
   door explains: "This Google account is not on the house roster…".
+- **Phone number is optional** (roster, profile edits, sign-up). When given it must be in
+  international format and unique; blank clears it. Without a phone, blacklisting matches by email
+  only.
 - Existing accounts (the three Super Admins) are linked to their Google identity automatically by
   Supabase (same confirmed email), so they sign in with Google too.
 - Suspended, blacklisted and deleted members are banned in Auth (`apply-account-status`), so Google

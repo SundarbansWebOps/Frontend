@@ -19,11 +19,10 @@
         <input v-model.trim="one.full_name" class="adm-input" required maxlength="200" />
       </label>
       <label class="adm-field">
-        <span>Phone (WhatsApp)</span>
+        <span>Phone (optional)</span>
         <input
           v-model.trim="one.phone"
           class="adm-input"
-          required
           inputmode="tel"
           placeholder="+919876543210"
         />
@@ -57,8 +56,9 @@
           placeholder="email, full name, phone, region, gender"
         />
         <small>
-          Columns: email, full name, phone{{ isSuperAdmin ? ', region (name or code)' : '' }},
-          gender (optional). Copy straight from Google Sheets; a header row is skipped.
+          Columns: email, full name, phone (optional){{
+            isSuperAdmin ? ', region (name or code)' : ''
+          }}, gender (optional). Copy straight from Google Sheets; a header row is skipped.
         </small>
       </label>
       <p class="adm-note wide">
@@ -92,7 +92,7 @@
             <b>{{ e.full_name }}</b>
             <div class="adm-meta">
               <span class="mono">{{ e.email }}</span>
-              <span class="mono">{{ e.phone }}</span>
+              <span v-if="e.phone" class="mono">{{ e.phone }}</span>
               <span>{{ regionOf(e.region_id) }}</span>
             </div>
           </div>

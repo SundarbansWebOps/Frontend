@@ -132,3 +132,6 @@
 ## 2026-10-08 — Admin lounge at /admin, entered from inside the Lounge; supabase-js added (pinned)
 **Why:** The owner chose a separate `/admin` route reachable from the Lounge for RCs and Super Admins only, built in the public site's design system (tokens, Teams page skeleton). `@supabase/supabase-js` 2.117.2 was added with the owner's go-ahead (design skill's dependency limit); it loads lazily so public pages stay light (entry ~91 KB gzip, supabase chunk 59 KB). Rejected: hand-written Auth/REST calls (more code, easier to get auth wrong).
 
+## 2026-10-08 — Phone number is optional
+**Why:** The owner asked for it. `members.phone`, `member_roster.phone` and `blacklist_entries.phone_hash` are nullable; a given phone is still validated (E.164) and unique; a blank one clears it. Search no longer drops members without a phone, and blacklisting someone without a phone matches by email only.
+

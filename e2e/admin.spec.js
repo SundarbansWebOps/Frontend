@@ -53,7 +53,7 @@ test('a normal member cannot open the admin lounge', async ({ page }) => {
 });
 
 test('a Regional Coordinator opens the admin lounge from the Lounge', async ({ page }) => {
-  await mockSupabase(page, { as: 'rc' });
+  const calls = await mockSupabase(page, { as: 'rc', data: { roster_add: 'ok' } });
   await page.addInitScript(() => localStorage.setItem('lounge-e-tour-seen', '1'));
   await page.goto('/#/lounge');
   await page.getByRole('button', { name: /Your profile/ }).click();
@@ -65,6 +65,19 @@ test('a Regional Coordinator opens the admin lounge from the Lounge', async ({ p
   await expect(tabs).toHaveText(['Students', 'Roster', 'Events', 'Requests']);
   await page.getByRole('tab', { name: 'Roster' }).click();
   await expect(page.getByText('Added to Patna.')).toBeVisible();
+  // Phone is optional: a student can be added with email and name only.
+  await page.getByLabel('IITM email').fill('21f1000001@ds.study.iitm.ac.in');
+  await page.getByLabel('Full name', { exact: true }).fill('No Phone Student');
+  await page.getByRole('button', { name: 'Add to roster' }).first().click();
+  await expect(
+    page.getByText('21f1000001@ds.study.iitm.ac.in can now sign in with Google.')
+  ).toBeVisible();
+  const added = calls.find((c) => c.path === '/rest/v1/rpc/roster_add');
+  expect(JSON.parse(added.body)).toMatchObject({
+    p_email: '21f1000001@ds.study.iitm.ac.in',
+    p_phone: null,
+    p_region_id: null,
+  });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     await page.evaluate(() => innerWidth)
   );

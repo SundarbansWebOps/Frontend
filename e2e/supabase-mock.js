@@ -110,7 +110,7 @@ export async function mockSupabase(
     const req = route.request();
     const url = new URL(req.url());
     const path = url.pathname;
-    calls.push({ method: req.method(), path, url: req.url() });
+    calls.push({ method: req.method(), path, url: req.url(), body: req.postData() });
     const json = (body, status = 200, headers = {}) =>
       route.fulfill({
         status,

@@ -138,6 +138,42 @@ select is((select count(*)::int from public.audit_log where action = 'request.ap
   3, 'every approval is in the audit log');
 reset role;
 
+-- ── Phone is optional ───────────────────────────────────────────────────────
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a9000000-0000-4000-8000-000000000003","role":"authenticated"}';
+select lives_ok($$ select public.roster_add('99f9000020@ds.study.iitm.ac.in', 'No Phone', null) $$,
+  'RC adds a student without a phone number');
+select lives_ok($$ select public.roster_add('99f9000021@ds.study.iitm.ac.in', 'Blank Phone', '  ') $$,
+  'a blank phone counts as no phone');
+select throws_ok($$ select public.roster_add('99f9000022@ds.study.iitm.ac.in', 'Bad Phone', '12345') $$,
+  '22023', null, 'a phone that is given must still be valid');
+reset role;
+
+insert into auth.users (id, email, aud, role)
+  values ('a9000000-0000-4000-8000-000000000020', '99f9000020@ds.study.iitm.ac.in', 'authenticated', 'authenticated');
+select results_eq($$ select full_name, phone from public.members where id = 'a9000000-0000-4000-8000-000000000020' $$,
+  $$ values ('No Phone'::text, null::text) $$, 'a student without a phone can sign in');
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a9000000-0000-4000-8000-000000000003","role":"authenticated"}';
+select results_eq($$ select full_name from public.search_members('No Phone') $$,
+  $$ values ('No Phone'::text) $$, 'a student without a phone is still found by search');
+select lives_ok($$ select public.request_blacklist('a9000000-0000-4000-8000-000000000020', 'Test') $$,
+  'RC can ask to blacklist a student without a phone');
+reset role;
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a9000000-0000-4000-8000-000000000002","role":"authenticated"}';
+select lives_ok($$ select public.approve_request((select id from public.approval_requests
+                    where target_member_id = 'a9000000-0000-4000-8000-000000000020' and status = 'pending')) $$,
+  'blacklisting a student without a phone can be approved');
+select results_eq($$ select phone_hash is null from public.blacklist_entries
+                     where member_id = 'a9000000-0000-4000-8000-000000000020' $$,
+  $$ values (true) $$, 'their blacklist entry has no phone hash (email only)');
+select lives_ok($$ select public.request_member_update('a9000000-0000-4000-8000-000000000004',
+                     '{"phone":""}', 'No longer uses WhatsApp') $$, 'a phone number can be cleared by request');
+reset role;
+
 -- ── Normal member ───────────────────────────────────────────────────────────
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"a9000000-0000-4000-8000-000000000004","role":"authenticated"}';

@@ -144,7 +144,7 @@ export const rosterAdd = (row) =>
     .rpc('roster_add', {
       p_email: row.email,
       p_full_name: row.full_name,
-      p_phone: row.phone,
+      p_phone: row.phone || null,
       p_region_id: row.region_id || null,
       p_gender: row.gender || null,
     })
@@ -154,7 +154,8 @@ export const rosterAddMany = (rows) =>
 export const rosterRemove = (email) =>
   supabase.rpc('roster_remove', { p_email: email }).then(unwrap);
 
-// One student per line, tab- or comma-separated: email, full name, phone[, region code][, gender].
+// One student per line, tab- or comma-separated: email, full name[, phone][, region][, gender].
+// Phone may be left empty.
 // Spreadsheet copies paste as tabs. A header row is skipped.
 export function parseRosterPaste(text, regions) {
   const byCode = new Map(regions.map((r) => [r.code, r.id]));
@@ -162,11 +163,11 @@ export function parseRosterPaste(text, regions) {
   return text
     .split(/\r?\n/)
     .map((line) => line.split(line.includes('\t') ? '\t' : ',').map((c) => c.trim()))
-    .filter((c) => c.length >= 3 && c[0] && !/^e-?mail$/i.test(c[0]))
+    .filter((c) => c.length >= 2 && c[0] && c[1] && !/^e-?mail$/i.test(c[0]))
     .map(([email, full_name, phone, region, gender]) => ({
       email,
       full_name,
-      phone,
+      phone: phone || null,
       region_id: region
         ? (byCode.get(region.toLowerCase()) ?? byName.get(region.toLowerCase()) ?? null)
         : null,
