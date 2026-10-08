@@ -35,7 +35,7 @@
         <LineIcon :name="s.icon" />
       </a>
     </div>
-    <small>Sundarbans House · IIT Madras BS degree</small>
+    <small>Sundarbans House · IIT Madras BS</small>
   </footer>
 </template>
 
