@@ -4,8 +4,8 @@
   ghat paper with the lotus band on its top edge (cards.css .gp-band-top; styles in
   panels.css, .ld).
   variant: 'center' (a sheet; bottom sheet on phones), 'side' (a panel from the right;
-  bottom sheet on phones), 'drop' (hangs from the header under its button; a full-width
-  panel from the top on phones). Motion (_notes/motion.md, paper): one short entrance in CSS,
+  bottom sheet on phones), 'drop' (unrolls from under the header's bottom rule, aligned to
+  the header's actions; full width under the header on phones). Motion (_notes/motion.md, paper): one short entrance in CSS,
   one short exit here; nothing moves at rest.
 -->
 <template>
