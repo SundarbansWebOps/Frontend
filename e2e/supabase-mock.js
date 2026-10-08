@@ -135,6 +135,7 @@ export async function mockSupabase(
     if (path === '/auth/v1/logout') return route.fulfill({ status: 204, headers: CORS });
     if (path === '/auth/v1/user') return json(sessionFor(person).user);
 
+    if (path.startsWith('/functions/v1/')) return json(data[path] ?? { ok: true });
     if (path === '/rest/v1/rpc/get_my_dashboard') return json(person.dashboard);
     if (path.startsWith('/rest/v1/rpc/'))
       return json(data[path.slice('/rest/v1/rpc/'.length)] ?? null);

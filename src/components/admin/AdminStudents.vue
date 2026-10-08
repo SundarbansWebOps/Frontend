@@ -142,6 +142,14 @@
           </button>
           <template v-if="isSuperAdmin && !isSelf">
             <button
+              v-if="detail.member.account_status !== 'deleted'"
+              type="button"
+              class="adm-btn ghost small"
+              @click="startEmail"
+            >
+              Change login email
+            </button>
+            <button
               v-for="a in statusActions"
               :key="a"
               type="button"
@@ -212,7 +220,10 @@
         <label class="adm-field wide">
           <span>Why</span>
           <textarea v-model.trim="form.reason" class="adm-input" required maxlength="2000" />
-          <small>A Super Admin reads this before approving. Email can’t be changed here.</small>
+          <small>
+            A Super Admin reads this before approving. The login email is changed separately (Super
+            Admins: Change login email).
+          </small>
         </label>
         <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
         <div class="wide row-end">
@@ -244,6 +255,31 @@
           <small
             >An RC coordinates the region they live in. Another Super Admin approves this.</small
           >
+        </label>
+        <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
+        <div class="wide row-end">
+          <button type="button" class="adm-btn ghost" @click="mode = 'view'">Back</button>
+          <button type="submit" class="adm-btn mari" :disabled="busy">Send for approval</button>
+        </div>
+      </form>
+
+      <form v-else-if="mode === 'email'" class="adm-form" @submit.prevent="submitEmail">
+        <p class="adm-note wide">
+          Their Google sign-in moves to the new address. Another Super Admin has to approve it.
+        </p>
+        <label class="adm-field wide">
+          <span>New IITM email</span>
+          <input
+            v-model.trim="form.email"
+            class="adm-input"
+            type="email"
+            required
+            placeholder="21f1000000@ds.study.iitm.ac.in"
+          />
+        </label>
+        <label class="adm-field wide">
+          <span>Why</span>
+          <textarea v-model.trim="form.reason" class="adm-input" required maxlength="2000" />
         </label>
         <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
         <div class="wide row-end">
@@ -286,6 +322,7 @@ import {
   listMembers,
   requestBlacklist,
   requestDeletion,
+  requestContactChange,
   requestHardDelete,
   requestPosition,
   requestStatus,
@@ -561,6 +598,15 @@ function submitPosition() {
       form.reason
     )
   );
+}
+
+function startEmail() {
+  reset({ email: '' });
+  mode.value = 'email';
+}
+
+function submitEmail() {
+  return file(() => requestContactChange(detail.value.member.id, form.email, form.reason));
 }
 
 function startPosition() {

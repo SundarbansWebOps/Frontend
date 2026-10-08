@@ -27,10 +27,16 @@ export const admin = createClient(SUPABASE_URL, secretKey(), {
 });
 // CORS: browsers are allowed only from origins listed in ALLOWED_ORIGINS (comma-separated).
 // With the secret unset, no CORS headers are sent and browsers are refused; curl still works.
-const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") ?? "").split(",").map((o)=>o.trim()).filter(Boolean);
+// An entry may use one "*" inside a single host label, e.g. Vercel previews:
+// https://sundarbans-*-sundarbans-projects.vercel.app ("*" never matches a dot). Tokens are sent as
+// bearer headers, not cookies, so another origin cannot borrow a member's session through CORS.
+const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") ?? "").split(",").map((o)=>o.trim()).filter(Boolean).map((o)=>o.includes("*") ? new RegExp(`^${o.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace("*", "[a-z0-9-]+")}$`) : o);
+function originAllowed(origin) {
+  return allowedOrigins.some((a)=>typeof a === "string" ? a === origin : a.test(origin));
+}
 function corsHeaders(req) {
   const origin = req.headers.get("Origin");
-  if (!origin || !allowedOrigins.includes(origin)) return {};
+  if (!origin || !originAllowed(origin)) return {};
   return {
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",

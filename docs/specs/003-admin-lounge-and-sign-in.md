@@ -37,9 +37,11 @@
 
 **Two-person rule:** every change to a student's data is a request; a different Super Admin approves
 it, and only then is it applied (in one transaction, audited). The old direct `sa_*` actions and
-`assign_position` / `revoke_position` can no longer be called from the website. Email changes are not
-in the panel (the IITM email is the login); the `change-member-contact` Edge Function is still a
-direct Super Admin tool for exceptional cases.
+`assign_position` / `revoke_position` can no longer be called from the website. **Login email changes**
+follow the same rule: a Super Admin files "Change login email" (Students → student), and a different
+Super Admin approves it on Requests, which runs the `change-member-contact` Edge Function (Auth and
+`members` change together). The function accepts only an approved request id; direct changes are
+closed.
 
 ## Setup a person must do (Supabase and Google dashboards)
 
@@ -49,10 +51,14 @@ direct Super Admin tool for exceptional cases.
 2. **Supabase → Authentication → Sign In / Providers → Google**: enable; paste the client ID and
    secret.
 3. **Supabase → Authentication → URL Configuration**: Site URL `https://sundarbans.iitmbs.org`;
-   Redirect URLs `https://sundarbans.iitmbs.org/**`, `http://localhost:5173/**` and the Vercel
-   domain(s), e.g. `https://*-sundarbans-projects.vercel.app/**`.
-4. **Supabase → Edge Functions → Secrets**: `ALLOWED_ORIGINS` = the same origins, comma-separated
-   (no wildcards). Needed for approving deletions / status changes (sign-in access sync) and erasure.
+   Redirect URLs `https://sundarbans.iitmbs.org/**`, `http://localhost:5173/**` and the **exact**
+   Vercel preview you are testing (e.g. `https://sundarbans-1xaokuwjk-sundarbans-projects.vercel.app/**`).
+   Avoid broad `*.vercel.app` wildcards there: a sign-in code would be sent to any matching domain.
+4. **Supabase → Edge Functions → Secrets**: `ALLOWED_ORIGINS`, exactly
+   `https://sundarbans.iitmbs.org,http://localhost:5173,https://sundarbans-*-sundarbans-projects.vercel.app`
+   (no quotes, spaces or trailing `/`; one `*` matches one host label, for Vercel previews). Check with
+   `curl -si -X OPTIONS https://bqoejoznqudcyeaebmsm.supabase.co/functions/v1/apply-account-status -H "Origin: https://sundarbans.iitmbs.org" -H "Access-Control-Request-Method: POST"`
+   — the answer must contain `access-control-allow-origin`.
 5. **Vercel** (optional): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`. The code defaults to
    the production project, so builds work without them.
 6. **Supabase → Authentication → Sign In / Providers → Email**: optionally turn off email sign-up;
@@ -72,3 +78,13 @@ direct Super Admin tool for exceptional cases.
   still runs on sample data (spec 002).
 - `e2e/supabase-mock.js` — browser tests answer every Supabase call locally (incl. the Google
   round-trip), so CI needs no secrets.
+
+## Security headers (`vercel.json`)
+
+CSP (scripts: own files + the hash of `index.html`'s inline theme script; styles: own + inline +
+Google Fonts; images: Cloudinary, `*.googleusercontent.com`; connections: the Supabase project only;
+no frames, no framing), HSTS, `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`,
+`Permissions-Policy`, `Cross-Origin-Opener-Policy`. `e2e/security-headers.spec.js` applies the same
+CSP to every page and fails on any violation — **if you edit the inline script in `index.html`,
+update its `sha256-…` in `vercel.json`** (the failing test prints the blocked script). Pointing the
+site at another Supabase project also needs that project in `connect-src`.

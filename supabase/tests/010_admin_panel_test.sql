@@ -12,7 +12,7 @@ insert into fx values
   ('rc',  'a9000000-0000-4000-8000-000000000003', '99f9000003@ds.study.iitm.ac.in'),
   ('s1',  'a9000000-0000-4000-8000-000000000004', '99f9000004@ds.study.iitm.ac.in'),
   ('s2',  'a9000000-0000-4000-8000-000000000005', '99f9000005@ds.study.iitm.ac.in');
-grant select on fx to authenticated;
+grant select on fx to authenticated, service_role;
 
 -- A stranger who is not on the roster cannot get an account.
 select throws_ok($$ insert into auth.users (id, email, aud, role)
@@ -173,6 +173,53 @@ select results_eq($$ select phone_hash is null from public.blacklist_entries
 select lives_ok($$ select public.request_member_update('a9000000-0000-4000-8000-000000000004',
                      '{"phone":""}', 'No longer uses WhatsApp') $$, 'a phone number can be cleared by request');
 reset role;
+
+-- ── Login email change: one Super Admin files, another approves (Edge Function path) ──
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a9000000-0000-4000-8000-000000000003","role":"authenticated"}';
+select throws_ok($$ select public.request_contact_change('a9000000-0000-4000-8000-000000000020',
+                     '99f9000030@ds.study.iitm.ac.in', 'x') $$, '42501', null, 'an RC cannot request a login email change');
+reset role;
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a9000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select throws_ok($$ select public.request_contact_change('a9000000-0000-4000-8000-000000000005',
+                     'someone@gmail.com', 'x') $$, '22023', null, 'the new login email must be an IITM email');
+select lives_ok($$ select public.request_contact_change('a9000000-0000-4000-8000-000000000005',
+                     '99f9000030@ds.study.iitm.ac.in', 'Roll number corrected') $$, 'a Super Admin files a login email change');
+select throws_ok($$ select public.approve_request((select id from public.approval_requests
+                     where type = 'member_contact_change' and status = 'pending')) $$,
+  '42501', null, 'the filer cannot approve their own email change');
+reset role;
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a9000000-0000-4000-8000-000000000002","role":"authenticated"}';
+select throws_ok($$ select public.approve_request((select id from public.approval_requests
+                     where type = 'member_contact_change' and status = 'pending')) $$,
+  '0A000', null, 'ordinary approval refuses email changes (they need the Edge Function)');
+select throws_ok($$ select public.svc_contact_request_plan('a9000000-0000-4000-8000-000000000002',
+                     (select id from public.approval_requests where type = 'member_contact_change' and status = 'pending')) $$,
+  '42501', null, 'signed-in users cannot call the Edge Function''s database steps');
+reset role;
+
+set local role service_role;
+select throws_ok($$ select public.svc_contact_request_plan('a9000000-0000-4000-8000-000000000001',
+                     (select id from public.approval_requests where type = 'member_contact_change' and status = 'pending')) $$,
+  '42501', 'A different Super Admin must approve this change', 'the Edge Function refuses the filer as approver');
+select throws_ok($$ select public.svc_apply_contact_change('a9000000-0000-4000-8000-000000000002',
+                     'a9000000-0000-4000-8000-000000000005', '99f9000031@ds.study.iitm.ac.in', null, '99f9000005@ds.study.iitm.ac.in') $$,
+  '42501', null, 'the old direct change path is closed');
+select results_eq($$ select public.svc_contact_request_plan('a9000000-0000-4000-8000-000000000002',
+                     (select id from public.approval_requests where type = 'member_contact_change' and status = 'pending')) ->> 'new_email' $$,
+  $$ values ('99f9000030@ds.study.iitm.ac.in'::text) $$, 'a second Super Admin gets the plan');
+select lives_ok($$ select public.svc_complete_contact_request('a9000000-0000-4000-8000-000000000002',
+                     (select id from public.approval_requests where type = 'member_contact_change' and status = 'pending'),
+                     '99f9000005@ds.study.iitm.ac.in', 'ok') $$, 'the second Super Admin completes it');
+reset role;
+select results_eq($$ select m.email, r.status::text from public.members m
+                     join public.approval_requests r on r.target_member_id = m.id and r.type = 'member_contact_change'
+                     where m.id = 'a9000000-0000-4000-8000-000000000005' $$,
+  $$ values ('99f9000030@ds.study.iitm.ac.in'::text, 'approved'::text) $$, 'the email changed and the request is approved');
 
 -- ── Normal member ───────────────────────────────────────────────────────────
 set local role authenticated;

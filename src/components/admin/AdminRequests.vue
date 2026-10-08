@@ -94,6 +94,7 @@ import {
   STATUS_ACTION_LABEL,
   approveRequest,
   cancelRequest,
+  executeContactChange,
   executeHardDelete,
   listRequests,
   rejectRequest,
@@ -138,6 +139,7 @@ function change(r) {
     return Object.entries(c)
       .map(([k, v]) => `${FIELD[k] ?? k} → ${k === 'region_id' ? regionOf(v) : (v ?? 'cleared')}`)
       .join(' · ');
+  if (r.type === 'member_contact_change') return `Login email → ${c.email}`;
   if (r.type === 'member_status_change') return STATUS_ACTION_LABEL[c.action] ?? c.action;
   if (r.type === 'position_change')
     return c.action === 'revoke'
@@ -186,6 +188,11 @@ async function act(run, message) {
 }
 
 function approve(r) {
+  if (r.type === 'member_contact_change')
+    return act(
+      () => executeContactChange(r.id, notes[r.id]),
+      'Approved. Their sign-in now uses the new email.'
+    );
   if (r.type === 'member_hard_delete') {
     if (!confirm(`Erase ${targetName(r)} permanently? This cannot be undone.`)) return;
     return act(() => executeHardDelete(r.id), 'Erased. Their account has been removed.');

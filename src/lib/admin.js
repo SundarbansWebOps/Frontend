@@ -15,6 +15,7 @@ export const REQUEST_LABEL = {
   member_blacklist: 'Blacklist member',
   member_hard_delete: 'Erase permanently',
   member_profile_update: 'Edit details',
+  member_contact_change: 'Change login email',
   member_status_change: 'Change status',
   position_change: 'Change position',
   community_record_update: 'Edit community record',
@@ -124,6 +125,11 @@ export const requestPosition = (memberId, action, position, communityId, reason)
       p_community_id: communityId ?? null,
       p_reason: reason,
     })
+    .then(unwrap);
+// Login email: one Super Admin files, another approves through change-member-contact.
+export const requestContactChange = (memberId, email, reason) =>
+  supabase
+    .rpc('request_contact_change', { p_member_id: memberId, p_email: email, p_reason: reason })
     .then(unwrap);
 export const requestHardDelete = (memberId, reason) =>
   supabase.rpc('request_hard_delete', { p_member_id: memberId, p_reason: reason }).then(unwrap);
@@ -268,6 +274,9 @@ async function invoke(name, body) {
 // Sign-in access follows the member's status (an inactive member is banned in Auth).
 export const syncSignInAccess = (memberId) =>
   invoke('apply-account-status', { member_id: memberId });
+// A second Super Admin approves a login email change (Auth and members move together).
+export const executeContactChange = (requestId, note) =>
+  invoke('change-member-contact', { request_id: requestId, note: note || null });
 // Permanent erasure is executed by a second Super Admin through its Edge Function.
 export const executeHardDelete = (requestId) =>
   invoke('hard-delete-member', { request_id: requestId });

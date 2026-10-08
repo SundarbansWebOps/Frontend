@@ -135,3 +135,6 @@
 ## 2026-10-08 — Phone number is optional
 **Why:** The owner asked for it. `members.phone`, `member_roster.phone` and `blacklist_entries.phone_hash` are nullable; a given phone is still validated (E.164) and unique; a blank one clears it. Search no longer drops members without a phone, and blacklisting someone without a phone matches by email only.
 
+## 2026-10-08 — Login email changes need a second Super Admin; security headers on Vercel
+**Why:** The owner asked that `change-member-contact` be filed by one Super Admin and approved by another. The function now executes only a `member_contact_change` request (id) and refuses its filer; the old direct database path is revoked. `vercel.json` adds a CSP and the usual hardening headers; a Playwright test replays the CSP so a changed inline script cannot silently break the site. Edge Function CORS accepts one-label wildcards for Vercel previews (tokens are bearer, not cookies); Auth redirect URLs stay exact.
+
