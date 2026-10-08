@@ -2,9 +2,11 @@
 > IITM BS frontend and backend · Last checkpoint: 2026-10-08
 
 ## In progress / next
+- **Admin lounge + real Google sign-in** on `feat/admin-panel-supabase` (spec `docs/specs/003-admin-lounge-and-sign-in.md`). Backend applied to the cloud (roster-only sign-up, two-person rule, RCs manage all events; 33/33 pgTAP in a rolled-back run). Front end: `/login` signs in with Google, `/lounge` and `/admin` are guarded, Lounge profile menu has "Admin lounge" for RCs/Super Admins. Gates: format, lint, design, study, build, Playwright 40/40 (Supabase mocked), shots OK.
+- **Before merge:** rename the two `20261008120000/120100_*.sql` migration files to the versions `supabase migration list --linked` shows for `admin_request_types` / `admin_panel_backend` (applied via MCP; versions differ). Then enable the Google provider + redirect URLs + `ALLOWED_ORIGINS` (spec 003, Setup) and test a real Google sign-in.
 - **Lounge E port, Raja's review round.** Worktree `/home/raja/Anuraj-dev/Frontend-lounge-port`, branch `feat/lounge-production-entry`, local commits only (not pushed, no PR). Preview http://127.0.0.1:5202/#/login (owned Vite PID 106037).
 - Next: Raja reviews House card, sign-in door, boat on Events, and sign-out in real Chrome. Chrome tabs in the background pause animations; verify motion in a visible window.
-- Google sign-in and the once-only tour seen flag are pending backend work. Sign-out currently just returns to `/login`; there is no session.
+- Once-only tour seen flag and the rest of spec 002 are pending backend work. Sign-out now ends the Supabase session (this device) and returns to `/login`.
 - Backend wiring is separate work: `docs/specs/002-lounge-backend-needs.md`. No backend writes, push, PR, merge, or deployment requested.
 - Council change pushed on `fix/council-deputy-secretary` (`bb81c16`); no PR. Do not silently change Bengaluru's status.
 - Cloud Supabase `Website Backend` (`bqoejoznqudcyeaebmsm`) is the source of truth; repo mirror in sync. Frontend auth/dashboard integration pending.

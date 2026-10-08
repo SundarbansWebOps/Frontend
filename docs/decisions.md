@@ -122,3 +122,13 @@
 
 ## 2026-10-08 — Sign-out returns to the sign-in door until a session exists
 **Why:** Sign-out did nothing and only showed a "does nothing in this prototype" note. Routing to `/login` makes the signed-out visitor's view real now and needs no auth code. Rejected: a placeholder note (what Raja asked to remove). When Google sign-in lands, this route becomes the real signed-out state.
+
+## 2026-10-08 — Google sign-in only for rostered members; RCs/Super Admins add students first
+**Why:** The owner wants only members whose profile exists to get in. The database's sign-up trigger now creates an account only for an email on `member_roster` (filled by the RC for their region or a Super Admin, one by one or pasted from the council Sheet) and refuses everyone else; existing accounts are linked to Google by email. Rejected: self sign-up with a form (anyone with an IITM email could join) and a nightly Sheet sync (another moving part).
+
+## 2026-10-08 — Two-person rule for every change to student data; RCs manage all events
+**Why:** The owner asked that changes by an RC or by a Super Admin both need another Super Admin's approval, and that changing RCs also needs approval. All edits, removals, status and position changes are requests; approval applies them. Direct `sa_*` and position RPCs are no longer callable from the site. RCs now manage every event, not only house-wide ones (owner's call).
+
+## 2026-10-08 — Admin lounge at /admin, entered from inside the Lounge; supabase-js added (pinned)
+**Why:** The owner chose a separate `/admin` route reachable from the Lounge for RCs and Super Admins only, built in the public site's design system (tokens, Teams page skeleton). `@supabase/supabase-js` 2.117.2 was added with the owner's go-ahead (design skill's dependency limit); it loads lazily so public pages stay light (entry ~91 KB gzip, supabase chunk 59 KB). Rejected: hand-written Auth/REST calls (more code, easier to get auth wrong).
+

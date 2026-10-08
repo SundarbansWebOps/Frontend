@@ -81,6 +81,15 @@
             <span>{{ theme === 'dark' ? 'Switch to day' : 'Switch to night' }}</span>
           </button>
         </li>
+        <li v-if="canAdmin">
+          <button type="button" @click="leaveTo('/admin')">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6L12 3Z" />
+              <path d="m8.8 12.2 2.2 2.2 4.4-4.6" />
+            </svg>
+            <span>Admin lounge</span>
+          </button>
+        </li>
         <li>
           <button type="button" class="pm-out" @click="signOut">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -103,6 +112,7 @@ import LoungeDialog from './LoungeDialog.vue';
 import * as ev from './events.js';
 import { member } from './fixtures.js';
 import { callName, initialsOf, theme } from './state.js';
+import { canAdmin, signOut as endSession } from '../../lib/auth.js';
 
 const emit = defineEmits(['close', 'edit', 'certs', 'tour', 'theme']);
 const router = useRouter();
@@ -111,10 +121,9 @@ const dlg = ref(null);
 const initials = computed(() => initialsOf(callName.value));
 const certCount = computed(() => ev.certificates?.length ?? 0);
 
-/* Sign out has no session yet: it returns to the sign-in door, which is how a signed-out
-   visitor sees the Lounge. Closing the menu from the UI pops its history entry (layers.js)
-   asynchronously; a push made before that Back lands would be cancelled by it. */
-async function signOut() {
+/* Closing the menu from the UI pops its history entry (layers.js) asynchronously; a push made
+   before that Back lands would be cancelled by it, so wait for it first. */
+async function leaveTo(path) {
   const backDone = history.state?.loungeLayer
     ? new Promise((done) => {
         addEventListener('popstate', done, { once: true });
@@ -123,9 +132,13 @@ async function signOut() {
     : null;
   await dlg.value?.close();
   await backDone;
-  router.push({ path: '/login' });
+  router.push({ path });
 }
-
+/* Sign out ends the Supabase session, then returns to the sign-in door. */
+async function signOut() {
+  await endSession().catch(() => {});
+  await leaveTo('/login');
+}
 /* Edit and My certificates replace this menu (same Back entry); tour and theme close it. */
 async function go(what) {
   if (what === 'edit' || what === 'certs') {
