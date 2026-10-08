@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { mockSupabase } from './supabase-mock.js';
+
+// A member who is already signed in with Google (Supabase mocked): the door offers to enter.
+test.beforeEach(({ page }) => mockSupabase(page));
 
 for (const viewport of [
   { width: 1366, height: 900 },
@@ -18,7 +22,7 @@ for (const viewport of [
       .filter({ visible: true })
       .click();
     await expect(page).toHaveURL(/#\/login$/);
-    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Enter the lounge', exact: true })).toBeVisible();
     await expect(page.locator('.nav')).toBeVisible();
     await expect(page.locator('.tabbar')).toBeVisible({ visible: viewport.width <= 760 });
     await expect(page.locator('footer, .rooms, .home, .tour')).toHaveCount(0);
@@ -39,7 +43,7 @@ for (const viewport of [
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(viewport.width);
     await expect(page.locator('.lounge.entry')).toHaveClass(/open/);
     await page.screenshot({ path: `/tmp/lounge-sign-in-${viewport.width}.png` });
-    await page.getByRole('button', { name: 'Sign in', exact: true }).press('Enter');
+    await page.getByRole('button', { name: 'Enter the lounge', exact: true }).press('Enter');
     await expect(page.locator('.tour')).toBeVisible();
     await expect(page.locator('.home')).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem('lounge-e-tour-seen'))).toBeNull();
@@ -50,7 +54,7 @@ for (const viewport of [
     await expect(page.locator('.home')).toBeVisible();
     expect(await page.evaluate(() => localStorage.getItem('lounge-e-tour-seen'))).toBe('1');
     await page.goto('/#/login');
-    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+    await page.getByRole('button', { name: 'Enter the lounge', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Skip tour', exact: true })).toBeVisible();
     await expect(page.locator('.home')).toHaveCount(0);
   });
@@ -64,7 +68,7 @@ test('sign-in fades slowly and cannot navigate after leaving the page', async ({
   });
   await page.clock.install();
   await page.goto('/#/login');
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Enter the lounge', exact: true }).click();
   await expect(page.locator('.sign-in')).toHaveClass(/leaving/);
   await expect(page.getByRole('button', { name: 'Entering…' })).toBeDisabled();
   await expect(page.locator('.sign-in')).toHaveCSS('transition-duration', '0.9s');
@@ -93,7 +97,7 @@ test('sign-in fades slowly and cannot navigate after leaving the page', async ({
 test('normal-motion sign-in cross-dissolves into the painted tour', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/#/login');
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Enter the lounge', exact: true }).click();
   await expect(page.locator('.tour')).toBeVisible();
   await expect(page.locator('.sign-in')).toHaveCount(0);
   await expect(page.locator('html')).not.toHaveClass(/sign-in-cross|sign-in-arrival/);
@@ -112,5 +116,7 @@ test('sign out returns to the sign-in door', async ({ page }) => {
   await page.getByRole('button', { name: /Your profile/ }).click();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page).toHaveURL(/#\/login$/);
-  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Sign in with Google', exact: true })
+  ).toBeVisible();
 });
