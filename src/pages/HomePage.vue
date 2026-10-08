@@ -41,7 +41,12 @@
               />
               <canvas ref="waterEl" class="water" />
             </div>
-            <div class="tiger">
+            <div class="boat">
+              <img class="boat-refl" :src="ASSET.boat" alt="" draggable="false" decoding="async" />
+              <img class="boat-art" :src="ASSET.boat" alt="" draggable="false" decoding="async" />
+            </div>
+            <div class="stage">
+              <img class="bank" :src="ASSET.bank" alt="" draggable="false" decoding="async" />
               <div class="walk">
                 <div class="bob">
                   <PatFigure
@@ -526,7 +531,8 @@ function applyPointer() {
   }
 }
 
-// ---- Water: the plate's river rows ripple sideways, the fishing boat rocks ------------------
+// ---- Water: the plate's river rows ripple sideways; the boat is a sprite that rocks in CSS -----
+const RIPPLE_Y = 805; // plate y where the river rows start (below the boat's waterline)
 const forestEl = ref(null);
 const waterEl = ref(null);
 let geo = null;
@@ -557,13 +563,18 @@ function measureWater() {
   const s = Math.max(W / FOREST.w, H / FOREST.h); // object-fit: cover, anchored bottom
   const ox = (W - FOREST.w * s) / 2;
   const oy = H - FOREST.h * s;
-  const top = oy + FOREST.boat.y * s;
+  const top = oy + RIPPLE_Y * s;
   const dpr = Math.min(devicePixelRatio || 1, 1.5);
   cv.style.top = `${top}px`;
   cv.style.height = `${H - top}px`;
   cv.width = Math.round(W * dpr);
   cv.height = Math.round((H - top) * dpr);
   geo = { s, ox, oy, top, dpr, W, H };
+  // The boat sprite is placed in plate coordinates, so it tracks object-fit: cover.
+  const b = FOREST.boat;
+  scene.style.setProperty('--boat-x', `${ox + b.x * s}px`);
+  scene.style.setProperty('--boat-y', `${oy + b.y * s}px`);
+  scene.style.setProperty('--boat-w', `${b.w * s}px`);
 }
 function kickWater() {
   if (RM.value || waterRaf || !forestReady || !heroLive.value || document.hidden) return;
@@ -584,7 +595,7 @@ function drawWater(t) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, W, cv.height / dpr);
   // River rows below the boat's waterline: each 2-plate-px row slides on its own sine.
-  const y0 = 805;
+  const y0 = RIPPLE_Y;
   for (let y = y0; y < FOREST.h; y += 2) {
     const amp = Math.min(1, (y - y0) / 40) * 2.4;
     const dx = Math.sin(sec * 1.25 + y * 0.075) * amp + Math.sin(sec * 0.6 + y * 0.021) * amp * 0.5;
@@ -602,45 +613,7 @@ function drawWater(t) {
     );
   }
   ctx.globalAlpha = 1;
-  // The fishing boat rocks on the swell.
-  const b = FOREST.boat;
-  const cx = ox + (b.x + b.w / 2) * s;
-  const cy = oy + (b.y + b.h * 0.85) * s - top;
-  ctx.save();
-  ctx.translate(cx, cy + Math.sin(sec * 1.1) * 1.6);
-  ctx.rotate(Math.sin(sec * 1.1 - 0.8) * 0.011);
-  ctx.drawImage(boatCopy(img, k), -b.w * s * 0.5, -b.h * s * 0.85, b.w * s, b.h * s);
-  ctx.restore();
   waterRaf = requestAnimationFrame(drawWater);
-}
-
-// The boat's patch of the plate, feathered at the sides and bottom so its rocking leaves no seam.
-let boatCv = null;
-function boatCopy(img, k) {
-  if (boatCv?.src === img.currentSrc && boatCv.width === img.naturalWidth) return boatCv.cv;
-  const b = FOREST.boat;
-  const cv = document.createElement('canvas');
-  cv.width = Math.round(b.w * k);
-  cv.height = Math.round(b.h * k);
-  const c = cv.getContext('2d');
-  c.drawImage(img, b.x * k, b.y * k, b.w * k, b.h * k, 0, 0, cv.width, cv.height);
-  c.globalCompositeOperation = 'destination-in';
-  const gx = c.createLinearGradient(0, 0, cv.width, 0);
-  gx.addColorStop(0, '#0000');
-  gx.addColorStop(0.06, '#000');
-  gx.addColorStop(0.94, '#000');
-  gx.addColorStop(1, '#0000');
-  c.fillStyle = gx;
-  c.fillRect(0, 0, cv.width, cv.height);
-  const gy = c.createLinearGradient(0, 0, 0, cv.height);
-  gy.addColorStop(0, '#0000');
-  gy.addColorStop(0.04, '#000');
-  gy.addColorStop(0.9, '#000');
-  gy.addColorStop(1, '#0000');
-  c.fillStyle = gy;
-  c.fillRect(0, 0, cv.width, cv.height);
-  boatCv = { src: img.currentSrc, width: img.naturalWidth, cv };
-  return cv;
 }
 
 function onVisibility() {
@@ -979,6 +952,66 @@ img.forest.ink {
   width: 100%;
   pointer-events: none;
 }
+/* The Lounge's boatman, placed by measureWater() in plate coordinates. The wrapper glides in from
+   the left; the art rocks on the swell. The hull sinks below the waterline (82% of the sprite) and
+   is mirrored there, broken into strokes like the plate's ripples, so the boat sits in the water. */
+.boat {
+  position: absolute;
+  left: var(--boat-x, 30%);
+  top: var(--boat-y, 60%);
+  width: var(--boat-w, 30%);
+  pointer-events: none;
+}
+.pat:not(.ff) .boat {
+  animation: boat-in 1.6s var(--ease-out) 0.6s both;
+}
+.boat img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.boat-art {
+  position: relative;
+  transform-origin: 50% 82%;
+  -webkit-mask: linear-gradient(var(--ink) 80%, transparent 93%);
+  mask: linear-gradient(var(--ink) 80%, transparent 93%);
+  animation: boat-rock 4s ease-in-out infinite;
+}
+.boat-refl {
+  position: absolute;
+  inset: 0;
+  transform: scaleY(-0.7);
+  transform-origin: 50% 82%;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  -webkit-mask:
+    linear-gradient(transparent 30%, var(--ink) 74%, var(--ink) 80%, transparent 83%),
+    repeating-linear-gradient(var(--ink) 0 3px, transparent 3px 6px);
+  -webkit-mask-composite: source-in;
+  mask:
+    linear-gradient(transparent 30%, var(--ink) 74%, var(--ink) 80%, transparent 83%),
+    repeating-linear-gradient(var(--ink) 0 3px, transparent 3px 6px);
+  mask-composite: intersect;
+}
+@keyframes boat-in {
+  from {
+    translate: -40% 0;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+@keyframes boat-rock {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-1.5px) rotate(0.6deg);
+  }
+}
 .pat:not(.ff) .forest.color {
   -webkit-mask: var(--brush-v) no-repeat 0 100% / 100% 250%;
   mask: var(--brush-v) no-repeat 0 100% / 100% 250%;
@@ -1004,14 +1037,35 @@ img.forest.ink {
   display: none;
 }
 
-/* The tiger: walks in as a line drawing, stops on the bank, is coloured in. */
-.tiger {
+/* The tiger: walks in as a line drawing, stops on the bank, is coloured in. The stage is sized by
+   its width; the figure fills it. The bank is a sibling before .walk, so it stays put while the tiger
+   walks onto it; its mud top sits at the paw line. Numbers are fractions of the figure's width. */
+.stage {
   position: absolute;
-  left: 45%;
+  left: 56%;
   bottom: 17%;
-  width: 36%;
+  width: 13%;
   transform: translate(calc(var(--mx) * 9px), calc(var(--my) * 4px));
   transition: transform 0.8s var(--ease-out);
+}
+.bank {
+  position: absolute;
+  left: 50%;
+  bottom: -16%;
+  width: 140%;
+  height: auto;
+  transform: translateX(-50%);
+  /* Toned down from the sprite's brighter ochre to sit with the plate's earth. */
+  filter: saturate(0.8) brightness(0.9);
+  pointer-events: none;
+}
+.pat:not(.ff) .bank {
+  animation: bank-in 0.9s var(--ease-out) 0.4s both;
+}
+@keyframes bank-in {
+  from {
+    opacity: 0;
+  }
 }
 .pat:not(.ff) .walk {
   animation: walk 1.9s cubic-bezier(0.3, 0.1, 0.25, 1) 0.55s both;
@@ -1748,10 +1802,11 @@ h3 {
     grid-row: 3;
     margin-top: 12px;
   }
-  .tiger {
-    left: 22%;
-    width: 72%;
-    bottom: 22%;
+  .stage {
+    left: auto;
+    right: 8%;
+    width: 32%;
+    bottom: 14%;
   }
   .panel {
     /* minmax(0, …): a bare 1fr grows to the poster line's scroll width and pushes the art off-screen. */
@@ -1783,7 +1838,11 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tiger,
+  .boat,
+  .boat-art {
+    animation: none;
+  }
+  .stage,
   .title {
     transform: none;
     transition: none;
