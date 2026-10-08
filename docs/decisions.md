@@ -116,3 +116,9 @@
 
 ## 2026-10-08 — Lounge E theme switch = B's sun/moon circle, not a dissolve
 **Why:** Raja found E's 1.2s dissolve missing B's feeling; B's clip-path circle from the sky body, with the scene's own CSS choreography live inside it, is the reference. The separate view-transition names for the lantern/fleet were dropped so they reveal with the circle instead of ghosting over a fade.
+
+## 2026-10-08 — Sign-in cross-dissolves into the lounge instead of fading out first
+**Why:** A sequential fade (sign-in out, then tour in) left a dark gap that read as the sign-in not fading properly. The View Transitions cross-dissolve overlaps both for 900ms. Rejected: keeping the sequential fade and shortening it, which still dips through black; and a custom overlay that keeps the login mounted, which is more code for the same effect. The timed fade stays as the fallback for browsers without the API and for reduced motion.
+
+## 2026-10-08 — Sign-out returns to the sign-in door until a session exists
+**Why:** Sign-out did nothing and only showed a "does nothing in this prototype" note. Routing to `/login` makes the signed-out visitor's view real now and needs no auth code. Rejected: a placeholder note (what Raja asked to remove). When Google sign-in lands, this route becomes the real signed-out state.
