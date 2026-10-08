@@ -1,0 +1,998 @@
+/* Pop-ups: LoungeDialog (.ld) and what goes in it. Every pop-up is a sheet of ghat paper
+   (cards.css) with the lotus band on its top edge: rice paper by day, indigo paper by night.
+   Motion (_notes/motion.md, "paper"): one short entrance here, one short exit in
+   LoungeDialog.vue, transform/opacity only; nothing moves at rest. Tokens: tokens.css. */
+
+/* ---------- The dialog ---------- */
+
+:where(html.lounge-active) .ld {
+  --bh: 16px;
+  --pad: clamp(18px, 4vw, 30px);
+  padding: var(--bh) 0 0;
+  border: var(--kw) solid var(--keyline);
+  border-radius: var(--r-sheet);
+  background: var(--paper);
+  color: var(--t-1);
+  box-shadow:
+    0 3px 0 var(--under),
+    0 28px 60px -24px rgb(0 0 0 / 0.55);
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
+  font-family: var(--font);
+}
+
+/* The lotus band on the top edge, with an ink rule under it. */
+:where(html.lounge-active) .ld::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: var(--bh);
+  background: url('../../assets/pat/band.webp') 0 0 / auto var(--bh) repeat-x;
+  border-bottom: var(--kw) solid var(--keyline);
+  opacity: var(--band-o);
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .ld[open] {
+  display: flex;
+  flex-direction: column;
+  animation: m-pop-in var(--t-paper, 280ms) var(--ease-out) both;
+}
+
+:where(html.lounge-active) .ld::backdrop {
+  background: var(--scrim);
+  animation: m-fade-in 200ms linear both;
+}
+
+/* Hand-over between pop-ups (LoungeDialog swap): exactly one dim on screen throughout. */
+:where(html.lounge-active) .ld.ld-taken::backdrop {
+  animation: none;
+}
+
+:where(html.lounge-active) .ld.ld-passed::backdrop {
+  background: transparent;
+  animation: none;
+}
+
+/* Closing: the dim fades with the paper instead of vanishing after it. */
+:where(html.lounge-active) .ld.ld-out:not(.ld-passed)::backdrop {
+  animation: m-fade-out 180ms linear forwards;
+}
+
+:where(html.lounge-active) .ld-panel {
+  position: static;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 22px var(--pad) 26px;
+}
+
+:where(html.lounge-active) .ld-center {
+  width: min(540px, calc(100vw - 32px));
+}
+
+:where(html.lounge-active) .ld-wide {
+  width: min(920px, calc(100vw - 32px));
+}
+
+:where(html.lounge-active) .ld-side {
+  margin: 0 0 0 auto;
+  width: min(440px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  border-radius: 0;
+  border-width: 0 0 0 var(--kw);
+}
+
+:where(html.lounge-active) .ld-side[open] {
+  animation-name: ld-side;
+}
+
+/* Hangs from the header, under its button, right-aligned with the header's actions. */
+:where(html.lounge-active) .ld-drop {
+  inset: calc(var(--nav-h) + 8px) 14px auto auto;
+  margin: 0;
+  width: min(360px, calc(100vw - 28px));
+  max-height: calc(100dvh - var(--nav-h) - 22px);
+  transform-origin: top right;
+}
+
+:where(html.lounge-active) .ld-drop[open] {
+  animation: m-drop-in 220ms var(--ease-out) both;
+}
+
+:where(html.lounge-active) .ld-drop .ld-panel {
+  padding: 18px 18px 14px;
+}
+
+@keyframes ld-side {
+  from {
+    opacity: 0;
+    transform: translate3d(28px, 0, 0);
+  }
+}
+
+:where(html.lounge-active) .ld-x {
+  position: absolute;
+  top: calc(var(--bh) + 12px);
+  right: 12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: var(--kw) solid color-mix(in srgb, var(--keyline) 80%, transparent);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .ld-x svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+:where(html.lounge-active) .ld-x:hover {
+  background: var(--paper-2);
+}
+
+:where(html.lounge-active) .ld-drop .ld-x {
+  display: none;
+}
+
+:where(html.lounge-active) .ld :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Shared words and buttons inside pop-ups ---------- */
+
+:where(html.lounge-active) .ed-comm {
+  color: var(--w, var(--accent));
+}
+
+:where(html.lounge-active) .ed-h {
+  margin: 6px 0 0;
+  padding-right: 48px;
+  font-size: clamp(24px, 2.6vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+:where(html.lounge-active) .ed-h:focus {
+  outline: none;
+}
+
+:where(html.lounge-active) .gp-btn.off {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .gp-btn .ic {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:where(html.lounge-active) .reg-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin-top: 18px;
+}
+
+/* ---------- Profile menu ---------- */
+
+:where(html.lounge-active) .pm-who {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+:where(html.lounge-active) .pm-av {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--paper-2);
+  color: var(--accent);
+  border: var(--kw) solid var(--keyline);
+  overflow: hidden;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+:where(html.lounge-active) .pm-av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+:where(html.lounge-active) .pm-id {
+  min-width: 0;
+}
+
+:where(html.lounge-active) .pm-id h2 {
+  margin: 2px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+:where(html.lounge-active) .pm-id h2.pm-noname {
+  color: var(--t-2);
+  font-size: 19px;
+}
+
+:where(html.lounge-active) .pm-add {
+  margin-top: 8px;
+}
+
+:where(html.lounge-active) .pm-facts {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px dotted var(--rule);
+}
+
+:where(html.lounge-active) .pm-facts div {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+
+:where(html.lounge-active) .pm-facts dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .pm-facts dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .pm-acts {
+  margin: 14px -8px 0;
+  padding: 8px 0 0;
+  list-style: none;
+  border-top: 1px dotted var(--rule);
+}
+
+:where(html.lounge-active) .pm-acts button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .pm-acts button:hover {
+  background: var(--paper-2);
+}
+
+:where(html.lounge-active) .pm-acts svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .pm-acts span {
+  flex: 1;
+}
+
+:where(html.lounge-active) .pm-n {
+  min-width: 26px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: var(--kw) solid var(--keyline);
+  color: var(--t-1);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+:where(html.lounge-active) .pm-out {
+  color: var(--t-3) !important;
+}
+
+/* ---------- The name card (ProfileEdit) ---------- */
+
+:where(html.lounge-active) .pe {
+  display: grid;
+  gap: 16px;
+}
+
+:where(html.lounge-active) .pe-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+}
+
+:where(html.lounge-active) .pe .ed-h {
+  margin-top: 4px;
+}
+
+:where(html.lounge-active) .pe-ghat .ld-panel {
+  padding-right: calc(var(--pad) + 4px);
+}
+
+:where(html.lounge-active) .pe-preview {
+  width: 96px;
+  margin-right: 44px;
+}
+
+:where(html.lounge-active) .pe-field {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .pe-field small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .pe-field input {
+  min-height: 48px;
+  padding: 10px 12px;
+  border: var(--kw) solid var(--keyline);
+  border-radius: 4px;
+  background: var(--paper-2);
+  color: var(--t-1);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+:where(html.lounge-active) .pe-field input::placeholder {
+  color: var(--t-3);
+  font-weight: 500;
+}
+
+:where(html.lounge-active) .pe-field input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+:where(html.lounge-active) .pe-ro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+  padding: 12px 14px;
+}
+
+:where(html.lounge-active) .pe-ro div {
+  display: grid;
+  gap: 2px;
+}
+
+:where(html.lounge-active) .pe-k {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .pe-v {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+:where(html.lounge-active) .pe-wrong {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .pe-cert {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .pe-cert b {
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .pe-saved {
+  margin: 0;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .pe .reg-acts {
+  margin-top: 0;
+}
+
+/* ---------- Certificates ---------- */
+
+:where(html.lounge-active) .cp-n {
+  min-width: 28px;
+  height: 26px;
+  margin-left: 6px;
+  font-size: 15px;
+  vertical-align: 4px;
+}
+
+:where(html.lounge-active) .cp-sub {
+  margin: 6px 0 18px;
+  font-size: 15px;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .cp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0 0 6px;
+  list-style: none;
+}
+
+/* A small certificate in HTML: a printed artefact, the same cream paper, band and
+   keylines as the real one in both themes. */
+:where(html.lounge-active) .mini {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 3px;
+  width: 100%;
+  aspect-ratio: 1600 / 1130;
+  padding: 24px 16px 12px;
+  border: 2px solid var(--print-ink);
+  border-radius: 4px;
+  background:
+    url('../../assets/pat/grain.webp') 0 0 / 300px 300px,
+    var(--print);
+  background-blend-mode: multiply, normal;
+  color: var(--print-ink);
+  text-align: center;
+  box-shadow: 0 3px 0 var(--under);
+  overflow: hidden;
+  transition: transform var(--t-hover, 200ms) var(--ease-out);
+}
+
+:where(html.lounge-active) .mini::after {
+  content: '';
+  position: absolute;
+  inset: 16px 7px 7px;
+  border: 1px solid rgb(29 25 21 / 0.55);
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .mini:hover {
+  transform: translateY(-2px);
+}
+
+:where(html.lounge-active) .mini-band {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 11px;
+  background: url('../../assets/pat/band.webp') 0 0 / auto 11px repeat-x;
+}
+
+:where(html.lounge-active) .mini-art {
+  position: absolute;
+  left: 10px;
+  bottom: 9px;
+  width: auto;
+  height: auto;
+  max-width: 30%;
+  max-height: 34%;
+}
+
+:where(html.lounge-active) .mini-crest {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #eaa53c,
+    0 0 0 3.5px var(--print-ink);
+}
+
+:where(html.lounge-active) .mini-stamp {
+  position: absolute;
+  right: 14px;
+  bottom: 22px;
+  width: 44px;
+  height: 44px;
+  border: 3px double #a52d16;
+  border-radius: 50%;
+  opacity: 0.85;
+  transform: rotate(-12deg);
+}
+
+:where(html.lounge-active) .mini-k {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #54483c;
+}
+
+:where(html.lounge-active) .mini-name {
+  display: -webkit-box;
+  max-width: 92%;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+:where(html.lounge-active) .mini-meta {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #54483c;
+}
+
+/* Wing colours as print inks (light values: the paper is cream in both themes). */
+:where(html.lounge-active) .mini-comm {
+  color: var(--wp, #7e3474);
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .mini.w-cultural {
+  --wp: #9a5200;
+}
+
+:where(html.lounge-active) .mini.w-tech {
+  --wp: #2f4f9e;
+}
+
+:where(html.lounge-active) .mini.w-games {
+  --wp: #b8341b;
+}
+
+:where(html.lounge-active) .mini-id {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  font-size: 10px;
+  color: #54483c;
+}
+
+:where(html.lounge-active) .cp-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  margin: -4px 0 10px;
+  padding: 0 14px 0 8px;
+  border: 1.5px solid color-mix(in srgb, var(--t-1) 55%, transparent);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .cp-back svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Sized so Download and Verify stay on screen under it. */
+:where(html.lounge-active) .cp-cert {
+  display: grid;
+  place-items: center;
+  width: min(100%, calc((100dvh - 330px) * 1.416));
+  margin: 14px auto 12px;
+  aspect-ratio: 1600 / 1130;
+  border: 2px solid var(--print-ink);
+  border-radius: 4px;
+  background: var(--print);
+  box-shadow: 0 3px 0 var(--under);
+  overflow: hidden;
+}
+
+:where(html.lounge-active) .cp-cert img {
+  display: block;
+  width: 100%;
+  height: auto;
+  animation: m-fade-in 400ms ease-out both;
+}
+
+:where(html.lounge-active) .cp-cooking {
+  font-weight: 700;
+  color: #54483c;
+}
+
+:where(html.lounge-active) .cp-noname {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  margin: 16px 0 4px;
+  padding: 16px;
+}
+
+:where(html.lounge-active) .cp-noname p {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .cp-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 15px;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .cp-name b {
+  color: var(--t-1);
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .cp-asked {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .cp-verify {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--t-3);
+  overflow-wrap: anywhere;
+}
+
+/* Empty state (D's markup). */
+:where(html.lounge-active) .cp .ev-empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+:where(html.lounge-active) .cp .ev-empty img {
+  width: 120px;
+  height: auto;
+}
+
+/* ---------- Notices: hung tags tied one under the other ---------- */
+
+:where(html.lounge-active) .ld-drop.np-dlg {
+  width: min(420px, calc(100vw - 28px));
+}
+
+:where(html.lounge-active) .np-head {
+  display: grid;
+  gap: 2px;
+}
+
+:where(html.lounge-active) .np-head .ed-h {
+  margin: 0;
+  padding: 0;
+}
+
+:where(html.lounge-active) .np-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .np-unread {
+  font-weight: 700;
+  color: var(--live);
+}
+
+:where(html.lounge-active) .np-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  font-stretch: 112.5%;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .np-group::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dotted var(--rule);
+}
+
+:where(html.lounge-active) .np-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each tag hangs from a short rope tied to the one above. */
+:where(html.lounge-active) .np-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  filter: drop-shadow(0 2px 0 var(--under));
+}
+
+:where(html.lounge-active) .np-item::before {
+  content: '';
+  width: 2px;
+  height: 12px;
+  background: repeating-linear-gradient(#c9a66a 0 4px, #6e4f27 4px 6px);
+}
+
+:where(html.lounge-active) .np.swing .np-item > .nt {
+  transform-origin: 50% -14px;
+  animation: m-swing 1s ease-out both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+:where(html.lounge-active) .nt {
+  width: 100%;
+  padding: 14px 0 0;
+}
+
+:where(html.lounge-active) .nt-hit {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 4px 14px 4px 14px;
+  text-align: left;
+}
+
+:where(html.lounge-active) .nt-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+}
+
+:where(html.lounge-active) .nt.unread .nt-dot {
+  background: var(--verm);
+}
+
+:where(html.lounge-active) .nt-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .nt.unread .nt-title {
+  font-weight: 700;
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .nt-when {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--t-3);
+  white-space: nowrap;
+}
+
+:where(html.lounge-active) .nt-peek,
+:where(html.lounge-active) .nt-body {
+  margin: 0;
+  padding: 0 14px 12px 33px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .nt-peek {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+:where(html.lounge-active) .nt-body p {
+  margin: 0;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .nt-body .nt-by {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .np-empty {
+  margin: 16px 0 0;
+  color: var(--t-3);
+}
+
+/* ---------- Phones: pop-ups become bottom sheets, menus panels from the top ---------- */
+
+@media (max-width: 759px) {
+  :where(html.lounge-active) .ld-center,
+  :where(html.lounge-active) .ld-wide,
+  :where(html.lounge-active) .ld-side {
+    margin: auto 0 0;
+    width: 100%;
+    max-width: 100%;
+    /* fit-content, not auto: a fixed <dialog> with height auto stretches to max-height. */
+    height: fit-content;
+    max-height: 92dvh;
+    border-width: var(--kw) 0 0;
+    border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+    box-shadow: 0 -20px 50px -20px rgb(0 0 0 / 0.55);
+  }
+
+  :where(html.lounge-active) .ld-center[open],
+  :where(html.lounge-active) .ld-wide[open],
+  :where(html.lounge-active) .ld-side[open] {
+    animation: m-sheet-up var(--t-sheet, 340ms) var(--ease-out) both;
+  }
+
+  :where(html.lounge-active) .ld-panel {
+    padding: 20px 16px calc(22px + env(safe-area-inset-bottom));
+  }
+
+  :where(html.lounge-active) .ld-x {
+    right: 10px;
+  }
+
+  :where(html.lounge-active) .ld-drop,
+  :where(html.lounge-active) .ld-drop.np-dlg {
+    inset: 8px 8px auto 8px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - 16px);
+  }
+
+  :where(html.lounge-active) .ld-drop .ld-x {
+    display: grid;
+  }
+
+  :where(html.lounge-active) .ld-drop .pm-who,
+  :where(html.lounge-active) .ld-drop .np-head {
+    padding-right: 46px;
+  }
+
+  :where(html.lounge-active) .pm-facts div {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  :where(html.lounge-active) .pe-preview {
+    width: 76px;
+  }
+
+  :where(html.lounge-active) .cp-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  :where(html.lounge-active) .mini {
+    padding: 16px 8px 8px;
+  }
+
+  :where(html.lounge-active) .mini-name {
+    font-size: 13px;
+  }
+
+  :where(html.lounge-active) .mini-k,
+  :where(html.lounge-active) .mini-id,
+  :where(html.lounge-active) .mini-stamp {
+    display: none;
+  }
+
+  :where(html.lounge-active) .mini-crest {
+    width: 22px;
+    height: 22px;
+  }
+
+  :where(html.lounge-active) .mini-meta {
+    font-size: 10.5px;
+  }
+
+  :where(html.lounge-active) .cp-cert {
+    width: 100%;
+  }
+
+  :where(html.lounge-active) .pe-ro {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  :where(html.lounge-active) .cp-grid {
+    grid-template-columns: 1fr;
+  }
+
+  :where(html.lounge-active) .mini {
+    padding-top: 24px;
+  }
+
+  :where(html.lounge-active) .mini-name {
+    font-size: 16px;
+  }
+
+  :where(html.lounge-active) .mini-meta {
+    font-size: 12px;
+  }
+
+  :where(html.lounge-active) .mini-crest {
+    width: 30px;
+    height: 30px;
+  }
+
+  :where(html.lounge-active) .mini-stamp {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(html.lounge-active) .ld[open],
+  :where(html.lounge-active) .ld::backdrop,
+  :where(html.lounge-active) .cp-cert img,
+  :where(html.lounge-active) .np.swing .np-item > .nt {
+    animation: none !important;
+  }
+
+  :where(html.lounge-active) .mini {
+    transition: none;
+  }
+}

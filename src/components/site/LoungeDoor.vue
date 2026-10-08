@@ -1,45 +1,29 @@
 <!--
   The members' lounge, seen from outside. The door swings open as it scrolls in
   and warm light spills onto the floor; the rooms inside are listed beside it. On House it is
-  a teaser that leads to the Lounge tab; on the Lounge tab it is the page's opening.
+  a teaser that leads to sign-in; entry mode keeps the door, the sign-in slot and what is inside.
 -->
 <template>
-  <div ref="root" class="lounge" :class="{ open }">
-    <div class="copy">
+  <div ref="root" class="lounge" :class="{ open, entry }">
+    <div v-if="!entry" class="copy">
       <p class="eyebrow mono">Members only</p>
       <component :is="teaser ? 'h2' : 'h1'" id="lounge-h">The lounge</component>
-      <p class="lede">
-        Everything live happens inside, for Sundarbans members. Sign-in with your IITM student email
-        is coming soon — it’ll be checked against the house roster.
-      </p>
+      <p class="lede">Everything live happens inside, for Sundarbans members.</p>
       <ul class="rooms">
-        <li v-for="(r, i) in ROOMS" :key="r.key" :style="{ '--i': i }">
-          <component
-            :is="teaser ? 'a' : 'span'"
-            class="room"
-            :href="teaser ? `?page=lounge` : undefined"
-            @click="teaser && ($event.preventDefault(), nav.go('lounge', r.key))"
-          >
+        <li v-for="(r, i) in LOUNGE_ROOMS" :key="r.key" :style="{ '--i': i }">
+          <a class="room" href="?page=lounge" @click.prevent="nav.go('lounge', r.key)">
             <LineIcon :name="r.icon" />
             <span>
-              <strong>{{ r.title }}<em v-if="r.planned" class="mono">planned</em></strong>
+              <strong>{{ r.title }}</strong>
               <small>{{ r.desc }}</small>
             </span>
-          </component>
+          </a>
         </li>
       </ul>
       <div class="ctas">
-        <button v-if="teaser" type="button" class="enter" @click="nav.go('lounge')">
-          Take the tour
-          <LineIcon name="arrow" />
-        </button>
-        <button
-          type="button"
-          :class="teaser ? 'ghost' : 'enter'"
-          @click="toast('Members’ sign-in is coming soon')"
-        >
+        <button type="button" class="enter" @click="nav.go('login')">
           Sign in with IITM email
-          <LineIcon v-if="!teaser" name="arrow" />
+          <LineIcon name="arrow" />
         </button>
       </div>
     </div>
@@ -57,34 +41,25 @@
       </div>
       <div class="spill" />
     </div>
+    <div v-if="entry" class="entry-actions">
+      <slot />
+      <ul class="inside" aria-label="Inside the lounge">
+        <li v-for="(r, i) in LOUNGE_ROOMS" :key="r.key" :style="{ '--i': i }">
+          <LineIcon :name="r.icon" />
+          {{ r.title }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import LineIcon from './LineIcon.vue';
-import { nav, toast } from '../../lib/store.js';
+import { LOUNGE_ROOMS } from './lounge-rooms.js';
+import { nav } from '../../lib/store.js';
 
-defineProps({ teaser: Boolean });
-
-const ROOMS = [
-  { key: 'live', icon: 'live', title: 'Live events', desc: 'This week’s schedule and join links' },
-  {
-    key: 'owl',
-    icon: 'moon',
-    title: 'Night Owl rooms',
-    desc: 'Late-night study rooms, English and Hindi',
-  },
-  { key: 'groups', icon: 'people', title: 'Regional groups', desc: 'Your region’s WhatsApp group' },
-  { key: 'board', icon: 'trophy', title: 'Leaderboard', desc: 'Top performers of the month' },
-  {
-    key: 'certificates',
-    icon: 'cert',
-    title: 'Certificates',
-    desc: 'Generate a participation certificate for events you took part in',
-    planned: true,
-  },
-];
+defineProps({ teaser: Boolean, entry: Boolean });
 
 // Dust in the light: scattered positions, speeds and drift, fixed per mote.
 const MOTES = Array.from({ length: 16 }, (_, k) => ({
@@ -99,17 +74,21 @@ const MOTES = Array.from({ length: 16 }, (_, k) => ({
 
 const root = ref(null);
 const open = ref(false);
+let openTimer;
 const io = new IntersectionObserver(
   ([en]) => {
     if (en.isIntersecting) {
-      setTimeout(() => (open.value = true), 250);
+      openTimer = setTimeout(() => (open.value = true), 250);
       io.disconnect();
     }
   },
   { threshold: 0.4 }
 );
 onMounted(() => io.observe(root.value));
-onBeforeUnmount(() => io.disconnect());
+onBeforeUnmount(() => {
+  io.disconnect();
+  clearTimeout(openTimer);
+});
 </script>
 
 <style scoped>
@@ -129,9 +108,29 @@ onBeforeUnmount(() => io.disconnect());
   color: var(--l-ink);
   overflow: hidden;
 }
-:root[data-theme='dark'] .lounge {
+:root[data-theme='dark'] .lounge:not(.entry) {
   --l-bg: #0b0907;
   box-shadow: inset 0 0 0 1px #2e271f;
+}
+.lounge.entry {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+.entry .arch,
+.entry .spill {
+  width: clamp(150px, 24vh, 210px);
+}
+.entry .spill {
+  height: 60px;
+}
+.entry-actions {
+  display: grid;
+  justify-items: center;
+  text-align: center;
 }
 .eyebrow {
   display: inline-flex;
@@ -200,15 +199,6 @@ onBeforeUnmount(() => io.disconnect());
   font-size: 15.5px;
   font-weight: 650;
 }
-.rooms em {
-  padding: 1px 7px;
-  border: 1px dashed #6f6255;
-  border-radius: 99px;
-  font-style: normal;
-  font-size: 10.5px;
-  font-weight: 500;
-  color: var(--l-ink-2);
-}
 .rooms small {
   display: block;
   font-size: 13.5px;
@@ -226,18 +216,36 @@ a.room:hover {
   flex-wrap: wrap;
   gap: 10px;
 }
-.ghost {
-  padding: 13px 18px;
-  border: 1.5px solid #4a4035;
-  border-radius: 99px;
-  background: none;
-  color: var(--l-ink);
-  font-size: 15px;
-  font-weight: 600;
-  transition: border-color 0.2s;
+.inside {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 22px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--l-ink-2);
 }
-.ghost:hover {
-  border-color: #f2a93b;
+.inside li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.6s var(--ease-out),
+    transform 0.6s var(--ease-out);
+  transition-delay: calc(900ms + var(--i) * 120ms);
+}
+.open .inside li {
+  opacity: 1;
+  transform: none;
+}
+.inside :deep(svg) {
+  width: 18px;
+  height: 18px;
+  color: #f2a93b;
 }
 .enter {
   display: inline-flex;
@@ -395,7 +403,8 @@ a.room:hover {
   .door,
   .spill,
   .light,
-  .room {
+  .room,
+  .inside li {
     transition: none;
   }
   .mote {

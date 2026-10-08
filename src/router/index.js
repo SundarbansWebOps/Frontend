@@ -10,8 +10,8 @@ const routes = [
   { path: '/events', component: () => import('../pages/EventsPage.vue') },
   { path: '/house', component: () => import('../pages/HousePage.vue') },
   { path: '/teams', component: () => import('../pages/TeamsPage.vue') },
-  { path: '/lounge', component: () => import('../pages/LoungePage.vue') },
-  { path: '/login', component: () => import('../pages/LoginPage.vue') },
+  { path: '/lounge', name: 'Lounge', component: () => import('../pages/LoungePage.vue') },
+  { path: '/login', name: 'Login', component: () => import('../pages/LoginPage.vue') },
   { path: '/verify-certificate', component: () => import('../pages/VerifyPage.vue') },
 
   // Links from the previous site (shared on WhatsApp, bookmarked) land on the page that
@@ -119,6 +119,8 @@ export const router = createRouter({
 // captured first; the transition completes once the new page has rendered.
 router.beforeResolve((to, from) => {
   if (!from.matched.length || to.path === from.path) return;
+  // The Lounge owns its shared-scene transitions and arrival choreography.
+  if (to.name === 'Lounge' || from.name === 'Lounge') return;
   if (!document.startViewTransition || reducedMotion()) return;
   return new Promise((captured) => {
     const transition = document.startViewTransition(

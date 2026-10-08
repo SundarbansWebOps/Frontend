@@ -25,6 +25,7 @@ media.addEventListener('change', (e) => {
 watch(
   theme,
   (t) => {
+    if (document.documentElement.classList.contains('lounge-active')) return;
     document.documentElement.dataset.theme = t;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BAR[t]);
   },

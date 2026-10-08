@@ -99,3 +99,26 @@
 ## 2026-10-01 — Cloud backend goes live; repo mirrors all 31 cloud migrations
 **Why:** The cloud project was made production-ready: regions/communities became migration data (a rebuilt project could not sign anyone up before), the sign-up form and public Events page can read regions, communities and a `public_events` view signed-out (no `gmail_link`, no member ids), sign-up is limited to `ds.study.iitm.ac.in`, 3 Super Admins were added, all fake/test accounts were deleted, and the 9 regions got their real names. The 7 new migrations are committed under their cloud versions so `supabase migration list --linked` stays in sync and `db push` never re-runs them. Rejected: keeping test users on the live project; using local file timestamps (would make `db push` re-apply them).
 
+## 2026-10-06 — Lounge information architecture: two pages plus two panels
+**Why:** Raja wants a home that stays clean however many events exist, without a page per feature. Home shows only the member (name, roll, region), the live event (else one "Next up" line), WhatsApp groups and a notice banner for 72h. Events get one page with Live/Upcoming/Past/Mine tabs and compact rows (Mine absorbs the old "Your scroll" history). Notices live in a bell side panel with history; profile details in an avatar sheet. Rejected: everything on one scroll (Lounge A) and a page per section.
+
+## 2026-10-06 — New members get a one-time welcome tour before the Lounge
+**Why:** Raja (backed by former council members) wants first-timers to feel the house before its dashboard: a scroll-rowed boat ride past the house note, past councils since 2021, this year's Upper House Council with notes, and tappable community islands with sounds, ending at a ghat that hands over to Lounge Home. Shown once per member ever, after first sign-in; replayable only from the profile. The look stays lounge-a's rich painted pat with lounge-b's separate day/night scenes. Rejected: dropping straight into the dashboard.
+
+## 2026-10-06 — Lounge round 4: past councils, milestones, events and profile rules
+**Why:** Raja's review of round 3. Past councils are shown as "The Five Landings" (one landing per year built into the riverbank, Secretary then Deputy Secretary), chosen over signboards in the river and four other concepts from GPT-6 Astra. Web Admins are not listed per year (unofficial years are politics); contributors are credited through milestones instead, e.g. the 2023 move from Google Sites to the house's own website (first house to do it, Ravi Kumavat) shown as a lighthouse lighting up. Event registration is one-way (no unregister). Profile is an avatar dropdown with an edit pop-up; certificates open in a pop-up, not a page. The member confirms their name at the end of the welcome tour, prefilled from the roster.
+
+## 2026-10-06 — Lounge tour: no shrine-like portraits; council as emote characters
+**Why:** Raja saw the carved frame + photo + marigold garland (2026) and the halo silhouettes in niches (past) as RIP/memorial photos. 2026 council becomes three generic pat-style characters with name labels; the real photo shows in a thought bubble on click. Past placeholders become a plain cream frame with the house logo until real photos arrive. Rejected: keeping the frames without the garland (still reads as a memorial).
+
+## 2026-10-06 — Home → Events is one shared-scene transition
+**Why:** Raja's idea: the Home scene shrinks into a ~25vh Events header band (View Transitions; plain swap as fallback, instant under reduced motion). It replaces the earlier plan for a separate Events banner, keeps one visual world, and puts events above the fold.
+
+## 2026-10-08 — Lounge E theme switch = B's sun/moon circle, not a dissolve
+**Why:** Raja found E's 1.2s dissolve missing B's feeling; B's clip-path circle from the sky body, with the scene's own CSS choreography live inside it, is the reference. The separate view-transition names for the lantern/fleet were dropped so they reveal with the circle instead of ghosting over a fade.
+
+## 2026-10-08 — Sign-in cross-dissolves into the lounge instead of fading out first
+**Why:** A sequential fade (sign-in out, then tour in) left a dark gap that read as the sign-in not fading properly. The View Transitions cross-dissolve overlaps both for 900ms. Rejected: keeping the sequential fade and shortening it, which still dips through black; and a custom overlay that keeps the login mounted, which is more code for the same effect. The timed fade stays as the fallback for browsers without the API and for reduced motion.
+
+## 2026-10-08 — Sign-out returns to the sign-in door until a session exists
+**Why:** Sign-out did nothing and only showed a "does nothing in this prototype" note. Routing to `/login` makes the signed-out visitor's view real now and needs no auth code. Rejected: a placeholder note (what Raja asked to remove). When Google sign-in lands, this route becomes the real signed-out state.

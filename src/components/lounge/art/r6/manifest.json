@@ -1,0 +1,67 @@
+{
+  "boat-day": {
+    "w": 800,
+    "h": 328
+  },
+  "boat-night": {
+    "w": 800,
+    "h": 328,
+    "lamp": {
+      "x": 0.585,
+      "y": 0.212
+    }
+  },
+  "mangrove-day": {
+    "w": 640,
+    "h": 1047
+  },
+  "mangrove-night": {
+    "w": 640,
+    "h": 1047
+  },
+  "kite-mine": {
+    "w": 520,
+    "h": 650
+  },
+  "lantern-unlit": {
+    "w": 480,
+    "h": 620
+  },
+  "boat-moored": {
+    "w": 560,
+    "h": 203
+  },
+  "tour-farbank-day": {
+    "w": 1536,
+    "h": 233
+  },
+  "tour-farbank-night": {
+    "w": 1536,
+    "h": 233
+  },
+  "tour-sky-day": {
+    "w": 1536,
+    "h": 1024
+  },
+  "tour-sky-night": {
+    "w": 1536,
+    "h": 1024
+  },
+  "tour-water-far": {
+    "w": 1536,
+    "h": 1024
+  },
+  "tour-water-far-night": {
+    "w": 1536,
+    "h": 1024
+  },
+  "tour-water-near": {
+    "w": 1536,
+    "h": 1024
+  },
+  "tour-water-near-night": {
+    "w": 1536,
+    "h": 1024
+  },
+  "_note": "Keyed from _art/r6 (Codex imagegen, fast). Day/night pairs share one crop box so they align. boat-night.lamp = lamp centroid as a fraction of the sprite."
+}

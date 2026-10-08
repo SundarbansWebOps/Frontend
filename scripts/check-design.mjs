@@ -24,10 +24,17 @@ function walk(dir) {
   });
 }
 
+// The Members Lounge is its own painted world: its own palette, self-hosted Anek Latin (the name
+// fitter needs the width axis), global theme styles and breakpoints. The guard covers the public site.
+const isLounge = (file) =>
+  file.startsWith('src/components/lounge/') ||
+  file === 'src/pages/LoungePage.vue' ||
+  file === 'src/pages/LoginPage.vue';
+
 const errors = [];
 const counts = {};
 for (const file of walk(ROOT)) {
-  if (file === TOKENS) continue;
+  if (file === TOKENS || isLounge(file)) continue;
   const src = readFileSync(file, 'utf8');
   const lineOf = (i) => src.slice(0, i).split('\n').length;
   const c = {

@@ -1,0 +1,213 @@
+/* Lounge E palette and type tokens (design verdict §1, §6, §8; owner overrides: night is the
+   verdict's indigo, a little darker). Imported after ../../assets/tokens.css and after
+   every view's CSS, so these values win over stale :root definitions elsewhere.
+   Names are the contract for every worker: see _notes/shell.md.
+
+   Rules: at most one filled --lamp shape per view (the action). --verm/--live mean "now".
+   --indigo is secondary. Green is never UI. Cards never glow. */
+
+/* Self-host the variable Latin subset: the name fitter needs both axes, and first
+   paint must not wait for a third-party stylesheet and font connection. */
+@font-face {
+  font-family: 'Anek Latin Lounge';
+  font-style: normal;
+  font-weight: 400 800;
+  font-stretch: 75% 112.5%;
+  font-display: swap;
+  src: url('./fonts/anek-latin.woff2') format('woff2');
+}
+
+/* ---------- Day: rich rice paper under a cream-gold sky ---------- */
+:root:where(.lounge-active),
+:root:where(.lounge-active)[data-theme='light'] {
+  color-scheme: light;
+
+  /* Scene fields (the painted plates carry their own colour; these are for CSS skies,
+     bands and fallbacks). */
+  --sky-0: #fae8c0;
+  --sky-1: #f8c78b;
+  --town: #c98a3a;
+  --water-0: #df9a5a;
+  --water-1: #ca7c45;
+
+  /* Surfaces */
+  --bg: #f8e8c8; /* page under the scene, nav */
+  --paper: #fcf3dd; /* every card, pop-up, tag */
+  --paper-2: #f4e6c6; /* inputs, date blocks, insets */
+  --keyline: #2a1a0f; /* card borders */
+  --kw: 1.5px; /* keyline width */
+  --under: #2a1a0f; /* card under-edge */
+  --drop: 0 12px 24px -16px rgb(80 45 10 / 0.45);
+  --sheet-shadow: 0 3px 0 var(--under), var(--drop);
+  --rule: color-mix(in srgb, var(--t-3) 70%, transparent); /* dotted dividers */
+  --band-o: 1; /* lotus band opacity */
+  --scrim: rgb(42 26 15 / 0.42); /* pop-up backdrop */
+
+  /* Text: heading / body / meta. Every pair is >= 5.3:1 on --paper. */
+  --t-1: #2a1a0f;
+  --t-2: #553c2a;
+  --t-3: #715844;
+
+  /* Accents */
+  --lamp: #f2a93b; /* accent 1 FILL: the primary action */
+  --lamp-core: #ffedb9; /* flame cores in art only */
+  --accent: #915114; /* accent 1 as TEXT: kickers, links, "yours" */
+  --live: #b8341b; /* "now" as text */
+  --verm: #b8341b; /* "now" as fill: live stub, unread badge */
+  --on-verm: #fcf3dd;
+  --indigo: #3f5a86; /* accent 3 fill: kite paper, Technical, secondary */
+  --indigo-t: #3f5a86; /* accent 3 as text */
+  --focus: #915114;
+
+  /* Fixed colours, the same in both themes */
+  --pat-ink: #2a1a0f; /* ink outlines; text on --lamp */
+  --print: #f0dfc0; /* printed artefacts: certificates, lantern/kite faces */
+  --print-ink: #1d1915;
+
+  /* Community wings as text on --paper (>= 4.5:1) */
+  --w-cultural: #9a5200;
+  --w-games: #b8341b;
+  --w-tech: #2f4f9e;
+  --w-talks: #7e3474;
+  --w-meetups: #6b4a2b;
+}
+
+/* ---------- Night: B's night (Raja, 2026-10-07: "use the same colour as B"). Warm black-brown
+   page, umber horizon and water, B's cream-on-dark text and amber/vermilion lights. ---------- */
+:root:where(.lounge-active)[data-theme='dark'] {
+  color-scheme: dark;
+
+  --sky-0: #0c0b10;
+  --sky-1: #1a1310;
+  --town: #321405;
+  --water-0: #211611;
+  --water-1: #110c0a;
+
+  --bg: #110c0a;
+  --paper: #1f1a15;
+  --paper-2: #15120e;
+  --keyline: #4a4035;
+  --kw: 1px;
+  --under: #0a0705;
+  --drop: 0 16px 32px -18px rgb(0 0 0 / 0.7);
+  --band-o: 0.78;
+  --scrim: rgb(10 7 5 / 0.66);
+
+  --t-1: #f3ebdd;
+  --t-2: #b9ac9a;
+  --t-3: #8f8373;
+
+  --lamp: #f4b04a;
+  --lamp-core: #ffedb9;
+  --accent: #f4b04a;
+  --live: #ff7a5c;
+  --verm: #b6351b;
+  --on-verm: #fcf3dd;
+  --indigo: #405b88;
+  --indigo-t: #93a9ff;
+  --focus: #f4b04a;
+
+  --w-cultural: #f4b04a;
+  --w-games: #ff7a5c;
+  --w-tech: #93a9ff;
+  --w-talks: #e394d4;
+  --w-meetups: #d4ab80;
+}
+
+/* ---------- Type and layout ---------- */
+:root:where(.lounge-active) {
+  /* Anek Latin Lounge is the only family. Numbers use tabular figures, never monospace. */
+  --font: 'Anek Latin Lounge', ui-sans-serif, system-ui, sans-serif;
+  --mono: var(--font);
+  --fs-body: 15px;
+  --fs-meta: 13px;
+  --fs-kicker: 12px;
+  --fs-title: 16px; /* tag / row title */
+  --fs-h: 22px; /* section heading */
+  --nav-h: 60px;
+  --banner-h: 0px; /* the slim notice strip under the nav (LoungeNav) */
+  --r-sheet: 6px; /* paper, not an app bubble */
+}
+
+html:where(.lounge-active).has-banner {
+  --banner-h: 36px;
+}
+
+@media (max-width: 759px) {
+  :root:where(.lounge-active) {
+    --nav-h: 56px;
+  }
+}
+
+/* ---------- Legacy aliases: D's and src's names, mapped onto this palette so CSS written
+   against them (events.css, tour.css, lounge.css) adopts the new look. Prefer the names
+   above in new code. ---------- */
+:root:where(.lounge-active),
+:root:where(.lounge-active)[data-theme='light'],
+:root:where(.lounge-active)[data-theme='dark'] {
+  --ink: var(--t-1);
+  --ink-2: var(--t-2);
+  --ink-3: var(--t-3);
+  --card: var(--paper);
+  --sunk: var(--paper-2);
+  --line: color-mix(in srgb, var(--keyline) 35%, transparent);
+  --line-strong: color-mix(in srgb, var(--keyline) 75%, transparent);
+  --mari: var(--lamp);
+  --mari-soft: color-mix(in srgb, var(--lamp) 26%, var(--paper));
+  --mari-ink: var(--accent);
+  --on-mari: var(--pat-ink);
+  --verm-soft: color-mix(in srgb, var(--verm) 18%, var(--paper));
+  --shadow: var(--sheet-shadow);
+  --scene-bg: var(--bg);
+}
+
+/* ---------- Base ---------- */
+html:where(.lounge-active),
+:where(html.lounge-active) body {
+  background: var(--bg);
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) body {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  font-weight: 450;
+}
+
+:where(html.lounge-active) button,
+:where(html.lounge-active) input,
+:where(html.lounge-active) textarea,
+:where(html.lounge-active) select {
+  font: inherit;
+  color: inherit;
+}
+
+:where(html.lounge-active) button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* src's paper grain is for the main site; the Lounge's paper is in its art. */
+:where(html.lounge-active) body::before {
+  display: none;
+}
+
+:where(html.lounge-active) .mono,
+:where(html.lounge-active) .tnum {
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+:where(html.lounge-active) :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+:where(html.lounge-active) ::selection {
+  background: color-mix(in srgb, var(--lamp) 45%, transparent);
+  color: var(--t-1);
+}
