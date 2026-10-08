@@ -1,27 +1,24 @@
 # Sundarbans House — State
-> IITM BS frontend and backend · Last checkpoint: 2026-10-08
+> IITM BS frontend and backend · Last checkpoint: 2026-10-08 15:16
 
 ## In progress / next
-- **Lounge E port, Raja's review round.** Worktree `/home/raja/Anuraj-dev/Frontend-lounge-port`, branch `feat/lounge-production-entry`, local commits only (not pushed, no PR). Preview http://127.0.0.1:5202/#/login (owned Vite PID 106037).
-- Next: Raja reviews House card, sign-in door, boat on Events, and sign-out in real Chrome. Chrome tabs in the background pause animations; verify motion in a visible window.
-- Google sign-in and the once-only tour seen flag are pending backend work. Sign-out currently just returns to `/login`; there is no session.
-- Backend wiring is separate work: `docs/specs/002-lounge-backend-needs.md`. No backend writes, push, PR, merge, or deployment requested.
-- Council change pushed on `fix/council-deputy-secretary` (`bb81c16`); no PR. Do not silently change Bengaluru's status.
-- Cloud Supabase `Website Backend` (`bqoejoznqudcyeaebmsm`) is the source of truth; repo mirror in sync. Frontend auth/dashboard integration pending.
+- **PR #145** (`fix/home-hero-boat-tiger-ground` → `upstream/main`, open, not draft): Lounge boat on the Home river, tiger on a mud bank (`78ed11d`), Resources art shrunk ~4% (`48e16ad`). Next: Raja reviews Home on desktop and phone in a visible window, then merges. No merge done by the agent.
+- **Next chat: backend + Google sign-in.** Design agreed (no code yet): the Lounge has **sign-in only, no sign-up**. Accounts are pre-created from the student roster (real full name + roll/code); Google sign-in only logs into an existing account; no seeded account means "not on the roster". Full name field may be removed later (not now). Raja sends details later. Open: roster source, matching key (suggest IITM email), seed users vs link on first sign-in, profile fields/editability, turn off public sign-up (live change, ask first). Requirements: `docs/specs/002-lounge-backend-needs.md`.
+- Frontend has no Supabase code yet (`@supabase/supabase-js` not installed). The sign-up trigger needing `full_name`/`phone`/`region_code` is moot if accounts are pre-created.
+- Cloud Supabase `Website Backend` (`bqoejoznqudcyeaebmsm`): CLI logged in, repo linked, 31/31 migrations in sync. Google provider/redirect settings in the cloud not verified (no readable API token); check the dashboard. `db push` and function deploys write to the live project: ask first.
+- Council: Bengaluru status is not to be changed silently.
 
 ## Status
-- Port commits on `feat/lounge-production-entry`: `5ed4f86` port, `dfd974d` certificate/stale responses, `588004b` centered sign-in, `ee2b355` docs, `76710a4` door rooms + sign-in cross-dissolve, `c106fbe` boat glide removed, `009b47c` sign-out to `/login`.
-- House card (`src/components/site/LoungeDoor.vue`): one yellow "Sign in with IITM email" button with the tour button's hover; room list = what the launch contains (Live events, Regional groups, Certificates). Night Owl, Leaderboard, and "planned" tags removed. Shared list: `src/components/site/lounge-rooms.js`.
-- Sign-in door (`src/pages/LoginPage.vue`): same button effect; the three rooms appear under Sign in once the door opens.
-- Sign-in → tour: cross-dissolve via View Transitions (900ms, `html.sign-in-cross`). Timed fade remains the fallback (no API or reduced motion).
-- Boat on Events: no arrival glide now (`ProfileMenu`/`EventsPage` `boat-arrived` removed). Only the 3px idle bob remains.
-- Sign-out: closes the profile menu, waits for the pop-up's history Back, then routes to `/login` (`src/components/lounge/ProfileMenu.vue`).
-- Gates at `009b47c`: format, lint, build exit 0; smoke 33/33 on two runs. One earlier run failed `e2e/lounge.spec.js:68` (theme switch on art); it passed alone and in two later runs, treated as a flake.
-- Not verified: the cross-dissolve mid-frame (Chrome tab was hidden; screenshots landed after the overlap). Verify by eye.
-- Untracked, not ours to commit: `src/components/lounge/art/r6/tour-graded/build.py`.
-- Main checkout `/home/raja/Anuraj-dev/Frontend` has uncommitted user work (`M docs/*`, prototype dirs). Untouched by this session.
+- **Lounge is merged to `main`** (PR #144, `1d45fcd`): sign-in door, welcome tour, Lounge Home/Events, sign-out to `/login`. Still fixtures + local storage; Google auth and once-only tour flag pending backend.
+- **Home hero (PR #145):** the Lounge boatman replaces the painted boat and rocks/sinks on the river; the tiger stands on `tiger-bank.webp` and is smaller on phones.
+- **Resources panel art (PR #145, `48e16ad`):** `.art` is `width: 96%; max-width: 650px` (was 100% / 680px). Measured: 390px phone 346→332, 1836px desktop 680→650, no horizontal scroll at 360–2560px.
+- Gates at `48e16ad`: format:check, lint, check:design, build pass; `test:smoke` 33/33.
+- Repo: one worktree, only `main` locally plus this branch. Remotes: `origin` = Anuraj-dev/Frontend (fork), `upstream` = SundarbansWebOps/Frontend (PRs and `main` live here).
+- CI: `build-and-smoke` runs format, lint, `check:study`, `check:design`, build, smoke, shots. `scripts/check-design.mjs` exempts `src/components/lounge/`, `LoungePage.vue`, `LoginPage.vue` (own palette, self-hosted Anek Latin for the name fitter, global styles). Bringing the Lounge onto tokens is an open option.
+- Archive outside the repo: `~/Anuraj-dev/Sundarbans-prototype/` (all lounge prototypes, old worktrees, `study-utility-salvage/`).
 
 ## Architecture map
+- Home hero + panels: `src/pages/HomePage.vue` (boat sprite `.boat`, tiger `.stage`/`.bank`, panel art `.art`); plate and boat coords in `src/lib/pat.js`.
 - Lounge entry: `src/pages/LoungePage.vue` → `src/components/lounge/App.vue`; `src/pages/LoginPage.vue` (sign-in door).
 - House teaser: `src/components/site/LoungeDoor.vue` (teaser and entry modes); room data `src/components/site/lounge-rooms.js`.
 - Home ↔ Events transition and boat: `src/components/lounge/tide.js` (switchPage, view transitions), `EventsPage.vue`, `events.css`, `lounge.css` (boat view-transition-name), `home/RiverBoat.vue`.
@@ -34,8 +31,8 @@
 ## Stack & run
 - Vue 3, vue-router 4 (hash history), Vite 6; static hosting; cloud Supabase mirror.
 - Node: `export PATH=$HOME/.local/share/mise/installs/node/26.8.1/bin:$PATH` if the mise shim fails.
-- Port: `cd /home/raja/Anuraj-dev/Frontend-lounge-port`; `npm run dev -- --host 127.0.0.1 --port 5202 --strictPort` (running).
-- Gates: `npm run format:check`, `npm run lint`, `npm run build`, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:smoke` (uses `vite preview` on 4173 — rebuild before running after source edits).
+- Run: `npm run dev -- --host 127.0.0.1 --port 5202 --strictPort` from the repo root. `vite preview` binds `localhost:4173` (not 127.0.0.1).
+- Gates: `npm run format:check`, `npm run lint`, `npm run check:design`, `npm run build`, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:smoke` (rebuild before smoke after source edits).
 - Backend `supabase db push` / function deploy writes to the live project: only with Raja's explicit go-ahead.
 
 ## Key decisions (top 5)
@@ -52,4 +49,5 @@
 - Never stop the ports 5432x containers (other Supabase project); this repo uses 5442x. Never commit keys or member data. Edge functions need `ALLOWED_ORIGINS`.
 - Native overlays preserve Vue Router history state; certificate name is the first confirmed name. Fixtures are not issued certificates or member data.
 - Home phone grids require `minmax(0,1fr)`; bare `1fr` can stretch to poster width.
-- Preserve source E/prototype work, active servers, and unrelated worktrees. Port is committed on `feat/lounge-production-entry`, not merged.
+- A `max-width` cap on Home panel art only bites above ~1490px viewports (column width is the limit below that). To resize art at every width, change the percentage width too.
+- Never commit to `main`; branch first. Design-system hard limits: `src/assets/tokens.css`, `index.html` font link, `scripts/design-baseline.json`, `package.json` deps (see `.agents/skills/sundarbans-design/SKILL.md`).
