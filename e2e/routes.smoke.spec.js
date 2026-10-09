@@ -11,7 +11,9 @@ const ROUTES = {
   '/events': '/events',
   '/house': '/house',
   '/teams': '/teams',
-  '/lounge': '/lounge',
+  // Members-only: a signed-out visitor lands on the sign-in door.
+  '/lounge': '/login',
+  '/admin': '/login',
   '/login': '/login',
   '/verify-certificate': '/verify-certificate',
   // Old site
@@ -25,7 +27,7 @@ const ROUTES = {
   '/community/cultural': '/events',
   '/community/esports': '/events',
   '/contact': '/house',
-  '/dashboard': '/lounge',
+  '/dashboard': '/login',
 };
 
 function hashUrl(path) {

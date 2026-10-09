@@ -130,7 +130,9 @@ const COLS = [
         name: r.name,
         note: r.coordinators.length
           ? r.coordinators.map((c) => first(c.name)).join(' & ')
-          : 'No coordinator listed',
+          : r.recruiting
+            ? 'Recruiting a coordinator'
+            : 'No coordinator listed',
         faces: r.coordinators.map((c) => portrait.face(c.img)),
         open: !r.coordinators.length,
       })),

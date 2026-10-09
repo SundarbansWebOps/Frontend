@@ -10,9 +10,9 @@
       />
     </filter>
   </svg>
-  <TopNav />
+  <TopNav v-if="!isLounge" />
   <RouterView />
-  <SiteFooter v-if="route.path !== '/'" />
+  <SiteFooter v-if="route.path !== '/' && !isStandalone" />
   <CourseSheet />
   <Transition name="toast">
     <div v-if="store.toast" class="toast" role="status">{{ store.toast }}</div>
@@ -20,6 +20,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import TopNav from './components/site/TopNav.vue';
 import SiteFooter from './components/site/SiteFooter.vue';
@@ -27,6 +28,19 @@ import CourseSheet from './components/site/CourseSheet.vue';
 import { store } from './lib/store.js';
 
 const route = useRoute();
+const isLounge = computed(
+  () =>
+    route.name === 'Lounge' ||
+    (!route.matched.length && document.documentElement.classList.contains('lounge-active'))
+);
+const isStandalone = computed(
+  () =>
+    route.name === 'Lounge' ||
+    route.name === 'Login' ||
+    (!route.matched.length &&
+      (document.documentElement.classList.contains('lounge-active') ||
+        document.documentElement.classList.contains('sign-in-active')))
+);
 </script>
 
 <style scoped>

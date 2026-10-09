@@ -38,7 +38,7 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import MangroveArt from './MangroveArt.vue';
 
 const PARAS = [
-  'Sundarbans is one of the student houses of the IIT Madras BS degree — a community of learners spread across India and beyond.',
+  'Sundarbans is one of the student houses of the IIT Madras BS — a community of learners spread across India and beyond.',
   'We’re named after the world’s largest mangrove forest. Just as the Sundarbans thrives through many species working together, the house thrives on members from all walks of life.',
   'From Foundation level to the BS degree, we grow together, learn together and celebrate together — so no one feels disconnected in an online programme.',
 ].map((p) => p.split(' ').map((w) => `${w} `)); // trailing space kept so lines wrap

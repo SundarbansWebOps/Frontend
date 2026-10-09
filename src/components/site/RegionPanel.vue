@@ -58,7 +58,11 @@
               </span>
             </span>
           </template>
-          <span v-else class="coord none">No coordinator listed for 2026–27</span>
+          <span v-else class="coord none">{{
+            r.recruiting
+              ? 'Recruiting a coordinator for 2026–27'
+              : 'No coordinator listed for 2026–27'
+          }}</span>
         </div>
 
         <dl class="facts">

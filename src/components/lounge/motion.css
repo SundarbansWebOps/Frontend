@@ -1,0 +1,309 @@
+/* Lounge motion system: tokens, shared keyframes and a few utilities. Spec and the reasons
+   behind every number: _notes/motion.md. Owner: motion designer; everyone imports it.
+
+   The three rules that keep it cheap on a 2 GB Android phone:
+   1. Animate transform and opacity only. Never filter, box-shadow, clip-path,
+      background-position or layout properties in a loop.
+   2. Loops are few, slow and small, each with its own duration, and they pause off screen
+      (.m-off) and in hidden tabs.
+   3. Under prefers-reduced-motion every one-shot shows its end state and no loop runs. */
+
+:root:where(.lounge-active) {
+  /* Easing. No overshoot above 1.25 anywhere: water and paper don't bounce. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* arrivals */
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45); /* exits */
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1); /* travel between two places */
+  --ease-settle: cubic-bezier(0.3, 1.25, 0.5, 1); /* landing on water or a surface */
+  --ease-fall: cubic-bezier(0.55, 0.085, 0.68, 0.53); /* gravity: petals, a dropped thing */
+  --ease-flight: cubic-bezier(0.55, 0, 0.15, 1); /* the name flying onto the lantern */
+  /* B's two: the lantern's long travel, and the sun turning in (the one overshoot). */
+  --ease-swing: cubic-bezier(0.65, 0, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Durations. */
+  --t-press: 120ms; /* button / boat press */
+  --t-hover: 200ms; /* hover, focus */
+  --t-paper: 280ms; /* a card or popup arriving */
+  --t-leave: 180ms; /* anything leaving */
+  --t-sheet: 340ms; /* phone bottom sheet */
+  --t-arrive: 900ms; /* a world object arriving (lantern rise, boat glide) */
+  --t-travel: 1000ms; /* something crossing the screen (boat between views) */
+
+  /* Small distances. */
+  --d-paper: 8px; /* how far paper rises when it arrives */
+  --d-press: 2px; /* how far a button sinks */
+}
+
+/* ---------- Paper (UI): cards, popups, sheets ---------- */
+
+@keyframes m-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes m-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* A card or row arriving: laid down, not dropped. */
+@keyframes m-paper-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--d-paper), 0);
+  }
+}
+
+@keyframes m-paper-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0);
+  }
+}
+
+/* A centred popup: paper picked up toward you. */
+/* No scale: scaling a sheet of text re-rasterises it every frame, which reads as shimmer. */
+@keyframes m-pop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+/* A menu hanging from the header (profile, notices): it unrolls down a little. */
+@keyframes m-drop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+/* Phone bottom sheet. */
+@keyframes m-sheet-up {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+@keyframes m-sheet-down {
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+/* A hung tag swinging once on its rope (transform-origin above the eyelet). */
+@keyframes m-swing {
+  0% {
+    opacity: 0;
+    transform: rotate(4deg);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  55% {
+    transform: rotate(-2deg);
+  }
+
+  80% {
+    transform: rotate(0.7deg);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+/* The certificate stamp: the one ceremonial overshoot (1.3). */
+@keyframes m-stamp {
+  0% {
+    opacity: 0;
+    transform: rotate(-12deg) scale(1.6);
+  }
+
+  70% {
+    opacity: 1;
+    transform: rotate(-12deg) scale(0.94);
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+  }
+}
+
+/* ---------- Water ---------- */
+
+/* A boat set down by the current: dips, rights itself. Opacity done by 30%. */
+@keyframes m-settle {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -9px, 0) rotate(-1.6deg);
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  60% {
+    transform: translate3d(0, 2px, 0) rotate(0.7deg);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+/* One ripple ring spreading from a hull (an ellipse with a thin border). */
+@keyframes m-ripple {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+/* The main boat at rest on water: 3px, 0.6deg. Period 6.5s. */
+@keyframes m-bob-boat {
+  50% {
+    transform: translate3d(0, 3px, 0) rotate(-0.6deg);
+  }
+}
+
+/* A moored boat: 60% of the main boat, slower (7.5-9.9s, one period each). */
+@keyframes m-bob-moored {
+  50% {
+    transform: translate3d(0, 1.8px, 0) rotate(0.4deg);
+  }
+}
+
+/* A tap on a boat: rocks 2deg and damps out. 900ms. */
+@keyframes m-rock {
+  0% {
+    transform: none;
+  }
+
+  18% {
+    transform: rotate(2deg);
+  }
+
+  42% {
+    transform: rotate(-1.3deg);
+  }
+
+  66% {
+    transform: rotate(0.6deg);
+  }
+
+  84% {
+    transform: rotate(-0.2deg);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+/* Light lying on water under a lamp: short dashes that breathe sideways. Animates from
+   the element's own opacity to --shimmer-lo. Use alternate. */
+@keyframes m-shimmer {
+  to {
+    opacity: var(--shimmer-lo, 0.18);
+    transform: scaleX(0.7);
+  }
+}
+
+/* ---------- Light ---------- */
+
+/* A flame catching: two quick steps, then steady. Use with linear timing. */
+@keyframes m-catch {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.55;
+  }
+
+  40% {
+    opacity: 0.3;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* A star: opacity only, alternate, 3.2-7.6s, never in sync. */
+@keyframes m-twinkle {
+  to {
+    opacity: 0.25;
+  }
+}
+
+/* A firefly: dark most of the time, a quick flash, a quick decay. Linear. */
+@keyframes m-blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 1;
+  }
+
+  14% {
+    opacity: 0.15;
+  }
+
+  18% {
+    opacity: 0;
+  }
+}
+
+/* A four-point glint on water (sun path, wave crests): scale + turn in and out. */
+@keyframes m-glint {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(45deg);
+  }
+}
+
+/* ---------- Utilities ---------- */
+
+/* Paused: set on a container while it is off screen (home/motion.js vLoop) or the tab is
+   hidden (html.m-hidden). */
+:where(html.lounge-active) .m-off,
+:where(html.lounge-active) .m-off *,
+:where(html.lounge-active) .m-off *::before,
+:where(html.lounge-active) .m-off *::after,
+html:where(.lounge-active).m-hidden *,
+html:where(.lounge-active).m-hidden *::before,
+html:where(.lounge-active).m-hidden *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Shared fallback for the m- keyframes above: their end state, at once. Owners still
+     decide what their own loops show (usually the rest pose). */
+  :root:where(.lounge-active) {
+    --t-paper: 1ms;
+    --t-sheet: 1ms;
+    --t-arrive: 1ms;
+    --t-travel: 1ms;
+    --t-leave: 1ms;
+  }
+}

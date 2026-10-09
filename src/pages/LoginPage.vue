@@ -1,172 +1,221 @@
-<!--
-  Members' sign-in is not built yet. /login stays a real page (old links and bookmarks point
-  here) and says so, with the way into the lounge tour. The lounge is always night inside, so
-  this door is dark in both themes.
--->
+<!-- The sign-in door: Google sign-in for members on the house roster, then into the Lounge. -->
 <template>
-  <main class="wrap">
-    <section class="door rise" style="--i: 0" aria-labelledby="login-h">
-      <i class="glow" aria-hidden="true" />
-      <PatArt class="art" :fig="ART.login" name="login" />
-      <p class="kicker"><LineIcon name="door" /> Members’ lounge</p>
-      <h1 id="login-h">Sign-in is coming soon</h1>
-      <p class="sub">
-        We’re building member sign-in for the lounge. Until it opens, you can walk through the rooms
-        on the tour.
-      </p>
-      <div class="acts">
-        <RouterLink to="/lounge" class="btn"
-          >Take the lounge tour <span aria-hidden="true">→</span></RouterLink
-        >
-        <RouterLink to="/" class="btn ghost">Back home</RouterLink>
-      </div>
+  <main class="sign-in" :class="{ leaving }" :aria-busy="busy">
+    <section aria-labelledby="login-h">
+      <LoungeDoor entry>
+        <h1 id="login-h">The lounge</h1>
+        <button type="button" class="enter" :disabled="busy" @click="signIn">
+          {{ busy ? (auth.session ? 'Entering…' : 'Opening Google…') : label }}
+          <LineIcon name="arrow" />
+        </button>
+        <p v-if="error || auth.error" class="error" role="alert">{{ error || auth.error }}</p>
+      </LoungeDoor>
     </section>
   </main>
 </template>
 
 <script setup>
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import LoungeDoor from '../components/site/LoungeDoor.vue';
 import LineIcon from '../components/site/LineIcon.vue';
-import PatArt from '../components/site/PatArt.vue';
-import { ART } from '../lib/art.js';
+import { auth, authReady, signInWithGoogle, takeNext } from '../lib/auth.js';
+
+const router = useRouter();
+const route = useRoute();
+// Only members-only paths are honoured, so a crafted ?next= cannot send anyone off-site.
+const safeNext = (p) => (typeof p === 'string' && /^\/(lounge|admin)\b/.test(p) ? p : '/lounge');
+const label = computed(() => (auth.session ? 'Enter the lounge' : 'Sign in with Google'));
+document.documentElement.classList.add('sign-in-active');
+const busy = ref(false);
+const leaving = ref(false);
+const error = ref('');
+let disposed = false;
+let fadeTimer;
+
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Back from Google with a session: carry on to where the member was going.
+onMounted(async () => {
+  await authReady();
+  const next = takeNext();
+  if (!disposed && auth.session && auth.profile && next) enter(safeNext(next));
+});
+
+async function signIn() {
+  if (busy.value) return;
+  if (!auth.session) {
+    busy.value = true;
+    error.value = '';
+    try {
+      await signInWithGoogle(safeNext(route.query.next));
+    } catch {
+      busy.value = false;
+    }
+    return;
+  }
+  enter(safeNext(route.query.next));
+}
+
+async function enter(next) {
+  busy.value = true;
+  error.value = '';
+  if (next.startsWith('/admin')) {
+    router.push(next).catch(() => fail());
+    return;
+  }
+  try {
+    // Load both scenes before fading, so a slow chunk cannot leave an empty screen.
+    const [, , state] = await Promise.all([
+      import('./LoungePage.vue'),
+      import('../components/lounge/WelcomeTour.vue'),
+      import('../components/lounge/state.js'),
+    ]);
+    if (disposed) return;
+    // Deliberately replay on every sign-in until the backend owns the seen flag.
+    state.resetTour();
+    if (document.startViewTransition && !reducedMotion()) await crossfadeToLounge();
+    else await fadeToLounge();
+  } catch {
+    if (!disposed) fail();
+  }
+}
+
+// The door and the lounge's first frame cross-dissolve in one 900ms overlap. Fading the sign-in
+// out first would leave a dark gap before the tour could appear.
+async function crossfadeToLounge() {
+  const root = document.documentElement;
+  root.classList.add('sign-in-cross');
+  try {
+    const transition = document.startViewTransition(() =>
+      router.push({ path: '/lounge' }).then(() => nextTick())
+    );
+    // A transition skipped by a hidden tab or a quick second navigation still swaps the page.
+    transition.ready.catch(() => {});
+    await transition.finished;
+  } catch {
+    if (!disposed) fail();
+  } finally {
+    root.classList.remove('sign-in-cross');
+  }
+}
+
+// No View Transitions (or reduced motion): fade the sign-in out, then arrive with the lounge's
+// own fade-in.
+async function fadeToLounge() {
+  leaving.value = true;
+  const enter = async () => {
+    try {
+      await router.push({ path: '/lounge', state: { signIn: true } });
+    } catch {
+      if (!disposed) fail();
+    }
+  };
+  if (reducedMotion()) await enter();
+  else fadeTimer = setTimeout(enter, 900);
+}
+
+function fail() {
+  busy.value = leaving.value = false;
+  error.value = 'Couldn’t open the lounge. Please try again.';
+}
+
+onBeforeUnmount(() => {
+  disposed = true;
+  document.documentElement.classList.remove('sign-in-active');
+  clearTimeout(fadeTimer);
+});
 </script>
 
 <style scoped>
-.wrap {
+.sign-in {
   display: grid;
   place-items: center;
-  min-height: calc(100svh - var(--nav-h) - 180px);
-  padding: 40px 24px;
-}
-.door {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  width: min(560px, 100%);
-  padding: 36px 34px 32px;
-  border-radius: 22px;
+  min-height: calc(100svh - var(--nav-h));
+  padding: 32px 24px;
   background: #15120e;
   color: #f3ebdd;
-  box-shadow: 0 30px 60px -30px rgb(21 18 14 / 0.6);
+  opacity: 1;
+  transition: opacity 900ms ease-in-out;
 }
-/* The same slow turning edge of light as the Lounge pill in the nav. */
-.door::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: conic-gradient(
-    from var(--turn, 0deg),
-    #f2a93b00 0deg,
-    #f2a93b 70deg,
-    #ffd488 100deg,
-    #f2a93b00 160deg,
-    #f2a93b00 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: turn 6s linear infinite;
+.sign-in.leaving {
+  opacity: 0;
+  pointer-events: none;
 }
-@property --turn {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-@keyframes turn {
-  to {
-    --turn: 360deg;
-  }
-}
-.glow {
-  position: absolute;
-  inset: auto 15% -55% 15%;
-  z-index: -1;
-  height: 90%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(242 169 59 / 0.35), transparent);
-  animation: breathe 5s ease-in-out infinite;
-}
-@keyframes breathe {
-  50% {
-    opacity: 0.55;
-    transform: scale(0.94);
-  }
-}
-/* The ghat gate, lamp lit, on the night paper; a faint warm rim keeps its figures reading. */
-.art {
-  width: min(340px, 78%);
-  margin: -8px auto 14px;
-  filter: drop-shadow(0 0 1px rgb(255 222 170 / 0.45)) drop-shadow(0 0 22px rgb(255 190 110 / 0.14));
-}
-.kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 14px;
-  color: #f2a93b;
-  font-size: 12.5px;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.kicker .ic {
-  width: 18px;
-  height: 18px;
+section {
+  width: min(360px, 100%);
 }
 h1 {
-  margin: 0;
-  font-size: clamp(32px, 4.4vw, 44px);
+  margin: 0 0 24px;
+  font-size: clamp(32px, 4vw, 42px);
   font-weight: 750;
   letter-spacing: -0.04em;
-  line-height: 1;
+  line-height: 1.1;
 }
-.sub {
-  margin: 14px 0 0;
-  color: #b9ac9a;
-  font-size: 17px;
-  line-height: 1.45;
-}
-.acts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 26px;
-}
-.btn {
+.enter {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 46px;
-  padding: 0 20px;
+  justify-content: center;
+  gap: 12px;
+  min-width: 172px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 0;
   border-radius: 99px;
   background: #f2a93b;
   color: #1d1915;
-  font-size: 15.5px;
+  font-size: 17px;
   font-weight: 700;
-  text-decoration: none;
-  transition: transform 0.25s var(--ease-spring);
+  box-shadow: 0 0 0 0 rgb(242 169 59 / 0.5);
+  transition:
+    box-shadow 0.4s,
+    transform 0.3s var(--ease-spring);
 }
-.btn:hover {
+.enter:hover:not(:disabled) {
+  box-shadow: 0 0 0 8px rgb(242 169 59 / 0.16);
   transform: translateY(-1px);
 }
-.btn.ghost {
-  background: transparent;
-  color: #f3ebdd;
-  border: 1.5px solid #4a4035;
+.enter:disabled {
+  cursor: wait;
 }
-.btn:focus-visible {
-  outline-color: #f2a93b;
+.enter:focus-visible {
+  outline: 2px solid #ffd488;
+  outline-offset: 5px;
+}
+.enter :deep(svg) {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s var(--ease-spring);
+}
+.enter:hover:not(:disabled) :deep(svg) {
+  transform: translateX(3px);
+}
+.error {
+  max-width: 28ch;
+  margin: 18px 0 0;
+  color: #ffd488;
+}
+::selection {
+  background: #f2a93b;
+  color: #1d1915;
 }
 @media (max-width: 760px) {
-  .wrap {
-    padding: 24px 16px;
+  .sign-in {
+    padding-bottom: calc(32px + 72px + env(safe-area-inset-bottom));
   }
-  .door {
-    padding: 30px 22px 26px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sign-in {
+    transition: none;
   }
+}
+</style>
+
+<style>
+/* The sign-in → lounge cross-dissolve; the same 900ms as the fallback fade. */
+:root.sign-in-cross::view-transition-old(root),
+:root.sign-in-cross::view-transition-new(root) {
+  animation-duration: 900ms;
+  animation-timing-function: ease-in-out;
 }
 </style>

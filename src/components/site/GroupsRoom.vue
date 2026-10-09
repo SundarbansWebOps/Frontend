@@ -35,7 +35,9 @@
               ><small>Coordinator</small><strong>{{ c.name }}</strong></span
             >
           </span>
-          <span v-if="!r.coordinators.length" class="c none">No coordinator listed yet</span>
+          <span v-if="!r.coordinators.length" class="c none">{{
+            r.recruiting ? 'Recruiting a coordinator' : 'No coordinator listed yet'
+          }}</span>
           <span class="m mono"
             ><b>{{ r.items.length }}</b> meetups</span
           >

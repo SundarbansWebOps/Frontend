@@ -29,7 +29,7 @@ export default [
 
   // Tooling configs run in Node, not the browser.
   {
-    files: ['vite.config.js', 'eslint.config.js', 'playwright.config.js'],
+    files: ['vite.config.js', 'eslint.config.js', 'playwright.config.js', 'middleware.js'],
     languageOptions: {
       globals: {
         ...globals.node,

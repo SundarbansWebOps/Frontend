@@ -14,8 +14,8 @@
         </div>
       </dl>
       <p class="sub">
-        One of the student houses of the IIT Madras BS degree, since 2021. Who we are, who runs the
-        house, and where we meet.
+        One of the student houses of the IIT Madras BS, since 2021. Who we are, who runs the house,
+        and where we meet.
       </p>
     </header>
 

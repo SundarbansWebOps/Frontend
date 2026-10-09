@@ -80,7 +80,7 @@ const LINKS = [
   { to: '/events', label: 'Events', icon: 'cal' },
   { to: '/house', label: 'House', icon: 'house' },
   { to: '/teams', label: 'Teams', icon: 'people' },
-  { to: '/lounge', label: 'Lounge', icon: 'door', lounge: true },
+  { to: '/login', label: 'Lounge', icon: 'door', lounge: true },
 ];
 </script>
 

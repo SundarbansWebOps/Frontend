@@ -1,0 +1,1313 @@
+/* The Events page in B's world: a quarter-screen window onto Home's painted river with the
+   boat on it, then one ghat-paper sheet of rows (cards.css .gp), and the event pop-up's
+   content (EventDetail.vue, .evd-*). Palette: tokens.css. Motion: motion.css and
+   _notes/motion.md (paper in, minute countdowns, the live dot as the only UI loop). */
+
+/* ---------- Painted band ----------
+   The band is a window onto Home's scene. `.stage` is Home's plate box at full size (the
+   shared plate geometry in _notes/motion.md: centred, width max(100%, hero-h * 1.5), 3:2,
+   hero-h = max(600px, 100svh - nav) or 560px on phones), shifted up so the plate's horizon
+   (--hz down the plate) sits at --hb of the band. tide.js reads the stage offset to line the
+   two up mid-switch. */
+
+:where(html.lounge-active) .ev-hero {
+  --band-h: max(150px, 25svh);
+  --hero-h: max(600px, calc(100svh - var(--nav-h) - var(--banner-h)));
+  --hz: 0.335; /* home/art.js PLATE.horizon */
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: calc(var(--nav-h) + var(--banner-h) + var(--band-h));
+  padding: calc(var(--nav-h) + var(--banner-h)) 20px 6px;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--t-1);
+  background: var(--sky-0);
+}
+
+:where(html.lounge-active) .ev-hero .scene {
+  top: calc(var(--nav-h) + var(--banner-h));
+  container-type: inline-size;
+  background: var(--sky-0);
+}
+
+:where(html.lounge-active) .ev-hero .stage {
+  --pw: max(100cqw, calc(var(--hero-h) * 1.5));
+  position: absolute;
+  left: calc(50cqw - var(--pw) / 2);
+  top: calc(var(--band-h) * var(--hb, 0.5) - var(--pw) / 1.5 * var(--hz));
+  width: var(--pw);
+  aspect-ratio: 3 / 2;
+}
+
+:where(html.lounge-active) .ev-hero .ev-sky {
+  inset: 0;
+}
+
+:where(html.lounge-active) .ev-hero .ev-sky img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+/* The boat rides the band's river, right of the title, bow toward the page's right. The page
+   transition lands it here; nothing moves it after that. */
+:where(html.lounge-active) .ev-hero .ev-boat {
+  position: absolute;
+  right: 14%;
+  top: calc(var(--band-h) * 0.56);
+  width: clamp(170px, 14vw, 210px);
+}
+
+:where(html.lounge-active) .ev-title {
+  position: relative;
+  z-index: 2;
+  width: min(860px, 100%);
+  margin: 0 auto;
+}
+
+/* A paper plate on the far bank: the title and a one-line summary. */
+:where(html.lounge-active) .ev-plate {
+  display: inline-grid;
+  gap: 4px;
+  max-width: 100%;
+  padding: 10px 18px 11px;
+}
+
+:where(html.lounge-active) .ev-title h1 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+:where(html.lounge-active) .ev-sum {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 7px;
+  margin: 0;
+  font-size: var(--fs-meta);
+  font-weight: 600;
+  color: var(--t-2);
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .ev-sum .sep {
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .ev-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--live);
+  font-weight: 700;
+}
+
+/* The live dot: a solid dot and one ring that spreads and fades. The only UI loop, and only
+   while something is live (the element exists only then). */
+:where(html.lounge-active) .ev-live i,
+:where(html.lounge-active) .ev-tab .dot,
+:where(html.lounge-active) .er-onair i {
+  position: relative;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--live);
+}
+
+:where(html.lounge-active) .ev-live i::after,
+:where(html.lounge-active) .ev-tab .dot::after,
+:where(html.lounge-active) .er-onair i::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1.5px solid var(--live);
+  border-radius: 50%;
+  opacity: 0;
+  animation: ev-ping 2.4s var(--ease-out) infinite;
+}
+
+/* The tab's dot and the row's dot keep their own periods, so they never pulse together. */
+:where(html.lounge-active) .ev-tab .dot::after {
+  animation-duration: 2.9s;
+}
+
+:where(html.lounge-active) .er-onair i::after {
+  animation-duration: 2.6s;
+}
+
+@keyframes ev-ping {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.5);
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+/* ---------- The page under the band ---------- */
+
+:where(html.lounge-active) .ev-body {
+  position: relative;
+  z-index: 3;
+  padding: 34px 20px 88px;
+  background: var(--bg);
+}
+
+/* The lotus band: the band's lower edge, the house's mark on its own calendar. */
+:where(html.lounge-active) .ev-body::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -9px;
+  height: 18px;
+  background: url('../../assets/pat/band.webp') 0 50% / auto 100% repeat-x;
+  border-block: var(--kw) solid var(--keyline);
+}
+
+:root:where(.lounge-active)[data-theme='dark'] .ev-body::before {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgb(4 8 21 / 0.22), rgb(4 8 21 / 0.22)), url('../../assets/pat/band.webp');
+}
+
+:where(html.lounge-active) .ev-in {
+  width: min(860px, 100%);
+  margin: 0 auto;
+}
+
+/* ---------- Tabs: words on one paper strip, an accent rule under the chosen one ----------
+   The rule is one element that slides (translateX + scaleX) to the chosen tab. */
+
+:where(html.lounge-active) .ev-tabs {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 6px;
+}
+
+:where(html.lounge-active) .ev-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 4px;
+  color: var(--t-2);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+:where(html.lounge-active) .ev-tab:hover {
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .ev-tab.on {
+  color: var(--t-1);
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .ev-tab .n {
+  min-width: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  border: 1px solid color-mix(in srgb, var(--keyline) 30%, transparent);
+  color: var(--t-3);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .ev-tab.on .n {
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .ev-tab-rule {
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 100px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: translate3d(var(--x, 0), 0, 0) scaleX(var(--s, 0));
+  pointer-events: none;
+}
+
+:where(html.lounge-active) .ev-tab-rule.ev-slide {
+  transition: transform 240ms var(--ease-out);
+}
+
+/* ---------- Community chips ---------- */
+
+:where(html.lounge-active) .ev-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 18px;
+}
+
+:where(html.lounge-active) .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: var(--kw) solid color-mix(in srgb, var(--keyline) 55%, transparent);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--t-1);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+:where(html.lounge-active) .chip i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--w);
+}
+
+:where(html.lounge-active) .chip:hover {
+  border-color: var(--keyline);
+}
+
+/* Chosen: ink on rice paper by day; by night a lamp-lit outline, never a bright fill. */
+:where(html.lounge-active) .chip.on {
+  background: var(--t-1);
+  border-color: var(--t-1);
+  color: var(--paper);
+}
+
+:where(html.lounge-active) .chip.on i {
+  box-shadow: 0 0 0 1.5px var(--paper);
+}
+
+:root:where(.lounge-active)[data-theme='dark'] .chip.on {
+  background: var(--paper-2);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+:root:where(.lounge-active)[data-theme='dark'] .chip.on i {
+  box-shadow: none;
+}
+
+/* ---------- Panel and rows ---------- */
+
+:where(html.lounge-active) .ev-panel {
+  animation: m-fade-in 160ms linear;
+}
+
+:where(html.lounge-active) .ev-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 0 10px;
+}
+
+:where(html.lounge-active) .ev-group:first-child {
+  margin-top: 4px;
+}
+
+:where(html.lounge-active) .ev-group::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dotted var(--rule);
+}
+
+:where(html.lounge-active) .ev-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+:where(html.lounge-active) .er {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px 12px 14px;
+  animation: m-paper-in var(--t-paper) var(--ease-out) both;
+}
+
+/* Rows are laid down one after another, 40ms apart, at most six; the rest come together. */
+:where(html.lounge-active) .er:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+:where(html.lounge-active) .er:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+:where(html.lounge-active) .er:nth-child(4) {
+  animation-delay: 120ms;
+}
+
+:where(html.lounge-active) .er:nth-child(5) {
+  animation-delay: 160ms;
+}
+
+:where(html.lounge-active) .er:nth-child(n + 6) {
+  animation-delay: 200ms;
+}
+
+:where(html.lounge-active) .er + .er {
+  border-top: 1px dotted var(--rule);
+}
+
+:where(html.lounge-active) .er:hover {
+  background: color-mix(in srgb, var(--paper-2) 70%, transparent);
+}
+
+/* Date block (verdict §6): paper-2, keyline, day 19px, month 10px. Past dates are quieter. */
+:where(html.lounge-active) .er-date {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  width: 44px;
+  height: 46px;
+  background: var(--paper-2);
+  border: var(--kw) solid var(--keyline);
+  border-radius: 4px;
+  color: var(--t-1);
+  line-height: 1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .er-date b {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .er-date span {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .er-date small {
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .er.s-past .er-date {
+  background: transparent;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--keyline) 60%, transparent);
+}
+
+/* On air: the date block becomes a vermilion "now" block. */
+:where(html.lounge-active) .er-onair {
+  gap: 4px;
+  background: var(--verm);
+  border-color: var(--keyline);
+  color: var(--on-verm);
+}
+
+:where(html.lounge-active) .er-onair i {
+  width: 7px;
+  height: 7px;
+  background: var(--on-verm);
+}
+
+:where(html.lounge-active) .er-onair i::after {
+  border-color: var(--on-verm);
+}
+
+:where(html.lounge-active) .er-onair span {
+  margin: 0;
+  color: var(--on-verm);
+  font-size: 9.5px;
+}
+
+:where(html.lounge-active) .er-main {
+  min-width: 0;
+}
+
+:where(html.lounge-active) .er-kick {
+  margin-bottom: 3px;
+}
+
+:where(html.lounge-active) .er-main h3 {
+  margin: 0;
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: pretty;
+}
+
+:where(html.lounge-active) .er-hit {
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  font-weight: inherit;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--t-hover) var(--ease-out);
+}
+
+:where(html.lounge-active) .er:hover .er-hit {
+  text-decoration-color: color-mix(in srgb, var(--t-1) 45%, transparent);
+}
+
+/* The whole row opens the event; the actions on the right sit above this. */
+:where(html.lounge-active) .er-hit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+:where(html.lounge-active) .er-hit:focus-visible {
+  outline: none;
+}
+
+:where(html.lounge-active) .er-hit:focus-visible::after {
+  outline: 2px solid var(--focus);
+  outline-offset: -4px;
+  border-radius: 4px;
+}
+
+:where(html.lounge-active) .er-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  margin: 3px 0 0;
+  font-size: var(--fs-meta);
+  font-weight: 500;
+  color: var(--t-3);
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .er-meta .sep {
+  color: color-mix(in srgb, var(--t-3) 70%, transparent);
+}
+
+:where(html.lounge-active) .er-comm {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .er-meta .soon {
+  color: var(--t-1);
+  font-weight: 650;
+}
+
+/* A countdown that changed this minute rises in (the old one has gone with the re-render). */
+:where(html.lounge-active) .ev-tick {
+  display: inline-block;
+  animation: m-paper-in 300ms var(--ease-out);
+  --d-paper: 6px;
+}
+
+:where(html.lounge-active) .er-side {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+:where(html.lounge-active) .er-reg,
+:where(html.lounge-active) .er-join {
+  min-height: 40px;
+  padding: 0 18px;
+}
+
+:where(html.lounge-active) .er-join {
+  white-space: nowrap;
+}
+
+:where(html.lounge-active) .er-cert {
+  min-height: 38px;
+  padding: 0 14px 0 10px;
+  font-size: 14px;
+}
+
+:where(html.lounge-active) .er-cert svg {
+  stroke: var(--accent);
+}
+
+/* Marks: the member's own record on an event. Outlines, so the one lamp fill stays the
+   action. */
+:where(html.lounge-active) .mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: var(--kw) solid transparent;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .mark svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:where(html.lounge-active) .mark.m-registered,
+:where(html.lounge-active) .mark.m-attended {
+  border-color: color-mix(in srgb, var(--t-1) 55%, transparent);
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .mark.m-attended svg,
+:where(html.lounge-active) .mark.m-registered svg {
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .mark.m-early {
+  border: var(--kw) dashed var(--t-3);
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .mark.m-missed {
+  border-color: color-mix(in srgb, var(--keyline) 40%, transparent);
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .came {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-3);
+  white-space: nowrap;
+}
+
+/* ---------- On air (Live tab): the same sheet, roomier, with a vermilion rule ---------- */
+
+:where(html.lounge-active) .ev-list.air .er {
+  padding-block: 18px;
+}
+
+:where(html.lounge-active) .ev-list.air .er-main h3 {
+  font-size: 21px;
+  line-height: 1.15;
+}
+
+:where(html.lounge-active) .ev-list.air .er::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--verm);
+}
+
+/* ---------- Empty states ---------- */
+
+:where(html.lounge-active) .ev-empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 26px 22px 30px;
+  text-align: center;
+  animation: m-paper-in var(--t-paper) var(--ease-out) both;
+}
+
+:where(html.lounge-active) .ev-empty img {
+  width: auto;
+  height: 96px;
+  max-width: 220px;
+  margin-bottom: 6px;
+  object-fit: contain;
+}
+
+:where(html.lounge-active) .ev-empty h2 {
+  margin: 0;
+  font-size: var(--fs-h);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+:where(html.lounge-active) .ev-empty p {
+  max-width: 46ch;
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .ev-go {
+  margin-top: 10px;
+}
+
+:where(html.lounge-active) .ev-note {
+  margin: 16px 0 0;
+  font-size: var(--fs-meta);
+  color: var(--t-3);
+}
+
+/* ---------- Footer, in this page's paper ---------- */
+
+:where(html.lounge-active) .evp .foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--bg);
+  color: var(--t-2);
+  border-top: 1px dotted var(--rule);
+  padding: 32px 20px 96px;
+}
+
+:where(html.lounge-active) .evp .foot::before {
+  display: none;
+}
+
+:where(html.lounge-active) .evp .foot img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 var(--kw) var(--keyline);
+}
+
+:where(html.lounge-active) .evp .foot p {
+  margin: 0;
+  color: var(--t-3);
+  font-size: var(--fs-meta);
+}
+
+:where(html.lounge-active) .evp .foot b {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 760px) {
+  :where(html.lounge-active) .ev-hero {
+    --hero-h: 560px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  :where(html.lounge-active) .ev-hero .ev-boat {
+    right: 3%;
+    top: calc(var(--band-h) * 0.6);
+    width: 124px;
+  }
+
+  :where(html.lounge-active) .ev-plate {
+    padding: 8px 14px 9px;
+  }
+
+  :where(html.lounge-active) .ev-sum {
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 759px) {
+  :where(html.lounge-active) .ev-body {
+    padding: 28px 12px 64px;
+  }
+
+  :where(html.lounge-active) .ev-tabs {
+    width: 100%;
+    padding: 4px;
+  }
+
+  :where(html.lounge-active) .ev-tab {
+    flex: 1;
+    gap: 4px;
+    padding: 0 4px;
+    font-size: 15px;
+  }
+
+  :where(html.lounge-active) .ev-tab .n {
+    min-width: 18px;
+    padding: 0 4px;
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  /* The chips don't fit a phone, so the row scrolls on purpose: it snaps chip by chip,
+     and a fade on the side with more chips says there is more (classes set from scroll). */
+  :where(html.lounge-active) .ev-chips {
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin: 16px -12px 14px;
+    padding: 2px 12px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 12px;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  :where(html.lounge-active) .ev-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  :where(html.lounge-active) .ev-chips .chip {
+    scroll-snap-align: start;
+  }
+
+  :where(html.lounge-active) .ev-chips .chip:last-child {
+    scroll-snap-align: end;
+  }
+
+  :where(html.lounge-active) .ev-chips.more-r {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      #000 calc(100% - 84px),
+      transparent calc(100% - 6px)
+    );
+    mask-image: linear-gradient(90deg, #000 calc(100% - 84px), transparent calc(100% - 6px));
+  }
+
+  :where(html.lounge-active) .ev-chips.more-l {
+    -webkit-mask-image: linear-gradient(90deg, transparent 6px, #000 60px);
+    mask-image: linear-gradient(90deg, transparent 6px, #000 60px);
+  }
+
+  :where(html.lounge-active) .ev-chips.more-l.more-r {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 6px,
+      #000 60px,
+      #000 calc(100% - 84px),
+      transparent calc(100% - 6px)
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 6px,
+      #000 60px,
+      #000 calc(100% - 84px),
+      transparent calc(100% - 6px)
+    );
+  }
+
+  :where(html.lounge-active) .chip {
+    min-height: 44px;
+  }
+
+  :where(html.lounge-active) .er {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 4px 12px;
+    padding: 12px;
+  }
+
+  :where(html.lounge-active) .er-date {
+    grid-row: span 2;
+    align-self: start;
+  }
+
+  :where(html.lounge-active) .er-side {
+    grid-column: 2;
+    justify-content: flex-start;
+    margin-top: 6px;
+  }
+
+  :where(html.lounge-active) .er-side:empty {
+    display: none;
+  }
+
+  :where(html.lounge-active) .ev-list.air .er-main h3 {
+    font-size: 19px;
+  }
+
+  :where(html.lounge-active) .ev-list.air .er-join {
+    flex: 1;
+  }
+
+  :where(html.lounge-active) .evp .foot {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  :where(html.lounge-active) .ev-tab {
+    font-size: 14px;
+  }
+
+  :where(html.lounge-active) .ev-tab .n {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(html.lounge-active) .ev-panel,
+  :where(html.lounge-active) .er,
+  :where(html.lounge-active) .ev-empty,
+  :where(html.lounge-active) .ev-tick {
+    animation: none;
+  }
+
+  :where(html.lounge-active) .ev-live i::after,
+  :where(html.lounge-active) .ev-tab .dot::after,
+  :where(html.lounge-active) .er-onair i::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  :where(html.lounge-active) .ev-tab-rule.ev-slide,
+  :where(html.lounge-active) .er-hit {
+    transition: none;
+  }
+}
+
+/* ===================== Event pop-up content (EventDetail.vue) =====================
+   Inside LoungeDialog (.ld, a .gp sheet with the lotus band on top). B's register sheet:
+   the event in one line, plain labelled fields, pill choices, one lamp action; on success
+   the member's own lantern (night) or kite (day) rises with "You're in". */
+
+:where(html.lounge-active) .evd {
+  --pad: clamp(18px, 4vw, 30px);
+}
+
+/* The community's painted figures standing on Home's river: a crop of the same plate. */
+:where(html.lounge-active) .evd-art {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: clamp(132px, 22vh, 176px);
+  margin: -26px calc(-1 * clamp(18px, 4vw, 34px)) 18px;
+  padding-top: 14px;
+  background: var(--sky-0) var(--plate) 50% 32% / cover no-repeat;
+  border-bottom: var(--kw) solid var(--keyline);
+  overflow: hidden;
+}
+
+:where(html.lounge-active) .evd.form .evd-art {
+  height: 92px;
+}
+
+:where(html.lounge-active) .evd-art img {
+  position: relative;
+  width: auto;
+  max-width: 84%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  animation: m-paper-in var(--t-arrive) var(--ease-out) both;
+}
+
+/* House-wide events carry the crest, a printed seal, smaller. */
+:where(html.lounge-active) .evd.w-talks .evd-art img {
+  height: 82%;
+  align-self: center;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--pat-ink);
+}
+
+:where(html.lounge-active) .evd-kick {
+  padding-right: 52px;
+}
+
+:where(html.lounge-active) .evd-kick .evd-comm {
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .evd-h {
+  margin: 6px 0 0;
+  padding-right: 44px;
+  font-size: clamp(24px, 3vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+:where(html.lounge-active) .evd-h:focus {
+  outline: none;
+}
+
+:where(html.lounge-active) .evd-when {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--t-3);
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .evd-desc {
+  margin: 14px 0 0;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .evd-act {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+:where(html.lounge-active) .evd-small,
+:where(html.lounge-active) .evd-plain {
+  margin: 0;
+  font-size: 14px;
+  color: var(--t-3);
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .evd-plain {
+  padding: 12px 14px;
+  border: 1px dashed color-mix(in srgb, var(--t-3) 70%, transparent);
+  border-radius: 4px;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .evd-done {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .evd-done b {
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .evd-tick {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: var(--kw) solid var(--keyline);
+  background: var(--paper-2);
+  color: var(--accent);
+}
+
+:where(html.lounge-active) .evd-tick svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Live: the same inset as the live ticket's body, a vermilion rule for "now". */
+:where(html.lounge-active) .evd-air {
+  position: relative;
+  margin-top: 20px;
+  padding: 14px 16px 16px 18px;
+  overflow: hidden;
+}
+
+:where(html.lounge-active) .evd-air::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--verm);
+}
+
+:where(html.lounge-active) .evd-air .gp-meta {
+  margin-top: 4px;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .evd-air .gp-btn {
+  margin-top: 14px;
+}
+
+:where(html.lounge-active) .evd-air .evd-small {
+  margin-top: 10px;
+}
+
+/* ---------- Register (B's sheet) ---------- */
+
+:where(html.lounge-active) .evd-sub {
+  margin: -2px 0 0;
+  font-size: 14px;
+  color: var(--t-3);
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .evd-sub b {
+  color: var(--t-1);
+  font-weight: 650;
+}
+
+:where(html.lounge-active) .evd-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+:where(html.lounge-active) .evd-form label:not(.evd-opt):not(.evd-check),
+:where(html.lounge-active) .evd-form legend {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .evd-form small {
+  font-weight: 450;
+  color: var(--t-3);
+}
+
+:where(html.lounge-active) .evd-form input:not([type]),
+:where(html.lounge-active) .evd-form input[type='text'],
+:where(html.lounge-active) .evd-form textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: var(--kw) solid var(--keyline);
+  border-radius: 4px;
+  background: var(--paper-2);
+  color: var(--t-1);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 450;
+}
+
+:where(html.lounge-active) .evd-form input[readonly] {
+  background: transparent;
+  border-style: dashed;
+  color: var(--t-2);
+  font-variant-numeric: tabular-nums;
+}
+
+:where(html.lounge-active) .evd-form textarea {
+  resize: vertical;
+}
+
+:where(html.lounge-active) .evd-form input:focus-visible,
+:where(html.lounge-active) .evd-form textarea:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+:where(html.lounge-active) .evd-form fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+:where(html.lounge-active) .evd-form legend {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+/* Pill choices, as B's sheet: the chosen one takes the accent. */
+:where(html.lounge-active) .evd-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: var(--kw) solid color-mix(in srgb, var(--keyline) 55%, transparent);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 550;
+  color: var(--t-1);
+  cursor: pointer;
+}
+
+:where(html.lounge-active) .evd-opt:has(input:checked) {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--lamp) 16%, var(--paper));
+  color: var(--accent);
+  font-weight: 650;
+}
+
+:where(html.lounge-active) .evd-opt input,
+:where(html.lounge-active) .evd-check input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+:where(html.lounge-active) .evd-opt:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+:where(html.lounge-active) .evd-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--t-2);
+  cursor: pointer;
+}
+
+:where(html.lounge-active) .evd-final {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--verm);
+  background: var(--paper-2);
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .evd-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+}
+
+/* ---------- Registered: your lantern (night) or kite (day) rises ---------- */
+
+:where(html.lounge-active) .evd-sent {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 6px 0 4px;
+  text-align: center;
+}
+
+:where(html.lounge-active) .evd-sent .evd-h {
+  padding: 0;
+}
+
+:where(html.lounge-active) .evd-sent p {
+  max-width: 40ch;
+  margin: 0 0 8px;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .evd-sent p b {
+  color: var(--t-1);
+}
+
+:where(html.lounge-active) .evd-lamp {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 132px;
+}
+
+:where(html.lounge-active) .evd-lamp img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: evd-rise var(--t-arrive) var(--ease-out) 80ms both;
+}
+
+/* Night: the lantern's static halo (verdict §1), fading up as it rises. Never pulses. */
+:where(html.lounge-active) .evd-lamp .evd-halo {
+  position: absolute;
+  inset: -12% -35%;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 220 150 / 0.34),
+    rgb(255 176 74 / 0.13) 42%,
+    rgb(255 176 74 / 0.04) 66%,
+    transparent
+  );
+  animation: m-fade-in var(--t-arrive) var(--ease-out) 300ms both;
+}
+
+:where(html.lounge-active) .evd-lamp.is-kite img {
+  transform-origin: 50% 20%;
+  animation-name: evd-kite;
+  animation-timing-function: var(--ease-settle);
+  animation-duration: 1.1s;
+}
+
+@keyframes evd-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+}
+
+/* A kite catching the wind: rises, leans and rights itself. */
+@keyframes evd-kite {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) rotate(-6deg);
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  70% {
+    transform: translate3d(0, -2px, 0) rotate(3deg);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@media (max-width: 759px) {
+  :where(html.lounge-active) .evd-art {
+    margin-top: -22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(html.lounge-active) .evd-art img,
+  :where(html.lounge-active) .evd-lamp img,
+  :where(html.lounge-active) .evd-lamp .evd-halo {
+    animation: none;
+  }
+}

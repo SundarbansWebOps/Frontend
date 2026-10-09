@@ -1,57 +1,61 @@
-# Sundarbans House - State
-> IITM BS Sundarbans House frontend and backend work · Last checkpoint: 2026-10-01
+# Sundarbans House — State
+> IITM BS frontend and backend · Last checkpoint: 2026-10-08 15:16
 
 ## In progress / next
-- **The prototype is the live site in `src/`**, committed on `feat/prototype-site-delta` (latest `0a7ea4c`; not pushed, no PR). Next: Raja reviews in the browser (`npm run dev`), then decides on push/PR.
-- 2026-09-28 polish, all committed: theme switch ripples out of the nav toggle (copied from Raja's portfolio `ThemeToggle.tsx`); borderless round crest (`src/assets/crest.webp`, `public/favicon.png`, `public/apple-touch-icon.png`, cropped from `~/Downloads/sundarbans.png`); Home Events art sits beside the copy with less bottom space; panel art no longer off-screen on phones.
-- Old site deleted; meetup JSON lives in `src/data/meetups/json/`.
-- Not ported (were on old /study): doubts board, student tools, exam cities, contribute cards. Grade calculator and exam cities show "coming soon" in Resources tools.
-- **Backend = cloud Supabase "Website Backend"** (`bqoejoznqudcyeaebmsm`, org "Sundarbans IITM", Mumbai, Postgres 17), the source of truth since 2026-09-30. Branch `refactor/backend-cloud-source-of-truth` (uncommitted) replaces the old local-only v1 with the cloud's 24 migrations + 3 Edge Functions, pulled read-only; repo is `supabase link`ed; `supabase migration list --linked` = 24/24 in sync. Next: Raja plans the Lounge features, then wire `src/` to the cloud (supabase-js, Google sign-in, `get_my_dashboard`).
-- **2026-10-01 cloud go-live** (branch `chore/sync-cloud-migrations-2026-10-01`): 7 migrations applied to the cloud were mirrored here under their cloud versions (31/31): RLS placeholder (12b), regions + communities as data, signed-out read of `regions`/`communities`/`public_events`, sign-up limited to `ds.study.iitm.ac.in`, 3 Super Admins, all fake/test users deleted, real region names. The cloud now holds real accounts only.
-- **Before wiring `src/` to Supabase, decide:** (1) sign-in: the DB's sign-up trigger needs `full_name`, E.164 `phone` and `region_code` in the user metadata, so plain Google OAuth sign-up fails ("Database error saving new user"); use email sign-up/OTP with `options.data`, or ask for a DB change that lets Google users finish a profile after sign-in. (2) roster: CONTEXT.md says the Lounge is gated by the council Sheet roster, but the cloud has no Sheet sync; any `ds.study.iitm.ac.in` address can sign up and becomes an `active` member. (3) events: `public_events` has name, description, registration_link, starts_at/ends_at, community_id, status; the site's events also use poster image + size, type, attendees and location, and wing `tech` (DB code `technical`); posters need new columns or stay static.
-- Council agenda (certificates, winners, rosters, meetup photos, lounge rooms): `docs/council-questions.md`.
+- **PR #145** (`fix/home-hero-boat-tiger-ground` → `upstream/main`, open, not draft): Lounge boat on the Home river, tiger on a mud bank (`78ed11d`), Resources art shrunk ~4% (`48e16ad`). Next: Raja reviews Home on desktop and phone in a visible window, then merges. No merge done by the agent.
+- **Next chat: backend + Google sign-in.** Design agreed (no code yet): the Lounge has **sign-in only, no sign-up**. Accounts are pre-created from the student roster (real full name + roll/code); Google sign-in only logs into an existing account; no seeded account means "not on the roster". Full name field may be removed later (not now). Raja sends details later. Open: roster source, matching key (suggest IITM email), seed users vs link on first sign-in, profile fields/editability, turn off public sign-up (live change, ask first). Requirements: `docs/specs/002-lounge-backend-needs.md`.
+- Frontend has no Supabase code yet (`@supabase/supabase-js` not installed). The sign-up trigger needing `full_name`/`phone`/`region_code` is moot if accounts are pre-created.
+- Cloud Supabase `Website Backend` (`bqoejoznqudcyeaebmsm`): CLI logged in, repo linked, 31/31 migrations in sync. Google provider/redirect settings in the cloud not verified (no readable API token); check the dashboard. `db push` and function deploys write to the live project: ask first.
+- Council: Bengaluru status is not to be changed silently.
+- **Admin lounge + real Google sign-in** on `feat/admin-panel-supabase` (spec `docs/specs/003-admin-lounge-and-sign-in.md`). Backend applied to the cloud (roster-only sign-up, two-person rule, RCs manage all events; 53/53 pgTAP in a rolled-back run; phone optional; email changes two-person; security headers in `vercel.json`). Front end: `/login` signs in with Google, `/lounge` and `/admin` are guarded, Lounge profile menu has "Admin lounge" for RCs/Super Admins. Gates: format, lint, design, study, build, Playwright 40/40 (Supabase mocked), shots OK.
+- **Before merge:** rename the five `20261008120000/120100/130000/140000/140100_*.sql` migration files to the versions `supabase migration list --linked` shows for `admin_request_types` / `admin_panel_backend` / `optional_phone` / `contact_change_request_type` / `contact_change_two_person` (applied via MCP; versions differ). Then enable the Google provider + redirect URLs + `ALLOWED_ORIGINS` (spec 003, Setup) and test a real Google sign-in.
+- **Lounge E port, Raja's review round.** Worktree `/home/raja/Anuraj-dev/Frontend-lounge-port`, branch `feat/lounge-production-entry`, local commits only (not pushed, no PR). Preview http://127.0.0.1:5202/#/login (owned Vite PID 106037).
+- Next: Raja reviews House card, sign-in door, boat on Events, and sign-out in real Chrome. Chrome tabs in the background pause animations; verify motion in a visible window.
+- Once-only tour seen flag and the rest of spec 002 are pending backend work. Sign-out now ends the Supabase session (this device) and returns to `/login`.
+- Backend wiring is separate work: `docs/specs/002-lounge-backend-needs.md`. No backend writes, push, PR, merge, or deployment requested.
+- Council change pushed on `fix/council-deputy-secretary` (`bb81c16`); no PR. Do not silently change Bengaluru's status.
+- Cloud Supabase `Website Backend` (`bqoejoznqudcyeaebmsm`) is the source of truth; repo mirror in sync. Frontend auth/dashboard integration pending.
 
 ## Status
-- Routes (`src/router/index.js`): `/` Pat · `/resources` · `/events` · `/house` · `/teams` · `/lounge` (tour only) · `/login` (sign-in coming soon) · `/verify-certificate` (rethemed, same `public/data/certificates.json` lookup) · 404. Old URLs redirect: `/study`→Resources, `/about`→`/house#story`, `/meetups*`→`/house#regions`, `/community`→`/teams#communities`, `/community/{technical,cultural,esports}`→`/events?wing=`, `/contact`→`/house#contact` (footer), `/dashboard`→`/lounge`.
-- Verified 2026-09-28 against the production build: `npm run lint` exit 0, `npm run build` ok, `npm run test:smoke` 19/19 (all routes + redirects, no console errors). Playwright/Chromium checks: every route light at 1366 and dark at 390, no horizontal overflow; theme toggle persists across reload and follows system until chosen; verify found/not-found; course sheet deep link + Back; event sheet open + Back keeps scroll; anchor redirects land on their sections.
-- `npm run format:check` fails only on 7 untracked prototype "Current" files (`prototype/resource-hub/Current*.vue`, `LandingCurrent.vue`, `current-flow.js`) — pre-existing, not ported.
-- Theme ripple, crest and Events layout verified in headless Chromium only (frames, screenshots at 1846/1366/1024/390/360); smoke 19/19, lint 0.
-- Not verified: real phones/Safari, reduced-motion in a live browser, sustained frame rate, signed-in Chrome profile.
-- Home (Pat) ignores the theme by design (Raja, 2026-09-28): the painted scroll looks identical in light and dark; only the nav and the thin footer strip under the scroll follow the theme, as in the prototype. Verified by pixel-diffing light vs dark screenshots at 1366 and 390.
+- **Lounge is merged to `main`** (PR #144, `1d45fcd`): sign-in door, welcome tour, Lounge Home/Events, sign-out to `/login`. Still fixtures + local storage; Google auth and once-only tour flag pending backend.
+- **Home hero (PR #145):** the Lounge boatman replaces the painted boat and rocks/sinks on the river; the tiger stands on `tiger-bank.webp` and is smaller on phones.
+- **Resources panel art (PR #145, `48e16ad`):** `.art` is `width: 96%; max-width: 650px` (was 100% / 680px). Measured: 390px phone 346→332, 1836px desktop 680→650, no horizontal scroll at 360–2560px.
+- Gates at `48e16ad`: format:check, lint, check:design, build pass; `test:smoke` 33/33.
+- Repo: one worktree, only `main` locally plus this branch. Remotes: `origin` = Anuraj-dev/Frontend (fork), `upstream` = SundarbansWebOps/Frontend (PRs and `main` live here).
+- CI: `build-and-smoke` runs format, lint, `check:study`, `check:design`, build, smoke, shots. `scripts/check-design.mjs` exempts `src/components/lounge/`, `LoungePage.vue`, `LoginPage.vue` (own palette, self-hosted Anek Latin for the name fitter, global styles). Bringing the Lounge onto tokens is an open option.
+- Archive outside the repo: `~/Anuraj-dev/Sundarbans-prototype/` (all lounge prototypes, old worktrees, `study-utility-salvage/`).
 
 ## Architecture map
-- Pages -> `src/pages/*Page.vue`; page components -> `src/components/site/`; shell -> `src/App.vue` (TopNav, RouterView, SiteFooter except Home, CourseSheet, toast)
-- Shared state -> `src/lib/store.js` (`nav.go(page, anchor)` = router push; course sheet `?course=`), `src/lib/events.js` (`?event=`), `src/lib/house.js`, `src/lib/courses.js` (adapts `src/data/study/`: one JSON per course, checked by `npm run check:study`), `src/lib/pat.js`, `src/lib/theme.js`
-- Snapshots/data -> `src/data/{events.data.js,house.data.js,teams.js}`; Pat plates -> `src/assets/pat/`; tokens -> `src/assets/tokens.css`
-- Scroll/anchors/view transitions -> `scrollBehavior` + `beforeResolve` in `src/router/index.js`
-- Prototype (Synchrony/Current variants remain here only) -> `prototype/resource-hub/`
-- Backend (cloud mirror) -> `supabase/migrations/` (31 files, same versions as the cloud), `supabase/functions/{apply-account-status,change-member-contact,hard-delete-member,_shared}`; `src/` does not call it yet
-- Glossary -> `CONTEXT.md` · Decisions -> `docs/decisions.md` · Conventions -> `docs/conventions.md`
+- Home hero + panels: `src/pages/HomePage.vue` (boat sprite `.boat`, tiger `.stage`/`.bank`, panel art `.art`); plate and boat coords in `src/lib/pat.js`.
+- Lounge entry: `src/pages/LoungePage.vue` → `src/components/lounge/App.vue`; `src/pages/LoginPage.vue` (sign-in door).
+- House teaser: `src/components/site/LoungeDoor.vue` (teaser and entry modes); room data `src/components/site/lounge-rooms.js`.
+- Home ↔ Events transition and boat: `src/components/lounge/tide.js` (switchPage, view transitions), `EventsPage.vue`, `events.css`, `lounge.css` (boat view-transition-name), `home/RiverBoat.vue`.
+- Pop-up history: `src/components/lounge/layers.js` (one history entry per open pop-up); dialogs `LoungeDialog.vue`, `ProfileMenu.vue`.
+- Public site: pages `src/pages/*Page.vue`, components `src/components/site/`, shared state `src/lib/{store,events,house,courses,pat,theme}.js`, data `src/data/`.
+- Router: `src/router/index.js` (hash history; skips the generic view transition for Lounge entry/exit).
+- Backend: `supabase/migrations/`, functions `{apply-account-status,change-member-contact,hard-delete-member,_shared}`. No frontend backend calls yet.
+- Glossary `CONTEXT.md`; decisions `docs/decisions.md`; conventions `docs/conventions.md`.
 
 ## Stack & run
-- Vue 3, vue-router 4 (hash history), Vite 6, static hosting. Backend: cloud Supabase (Mumbai), linked via CLI.
-- Node: `export PATH=$HOME/.local/share/mise/installs/node/26.8.1/bin:$PATH` (mise shim broken in fresh shells).
-- Gates: `npm run format:check`, `npm run lint`, `npm run build`, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:smoke`.
-- Backend changes: new migration in `supabase/migrations/` -> `supabase db push`; functions -> `supabase functions deploy <name>`. Only with Raja's go-ahead: these write to the live project.
+- Vue 3, vue-router 4 (hash history), Vite 6; static hosting; cloud Supabase mirror.
+- Node: `export PATH=$HOME/.local/share/mise/installs/node/26.8.1/bin:$PATH` if the mise shim fails.
+- Run: `npm run dev -- --host 127.0.0.1 --port 5202 --strictPort` from the repo root. `vite preview` binds `localhost:4173` (not 127.0.0.1).
+- Gates: `npm run format:check`, `npm run lint`, `npm run check:design`, `npm run build`, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:smoke` (rebuild before smoke after source edits).
+- Backend `supabase db push` / function deploy writes to the live project: only with Raja's explicit go-ahead.
 
-## Key decisions
-- 2026-09-28: Home = Pat; typeface = Anek Latin; prototype mapped one-to-one into `src/`; lounge is a tour, sign-in "coming soon". Details in `docs/decisions.md`.
-- 2026-09-30: cloud Supabase is the backend source of truth; old repo backend v1 (profiles/meetups/important_dates, members-sync, Apps Script) deleted.
-- Site direction: bespoke motion, warm palette, no green, no lock icons; nav Resources · Events · House · Teams · Lounge.
+## Key decisions (top 5)
+- E is B's painted look plus D's story, with expressive optimized motion. Porting preserves approved source behavior.
+- Sign-in cross-dissolves into the lounge; the lounge owns its own arrival. Full log: `docs/decisions.md`.
+- Sign-out returns to the sign-in door until a real session exists.
+- Home (Pat) ignores theme by design; public nav/footer follow it.
+- Cloud schema is authoritative; repo backend mirrors it.
 
 ## Gotchas
-- Theme ripple (`src/lib/theme.js` + `tokens.css`): a view-transition clip-path circle, 700ms ease-in-out. `html.theme-ripple` pauses colour transitions so the new snapshot is final; keep it if adding colour fades.
-- Home phone grid must be `minmax(0, 1fr)`: a bare `1fr` grows to the poster line's ~5900px scroll width and pushes every panel's art off-screen.
-- Vue scoped CSS: `:global(.a) .b` compiles to `.a` only. Write `:root[data-theme='dark'] .b` instead.
-- Vue scoped styles: a parent class on a child component's root inherits the parent's scoped rules (bit the Lounge rail).
-- Overlays that push history must keep vue-router's state: use `router.push({ query, state })` or spread `history.state` (see `PhotoViewer.vue`).
-- Ports 5432x belong to another local Supabase project (`supabase_*_backend` containers); `supabase/config.toml` uses 5442x. Never stop their containers.
-- Never commit Supabase secret keys, the DB password, or member data. Edge Functions need `ALLOWED_ORIGINS` set as a function secret or browsers get no CORS headers.
-- Region codes are `region_01`…`region_09` in the order of `REGION_DEFS` in `src/lib/house.js` (Patna … Chennai); names match the site's display names exactly. Sign-up sends the code.
-- Supabase Auth redirects + hash router: create the client with `auth: { flowType: 'pkce' }` (supabase-js defaults to implicit; PKCE returns `?code=`) and redirect to the site root, not to a `#/` route; implicit flow puts tokens in the `#` and collides with hash history.
-- Signed-out site reads only `regions`, `communities` and the `public_events` view (publishable key). Everything else needs a signed-in member.
-- Cloud schema has `events` but no meetups or important dates tables; `src/data/*` and the sample term calendar in `src/lib/courses.js` stay static until tables exist.
-- Edge Function comments cite a "spec §10–§16 / Q7" that is not in this repo.
-- Meetup photos use original Google delivery URLs; rewriting size/flags broke loads. Each retries once, then drops.
-- Entry chunk is ~83 KB gzip because the global course sheet pulls course data; lazy-loading it is a possible follow-up.
-- The live chatbot runs a separate React app; its backend is built externally.
+- Closing a Lounge pop-up from the UI runs `history.back()` asynchronously (`layers.js`). A router push issued right after close is cancelled by that Back. Wait for the popstate first (see `ProfileMenu.signOut`).
+- Background or hidden Chrome tabs pause Web Animations. Anything awaiting `animation.finished` (dialog close, view transitions) stalls there. Test motion in a visible window; headless Playwright is fine.
+- `e2e/lounge.spec.js` theme-on-art test flaked once; rerun before blaming the change.
+- Never stop the ports 5432x containers (other Supabase project); this repo uses 5442x. Never commit keys or member data. Edge functions need `ALLOWED_ORIGINS`.
+- Native overlays preserve Vue Router history state; certificate name is the first confirmed name. Fixtures are not issued certificates or member data.
+- Home phone grids require `minmax(0,1fr)`; bare `1fr` can stretch to poster width.
+- A `max-width` cap on Home panel art only bites above ~1490px viewports (column width is the limit below that). To resize art at every width, change the percentage width too.
+- Never commit to `main`; branch first. Design-system hard limits: `src/assets/tokens.css`, `index.html` font link, `scripts/design-baseline.json`, `package.json` deps (see `.agents/skills/sundarbans-design/SKILL.md`).

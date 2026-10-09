@@ -99,3 +99,48 @@
 ## 2026-10-01 — Cloud backend goes live; repo mirrors all 31 cloud migrations
 **Why:** The cloud project was made production-ready: regions/communities became migration data (a rebuilt project could not sign anyone up before), the sign-up form and public Events page can read regions, communities and a `public_events` view signed-out (no `gmail_link`, no member ids), sign-up is limited to `ds.study.iitm.ac.in`, 3 Super Admins were added, all fake/test accounts were deleted, and the 9 regions got their real names. The 7 new migrations are committed under their cloud versions so `supabase migration list --linked` stays in sync and `db push` never re-runs them. Rejected: keeping test users on the live project; using local file timestamps (would make `db push` re-apply them).
 
+## 2026-10-06 — Lounge information architecture: two pages plus two panels
+**Why:** Raja wants a home that stays clean however many events exist, without a page per feature. Home shows only the member (name, roll, region), the live event (else one "Next up" line), WhatsApp groups and a notice banner for 72h. Events get one page with Live/Upcoming/Past/Mine tabs and compact rows (Mine absorbs the old "Your scroll" history). Notices live in a bell side panel with history; profile details in an avatar sheet. Rejected: everything on one scroll (Lounge A) and a page per section.
+
+## 2026-10-06 — New members get a one-time welcome tour before the Lounge
+**Why:** Raja (backed by former council members) wants first-timers to feel the house before its dashboard: a scroll-rowed boat ride past the house note, past councils since 2021, this year's Upper House Council with notes, and tappable community islands with sounds, ending at a ghat that hands over to Lounge Home. Shown once per member ever, after first sign-in; replayable only from the profile. The look stays lounge-a's rich painted pat with lounge-b's separate day/night scenes. Rejected: dropping straight into the dashboard.
+
+## 2026-10-06 — Lounge round 4: past councils, milestones, events and profile rules
+**Why:** Raja's review of round 3. Past councils are shown as "The Five Landings" (one landing per year built into the riverbank, Secretary then Deputy Secretary), chosen over signboards in the river and four other concepts from GPT-6 Astra. Web Admins are not listed per year (unofficial years are politics); contributors are credited through milestones instead, e.g. the 2023 move from Google Sites to the house's own website (first house to do it, Ravi Kumavat) shown as a lighthouse lighting up. Event registration is one-way (no unregister). Profile is an avatar dropdown with an edit pop-up; certificates open in a pop-up, not a page. The member confirms their name at the end of the welcome tour, prefilled from the roster.
+
+## 2026-10-06 — Lounge tour: no shrine-like portraits; council as emote characters
+**Why:** Raja saw the carved frame + photo + marigold garland (2026) and the halo silhouettes in niches (past) as RIP/memorial photos. 2026 council becomes three generic pat-style characters with name labels; the real photo shows in a thought bubble on click. Past placeholders become a plain cream frame with the house logo until real photos arrive. Rejected: keeping the frames without the garland (still reads as a memorial).
+
+## 2026-10-06 — Home → Events is one shared-scene transition
+**Why:** Raja's idea: the Home scene shrinks into a ~25vh Events header band (View Transitions; plain swap as fallback, instant under reduced motion). It replaces the earlier plan for a separate Events banner, keeps one visual world, and puts events above the fold.
+
+## 2026-10-08 — Lounge E theme switch = B's sun/moon circle, not a dissolve
+**Why:** Raja found E's 1.2s dissolve missing B's feeling; B's clip-path circle from the sky body, with the scene's own CSS choreography live inside it, is the reference. The separate view-transition names for the lantern/fleet were dropped so they reveal with the circle instead of ghosting over a fade.
+
+## 2026-10-08 — Sign-in cross-dissolves into the lounge instead of fading out first
+**Why:** A sequential fade (sign-in out, then tour in) left a dark gap that read as the sign-in not fading properly. The View Transitions cross-dissolve overlaps both for 900ms. Rejected: keeping the sequential fade and shortening it, which still dips through black; and a custom overlay that keeps the login mounted, which is more code for the same effect. The timed fade stays as the fallback for browsers without the API and for reduced motion.
+
+## 2026-10-08 — Sign-out returns to the sign-in door until a session exists
+**Why:** Sign-out did nothing and only showed a "does nothing in this prototype" note. Routing to `/login` makes the signed-out visitor's view real now and needs no auth code. Rejected: a placeholder note (what Raja asked to remove). When Google sign-in lands, this route becomes the real signed-out state.
+
+## 2026-10-08 — Lounge is sign-in only; accounts are pre-created from the roster
+**Why:** Raja wants no sign-up flow. Student accounts (real full name + roll/code) are seeded in advance and Google sign-in only logs into an existing one; anyone else is "not on the roster". This sidesteps the DB sign-up trigger that fails for plain Google users. Rejected: open sign-up limited to `ds.study.iitm.ac.in`. Details (matching key, seeding vs link on first sign-in, profile fields) are still open.
+
+## 2026-10-08 — The design guard exempts the Members Lounge
+**Why:** `check:design` failed PR #144 with 37 errors (raw colours, `!important`, extra breakpoints, unscoped styles, self-hosted font). The Lounge is its own painted world and the font alias is needed by the name fitter, so `scripts/check-design.mjs` skips `src/components/lounge/`, `LoungePage.vue` and `LoginPage.vue`; `design-baseline.json` untouched. Rejected: re-tokenising the Lounge now.
+
+## 2026-10-08 — Google sign-in only for rostered members; RCs/Super Admins add students first
+**Why:** The owner wants only members whose profile exists to get in. The database's sign-up trigger now creates an account only for an email on `member_roster` (filled by the RC for their region or a Super Admin, one by one or pasted from the council Sheet) and refuses everyone else; existing accounts are linked to Google by email. Rejected: self sign-up with a form (anyone with an IITM email could join) and a nightly Sheet sync (another moving part).
+
+## 2026-10-08 — Two-person rule for every change to student data; RCs manage all events
+**Why:** The owner asked that changes by an RC or by a Super Admin both need another Super Admin's approval, and that changing RCs also needs approval. All edits, removals, status and position changes are requests; approval applies them. Direct `sa_*` and position RPCs are no longer callable from the site. RCs now manage every event, not only house-wide ones (owner's call).
+
+## 2026-10-08 — Admin lounge at /admin, entered from inside the Lounge; supabase-js added (pinned)
+**Why:** The owner chose a separate `/admin` route reachable from the Lounge for RCs and Super Admins only, built in the public site's design system (tokens, Teams page skeleton). `@supabase/supabase-js` 2.117.2 was added with the owner's go-ahead (design skill's dependency limit); it loads lazily so public pages stay light (entry ~91 KB gzip, supabase chunk 59 KB). Rejected: hand-written Auth/REST calls (more code, easier to get auth wrong).
+
+## 2026-10-08 — Phone number is optional
+**Why:** The owner asked for it. `members.phone`, `member_roster.phone` and `blacklist_entries.phone_hash` are nullable; a given phone is still validated (E.164) and unique; a blank one clears it. Search no longer drops members without a phone, and blacklisting someone without a phone matches by email only.
+
+## 2026-10-08 — Login email changes need a second Super Admin; security headers on Vercel
+**Why:** The owner asked that `change-member-contact` be filed by one Super Admin and approved by another. The function now executes only a `member_contact_change` request (id) and refuses its filer; the old direct database path is revoked. `vercel.json` adds a CSP and the usual hardening headers; a Playwright test replays the CSP so a changed inline script cannot silently break the site. Edge Function CORS accepts one-label wildcards for Vercel previews (tokens are bearer, not cookies); Auth redirect URLs stay exact.
+
