@@ -74,9 +74,9 @@ const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentW
 .stub {
   display: grid;
   place-items: center;
-  background: var(--mari);
-  color: var(--on-mari);
-  border-right: 2px dashed color-mix(in srgb, var(--on-mari) 35%, transparent);
+  background: var(--acc-wash, var(--mari-soft));
+  color: var(--acc, var(--mari-ink));
+  border-right: 2px dashed color-mix(in srgb, var(--acc, var(--mari)) 45%, transparent);
 }
 .stub span {
   writing-mode: vertical-rl;
@@ -108,7 +108,7 @@ const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentW
   line-height: 1.05;
 }
 .name:hover b {
-  text-decoration: underline 2px var(--mari);
+  text-decoration: underline 2px var(--acc, var(--mari));
   text-underline-offset: 4px;
 }
 .name small {
@@ -145,8 +145,8 @@ const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentW
   transform: translateY(-1px);
 }
 .act.hot {
-  border-color: var(--verm);
-  color: var(--verm);
+  border-color: var(--acc, var(--verm));
+  color: var(--acc, var(--verm));
 }
 .act.hot i {
   color: inherit;

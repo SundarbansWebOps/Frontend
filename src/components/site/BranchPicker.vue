@@ -12,7 +12,7 @@
           type="button"
           @click="$emit('pick', b.id)"
         >
-          <b>{{ b.short }} — {{ b.label }}</b>
+          <b>{{ b.short }} · {{ b.label }}</b>
           <span>{{ b.blurb }}</span>
         </button>
       </div>
@@ -29,11 +29,17 @@ const list = Object.values(BRANCHES);
 
 <style scoped>
 .wrap {
+  --acc: var(--verm);
+  --acc-wash: color-mix(in srgb, var(--acc) 15%, transparent);
   max-width: 1240px;
   margin: 0 auto;
   padding: 60px 24px 80px;
   display: grid;
   gap: 28px;
+  background:
+    url('../../assets/pat/grain.webp') 0 0 / 512px 512px,
+    var(--paper);
+  background-blend-mode: multiply, normal;
 }
 .pick {
   max-width: 760px;
@@ -71,13 +77,23 @@ const list = Object.values(BRANCHES);
   padding: 28px 26px;
   border: 1.5px solid var(--line-strong);
   border-radius: 18px;
-  background: transparent;
+  background:
+    url('../../assets/pat/grain.webp') 0 0 / 512px 512px,
+    var(--card);
+  background-blend-mode: multiply, normal;
   color: var(--ink);
   cursor: pointer;
+  box-shadow: var(--shadow);
   transition:
     border-color 0.25s,
     background 0.25s,
     transform 0.25s;
+}
+.opt:nth-child(odd) {
+  transform: rotate(-0.4deg);
+}
+.opt:nth-child(even) {
+  transform: rotate(0.4deg);
 }
 .opt b {
   font-size: 19px;
@@ -87,9 +103,8 @@ const list = Object.values(BRANCHES);
   color: var(--ink-2);
 }
 .opt:hover {
-  transform: translateY(-2px);
-  border-color: var(--mari);
-  background: var(--mari-soft);
+  border-color: var(--acc);
+  transform: translateY(-3px) rotate(0deg);
 }
 @media (max-width: 760px) {
   .opts {

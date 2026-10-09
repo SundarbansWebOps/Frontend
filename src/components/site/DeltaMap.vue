@@ -71,7 +71,10 @@
             class="trail"
             :d="g.d"
             pathLength="1"
-            :style="{ strokeDasharray: `${trail['snake-' + g.id] ?? 0} 2`, opacity: trail['snake-' + g.id] ? 1 : 0 }"
+            :style="{
+              strokeDasharray: `${trail['snake-' + g.id] ?? 0} 2`,
+              opacity: trail['snake-' + g.id] ? 1 : 0,
+            }"
           />
         </template>
         <text
@@ -88,7 +91,13 @@
 
       <!-- section names ride the channels -->
       <template v-if="orient === 'h'">
-        <text v-for="s in segLabels" :key="'t' + s.id" class="section" :class="{ dim: dimSeg(s.id) }" :dy="s.dy">
+        <text
+          v-for="s in segLabels"
+          :key="'t' + s.id"
+          class="section"
+          :class="{ dim: dimSeg(s.id) }"
+          :dy="s.dy"
+        >
           <textPath :href="`#seg-${s.id}-${uid}`" :startOffset="s.offset">{{ s.text }}</textPath>
         </text>
         <path v-for="s in segs" :key="'p' + s.id" :id="`seg-${s.id}-${uid}`" :d="s.d" fill="none" />
@@ -342,8 +351,10 @@ const segLabels = computed(() => {
       { id: 'datascience', text: 'DIPLOMA · DATA SCIENCE', offset: '34%', dy: -12 },
     ];
   const out = [];
-  if (b.channels[0]) out.push({ id: 'programming', text: b.channels[0].label, offset: '34%', dy: 22 });
-  if (b.channels[1]) out.push({ id: 'datascience', text: b.channels[1].label, offset: '34%', dy: -12 });
+  if (b.channels[0])
+    out.push({ id: 'programming', text: b.channels[0].label, offset: '34%', dy: 22 });
+  if (b.channels[1])
+    out.push({ id: 'datascience', text: b.channels[1].label, offset: '34%', dy: -12 });
   return out;
 });
 
@@ -461,7 +472,18 @@ const snakeGroups = computed(() => {
       const yy = y + r * rowH;
       const L = padX;
       const R = W - padR;
-      const row = parity % 2 === 0 ? [[L, yy], [(L + R) / 2, yy], [R, yy]] : [[R, yy], [(L + R) / 2, yy], [L, yy]];
+      const row =
+        parity % 2 === 0
+          ? [
+              [L, yy],
+              [(L + R) / 2, yy],
+              [R, yy],
+            ]
+          : [
+              [R, yy],
+              [(L + R) / 2, yy],
+              [L, yy],
+            ];
       pts.push(...row);
       parity++;
     }
@@ -623,7 +645,11 @@ function measure() {
 }
 
 watch([width, orient], () => nextTick(measure), { flush: 'post' });
-watch(() => props.branch, () => nextTick(measure), { flush: 'post' });
+watch(
+  () => props.branch,
+  () => nextTick(measure),
+  { flush: 'post' }
+);
 
 // Hover trail
 const hovered = ref(null);
@@ -730,7 +756,7 @@ svg {
 
 .trail {
   fill: none;
-  stroke: var(--mari);
+  stroke: var(--acc, var(--mari));
   stroke-width: 5;
   stroke-linecap: round;
   transition:
@@ -788,7 +814,7 @@ svg {
 }
 .sea-label {
   font-size: 11px;
-  fill: var(--mari-ink);
+  fill: var(--acc, var(--mari-ink));
   animation-delay: 2.5s;
 }
 @keyframes fade {
@@ -856,7 +882,7 @@ svg {
     stroke 0.25s;
 }
 .halo {
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
   opacity: 0;
   transform: scale(0.4);
   transform-box: fill-box;
@@ -887,7 +913,7 @@ svg {
 .node.hover .dot,
 .node:focus-visible .dot {
   r: 8.5;
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
 }
 .node:focus-visible .halo,
 .node.hover .halo {
@@ -896,7 +922,7 @@ svg {
 }
 
 .node.mine .dot {
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
   stroke: var(--ink);
   r: 8;
 }
@@ -912,14 +938,14 @@ svg {
   }
 }
 .node.mine .code {
-  fill: var(--mari-ink);
+  fill: var(--acc, var(--mari-ink));
 }
 
 .searching .node.miss .pop {
   opacity: 0.16;
 }
 .searching .node.hit .dot {
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
   r: 9;
 }
 .searching .node.hit .halo {

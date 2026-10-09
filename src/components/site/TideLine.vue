@@ -159,7 +159,7 @@ header p {
 }
 .fill {
   width: var(--now);
-  background: var(--mari);
+  background: var(--acc, var(--mari));
   transform-origin: left;
   animation: tide 1.4s var(--ease-out) 0.3s both;
 }
@@ -213,8 +213,8 @@ header p {
   }
 }
 .mark.past i {
-  background: var(--mari);
-  border-color: var(--mari);
+  background: var(--acc, var(--mari));
+  border-color: var(--acc, var(--mari));
 }
 .mark span {
   position: absolute;
