@@ -66,6 +66,18 @@
     </div>
   </header>
 
+  <!-- Phones: the same two places as a bottom tab bar, as on the public site (TopNav.vue). -->
+  <nav class="lnav-tabs" aria-label="Main">
+    <a href="#/lounge" :aria-current="view === 'home' ? 'page' : undefined">
+      <LineIcon name="house" />
+      <span>Home</span>
+    </a>
+    <a href="#/lounge?view=events" :aria-current="view === 'events' ? 'page' : undefined">
+      <LineIcon name="cal" />
+      <span>Events</span>
+    </a>
+  </nav>
+
   <div v-if="strip" class="lnav-strip" role="region" aria-label="New notice">
     <button type="button" class="lnav-strip-open" @click="emit('notices', strip.id)">
       <span class="lnav-strip-k">Notice</span>
@@ -87,6 +99,7 @@
 <script setup>
 import { computed, onBeforeUnmount, watchEffect } from 'vue';
 import CREST from '../../assets/crest.webp';
+import LineIcon from '../site/LineIcon.vue';
 import * as ev from './events.js';
 import { callName, initialsOf, theme } from './state.js';
 import * as tide from './tide.js';
@@ -114,7 +127,7 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 12px;
-  padding: 0 20px;
+  padding: 0 24px;
   background: var(--bg);
   color: var(--t-1);
   border-bottom: 1px solid color-mix(in srgb, var(--keyline) 55%, transparent);
@@ -137,26 +150,24 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
   height: 34px;
 }
 
+/* The site's top bar (TopNav.vue): wordmark over a small quiet line, links in ink-2 with a
+   marigold rule under the current page, round outlined buttons. */
 :where(html.lounge-active) .lnav-word {
   display: grid;
-  line-height: 1;
+  line-height: 1.05;
   white-space: nowrap;
 }
 
 :where(html.lounge-active) .lnav-word b {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
 }
 
 :where(html.lounge-active) .lnav-word small {
-  margin-top: 3px;
-  font-size: 11px;
-  font-weight: 700;
-  font-stretch: 112.5%;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--t-2);
 }
 
 :where(html.lounge-active) .lnav-links {
@@ -168,32 +179,34 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 40px;
-  padding: 0 14px;
-  border-radius: 999px;
-  font-size: 15px;
-  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 14.5px;
+  font-weight: 550;
   color: var(--t-2);
   text-decoration: none;
+  transition:
+    color 0.2s,
+    background 0.2s;
 }
 
 :where(html.lounge-active) .lnav-links a:hover {
   color: var(--t-1);
+  background: var(--sunk);
 }
 
 :where(html.lounge-active) .lnav-links a[aria-current='page'] {
   color: var(--t-1);
-  font-weight: 700;
 }
 
-/* The current page: a short lamp rule under the word. */
+/* The current page: a short marigold rule under the word. */
 :where(html.lounge-active) .lnav-links a[aria-current='page']::after {
   content: '';
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: 5px;
-  height: 2px;
+  bottom: 2px;
+  height: 2.5px;
   border-radius: 2px;
   background: var(--lamp);
 }
@@ -213,15 +226,26 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
   width: 38px;
   height: 38px;
   padding: 0;
-  border: 1px solid color-mix(in srgb, var(--keyline) 80%, transparent);
+  border: 1.5px solid var(--line-strong);
   border-radius: 50%;
   background: transparent;
   color: var(--t-1);
   cursor: pointer;
+  transition:
+    transform 0.25s var(--ease-spring),
+    background 0.2s;
 }
 
-:where(html.lounge-active) .lnav-btn:hover {
-  background: color-mix(in srgb, var(--t-1) 7%, transparent);
+:where(html.lounge-active) .lnav-btn:hover,
+:where(html.lounge-active) .lnav-me:hover {
+  background: var(--sunk);
+  transform: translateY(-1px);
+}
+
+:where(html.lounge-active) .lnav-btn:focus-visible,
+:where(html.lounge-active) .lnav-me:focus-visible {
+  outline: 2px solid var(--mari);
+  outline-offset: 2px;
 }
 
 :where(html.lounge-active) .lnav-btn svg {
@@ -268,7 +292,6 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
 :where(html.lounge-active) .lnav-me {
   overflow: hidden;
   background: var(--paper);
-  border-color: var(--keyline);
   color: var(--accent);
   font-size: 13px;
   font-weight: 700;
@@ -380,9 +403,18 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
   outline-offset: -2px;
 }
 
-/* Page switch (tide.js adds html.vt-page): the header and strip hold still. */
+/* The bottom tab bar is hidden on desktop; the header's links are hidden on phones. */
+:where(html.lounge-active) .lnav-tabs {
+  display: none;
+}
+
+/* Page switch (tide.js adds html.vt-page): the header, bar and strip hold still. */
 html:where(.lounge-active).vt-page .lnav {
   view-transition-name: lounge-nav;
+}
+
+html:where(.lounge-active).vt-page .lnav-tabs {
+  view-transition-name: lounge-tabs;
 }
 
 html:where(.lounge-active).vt-page .lnav-strip {
@@ -390,18 +422,58 @@ html:where(.lounge-active).vt-page .lnav-strip {
 }
 
 @media (max-width: 759px) {
+  :where(html.lounge-active) {
+    --tab-h: 64px;
+  }
+
+  :where(html.lounge-active) main#main {
+    padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  }
+
   :where(html.lounge-active) .lnav {
     gap: 6px;
-    padding: 0 12px;
+    padding: 0 16px;
   }
 
-  :where(html.lounge-active) .lnav-links a {
-    padding: 0 10px;
+  :where(html.lounge-active) .lnav-links {
+    display: none;
   }
 
-  :where(html.lounge-active) .lnav-links a[aria-current='page']::after {
-    left: 10px;
-    right: 10px;
+  /* Same look as the site's tab bar (TopNav.vue .tabbar): fixed to the bottom, icon over label,
+     the current page on a soft marigold tile. */
+  :where(html.lounge-active) .lnav-tabs {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid color-mix(in srgb, var(--keyline) 55%, transparent);
+  }
+
+  :where(html.lounge-active) .lnav-tabs a {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    padding: 6px 0;
+    border-radius: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--t-2);
+    text-decoration: none;
+  }
+
+  :where(html.lounge-active) .lnav-tabs a[aria-current='page'] {
+    color: var(--t-1);
+    background: var(--mari-soft);
+  }
+
+  :where(html.lounge-active) .lnav-tabs svg {
+    width: 22px;
+    height: 22px;
   }
 
   :where(html.lounge-active) .lnav-acts {

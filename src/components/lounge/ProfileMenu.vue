@@ -2,7 +2,7 @@
   The profile menu from the avatar: a sheet of ghat paper with the band on top. Who you are
   (preferred name as the title, never the roll number; then roll, region and Regional
   Coordinator), then My certificates, Edit name, Retake the tour, the theme and Sign out.
-  Hangs from the header on wide screens; a full-width panel from the top on phones.
+  Comes down from under the header on every width (the drop variant in LoungeDialog.vue).
 -->
 <template>
   <LoungeDialog ref="dlg" variant="drop" labelledby="pm-h" @close="emit('close')">

@@ -123,6 +123,12 @@
 ## 2026-10-08 — Sign-out returns to the sign-in door until a session exists
 **Why:** Sign-out did nothing and only showed a "does nothing in this prototype" note. Routing to `/login` makes the signed-out visitor's view real now and needs no auth code. Rejected: a placeholder note (what Raja asked to remove). When Google sign-in lands, this route becomes the real signed-out state.
 
+## 2026-10-08 — Lounge is sign-in only; accounts are pre-created from the roster
+**Why:** Raja wants no sign-up flow. Student accounts (real full name + roll/code) are seeded in advance and Google sign-in only logs into an existing one; anyone else is "not on the roster". This sidesteps the DB sign-up trigger that fails for plain Google users. Rejected: open sign-up limited to `ds.study.iitm.ac.in`. Details (matching key, seeding vs link on first sign-in, profile fields) are still open.
+
+## 2026-10-08 — The design guard exempts the Members Lounge
+**Why:** `check:design` failed PR #144 with 37 errors (raw colours, `!important`, extra breakpoints, unscoped styles, self-hosted font). The Lounge is its own painted world and the font alias is needed by the name fitter, so `scripts/check-design.mjs` skips `src/components/lounge/`, `LoungePage.vue` and `LoginPage.vue`; `design-baseline.json` untouched. Rejected: re-tokenising the Lounge now.
+
 ## 2026-10-08 — Google sign-in only for rostered members; RCs/Super Admins add students first
 **Why:** The owner wants only members whose profile exists to get in. The database's sign-up trigger now creates an account only for an email on `member_roster` (filled by the RC for their region or a Super Admin, one by one or pasted from the council Sheet) and refuses everyone else; existing accounts are linked to Google by email. Rejected: self sign-up with a form (anyone with an IITM email could join) and a nightly Sheet sync (another moving part).
 

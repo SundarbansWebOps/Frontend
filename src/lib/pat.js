@@ -13,14 +13,18 @@ export const ASSET = {
   grain: u('grain.webp'),
   brush: u('brush.webp'),
   brushV: u('brush-v.webp'),
+  bank: u('tiger-bank.webp'),
+  // The Members Lounge's boatman, day art: the same boat the story returns to.
+  boat: new URL('../components/lounge/art/r6/boat-day.webp', import.meta.url).href,
 };
 
-// Forest plate geometry (source px) for the water canvas: the river band and the fishing boat.
+// Forest plate geometry (plate px) for the water canvas and the boat. The boat is the Lounge's
+// day sprite (800x328), placed by its left/top and width (height follows the sprite's ratio).
 export const FOREST = {
   w: 1536,
   h: 918,
   river: 716,
-  boat: { x: 300, y: 555, w: 460, h: 260 },
+  boat: { x: 300, y: 600, w: 520 },
 };
 
 const p = (file, box, cls, extra = {}) => ({ src: u(file), cls, ...box, ...extra });

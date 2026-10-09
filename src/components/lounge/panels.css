@@ -91,17 +91,28 @@
   animation-name: ld-side;
 }
 
-/* Hangs from the header, under its button, right-aligned with the header's actions. */
+/* Comes down from the header's bottom rule, right-aligned with the header's actions, on every
+   width. The header stays in view, so the button that opened it stays visible. */
 :where(html.lounge-active) .ld-drop {
   inset: calc(var(--nav-h) + 8px) 14px auto auto;
   margin: 0;
   width: min(360px, calc(100vw - 28px));
   max-height: calc(100dvh - var(--nav-h) - 22px);
-  transform-origin: top right;
 }
 
+/* A reveal from the top edge: the sheet is unrolled downwards. The inset keeps the shadow
+   and the band's rule outside the box; the clip is removed once the reveal ends. */
 :where(html.lounge-active) .ld-drop[open] {
-  animation: m-drop-in 220ms var(--ease-out) both;
+  animation: ld-drop-in 240ms var(--ease-out) backwards;
+}
+
+@keyframes ld-drop-in {
+  from {
+    clip-path: inset(0 -40px 100% -40px);
+  }
+  to {
+    clip-path: inset(0 -40px -60px -40px);
+  }
 }
 
 :where(html.lounge-active) .ld-drop .ld-panel {
@@ -896,10 +907,10 @@
 
   :where(html.lounge-active) .ld-drop,
   :where(html.lounge-active) .ld-drop.np-dlg {
-    inset: 8px 8px auto 8px;
+    inset: calc(var(--nav-h) + 8px) 8px auto 8px;
     width: auto;
     max-width: none;
-    max-height: calc(100dvh - 16px);
+    max-height: calc(100dvh - var(--nav-h) - 16px);
   }
 
   :where(html.lounge-active) .ld-drop .ld-x {
