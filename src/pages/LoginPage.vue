@@ -1,26 +1,31 @@
-<!-- Local entry for now; replace the button action with Google sign-in later. -->
+<!-- The sign-in door: Google sign-in for members on the house roster, then into the Lounge. -->
 <template>
   <main class="sign-in" :class="{ leaving }" :aria-busy="busy">
     <section aria-labelledby="login-h">
       <LoungeDoor entry>
         <h1 id="login-h">The lounge</h1>
         <button type="button" class="enter" :disabled="busy" @click="signIn">
-          {{ busy ? 'Entering…' : 'Sign in' }}
+          {{ busy ? (auth.session ? 'Entering…' : 'Opening Google…') : label }}
           <LineIcon name="arrow" />
         </button>
-        <p v-if="error" class="error" role="alert">{{ error }}</p>
+        <p v-if="error || auth.error" class="error" role="alert">{{ error || auth.error }}</p>
       </LoungeDoor>
     </section>
   </main>
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import LoungeDoor from '../components/site/LoungeDoor.vue';
 import LineIcon from '../components/site/LineIcon.vue';
+import { auth, authReady, signInWithGoogle, takeNext } from '../lib/auth.js';
 
 const router = useRouter();
+const route = useRoute();
+// Only members-only paths are honoured, so a crafted ?next= cannot send anyone off-site.
+const safeNext = (p) => (typeof p === 'string' && /^\/(lounge|admin)\b/.test(p) ? p : '/lounge');
+const label = computed(() => (auth.session ? 'Enter the lounge' : 'Sign in with Google'));
 document.documentElement.classList.add('sign-in-active');
 const busy = ref(false);
 const leaving = ref(false);
@@ -30,10 +35,35 @@ let fadeTimer;
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Back from Google with a session: carry on to where the member was going.
+onMounted(async () => {
+  await authReady();
+  const next = takeNext();
+  if (!disposed && auth.session && auth.profile && next) enter(safeNext(next));
+});
+
 async function signIn() {
   if (busy.value) return;
+  if (!auth.session) {
+    busy.value = true;
+    error.value = '';
+    try {
+      await signInWithGoogle(safeNext(route.query.next));
+    } catch {
+      busy.value = false;
+    }
+    return;
+  }
+  enter(safeNext(route.query.next));
+}
+
+async function enter(next) {
   busy.value = true;
   error.value = '';
+  if (next.startsWith('/admin')) {
+    router.push(next).catch(() => fail());
+    return;
+  }
   try {
     // Load both scenes before fading, so a slow chunk cannot leave an empty screen.
     const [, , state] = await Promise.all([

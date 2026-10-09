@@ -1,5 +1,6 @@
 import { nextTick } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { auth, authReady, canAdmin } from '../lib/auth.js';
 
 // Every route is lazy so a visitor to "/" downloads only the homepage chunk.
 // Paths must stay literal strings — Vite needs them statically analysable to
@@ -10,7 +11,19 @@ const routes = [
   { path: '/events', component: () => import('../pages/EventsPage.vue') },
   { path: '/house', component: () => import('../pages/HousePage.vue') },
   { path: '/teams', component: () => import('../pages/TeamsPage.vue') },
-  { path: '/lounge', name: 'Lounge', component: () => import('../pages/LoungePage.vue') },
+  {
+    path: '/lounge',
+    name: 'Lounge',
+    component: () => import('../pages/LoungePage.vue'),
+    meta: { member: true },
+  },
+  // The admin lounge: Regional Coordinators and Super Admins, opened from inside the Lounge.
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('../pages/AdminPage.vue'),
+    meta: { member: true, admin: true },
+  },
   { path: '/login', name: 'Login', component: () => import('../pages/LoginPage.vue') },
   { path: '/verify-certificate', component: () => import('../pages/VerifyPage.vue') },
 
@@ -113,6 +126,15 @@ export const router = createRouter({
     }
     return savedPosition ?? { top: 0 };
   },
+});
+
+// Members-only pages need a session (and the admin lounge an RC or Super Admin role). The
+// database enforces the same rules on every query; this only decides which page to show.
+router.beforeEach(async (to) => {
+  if (!to.meta.member) return;
+  await authReady();
+  if (!auth.session || !auth.profile) return { path: '/login', query: { next: to.fullPath } };
+  if (to.meta.admin && !canAdmin.value) return { path: '/lounge' };
 });
 
 // Page changes cross-fade where the browser supports view transitions. The old page is

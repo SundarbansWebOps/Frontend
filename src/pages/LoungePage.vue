@@ -8,6 +8,9 @@ import { onBeforeUnmount } from 'vue';
 import LoungeApp from '../components/lounge/App.vue';
 import { nameCardOpen, theme, tourSeen } from '../components/lounge/state.js';
 import { theme as siteTheme } from '../lib/theme.js';
+import { member } from '../components/lounge/fixtures.js';
+import { auth } from '../lib/auth.js';
+import { lower } from '../lib/house.js';
 import { activate, dispose } from '../components/lounge/tide.js';
 import { activateMotion, stopMotion } from '../components/lounge/home/motion.js';
 import { startClock, stopClock } from '../components/lounge/events.js';
@@ -18,6 +21,22 @@ import '../components/lounge/tour.css';
 import '../components/lounge/tokens.css';
 import '../components/lounge/cards.css';
 import '../components/lounge/panels.css';
+
+// The signed-in member's own details replace the sample member (the router guard has loaded
+// them). The coordinator comes from the public council list for their region.
+if (auth.profile) {
+  const regionName = auth.profile.region?.name ?? '';
+  const rc = lower.find(
+    (p) => p.region === regionName || (regionName === 'Delhi NCR' && p.region === 'Delhi')
+  );
+  Object.assign(member, {
+    full_name: auth.profile.full_name,
+    email: auth.profile.email,
+    roll: auth.profile.member_code.toUpperCase(),
+    region: { code: auth.profile.region?.code ?? '', name: regionName },
+    coordinator: { name: rc?.name ?? 'Your Regional Coordinator', role: 'Regional Coordinator' },
+  });
+}
 
 const root = document.documentElement;
 root.classList.add('lounge-active');

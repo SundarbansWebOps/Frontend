@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { mockSupabase } from './supabase-mock.js';
+
+// The Lounge needs a signed-in member; Supabase is mocked (see supabase-mock.js).
+test.beforeEach(({ page }) => mockSupabase(page));
 
 async function returningMember(page) {
   await page.addInitScript(() => {

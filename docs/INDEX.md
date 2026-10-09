@@ -19,6 +19,7 @@
 | specs/ | Numbered specs for complex features (see /spec) |
 | specs/001-codebase-overhaul.md | Spec 001 — overhaul goals, phases, constraints |
 | specs/002-lounge-backend-needs.md | Spec 002 — what the Lounge needs from the backend (tour seen flag, preferred name, registration, notices, WhatsApp groups, certificates) |
+| specs/003-admin-lounge-and-sign-in.md | Spec 003 — Google sign-in (roster only), roles, two-person rule, admin lounge, dashboard setup steps |
 | specs/001-tickets.md | Spec 001 — ticket list + **live status board** (T-01…T-29) |
 | reports/sundarbans-rag-chatbot-audit-2026-09-03.md | Live RAG chatbot audit findings and probes |
 | sessions/2026-10-07.md | Lounge A/D deployment, D→B direction, E completion and review gates |

@@ -128,3 +128,19 @@
 
 ## 2026-10-08 — The design guard exempts the Members Lounge
 **Why:** `check:design` failed PR #144 with 37 errors (raw colours, `!important`, extra breakpoints, unscoped styles, self-hosted font). The Lounge is its own painted world and the font alias is needed by the name fitter, so `scripts/check-design.mjs` skips `src/components/lounge/`, `LoungePage.vue` and `LoginPage.vue`; `design-baseline.json` untouched. Rejected: re-tokenising the Lounge now.
+
+## 2026-10-08 — Google sign-in only for rostered members; RCs/Super Admins add students first
+**Why:** The owner wants only members whose profile exists to get in. The database's sign-up trigger now creates an account only for an email on `member_roster` (filled by the RC for their region or a Super Admin, one by one or pasted from the council Sheet) and refuses everyone else; existing accounts are linked to Google by email. Rejected: self sign-up with a form (anyone with an IITM email could join) and a nightly Sheet sync (another moving part).
+
+## 2026-10-08 — Two-person rule for every change to student data; RCs manage all events
+**Why:** The owner asked that changes by an RC or by a Super Admin both need another Super Admin's approval, and that changing RCs also needs approval. All edits, removals, status and position changes are requests; approval applies them. Direct `sa_*` and position RPCs are no longer callable from the site. RCs now manage every event, not only house-wide ones (owner's call).
+
+## 2026-10-08 — Admin lounge at /admin, entered from inside the Lounge; supabase-js added (pinned)
+**Why:** The owner chose a separate `/admin` route reachable from the Lounge for RCs and Super Admins only, built in the public site's design system (tokens, Teams page skeleton). `@supabase/supabase-js` 2.117.2 was added with the owner's go-ahead (design skill's dependency limit); it loads lazily so public pages stay light (entry ~91 KB gzip, supabase chunk 59 KB). Rejected: hand-written Auth/REST calls (more code, easier to get auth wrong).
+
+## 2026-10-08 — Phone number is optional
+**Why:** The owner asked for it. `members.phone`, `member_roster.phone` and `blacklist_entries.phone_hash` are nullable; a given phone is still validated (E.164) and unique; a blank one clears it. Search no longer drops members without a phone, and blacklisting someone without a phone matches by email only.
+
+## 2026-10-08 — Login email changes need a second Super Admin; security headers on Vercel
+**Why:** The owner asked that `change-member-contact` be filed by one Super Admin and approved by another. The function now executes only a `member_contact_change` request (id) and refuses its filer; the old direct database path is revoked. `vercel.json` adds a CSP and the usual hardening headers; a Playwright test replays the CSP so a changed inline script cannot silently break the site. Edge Function CORS accepts one-label wildcards for Vercel previews (tokens are bearer, not cookies); Auth redirect URLs stay exact.
+

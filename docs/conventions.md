@@ -1,9 +1,10 @@
 # Conventions — Sundarbans House
-- Stack: Vue 3 (SFC) · vue-router 4 (hash history) · Vite 6 · no backend, no TypeScript
+- Stack: Vue 3 (SFC) · vue-router 4 (hash history) · Vite 6 · Supabase (`@supabase/supabase-js`, pinned) · no TypeScript
 - Run the app: `npm run dev`
 - Build: `npm run build` · Preview build: `npm run preview`
 - Local gates (same idea as CI): `npm run format:check` · `npm run lint` · `npm run build` · `npm run test:smoke` (Playwright route smoke; needs prior build + Chromium)
-- Env: copy `.env.example` → `.env`. `VITE_GOOGLE_CLIENT_ID` / `VITE_MEMBERSHIP_CHECK_URL` only served the retired login; members' sign-in is "coming soon".
+- Env: copy `.env.example` → `.env` (optional; Supabase defaults to production). Members sign in with Google through Supabase Auth; see `docs/specs/003-admin-lounge-and-sign-in.md`. `VITE_GOOGLE_CLIENT_ID` / `VITE_MEMBERSHIP_CHECK_URL` are retired.
+- Supabase calls: only through `src/lib/supabase.js` (lazy) via `src/lib/auth.js` / `src/lib/admin.js`. Browser tests mock Supabase (`e2e/supabase-mock.js`); never point tests at the live project.
 - Theme: light/dark via `data-theme` on `<html>` (`src/lib/theme.js` + inline script in `index.html`); colours are tokens in `src/assets/tokens.css`. Typeface: Anek Latin.
 - Naming / structure notes:
   - Pages live in `src/pages/` and are named `*Page.vue`; their components in `src/components/site/`; shared state and data adapters in `src/lib/` (`store.js`, `events.js`, `house.js`, `courses.js`, `theme.js`).
