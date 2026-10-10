@@ -97,17 +97,33 @@ export const byCode = Object.fromEntries(courses.map((c) => [c.code, c]));
 // resources that exist under the Data Science code.
 export const byName = Object.fromEntries(courses.map((c) => [c.name.toLowerCase(), c]));
 
-// ---- SAMPLE term calendar (Oct 2026 term). Replace with Supabase data (no table for term dates yet). ----
+// ---- 26F3 term dates supplied for the Resources calendar. ----
 export const TODAY = new Date();
 export const TERM = {
-  label: 'Oct 2026 term',
+  label: '26F3',
   start: new Date('2026-10-02T00:00:00+05:30'),
   end: new Date('2027-01-10T00:00:00+05:30'),
   weeks: 12,
 };
 export const DATES = [
-  { id: 'q1', label: 'Quiz 1', short: 'Quiz 1', date: '2026-11-15', kind: 'exam', exam: 'Quiz 1' },
-  { id: 'q2', label: 'Quiz 2', short: 'Quiz 2', date: '2026-12-05', kind: 'exam', exam: 'Quiz 2' },
+  {
+    id: 'q1',
+    label: 'Quiz 1',
+    short: 'Quiz 1',
+    date: '2026-11-15',
+    kind: 'exam',
+    exam: 'Quiz 1',
+    detail: '2–6 pm · In person at centres',
+  },
+  {
+    id: 'q2',
+    label: 'Quiz 2',
+    short: 'Quiz 2',
+    date: '2026-12-05',
+    kind: 'exam',
+    exam: 'Quiz 2',
+    detail: '2–6 pm · In person at centres',
+  },
   {
     id: 'et',
     label: 'End term',
@@ -115,6 +131,7 @@ export const DATES = [
     date: '2027-01-10',
     kind: 'exam',
     exam: 'End term',
+    detail: '9 am–12 pm and 2–5 pm · In person at centres',
   },
 ].map((d) => ({ ...d, at: new Date(`${d.date}T09:00:00+05:30`) }));
 

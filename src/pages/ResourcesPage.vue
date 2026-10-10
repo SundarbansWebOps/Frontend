@@ -382,8 +382,6 @@ function launch(id) {
 .side {
   display: grid;
   gap: 14px;
-  position: sticky;
-  top: 20px;
 }
 
 /* ---------- flow: crumbs, levels, courses ---------- */

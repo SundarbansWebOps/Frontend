@@ -1,104 +1,131 @@
-<!-- Monthly view for the sample quiz dates shown on the Resources page. -->
 <template>
-  <section class="calendar">
-    <header class="calendar-head">
-    </header>
+  <section class="calendar" aria-label="26F3 calendar">
+    <CalendarGrid
+      :month="month"
+      :events-by-date="eventsByDate"
+      :today-key="todayKey"
+      :selected-date="selectedDate"
+      :day-label="dayLabel"
+      @shift="shiftMonth"
+      @select="selectedDate = $event"
+    />
 
-    <div class="month-nav">
-      <button type="button" aria-label="Previous month" @click="shiftMonth(-1)">
-        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12.5 4.5-5 5 5 5" /></svg>
-      </button>
-      <h3>{{ monthLabel }}</h3>
-      <button type="button" aria-label="Next month" @click="shiftMonth(1)">
-        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7.5 4.5 5 5-5 5" /></svg>
-      </button>
-    </div>
-
-    <div class="weekdays" aria-hidden="true">
-      <span v-for="day in weekdays" :key="day">{{ day }}</span>
-    </div>
-    <div class="days" aria-label="Days in the selected month">
-      <template v-for="cell in calendarDays" :key="cell.key">
-        <span v-if="!cell.day" class="blank" />
-        <button
-          v-else
-          type="button"
-          class="day"
-          :class="{
-            event: eventsByDate.has(cell.key),
-            selected: selectedDate === cell.key,
-            today: todayKey === cell.key,
-            weekend: cell.weekend,
-          }"
-          :aria-label="dayLabel(cell)"
-          :aria-current="todayKey === cell.key ? 'date' : undefined"
-          :aria-pressed="selectedDate === cell.key"
-          @click="selectedDate = cell.key"
-        >
-          {{ cell.day }}
-          <i v-if="eventsByDate.has(cell.key)" aria-hidden="true" />
-        </button>
-      </template>
-    </div>
-
-    <p v-if="selectedEvent" class="date-detail" aria-live="polite">
-      <b>{{ selectedEvent.label }}</b>
-      <span>{{ formatDate(selectedEvent.date) }}</span>
+    <p v-if="selectedEvents.length" class="selected-summary" aria-live="polite">
+      <b>{{ formatDate(selectedDate) }}</b>
+      <span>{{ selectedEvents.map((event) => event.title).join(' · ') }}</span>
     </p>
 
-    <button
-      type="button"
-      class="open-calendar"
-      :aria-expanded="showDates"
-      @click="showDates = !showDates"
-    >
-      {{ showDates ? 'Hide key dates' : 'Open calendar' }}
+    <button ref="openButton" type="button" class="open-calendar" @click="openCalendar">
+      Open calendar
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4" /></svg>
     </button>
 
-    <ul v-if="showDates" class="key-dates">
-      <li v-for="date in DATES" :key="date.id">
-        <span>{{ date.label }}</span>
-        <time :datetime="date.date">{{ formatDate(date.date) }}</time>
-      </li>
-    </ul>
+    <Teleport to="body">
+      <Transition name="calendar-overlay">
+        <div v-if="showCalendar" class="calendar-backdrop" @click.self="closeCalendar">
+          <section
+            ref="dialog"
+            class="calendar-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="calendar-title"
+            tabindex="-1"
+          >
+            <header class="dialog-head">
+              <div>
+                <p class="dialog-kicker mono">{{ TERM.label }}</p>
+                <h2 id="calendar-title">Term calendar</h2>
+              </div>
+              <button
+                class="close"
+                type="button"
+                aria-label="Close calendar"
+                @click="closeCalendar"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" /></svg>
+              </button>
+            </header>
 
-    <p class="sample mono">SAMPLE DATES · {{ TERM.label.toUpperCase() }}</p>
+            <div class="dialog-body">
+              <div class="month-panel">
+                <CalendarGrid
+                  :month="month"
+                  :events-by-date="eventsByDate"
+                  :today-key="todayKey"
+                  :selected-date="selectedDate"
+                  :day-label="dayLabel"
+                  expanded
+                  @shift="shiftMonth"
+                  @select="selectedDate = $event"
+                />
+                <div v-if="selectedEvents.length" class="selected-events" aria-live="polite">
+                  <h3>{{ formatDate(selectedDate) }}</h3>
+                  <ul>
+                    <li v-for="event in selectedEvents" :key="event.id">
+                      <b>{{ event.title }}</b>
+                      <span v-if="event.detail">{{ event.detail }}</span>
+                      <time v-if="event.start" :datetime="event.start">{{
+                        formatRange(event)
+                      }}</time>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <section class="event-panel" aria-labelledby="dates-title">
+                <h3 id="dates-title">Key dates</h3>
+                <ul class="key-dates">
+                  <li v-for="event in orderedEvents" :key="event.id">
+                    <span class="date-label">
+                      <b>{{ event.title }}</b>
+                      <small v-if="event.detail">{{ event.detail }}</small>
+                    </span>
+                    <time v-if="event.start" :datetime="event.start">{{ formatRange(event) }}</time>
+                    <span v-else class="undated">Date to be decided</span>
+                  </li>
+                </ul>
+              </section>
+            </div>
+          </section>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import { DATES, TERM, TODAY, nextDate } from '../../lib/courses.js';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import CalendarGrid from './CalendarGrid.vue';
+import { TERM_CALENDAR } from '../../data/term-calendar-26f3.js';
+import { TERM, TODAY } from '../../lib/courses.js';
 
-const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const orderedEvents = [...TERM_CALENDAR].sort((a, b) =>
+  (a.start ?? '9999').localeCompare(b.start ?? '9999')
+);
 const dateFromKey = (key) => {
   const [year, month, day] = key.split('-').map(Number);
   return new Date(year, month - 1, day);
 };
-const initialDate = nextDate?.date ? dateFromKey(nextDate.date) : TODAY;
+const todayKey = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+const nextEvent = orderedEvents.find((event) => event.start && event.start >= todayKey);
+const initialDate = nextEvent ? dateFromKey(nextEvent.start) : TODAY;
 const month = ref(new Date(initialDate.getFullYear(), initialDate.getMonth(), 1));
 const selectedDate = ref('');
-const showDates = ref(false);
+const showCalendar = ref(false);
+const dialog = ref(null);
+const openButton = ref(null);
 const monthLabel = computed(() =>
   new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(month.value)
 );
-const todayKey = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
-const eventsByDate = new Map(DATES.map((date) => [date.date, date]));
-const selectedEvent = computed(() => eventsByDate.get(selectedDate.value));
-const calendarDays = computed(() => {
-  const year = month.value.getFullYear();
-  const monthIndex = month.value.getMonth();
-  const offset = new Date(year, monthIndex, 1).getDay();
-  const count = new Date(year, monthIndex + 1, 0).getDate();
-  const cells = Array.from({ length: Math.ceil((offset + count) / 7) * 7 }, (_, index) => {
-    const day = index - offset + 1;
-    if (day < 1 || day > count) return { key: `blank-${index}`, day: 0 };
-    const key = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return { key, day, weekend: index % 7 === 0 || index % 7 === 6 };
-  });
-  return cells;
-});
+const eventsByDate = new Map();
+for (const event of TERM_CALENDAR) {
+  for (const key of new Set([event.start, event.end].filter(Boolean))) {
+    const list = eventsByDate.get(key) ?? [];
+    list.push(event);
+    eventsByDate.set(key, list);
+  }
+}
+const selectedEvents = computed(() => eventsByDate.get(selectedDate.value) ?? []);
 
 function shiftMonth(amount) {
   month.value = new Date(month.value.getFullYear(), month.value.getMonth() + amount, 1);
@@ -111,12 +138,46 @@ function formatDate(key) {
   );
 }
 
+function formatRange(event) {
+  if (!event.start) return event.detail ?? 'Date to be decided';
+  const from = formatDate(event.start);
+  return event.end && event.end !== event.start ? `${from} – ${formatDate(event.end)}` : from;
+}
+
 function dayLabel(cell) {
-  const date = eventsByDate.get(cell.key);
-  return date
-    ? `${cell.day}, ${monthLabel.value}: ${date.label}`
+  const events = eventsByDate.get(cell.key) ?? [];
+  return events.length
+    ? `${cell.day}, ${monthLabel.value}: ${events.map((event) => event.title).join(', ')}`
     : `${cell.day}, ${monthLabel.value}`;
 }
+
+async function openCalendar() {
+  showCalendar.value = true;
+  document.body.style.overflow = 'hidden';
+  await nextTick();
+  dialog.value?.focus();
+}
+
+function closeCalendar() {
+  showCalendar.value = false;
+}
+
+watch(showCalendar, (open) => {
+  if (!open) {
+    document.body.style.overflow = '';
+    nextTick(() => openButton.value?.focus());
+  }
+});
+
+function onKeydown(event) {
+  if (event.key === 'Escape' && showCalendar.value) closeCalendar();
+}
+
+onMounted(() => document.addEventListener('keydown', onKeydown));
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onKeydown);
+  document.body.style.overflow = '';
+});
 </script>
 
 <style scoped>
@@ -127,144 +188,17 @@ function dayLabel(cell) {
   background: var(--card);
   box-shadow: var(--shadow);
 }
-.calendar-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
-}
-.calendar-head h2 {
-  margin: 0;
-  color: var(--ink-2);
-  font-size: 16px;
-  font-weight: 650;
-}
-.calendar-mark {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--mari);
-  box-shadow: 0 0 0 4px var(--mari-soft);
-}
-.month-nav {
+.selected-summary {
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) 36px;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 16px 8px;
-}
-.month-nav h3 {
-  margin: 0;
-  text-align: center;
-  color: var(--mari-ink);
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-.month-nav button {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--ink-2);
-  cursor: pointer;
-  transition:
-    background 0.2s,
-    color 0.2s;
-}
-.month-nav button:hover {
-  background: var(--mari-soft);
-  color: var(--mari-ink);
-}
-.month-nav svg {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.weekdays,
-.days {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  padding: 0 18px;
-  text-align: center;
-}
-.weekdays {
-  padding-top: 7px;
-  color: var(--ink-3);
-  font-size: 11.5px;
-  font-weight: 650;
-}
-.days {
-  padding-top: 7px;
-  padding-bottom: 12px;
-}
-.day,
-.blank {
-  position: relative;
-  display: grid;
-  place-items: center;
-  justify-self: center;
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 50%;
-}
-.day {
-  background: transparent;
-  color: var(--ink-2);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  transition:
-    background 0.18s,
-    color 0.18s,
-    transform 0.18s var(--ease-out);
-}
-.day.weekend {
-  color: var(--mari-ink);
-}
-.day:hover {
-  background: var(--sunk);
-}
-.day.event::after {
-  content: '';
-  position: absolute;
-  bottom: 3px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--verm);
-}
-.day.selected {
-  background: var(--mari-soft);
-  color: var(--mari-ink);
-}
-.day.today {
-  box-shadow: inset 0 0 0 1px var(--line-strong);
-}
-.date-detail {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 20px 12px;
-  padding: 10px 12px;
+  gap: 2px;
+  margin: 0 18px 10px;
+  padding: 8px 10px;
   border-radius: 10px;
   background: var(--sunk);
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: 12px;
 }
-.date-detail span {
+.selected-summary span {
   color: var(--ink-3);
 }
 .open-calendar {
@@ -272,15 +206,15 @@ function dayLabel(cell) {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: calc(100% - 40px);
-  min-height: 42px;
-  margin: 0 20px 14px;
+  width: calc(100% - 36px);
+  min-height: 38px;
+  margin: 0 18px 14px;
   border: 0;
   border-radius: 99px;
   background: var(--mari-soft);
   color: var(--mari-ink);
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 650;
   cursor: pointer;
   transition:
@@ -292,39 +226,195 @@ function dayLabel(cell) {
   background: var(--mari);
 }
 .open-calendar svg {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.key-dates {
+.calendar-backdrop {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
   display: grid;
-  gap: 8px;
-  margin: 0 20px 14px;
-  padding: 12px;
+  place-items: center;
+  padding: 5vh 5vw;
+  background: color-mix(in srgb, var(--ink) 58%, transparent);
+  backdrop-filter: blur(7px);
+}
+.calendar-dialog {
+  width: min(1100px, 90vw);
+  max-height: 90vh;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 22px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  transform-origin: bottom right;
+  outline: none;
+}
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.dialog-kicker {
+  margin: 0 0 2px;
+  color: var(--mari-ink);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.dialog-head h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+.close {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.close svg {
+  width: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.dialog-body {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.5fr);
+  gap: 20px;
+  max-height: calc(90vh - 78px);
+  overflow: auto;
+  padding: 20px;
+}
+.month-panel,
+.event-panel {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+}
+.event-panel {
+  overflow: hidden;
+}
+.event-panel > h3,
+.selected-events > h3 {
+  margin: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 15px;
+  font-weight: 700;
+}
+.selected-events {
+  margin: 0 16px 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--sunk);
+}
+.selected-events ul,
+.key-dates {
+  display: grid;
+  gap: 0;
+  max-height: 55vh;
+  overflow: auto;
+  margin: 0;
+  padding: 0 16px;
   list-style: none;
 }
+.selected-events li,
 .key-dates li {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 14px;
+  padding: 11px 0;
   color: var(--ink-2);
   font-size: 13px;
 }
-.key-dates time {
+.selected-events li + li,
+.key-dates li + li {
+  border-top: 1px solid var(--line);
+}
+.selected-events li > span,
+.date-label small {
   color: var(--ink-3);
+}
+.selected-events time,
+.key-dates time,
+.undated {
+  flex: none;
+  color: var(--mari-ink);
   font-variant-numeric: tabular-nums;
 }
-.sample {
-  margin: 0;
-  padding: 0 20px 16px;
-  color: var(--ink-3);
-  font-size: 9.5px;
-  letter-spacing: 0.13em;
+.date-label {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.date-label small {
+  font-size: 11px;
+}
+.calendar-overlay-enter-active,
+.calendar-overlay-leave-active {
+  transition: opacity 0.28s var(--ease-out);
+}
+.calendar-overlay-enter-active .calendar-dialog,
+.calendar-overlay-leave-active .calendar-dialog {
+  transition:
+    transform 0.42s var(--ease-spring),
+    opacity 0.24s var(--ease-out);
+}
+.calendar-overlay-enter-from,
+.calendar-overlay-leave-to {
+  opacity: 0;
+}
+.calendar-overlay-enter-from .calendar-dialog,
+.calendar-overlay-leave-to .calendar-dialog {
+  opacity: 0.4;
+  transform: translate(14vw, 10vh) scale(0.35);
+}
+@media (max-width: 760px) {
+  .calendar-backdrop {
+    padding: 3vh 4vw;
+  }
+  .calendar-dialog {
+    width: 92vw;
+    max-height: 94vh;
+  }
+  .dialog-body {
+    grid-template-columns: minmax(0, 1fr);
+    max-height: calc(94vh - 78px);
+    padding: 12px;
+  }
+  .dialog-head {
+    padding: 14px 18px;
+  }
+  .event-panel .key-dates {
+    max-height: 38vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .calendar-overlay-enter-active,
+  .calendar-overlay-leave-active,
+  .calendar-overlay-enter-active .calendar-dialog,
+  .calendar-overlay-leave-active .calendar-dialog {
+    transition: none;
+  }
 }
 </style>
