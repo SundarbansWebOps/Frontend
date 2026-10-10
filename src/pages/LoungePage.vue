@@ -8,7 +8,7 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import LoungeApp from '../components/lounge/App.vue';
-import { nameCardOpen, theme, tourSeen } from '../components/lounge/state.js';
+import { loungeArrived, nameCardOpen, theme, tourSeen } from '../components/lounge/state.js';
 import { theme as siteTheme } from '../lib/theme.js';
 import { fillMember, hydrateLounge, lounge } from '../components/lounge/session.js';
 import { auth, errorText } from '../lib/auth.js';
@@ -28,10 +28,11 @@ const bootError = ref('');
 
 if (auth.profile) fillMember(auth.profile);
 
+const arrival = !loungeArrived.value;
 const root = document.documentElement;
 root.classList.add('lounge-active');
 let arrivalTimer;
-if (history.state?.signIn) {
+if (arrival && history.state?.signIn) {
   root.classList.add('sign-in-arrival');
   arrivalTimer = setTimeout(() => root.classList.remove('sign-in-arrival'), 900);
 }
@@ -49,7 +50,7 @@ onMounted(async () => {
   }
   ready.value = true;
   window.dispatchEvent(new Event('lounge-ready'));
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && tourSeen.value) {
+  if (arrival && !matchMedia('(prefers-reduced-motion: reduce)').matches && tourSeen.value) {
     root.classList.add('building');
   }
 });

@@ -6,6 +6,8 @@ import { member } from './fixtures.js';
 import { boot } from './boot.js';
 export { boot };
 
+// Document lifetime only: route returns stay settled; a browser refresh replays arrival.
+export const loungeArrived = ref(false);
 export const theme = ref(boot.theme);
 export const rosterName = computed(() => member.full_name ?? '');
 export const preferredName = ref(null);

@@ -268,3 +268,45 @@ test('Lounge font registration leaves the public site font family intact', async
     )
   ).toBe(0);
 });
+
+test('Lounge arrival plays once per document, not after returning from a group form', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const id = '31a00000-0000-4000-8000-000000000002';
+  await returningMember(page, {
+    data: {
+      list_lounge_forms: [
+        {
+          id,
+          title: 'Esports',
+          form_kind: 'group',
+          group_label: 'Esports',
+          fields: [],
+          is_open: true,
+          accepting_responses: true,
+          submitted: false,
+          region_id: null,
+          community_id: 3,
+          event_id: null,
+        },
+      ],
+    },
+  });
+  await expect(page.locator('.home')).toHaveClass(/intro/);
+  await page.locator(`a[href="#/lounge/forms/${id}"]`).click();
+  await expect(page).toHaveURL(new RegExp(`/lounge/forms/${id}`));
+  await page.goBack();
+  await expect(page.locator('.home')).toBeVisible();
+  // Assert immediately: waiting for the animation to finish would hide a replay.
+  expect(await page.locator('.home').getAttribute('class')).not.toMatch(/intro|arrive/);
+  expect(await page.locator('html').getAttribute('class')).not.toMatch(/building/);
+  await page.screenshot({ path: test.info().outputPath('settled-return.png') });
+  await page.locator(`a[href="#/lounge/forms/${id}"]`).click();
+  await expect(page).toHaveURL(new RegExp(`/lounge/forms/${id}`));
+  await page.getByRole('link', { name: 'Back to the Lounge', exact: true }).first().click();
+  await expect(page.locator('.home')).toBeVisible();
+  expect(await page.locator('.home').getAttribute('class')).not.toMatch(/intro|arrive/);
+  await page.reload();
+  await expect(page.locator('.home')).toHaveClass(/intro/);
+});

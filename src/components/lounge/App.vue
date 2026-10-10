@@ -55,7 +55,7 @@ import { member } from './fixtures.js';
 import { errorText } from '../../lib/auth.js';
 import { formById } from './session.js';
 import { eventsTab } from './events.js';
-import { markTourSeen, nameCardOpen, resetTour, tourSeen } from './state.js';
+import { loungeArrived, markTourSeen, nameCardOpen, resetTour, tourSeen } from './state.js';
 /* tide.js (theme and page switches) belongs to the motion designer; every call is optional. */
 import * as tide from './tide.js';
 import { useRoute, useRouter } from 'vue-router';
@@ -93,8 +93,8 @@ const homeKey = ref(0);
 /* How Home starts: 'name' plays the load choreography, 'none' shows it finished, or
    { from, boat } flies the name (and the boat) in from the tour's ghat. Reset to 'none'
    once Home has mounted, so coming back from Events doesn't replay it. */
-/* Every page load plays the build (Raja, 2026-10-07: a refresh builds the screen from nothing). */
-const entry = ref('name');
+const entry = ref(loungeArrived.value ? 'none' : 'name');
+loungeArrived.value = true;
 
 const profileOpen = ref(false);
 const editOpen = ref(false);
