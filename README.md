@@ -26,7 +26,7 @@ Sundarbans-House_Vue-main/
 │   └── data/
 │       └── doubts.json               # Static FAQ/doubts data
 │
-├── sundarbans/                       # Legacy standalone HTML version
+├── readme-images/          # README screenshots (WebP + original PNGs)
 │   ├── login.html / login.css / login.js
 │   ├── dashboard.html / dashboard.css / dashboard.js / dashboard.json
 │   ├── members.html / members.css / members.js / members.json
