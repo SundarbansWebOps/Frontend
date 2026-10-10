@@ -9,6 +9,7 @@
     <li
       v-for="(t, i) in teams"
       :key="t.id"
+      :id="`team-${t.id}`"
       class="team"
       :class="{ in: shown }"
       :style="{ '--i': i, '--c': t.wing ? `var(--w-${t.wing})` : 'var(--mari-ink)' }"
@@ -56,8 +57,7 @@ import { nav } from '../../lib/store.js';
 defineProps({ teams: { type: Array, required: true } });
 
 function toEvents(wing) {
-  ev.wing = wing;
-  nav.go('events');
+  nav.go('events', null, { wing });
 }
 
 const root = ref(null);
@@ -87,7 +87,7 @@ onBeforeUnmount(() => io.disconnect());
 .team {
   position: relative;
   display: grid;
-  grid-template-rows: auto auto 1fr auto auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   gap: 6px;
   padding: 20px 20px 18px;
   overflow: hidden;

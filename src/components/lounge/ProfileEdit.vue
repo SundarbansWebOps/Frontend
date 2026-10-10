@@ -1,7 +1,7 @@
 <!--
-  The name card. The preferred name is the only thing a member edits (spec 002 §2); roll and
-  region come from the roster and the coordinator fixes them.
-  - variant 'profile': "Edit name" from the profile menu.
+  The name card. A member edits only the preferred name and optional phone (spec 002 §2); roll
+  and region come from the roster and the coordinator fixes them.
+  - variant 'profile': "Edit profile" from the profile menu.
   - variant 'ghat': the ghat name card reopened over the Lounge (openNameCard() in state.js:
     the lantern's "Name your lantern" chip, the crest face). The same band card and fields
     as the tour's ghat, without the tour, with a live preview of the lantern / kite.
@@ -40,6 +40,18 @@
         <small id="pe-name-help">{{ help }}</small>
       </label>
 
+      <label class="pe-field">
+        <span>Phone <small>optional</small></span>
+        <input
+          v-model="phoneDraft"
+          type="tel"
+          inputmode="tel"
+          autocomplete="tel"
+          maxlength="20"
+          placeholder="For later forms"
+        />
+      </label>
+
       <div class="pe-ro gp-inset">
         <div>
           <span class="pe-k">Roll</span>
@@ -47,36 +59,52 @@
         </div>
         <div>
           <span class="pe-k">Region</span>
-          <span class="pe-v">{{ member.region.name }}</span>
+          <span class="pe-v">{{ member.region.name || 'Not set' }}</span>
         </div>
         <p class="pe-wrong">
-          Wrong? Tell your Regional Coordinator, {{ member.coordinator.name }}. These come from the
-          house roster.
+          <template v-if="!member.region_id">
+            Pick your region once. It is saved immediately.
+            <button type="button" class="gp-link" @click="regionOpen = true">
+              Choose your region
+            </button>
+          </template>
+          <template v-else>
+            Region changes need approval from {{ member.coordinator.name }}.
+            <button type="button" class="gp-link" @click="regionOpen = true">
+              Request a change
+            </button>
+          </template>
         </p>
       </div>
 
       <p v-if="certName" class="pe-cert">
         Your certificates print <b>{{ certName }}</b
-        >. Changing your name here doesn't change them.
+        >. Changing your Lounge name does not change them.
       </p>
       <p v-else class="pe-cert">
-        The first name you save is printed on your certificates. Check the spelling.
+        A certificate name is asked only when an event releases one for you.
       </p>
 
+      <p v-if="error" class="ff-err" role="alert">{{ error }}</p>
       <p v-if="saved" class="pe-saved" role="status">Saved.</p>
       <div class="reg-acts">
-        <button type="submit" class="gp-btn is-big">Save</button>
+        <button type="submit" class="gp-btn is-big" :disabled="busy">
+          {{ busy ? 'Saving…' : 'Save' }}
+        </button>
         <button type="button" class="gp-btn is-ghost is-big" @click="dlg?.close()">
           {{ ghat ? 'Not now' : 'Cancel' }}
         </button>
       </div>
     </form>
+    <RegionSelect v-if="regionOpen" @close="regionOpen = false" />
   </LoungeDialog>
 </template>
 
 <script setup>
 import { computed, nextTick, onMounted, ref, shallowRef } from 'vue';
+import { errorText } from '../../lib/auth.js';
 import LoungeDialog from './LoungeDialog.vue';
+import RegionSelect from './RegionSelect.vue';
 import { member } from './fixtures.js';
 import {
   certName,
@@ -94,8 +122,12 @@ const ghat = computed(() => props.variant === 'ghat');
 const dlg = ref(null);
 const nameEl = ref(null);
 const draft = ref(preferredName.value);
+const phoneDraft = ref(member.phone || '');
 const draftClean = computed(() => cleanName(draft.value));
 const saved = ref(false);
+const busy = ref(false);
+const error = ref('');
+const regionOpen = ref(false);
 
 const object = computed(() => (mode.value === 'night' ? 'lantern' : 'kite'));
 const heading = computed(() =>
@@ -120,22 +152,29 @@ if (beacons['./home/NameBeacon.vue']) {
 onMounted(() => nextTick(() => nameEl.value?.focus()));
 
 async function save() {
+  if (busy.value) return;
+  busy.value = true;
+  error.value = '';
   const from = nameEl.value?.getBoundingClientRect();
-  savePreferredName(draft.value);
-  nameOn.value = true;
-  if (preferredName.value) {
-    nameFlight.value = {
-      name: preferredName.value,
-      from: from && { left: from.left, top: from.top, width: from.width, height: from.height },
-      at: Date.now(),
-    };
+  try {
+    await savePreferredName(draft.value, phoneDraft.value.trim() || null);
+    nameOn.value = true;
+    if (preferredName.value) {
+      nameFlight.value = {
+        name: preferredName.value,
+        from: from && { left: from.left, top: from.top, width: from.width, height: from.height },
+        at: Date.now(),
+      };
+    }
+    if (!ghat.value) {
+      saved.value = true;
+      await new Promise((r) => setTimeout(r, 450));
+    }
+    dlg.value?.close();
+  } catch (err) {
+    error.value = errorText(err);
+  } finally {
+    busy.value = false;
   }
-  /* The ghat card gets out of the way so the name can be seen landing; the profile edit
-     confirms first. */
-  if (!ghat.value) {
-    saved.value = true;
-    await new Promise((r) => setTimeout(r, 450));
-  }
-  dlg.value?.close();
 }
 </script>

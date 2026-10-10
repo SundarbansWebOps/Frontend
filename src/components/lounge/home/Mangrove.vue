@@ -70,7 +70,7 @@
 import { computed, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { mode } from '../state.js';
 import { MANGROVE } from './art.js';
-import { lite, rare, reduced } from './motion.js';
+import { motionTimeout, lite, rare, reduced } from './motion.js';
 
 defineOptions({ name: 'LoungeMangrove' });
 
@@ -141,13 +141,13 @@ const dots = computed(() => DOTS.slice(0, lite ? (props.phone ? 3 : 4) : props.p
 /* The sync: once per visit, 6s after calm, for three 1.2s flashes. Night only. */
 const sync = ref(false);
 let synced = false;
-let t = 0;
+let t = () => {};
 let stop = () => {};
 watch(
   () => props.calm && mode.value === 'night',
   (go) => {
     stop();
-    clearTimeout(t);
+    t();
     sync.value = false;
     if (!go || synced || reduced()) return;
     stop = rare(
@@ -155,7 +155,7 @@ watch(
         stop();
         synced = true;
         sync.value = true;
-        t = setTimeout(() => (sync.value = false), 3700);
+        t = motionTimeout(() => (sync.value = false), 3700);
       },
       { first: 6000, min: 6000, max: 9000, when: () => props.visible() }
     );
@@ -164,7 +164,7 @@ watch(
 );
 onBeforeUnmount(() => {
   stop();
-  clearTimeout(t);
+  t();
 });
 </script>
 

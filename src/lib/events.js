@@ -76,8 +76,14 @@ const WING_OF_TYPE = {
   Workshop: 'tech',
   Cultural: 'cultural',
 };
-const wingOf = (e) =>
-  e.wing === 'esports' ? 'games' : (e.wing ?? WING_OF_TYPE[e.type] ?? 'cultural');
+export const wingOf = (e) => {
+  const raw = e.wing || e.event_type || e.type;
+  if (raw === 'esports' || raw === 'games') return 'games';
+  if (raw === 'technical' || raw === 'tech') return 'tech';
+  if (raw === 'cultural') return 'cultural';
+  if (raw === 'talks') return 'talks';
+  return WING_OF_TYPE[e.event_type || e.type] ?? (WINGS[e.wing] ? e.wing : 'cultural');
+};
 
 // Cloudinary: swap the stored delivery transform for one sized to where it is shown.
 const CLD = 'f_auto,q_auto:good,w_1000,c_limit';
@@ -88,28 +94,108 @@ export const img = {
   full: (u) => u?.replace(CLD, 'f_auto,q_auto,w_900,c_limit'),
 };
 
-// "Offline Meetup" rows duplicate the regional meetup sheets, which live on the House page.
-export const events = EVENTS.filter((e) => e.type !== 'Offline Meetup').map((e) => {
-  const when = parseDate(e.date);
-  const wing = wingOf(e);
+function fromIso(iso) {
+  if (!iso) return { y: null, m: null, d: null, time: '', range: '' };
+  const dt = new Date(iso);
+  if (Number.isNaN(dt.getTime())) return { y: null, m: null, d: null, time: '', range: '' };
+  const options = { timeZone: 'Asia/Kolkata' };
+  const dateParts = new Intl.DateTimeFormat('en', {
+    ...options,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(dt);
+  const part = (type) => Number(dateParts.find((p) => p.type === type)?.value);
+  const time = new Intl.DateTimeFormat('en-IN', {
+    ...options,
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(dt);
+  return { y: part('year'), m: part('month') - 1, d: part('day'), time, range: '' };
+}
+
+// Public archive cards: RPC rows first, then the local 43-event snapshot if the RPC is empty
+// or missing. Same poster fields either way (image, type, wing, date, turnout).
+export function fromPublicRow(row) {
+  const title = row.name || row.title || '';
+  const dateText = row.display_date || row.date || '';
+  const when = row.starts_at ? fromIso(row.starts_at) : parseDate(dateText);
+  const w = row.image_width ?? row.w;
+  const h = row.image_height ?? row.h;
+  // Source turnout labels such as "50+" are kept as text, never coerced to an exact count.
+  const attendees =
+    row.attendee_display ??
+    (row.attendee_count == null || row.attendee_count === ''
+      ? (row.attendees ?? '')
+      : String(row.attendee_count));
   return {
-    id: slug(e.title),
-    title: e.title,
-    type: e.type,
-    wing,
-    desc: e.desc ?? '',
-    attendees: e.attendees ?? '',
-    location: e.location ?? '',
-    image: e.image ?? null,
-    ratio: e.w ? e.w / e.h : null,
+    id: row.source_key || row.id || slug(title),
+    dbId: row.id || null,
+    title,
+    type: row.event_type || row.type || '',
+    wing: wingOf(row),
+    desc: row.description ?? row.desc ?? '',
+    attendees,
+    location: row.location ?? '',
+    image: row.image_url ?? row.image ?? null,
+    ratio: w && h ? w / h : null,
+    display_date: dateText || null,
+    region_id: row.region_id ?? null,
+    community_id: row.community_id ?? null,
+    archive: row.archive ?? null,
     ...when,
-    online: /online/i.test(e.date ?? ''),
-    at: when.y != null ? new Date(when.y, when.m, when.d ?? 15) : null,
+    online: /online/i.test(`${dateText} ${row.location ?? ''}`),
+    at:
+      row.starts_at && !Number.isNaN(Date.parse(row.starts_at))
+        ? new Date(row.starts_at)
+        : when.y != null
+          ? new Date(when.y, when.m, when.d ?? 15)
+          : null,
   };
+}
+
+// "Offline Meetup" rows duplicate the regional meetup sheets, which live on the House page.
+const notMeetup = (e) => e.type !== 'Offline Meetup';
+const snapshot = EVENTS.filter(notMeetup).map(fromPublicRow);
+snapshot.sort((a, b) => (b.at ?? 0) - (a.at ?? 0));
+
+export const events = reactive([]);
+export const byId = reactive({});
+export const publicCatalog = reactive({
+  ready: false,
+  error: '',
+  regions: [],
 });
 
-events.sort((a, b) => (b.at ?? 0) - (a.at ?? 0));
-export const byId = Object.fromEntries(events.map((e) => [e.id, e]));
+function replaceEvents(list) {
+  events.splice(0, events.length, ...list);
+  for (const key of Object.keys(byId)) delete byId[key];
+  for (const e of list) byId[e.id] = e;
+}
+
+replaceEvents(snapshot);
+
+export async function loadPublicEvents() {
+  publicCatalog.error = '';
+  try {
+    const [{ listPublicPastEvents }, { supabase }] = await Promise.all([
+      import('./lounge.js'),
+      import('./supabase.js'),
+    ]);
+    const [rows, regions] = await Promise.all([
+      listPublicPastEvents(),
+      supabase.from('regions').select('id, code, name').order('name'),
+    ]);
+    const list = (Array.isArray(rows) ? rows : []).map(fromPublicRow).filter(notMeetup);
+    list.sort((a, b) => (b.at ?? 0) - (a.at ?? 0));
+    if (list.length) replaceEvents(list);
+    if (!regions.error) publicCatalog.regions = regions.data ?? [];
+  } catch (err) {
+    publicCatalog.error = err?.message || 'The event archive did not load.';
+  } finally {
+    publicCatalog.ready = true;
+  }
+}
 
 export const monthKey = (e) => (e.at ? e.y * 12 + e.m : null);
 
@@ -210,8 +296,8 @@ function runAfterClose() {
 // The URL is the source of truth: Back drops ?event= and the sheet closes; a shared
 // ?event= link (or Forward) opens it.
 watch(
-  () => router.currentRoute.value.query.event,
-  (id) => {
+  () => [router.currentRoute.value.query.event, events.length],
+  ([id]) => {
     if (id && byId[id]) {
       if (ev.open !== id) {
         ev.open = id;

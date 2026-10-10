@@ -4,7 +4,7 @@
   the lounge door, which leads to the Lounge tab. A sticky section rail tracks where you are.
 -->
 <template>
-  <main class="wrap">
+  <main id="main-content" class="wrap" tabindex="-1">
     <header class="head rise" style="--i: 0">
       <h1>House</h1>
       <dl class="stats">
@@ -57,7 +57,8 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import SectionRail from '../components/site/SectionRail.vue';
 import HouseStory from '../components/site/HouseStory.vue';
 import CouncilTrio from '../components/site/CouncilTrio.vue';
@@ -65,7 +66,18 @@ import RegionSky from '../components/site/RegionSky.vue';
 import RegionPanel from '../components/site/RegionPanel.vue';
 import LoungeDoor from '../components/site/LoungeDoor.vue';
 import PhotoViewer from '../components/site/PhotoViewer.vue';
-import { council, house, meetupCount, regions } from '../lib/house.js';
+import { council, house, meetupCount, regionById, regions } from '../lib/house.js';
+
+const route = useRoute();
+watch(
+  () => route.query.region,
+  (value) => {
+    if (typeof value !== 'string') return;
+    const id = value.toLowerCase().replace(/-ncr$/, '');
+    if (regionById[id]) house.region = id;
+  },
+  { immediate: true }
+);
 
 const SECTIONS = [
   { id: 'story', label: 'Story' },
@@ -116,7 +128,7 @@ onMounted(countUp);
 }
 .head {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: end;
   gap: 4px 28px;
 }
@@ -201,7 +213,7 @@ h1 {
 
 @media (max-width: 900px) {
   .head {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .stats {
     justify-content: flex-start;

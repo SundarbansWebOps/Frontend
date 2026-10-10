@@ -1,6 +1,6 @@
 <!-- Resources — "Delta": the course map is the navigator. -->
 <template>
-  <main class="wrap">
+  <main id="main-content" class="wrap" tabindex="-1">
     <div class="bar">
       <SearchBar v-model="q" class="rise" style="--i: 0" />
       <TideLine class="rise" style="--i: 1" @pick="pick" />
@@ -74,7 +74,7 @@ function pick(d) {
 }
 .bar {
   display: grid;
-  grid-template-columns: 1fr minmax(360px, 440px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, min(440px, 100%));
   gap: 16px;
   align-items: start;
 }
@@ -97,7 +97,7 @@ function pick(d) {
 }
 .tix {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr));
   gap: 12px;
 }
 .hint {
@@ -184,7 +184,7 @@ function pick(d) {
 }
 @media (max-width: 900px) {
   .bar {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 760px) {

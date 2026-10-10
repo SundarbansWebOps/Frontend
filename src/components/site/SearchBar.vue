@@ -11,6 +11,14 @@
         ref="input"
         :value="modelValue"
         type="search"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-haspopup="listbox"
+        :aria-expanded="showDrop"
+        :aria-controls="showDrop ? 'course-search-results' : undefined"
+        :aria-activedescendant="
+          showDrop && items[active] ? `course-result-${items[active].key}` : undefined
+        "
         autocomplete="off"
         spellcheck="false"
         enterkeyhint="go"
@@ -37,7 +45,14 @@
     </label>
 
     <Transition name="drop">
-      <div v-if="showDrop" class="drop" role="listbox">
+      <div
+        v-if="showDrop"
+        id="course-search-results"
+        class="drop"
+        role="listbox"
+        tabindex="-1"
+        aria-label="Search results"
+      >
         <p v-if="!items.length" class="empty">
           Nothing matched “{{ modelValue }}”. Try a course code like <b>BSMA1001</b> or a short name
           like <b>PDSA</b>.
@@ -45,8 +60,10 @@
         <button
           v-for="(it, i) in items"
           :key="it.key"
+          :id="`course-result-${it.key}`"
           type="button"
           role="option"
+          tabindex="-1"
           class="item"
           :class="{ active: i === active }"
           :aria-selected="i === active"
@@ -177,7 +194,7 @@ function clear() {
   emit('update:modelValue', '');
 }
 function onBlur() {
-  setTimeout(() => (focused.value = false), 80);
+  focused.value = false;
 }
 
 defineExpose({ focus: () => input.value?.focus() });
@@ -342,7 +359,7 @@ kbd {
 }
 .item {
   display: grid;
-  grid-template-columns: 84px 1fr auto;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   padding: 10px 10px;
@@ -423,7 +440,7 @@ kbd {
     display: none;
   }
   .item {
-    grid-template-columns: 72px 1fr auto;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
   }
 }
 </style>

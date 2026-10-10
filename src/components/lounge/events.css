@@ -1098,8 +1098,79 @@
   color: var(--t-3);
 }
 
+:where(html.lounge-active) .ff,
+:where(html.lounge-active) .evd-form .ff {
+  display: grid;
+  gap: 16px;
+}
+:where(html.lounge-active) .ff-field,
+:where(html.lounge-active) .ff-multi legend {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 650;
+}
+:where(html.lounge-active) .ff-field small,
+:where(html.lounge-active) .ff-multi small {
+  font-weight: 450;
+  color: var(--t-3);
+}
+:where(html.lounge-active) .ff-field input,
+:where(html.lounge-active) .ff-field select,
+:where(html.lounge-active) .ff-field textarea,
+:where(html.lounge-active) .ff-other input[type='text'] {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: var(--kw) solid var(--keyline);
+  border-radius: 4px;
+  background: var(--paper-2);
+  color: var(--t-1);
+  font: inherit;
+  font-size: 16px;
+}
+:where(html.lounge-active) .ff-multi {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 8px;
+}
+:where(html.lounge-active) .ff-check,
+:where(html.lounge-active) .ff-other {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+}
+:where(html.lounge-active) .ff-err {
+  margin: 0;
+  color: var(--verm);
+  font-size: 14px;
+}
+:where(html.lounge-active) .ff-invite {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--t-2);
+}
+:where(html.lounge-active) .pe-field select {
+  min-height: 48px;
+  padding: 10px 12px;
+  border: var(--kw) solid var(--keyline);
+  border-radius: 4px;
+  background: var(--paper-2);
+  color: var(--t-1);
+  font: inherit;
+}
+
 :where(html.lounge-active) .evd-form input:not([type]),
 :where(html.lounge-active) .evd-form input[type='text'],
+:where(html.lounge-active) .evd-form input[type='email'],
+:where(html.lounge-active) .evd-form input[type='tel'],
+:where(html.lounge-active) .evd-form select,
 :where(html.lounge-active) .evd-form textarea {
   width: 100%;
   min-height: 46px;

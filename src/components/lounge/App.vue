@@ -1,6 +1,10 @@
 <!-- Approved Lounge E shell: Home/Events, profile, notices, certificates and the welcome tour.
      Enter or Not now marks the tour seen; Skip only advances to the ghat. -->
 <template>
+  <p v-if="tourError" class="tour-error" role="alert">
+    {{ tourError }}
+    <button type="button" @click="retakeTour">Try again</button>
+  </p>
   <LoungeNav
     v-if="showHome"
     :view="view"
@@ -30,22 +34,31 @@
   />
   <ProfileEdit v-if="editOpen" @close="editOpen = false" />
   <ProfileEdit v-if="nameCardOpen" variant="ghat" @close="nameCardOpen = false" />
+  <RegionSelect v-if="needRegion" @close="needRegion = false" />
+  <FormDialog v-if="formOpen" :form="formOpen" @close="formOpen = null" />
   <CertificatesPopup v-if="certsOpen" :start="certStart" @close="certsOpen = false" />
   <NoticesPanel v-if="noticesOpen" :focus="noticeFocus" @close="noticesOpen = false" />
 </template>
 
 <script setup>
-import { defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue';
+import { defineAsyncComponent, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import CertificatesPopup from './CertificatesPopup.vue';
 import EventsPage from './EventsPage.vue';
+import FormDialog from './FormDialog.vue';
 import LoungeHome from './LoungeHome.vue';
 import LoungeNav from './LoungeNav.vue';
 import NoticesPanel from './NoticesPanel.vue';
 import ProfileEdit from './ProfileEdit.vue';
 import ProfileMenu from './ProfileMenu.vue';
-import { markTourSeen, nameCardOpen, resetTour, tourSeen } from './state.js';
+import RegionSelect from './RegionSelect.vue';
+import { member } from './fixtures.js';
+import { errorText } from '../../lib/auth.js';
+import { formById } from './session.js';
+import { eventsTab } from './events.js';
+import { loungeArrived, markTourSeen, nameCardOpen, resetTour, tourSeen } from './state.js';
 /* tide.js (theme and page switches) belongs to the motion designer; every call is optional. */
 import * as tide from './tide.js';
+import { motionTimeout } from './home/motion.js';
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
@@ -67,9 +80,9 @@ function onHash() {
 }
 watch(() => route.query.view, onHash);
 /* The build (lounge.css) is over by 4.2s; dropping the class leaves the shell at rest. */
-const built = setTimeout(() => document.documentElement.classList.remove('building'), 4200);
+const built = motionTimeout(() => document.documentElement.classList.remove('building'), 4200);
 onBeforeUnmount(() => {
-  clearTimeout(built);
+  built();
 });
 
 /* ---------- Tour gating ---------- */
@@ -81,8 +94,8 @@ const homeKey = ref(0);
 /* How Home starts: 'name' plays the load choreography, 'none' shows it finished, or
    { from, boat } flies the name (and the boat) in from the tour's ghat. Reset to 'none'
    once Home has mounted, so coming back from Events doesn't replay it. */
-/* Every page load plays the build (Raja, 2026-10-07: a refresh builds the screen from nothing). */
-const entry = ref('name');
+const entry = ref(loungeArrived.value ? 'none' : 'name');
+loungeArrived.value = true;
 
 const profileOpen = ref(false);
 const editOpen = ref(false);
@@ -90,9 +103,60 @@ const certsOpen = ref(false);
 const certStart = ref('');
 const noticesOpen = ref(false);
 const noticeFocus = ref('');
+const needRegion = ref(false);
+const tourError = ref('');
+const formOpen = ref(null);
 
-function retakeTour() {
-  resetTour();
+watch(
+  () => [showHome.value, member.region_id],
+  ([home, regionId]) => {
+    needRegion.value = !!home && !regionId;
+  },
+  { immediate: true }
+);
+
+watch(
+  () => route.query.form,
+  (id) => {
+    formOpen.value = typeof id === 'string' ? formById(id) : null;
+  },
+  { immediate: true }
+);
+
+watch(
+  () => [route.query.room, showHome.value],
+  async ([room, home]) => {
+    if (!home || typeof room !== 'string' || !['live', 'groups', 'certificates'].includes(room))
+      return;
+    const query = { ...route.query };
+    delete query.room;
+    if (room === 'live') {
+      eventsTab.value = 'live';
+      query.view = 'events';
+      view.value = 'events';
+    } else if (room === 'groups') {
+      delete query.view;
+      view.value = 'home';
+    }
+    await router.replace({ path: '/lounge', query });
+    if (room === 'groups') {
+      await nextTick();
+      document.getElementById('groups')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (room === 'certificates') {
+      openCert('');
+    }
+  },
+  { immediate: true }
+);
+
+async function retakeTour() {
+  tourError.value = '';
+  try {
+    await resetTour();
+  } catch (err) {
+    tourError.value = errorText(err) || 'The tour could not be reopened. Try again.';
+    return;
+  }
   profileOpen.value = editOpen.value = certsOpen.value = noticesOpen.value = false;
   nameCardOpen.value = false;
   leaving.value = false;
@@ -102,8 +166,12 @@ function retakeTour() {
 }
 
 /* Enter the Lounge ({ from, boat }: where the name and the boat are now) or "Not now" (null). */
-function onDone(handoff) {
-  markTourSeen();
+async function onDone(handoff) {
+  try {
+    await markTourSeen();
+  } catch {
+    /* Tour still closes; the member can retake from profile if the save did not land. */
+  }
   entry.value = handoff?.from ? handoff : 'name';
   if (view.value !== 'home') {
     router.replace({ path: '/lounge' });
@@ -132,3 +200,31 @@ function openNotices(id) {
   noticesOpen.value = true;
 }
 </script>
+
+<style scoped>
+.tour-error {
+  position: fixed;
+  z-index: 5000;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(90vw, 620px);
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--verm);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--verm);
+  box-shadow: var(--shadow);
+}
+.tour-error button {
+  margin-left: 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+</style>

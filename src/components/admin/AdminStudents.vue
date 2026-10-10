@@ -39,7 +39,7 @@
       <li v-for="m in rows" :key="m.id">
         <button type="button" class="adm-row button" @click="open(m.id)">
           <div>
-            <b>{{ m.preferred_name || m.full_name }}</b>
+            <b>{{ m.preferred_name || m.full_name || m.email }}</b>
             <div class="adm-meta">
               <span class="mono">{{ m.member_code }}</span>
               <span>{{ regionOf(m.region_id) }}</span>
@@ -94,7 +94,7 @@
           </div>
           <div>
             <dt>Full name</dt>
-            <dd>{{ detail.member.full_name }}</dd>
+            <dd>{{ detail.member.full_name || '–' }}</dd>
           </div>
           <div>
             <dt>Preferred name</dt>
@@ -192,7 +192,8 @@
       <form v-else-if="mode === 'edit'" class="adm-form" @submit.prevent="submitEdit">
         <label class="adm-field wide">
           <span>Full name (as on the roster)</span>
-          <input v-model="form.full_name" class="adm-input" required maxlength="200" />
+          <input v-model="form.full_name" class="adm-input" maxlength="200" />
+          <small>Optional. A missing name does not block Lounge access.</small>
         </label>
         <label class="adm-field">
           <span>Preferred name</span>
@@ -236,7 +237,7 @@
         <label class="adm-field">
           <span>Position</span>
           <select v-model="form.position" class="adm-input" required>
-            <option value="rc">
+            <option v-if="!internationalTarget" value="rc">
               Regional Coordinator ({{ regionOf(detail.member.region_id) }})
             </option>
             <option value="head">Community Head</option>
@@ -252,9 +253,10 @@
         <label class="adm-field wide">
           <span>Why</span>
           <textarea v-model.trim="form.reason" class="adm-input" required maxlength="2000" />
-          <small
-            >An RC coordinates the region they live in. Another Super Admin approves this.</small
-          >
+          <small>
+            A region may have at most two coordinators. International has none. Another Super Admin
+            approves this. Super Admin accounts are fixed.
+          </small>
         </label>
         <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
         <div class="wide row-end">
@@ -319,6 +321,7 @@ import {
   POSITION_LABEL,
   STATUS_ACTION_LABEL,
   getMember,
+  isInternationalRegion,
   listMembers,
   requestBlacklist,
   requestDeletion,
@@ -434,10 +437,17 @@ const pending = ref(null);
 const form = reactive({});
 
 const detailTitle = computed(() =>
-  detail.value ? detail.value.member.preferred_name || detail.value.member.full_name : ''
+  detail.value
+    ? detail.value.member.preferred_name ||
+      detail.value.member.full_name ||
+      detail.value.member.email
+    : ''
 );
 const isSelf = computed(() => detail.value?.member.id === auth.profile?.id);
 const targetIsAdmin = computed(() => !!detail.value?.position);
+const internationalTarget = computed(() =>
+  isInternationalRegion(props.lookups.regions.find((r) => r.id === detail.value?.member.region_id))
+);
 const canEdit = computed(
   () =>
     !isSelf.value &&
@@ -610,7 +620,10 @@ function submitEmail() {
 }
 
 function startPosition() {
-  reset({ position: 'rc', community_id: props.lookups.communities[0]?.id ?? null });
+  reset({
+    position: internationalTarget.value ? 'head' : 'rc',
+    community_id: props.lookups.communities[0]?.id ?? null,
+  });
   mode.value = 'position';
 }
 </script>

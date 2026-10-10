@@ -146,7 +146,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { mode } from '../state.js';
 import { fadeReady } from '../tide.js';
 import { BIRDS, CLOUDS, KITES, LANTERN_FAR, MOON, PLATE, SUN } from './art.js';
-import { animate, lite, rare, reduced } from './motion.js';
+import { animate, motionTimeout, motionActive, lite, rare, reduced } from './motion.js';
 
 const props = defineProps({
   phone: { type: Boolean, default: false },
@@ -263,7 +263,7 @@ let paperTimers = [];
 let fleetGeneration = 0;
 watch(mode, async (m) => {
   const generation = ++fleetGeneration;
-  paperTimers.forEach(clearTimeout);
+  paperTimers.forEach((cancel) => cancel());
   paperTimers = [];
   if (reduced()) {
     paperKites.value = paperKites.value.map(() => m === 'day');
@@ -275,7 +275,7 @@ watch(mode, async (m) => {
   /* Each turns edge-on in turn (120ms apart, as in B) and swaps paper at its half. */
   fleet.value.forEach((_, i) => {
     paperTimers.push(
-      setTimeout(
+      motionTimeout(
         () => {
           if (generation === fleetGeneration) paperKites.value[i] = m === 'day';
         },
@@ -284,7 +284,7 @@ watch(mode, async (m) => {
     );
   });
   paperTimers.push(
-    setTimeout(() => (fleetTurning.value = false), 900 + fleet.value.length * 120 + 100)
+    motionTimeout(() => (fleetTurning.value = false), 900 + fleet.value.length * 120 + 100)
   );
 });
 
@@ -292,8 +292,8 @@ watch(mode, async (m) => {
 
 const shootHost = ref(null);
 const birdHost = ref(null);
-let follow = 0;
-const canPlay = () => !reduced() && !document.hidden && props.calm && props.visible();
+let follow = () => {};
+const canPlay = () => !reduced() && motionActive() && props.calm && props.visible();
 
 function shootingStar(lead = true) {
   const host = shootHost.value;
@@ -324,7 +324,7 @@ function shootingStar(lead = true) {
   );
   /* Now and then a second one follows the first. */
   if (lead && !lite && Math.random() < 0.22) {
-    follow = setTimeout(() => shootingStar(false), 260 + Math.random() * 260);
+    follow = motionTimeout(() => shootingStar(false), 260 + Math.random() * 260);
   }
 }
 
@@ -365,7 +365,7 @@ let stops = [];
 function schedule() {
   stops.forEach((s) => s());
   stops = [];
-  clearTimeout(follow);
+  follow();
   for (const host of [shootHost.value, birdHost.value]) {
     host?.getAnimations({ subtree: true }).forEach((a) => a.cancel());
     host?.replaceChildren();
@@ -393,9 +393,9 @@ onMounted(schedule);
 watch(mode, schedule);
 onBeforeUnmount(() => {
   fleetGeneration++;
-  paperTimers.forEach(clearTimeout);
+  paperTimers.forEach((cancel) => cancel());
   stops.forEach((s) => s());
-  clearTimeout(follow);
+  follow();
 });
 </script>
 

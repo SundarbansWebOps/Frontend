@@ -27,6 +27,101 @@
     <p v-if="error" class="adm-msg err" role="alert">{{ error }}</p>
     <p v-if="notice" class="adm-msg ok" role="status">{{ notice }}</p>
 
+    <section v-if="status === 'pending'" class="block" aria-labelledby="region-req-h">
+      <h3 id="region-req-h" class="adm-kicker">Student region corrections</h3>
+      <p class="adm-note">
+        The student’s current-region coordinator or a Super Admin reviews these. They are not the
+        two-person admin workflow.
+      </p>
+      <ul v-if="regionRequests.length" class="adm-list">
+        <li v-for="r in regionRequests" :key="r.id" class="adm-card req">
+          <div class="top">
+            <div>
+              <p class="adm-kicker">Region change</p>
+              <b class="name">{{
+                r.member?.preferred_name || r.member?.full_name || r.member?.email || r.member_id
+              }}</b>
+              <span class="mono code">{{ r.member?.member_code }}</span>
+            </div>
+            <span class="adm-badge">{{ r.status }}</span>
+          </div>
+          <p class="what">{{ regionOf(r.from_region_id) }} → {{ regionOf(r.to_region_id) }}</p>
+          <p class="why">“{{ r.reason }}”</p>
+          <div v-if="r.status === 'pending'" class="acts">
+            <input
+              v-model.trim="notes[r.id]"
+              class="adm-input note"
+              maxlength="2000"
+              placeholder="Note (optional)"
+            />
+            <button
+              type="button"
+              class="adm-btn mari small"
+              :disabled="busy"
+              @click="reviewRegion(r, true)"
+            >
+              Approve
+            </button>
+            <button
+              type="button"
+              class="adm-btn ghost small"
+              :disabled="busy"
+              @click="reviewRegion(r, false)"
+            >
+              Reject
+            </button>
+          </div>
+        </li>
+      </ul>
+      <p v-else-if="!loading" class="adm-empty">No student region requests waiting.</p>
+    </section>
+
+    <section v-if="isSuperAdmin && status === 'pending'" class="block" aria-labelledby="cert-req-h">
+      <h3 id="cert-req-h" class="adm-kicker">Certificate name corrections</h3>
+      <ul v-if="certRequests.length" class="adm-list">
+        <li v-for="r in certRequests" :key="r.id" class="adm-card req">
+          <div class="top">
+            <div>
+              <p class="adm-kicker">Certificate name</p>
+              <b class="name">{{
+                r.member?.preferred_name || r.member?.full_name || r.member?.email || r.member_id
+              }}</b>
+            </div>
+            <span class="adm-badge">{{ r.status }}</span>
+          </div>
+          <p class="what">{{ r.old_name }} → {{ r.new_name }}</p>
+          <p class="why">“{{ r.reason }}”</p>
+          <div v-if="r.status === 'pending' && r.member_id !== me" class="acts">
+            <input
+              v-model.trim="notes[r.id]"
+              class="adm-input note"
+              maxlength="2000"
+              placeholder="Note (optional)"
+            />
+            <button
+              type="button"
+              class="adm-btn mari small"
+              :disabled="busy"
+              @click="reviewCert(r, true)"
+            >
+              Approve
+            </button>
+            <button
+              type="button"
+              class="adm-btn ghost small"
+              :disabled="busy"
+              @click="reviewCert(r, false)"
+            >
+              Reject
+            </button>
+          </div>
+          <p v-else-if="r.member_id === me" class="adm-note">You cannot review your own request.</p>
+        </li>
+      </ul>
+      <p v-else-if="!loading" class="adm-empty">No certificate-name requests waiting.</p>
+    </section>
+
+    <h3 class="adm-kicker">Admin student changes</h3>
     <ul v-if="requests.length" class="adm-list">
       <li v-for="r in requests" :key="r.id" class="adm-card req">
         <div class="top">
@@ -96,8 +191,12 @@ import {
   cancelRequest,
   executeContactChange,
   executeHardDelete,
+  listCertificateNameRequests,
+  listRegionRequests,
   listRequests,
   rejectRequest,
+  reviewCertificateNameRequest,
+  reviewRegionRequest,
   syncSignInAccess,
 } from '../../lib/admin.js';
 
@@ -107,6 +206,8 @@ const emit = defineEmits(['changed']);
 const me = computed(() => auth.profile?.id);
 const status = ref('pending');
 const requests = ref([]);
+const regionRequests = ref([]);
+const certRequests = ref([]);
 const loading = ref(false);
 const busy = ref(false);
 const error = ref('');
@@ -158,6 +259,27 @@ async function load() {
   error.value = '';
   try {
     requests.value = await listRequests({ status: status.value });
+    if (status.value === 'pending') {
+      try {
+        regionRequests.value = (await listRegionRequests()).filter((r) => r.status === 'pending');
+      } catch (e) {
+        regionRequests.value = [];
+        error.value = errorText(e);
+      }
+      if (isSuperAdmin.value) {
+        try {
+          certRequests.value = (await listCertificateNameRequests()).filter(
+            (r) => r.status === 'pending'
+          );
+        } catch (e) {
+          certRequests.value = [];
+          error.value = errorText(e);
+        }
+      }
+    } else {
+      regionRequests.value = [];
+      certRequests.value = [];
+    }
   } catch (e) {
     error.value = errorText(e);
   } finally {
@@ -212,6 +334,18 @@ function approve(r) {
 }
 const reject = (r) => act(() => rejectRequest(r.id, notes[r.id]), 'Rejected. Nothing was changed.');
 const cancel = (r) => act(() => cancelRequest(r.id), 'Request cancelled.');
+const reviewRegion = (r, approve) =>
+  act(
+    () => reviewRegionRequest(r.id, approve, notes[r.id]),
+    approve ? 'Region change applied.' : 'Region request rejected. Nothing was changed.'
+  );
+const reviewCert = (r, approve) =>
+  act(
+    () => reviewCertificateNameRequest(r.id, approve, notes[r.id]),
+    approve
+      ? 'Certificate name updated for future certificates.'
+      : 'Certificate-name request rejected.'
+  );
 </script>
 
 <style scoped>
@@ -255,5 +389,8 @@ const cancel = (r) => act(() => cancelRequest(r.id), 'Request cancelled.');
 .note {
   flex: 1 1 220px;
   height: 36px;
+}
+.block {
+  margin-bottom: 22px;
 }
 </style>

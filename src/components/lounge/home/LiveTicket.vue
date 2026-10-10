@@ -31,7 +31,7 @@
         <a
           v-if="live"
           class="tk-join"
-          :href="live.meet_link"
+          :href="live.meet_link || live.gmail_link"
           target="_blank"
           rel="noopener noreferrer"
           >Join on Meet <span aria-hidden="true">→</span></a

@@ -3,7 +3,7 @@
   members inside the House lounge. Swell chart → month-by-month log. (Meetups live on House.)
 -->
 <template>
-  <main class="wrap">
+  <main id="main-content" class="wrap" tabindex="-1">
     <header class="head rise" style="--i: 0">
       <h1>Events</h1>
       <dl class="stats">
@@ -12,7 +12,9 @@
           <dd class="mono">{{ shown[s.key] }}</dd>
         </div>
       </dl>
-      <p class="sub">
+      <p v-if="publicCatalog.error" class="sub" role="alert">{{ publicCatalog.error }}</p>
+      <p v-else-if="!first" class="sub">Past events the house has published.</p>
+      <p v-else class="sub">
         Everything the house has run since {{ MONTH[first.m] }} {{ first.y }}. Upcoming events are
         announced to members in the House lounge.
       </p>
@@ -34,6 +36,25 @@
         >
           <i v-if="c.id !== 'all'" class="dot" />{{ c.label }}
           <small>{{ c.n }}</small>
+        </button>
+      </div>
+      <div
+        v-if="regionChips.length > 1"
+        class="chips"
+        role="radiogroup"
+        aria-label="Filter by region"
+      >
+        <button
+          v-for="r in regionChips"
+          :key="r.id"
+          type="button"
+          role="radio"
+          :aria-checked="regionId === r.id"
+          class="chip"
+          :class="{ on: regionId === r.id }"
+          @click="regionId = r.id"
+        >
+          {{ r.label }}
         </button>
       </div>
       <label class="find" :class="{ has: q }">
@@ -111,7 +132,7 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import SwellChart from '../components/site/SwellChart.vue';
 import EventCard from '../components/site/EventCard.vue';
@@ -122,27 +143,45 @@ import {
   ev,
   events,
   groupByMonth,
+  loadPublicEvents,
   matches,
   monthKey,
   monthLong,
   openEvent,
+  publicCatalog,
 } from '../lib/events.js';
 
 // A wing filter arrives from a Teams community card (ev.wing) or an old /community/* link (?wing=).
 const route = useRoute();
+const router = useRouter();
 const wing = ref(ev.wing ?? (WINGS[route.query.wing] ? route.query.wing : 'all'));
 ev.wing = null;
-const q = ref('');
+const q = ref(typeof route.query.q === 'string' ? route.query.q : '');
+const regionId = ref(typeof route.query.region === 'string' ? route.query.region : 'all');
 const findEl = ref(null);
 const chart = ref(null);
 
-const dated = events.filter((e) => e.at);
-const first = dated.at(-1);
+const dated = computed(() => events.filter((e) => e.at));
+const first = computed(() => dated.value.at(-1));
 
 const inWing = (e) => wing.value === 'all' || e.wing === wing.value;
-const visible = computed(() => events.filter((e) => inWing(e) && matches(e, q.value)));
+const inRegion = (e) => regionId.value === 'all' || String(e.region_id) === regionId.value;
+const visible = computed(() =>
+  events.filter((e) => inWing(e) && inRegion(e) && matches(e, q.value))
+);
+const regionChips = computed(() => {
+  const ids = [...new Set(events.map((e) => e.region_id).filter(Boolean))];
+  if (!ids.length) return [];
+  const named = publicCatalog.regions.filter((r) => ids.includes(r.id));
+  return [
+    { id: 'all', label: 'All regions' },
+    ...named.map((r) => ({ id: String(r.id), label: r.name })),
+  ];
+});
 const activeIds = computed(() =>
-  wing.value === 'all' && !q.value.trim() ? null : new Set(visible.value.map((e) => e.id))
+  wing.value === 'all' && regionId.value === 'all' && !q.value.trim()
+    ? null
+    : new Set(visible.value.map((e) => e.id))
 );
 const groups = computed(() => groupByMonth(visible.value));
 
@@ -169,21 +208,49 @@ async function placePill() {
 }
 watch(wing, placePill);
 
-const STATS = [
+watch(
+  () => [wing.value, regionId.value, q.value],
+  ([nextWing, nextRegion, nextQuery]) => {
+    const query = { ...route.query };
+    if (nextWing === 'all') delete query.wing;
+    else query.wing = nextWing;
+    if (nextRegion === 'all') delete query.region;
+    else query.region = nextRegion;
+    if (nextQuery) query.q = nextQuery;
+    else delete query.q;
+    if (
+      query.wing !== route.query.wing ||
+      query.region !== route.query.region ||
+      query.q !== route.query.q
+    )
+      router.replace({ query });
+  }
+);
+watch(
+  () => [route.query.wing, route.query.region, route.query.q],
+  ([nextWing, nextRegion, nextQuery]) => {
+    wing.value = WINGS[nextWing] ? nextWing : 'all';
+    regionId.value = typeof nextRegion === 'string' ? nextRegion : 'all';
+    q.value = typeof nextQuery === 'string' ? nextQuery : '';
+  }
+);
+
+const STATS = computed(() => [
   { key: 'events', label: 'events', to: events.length },
-  { key: 'months', label: 'active months', to: new Set(dated.map(monthKey)).size },
-];
-const shown = reactive(Object.fromEntries(STATS.map((s) => [s.key, 0])));
+  { key: 'months', label: 'active months', to: new Set(dated.value.map(monthKey)).size },
+]);
+const shown = reactive({ events: 0, months: 0 });
 function countUp() {
+  const stats = STATS.value;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    for (const s of STATS) shown[s.key] = s.to;
+    for (const s of stats) shown[s.key] = s.to;
     return;
   }
   const t0 = performance.now();
   const tick = (t) => {
     const k = Math.min(1, (t - t0) / 1200);
     const e = 1 - Math.pow(1 - k, 3);
-    for (const s of STATS) shown[s.key] = Math.round(s.to * e);
+    for (const s of stats) shown[s.key] = Math.round(s.to * e);
     if (k < 1) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
@@ -208,6 +275,7 @@ function jump(key) {
 function clearAll() {
   q.value = '';
   wing.value = 'all';
+  regionId.value = 'all';
 }
 
 // Hovering a card on a phone-width chart scrolls its bubble into view.
@@ -221,7 +289,8 @@ function slash(e) {
   e.preventDefault();
   findEl.value?.focus();
 }
-onMounted(() => {
+onMounted(async () => {
+  await loadPublicEvents();
   countUp();
   placePill();
   window.addEventListener('keydown', slash);
@@ -246,7 +315,7 @@ onBeforeUnmount(() => {
 }
 .head {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: end;
   gap: 4px 28px;
 }
@@ -442,7 +511,7 @@ h1 {
 .month {
   position: relative;
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 150px minmax(0, 1fr);
   gap: 24px;
   padding: 16px 0 26px;
   scroll-margin-top: calc(var(--nav-h) + 16px);
@@ -496,7 +565,7 @@ h1 {
 }
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr));
   gap: 26px 20px;
   align-items: start;
 }
@@ -541,7 +610,7 @@ h1 {
 
 @media (max-width: 900px) {
   .head {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .stats {
     justify-content: flex-start;
@@ -586,7 +655,7 @@ h1 {
     display: none;
   }
   .month {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     padding: 10px 0 18px;
   }
@@ -607,7 +676,7 @@ h1 {
     margin: 0 0 0 auto;
   }
   .cards {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px 12px;
   }
 }

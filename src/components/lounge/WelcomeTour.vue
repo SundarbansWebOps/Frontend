@@ -458,6 +458,17 @@
               >It goes on your {{ objectWord }}, and it's what the house calls you.</small
             >
           </label>
+          <label class="f-name">
+            <span>Phone <small>optional</small></span>
+            <input
+              v-model="phoneDraft"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              maxlength="20"
+              placeholder="For later forms"
+            />
+          </label>
           <div class="f-fixed gp-inset">
             <div>
               <span class="f-k">Roll</span>
@@ -468,19 +479,27 @@
               <span class="f-v">{{ member.region.name }}</span>
             </div>
             <p class="f-wrong">
-              Wrong? Tell your Regional Coordinator, {{ member.coordinator.name }}. These come from
-              the house roster.
+              <template v-if="!member.region_id">
+                Choose your region from Edit profile after entering. It saves immediately.
+              </template>
+              <template v-else>
+                Wrong? Ask {{ member.coordinator.name }} to correct your region. Region changes need
+                coordinator approval.
+              </template>
             </p>
           </div>
           <p class="f-cert">
             {{
               certName
-                ? `Certificates keep your first confirmed name: ${certName}.`
-                : 'The first name you save is printed on your certificates. Check the spelling.'
+                ? `Certificates print ${certName}. Lounge name edits do not change that.`
+                : 'A certificate name is asked only when an event releases one for you.'
             }}
           </p>
+          <p v-if="saveError" class="ff-err" role="alert">{{ saveError }}</p>
           <div class="f-acts">
-            <button type="submit" class="gp-btn is-big" :disabled="!canSave">Save</button>
+            <button type="submit" class="gp-btn is-big" :disabled="!canSave || saving">
+              {{ saving ? 'Saving…' : 'Save' }}
+            </button>
             <button type="button" class="gp-btn is-ghost is-big" @click="notNow">Not now</button>
           </div>
         </form>
@@ -546,10 +565,20 @@ import M5 from './art/r5/manifest.json';
 import NameBeacon from './home/NameBeacon.vue';
 import RiverBoat from './home/RiverBoat.vue';
 import { BIRDS, BOAT, MOON, PLATE, SUN } from './home/art.js';
-import { animate, lite, rare, reduced } from './home/motion.js';
+import {
+  animate,
+  lite,
+  rare,
+  reduced,
+  motionActive,
+  onMotionChange,
+  motionFrame,
+  motionNow,
+} from './home/motion.js';
 import { member } from './fixtures.js';
 import { play } from './sound.js';
-import { certName, mode, preferredName, rosterName, savePreferredName, wait } from './state.js';
+import { errorText } from '../../lib/auth.js';
+import { certName, mode, preferredName, savePreferredName, wait } from './state.js';
 import {
   COMMUNITIES,
   COUNCIL,
@@ -730,9 +759,12 @@ const stars = computed(() => {
 });
 
 /* The name at the ghat: the member's preferred name, never the roll number. */
-const nameDraft = ref(preferredName.value || rosterName);
+const nameDraft = ref(preferredName.value || '');
+const phoneDraft = ref(member.phone || '');
 const saved = ref(false);
 const savedName = ref('');
+const saving = ref(false);
+const saveError = ref('');
 const clean = (v) => v.trim().replace(/\s+/g, ' ');
 const savedFirst = computed(() => savedName.value.split(' ')[0]);
 const canSave = computed(() => clean(nameDraft.value).length > 0);
@@ -1423,12 +1455,20 @@ function dock() {
   );
 }
 
-function save() {
-  if (!canSave.value) return;
-  savePreferredName(nameDraft.value);
-  savedName.value = clean(nameDraft.value);
-  saved.value = true;
-  nextTick(() => enterEl.value?.focus({ preventScroll: true }));
+async function save() {
+  if (!canSave.value || saving.value) return;
+  saving.value = true;
+  saveError.value = '';
+  try {
+    await savePreferredName(nameDraft.value, phoneDraft.value.trim() || null);
+    savedName.value = clean(nameDraft.value);
+    saved.value = true;
+    nextTick(() => enterEl.value?.focus({ preventScroll: true }));
+  } catch (err) {
+    saveError.value = errorText(err);
+  } finally {
+    saving.value = false;
+  }
 }
 
 watch(saved, (on) => {
@@ -1554,7 +1594,7 @@ function autoAct(g, s) {
 
 function autoStep(ts) {
   autoRaf = 0;
-  if (!auto.value || dead) return;
+  if (!auto.value || dead || !motionActive()) return;
   const p = plan.value;
   const dt = autoLast ? Math.min(50, ts - autoLast) : 16;
   autoLast = ts;
@@ -1617,6 +1657,7 @@ function autoTotal() {
 /* The world dips out (220ms), the boat keeps its place, the river jumps to just before
    the ghat and the last stretch rows in (650ms), then the name card comes up. Only the
    ghat's art loads; the chapters in between are never fetched. */
+let skipFrame = () => {};
 async function skip() {
   if (skipping.value || docked.value) return;
   stopAuto();
@@ -1631,7 +1672,7 @@ async function skip() {
   update();
   await nextTick();
   skipping.value = false;
-  const t0 = performance.now();
+  const t0 = motionNow();
   const D = 650;
   await new Promise((done) => {
     const step = (ts) => {
@@ -1643,10 +1684,10 @@ async function skip() {
       const t = clamp((ts - t0) / D, 0, 1);
       const e = 1 - (1 - t) ** 3;
       window.scrollTo({ top: from + (p.end - from) * e, behavior: 'instant' });
-      if (t < 1) requestAnimationFrame(step);
+      if (t < 1) skipFrame = motionFrame(step);
       else done();
     };
-    requestAnimationFrame(step);
+    skipFrame = motionFrame(step);
   });
   if (!dead && !docked.value) dock();
 }
@@ -1816,8 +1857,12 @@ function onMotionPreference() {
     if (!props.leaving) update();
   }
 }
-function onVisibility() {
-  if (document.visibilityState === 'hidden') stopAuto();
+let stopActivity = () => {};
+function onActivity(active) {
+  cancelAnimationFrame(autoRaf);
+  autoRaf = 0;
+  autoLast = 0;
+  if (active && auto.value && !dead) autoRaf = requestAnimationFrame(autoStep);
 }
 
 onMounted(() => {
@@ -1840,7 +1885,7 @@ onMounted(() => {
   window.addEventListener('resize', onResize);
   window.addEventListener('keydown', onKey);
   window.addEventListener('pointerdown', onPointer);
-  document.addEventListener('visibilitychange', onVisibility);
+  stopActivity = onMotionChange(onActivity);
   motionPreference.addEventListener('change', onMotionPreference);
   if (!reduced()) {
     stopShoot = rare(shoot, {
@@ -1863,12 +1908,13 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   dead = true;
+  skipFrame();
   stopAuto();
   lockScroll(false);
   stopShoot?.();
   stopBirds?.();
   delete window.__loungeTour;
-  document.removeEventListener('visibilitychange', onVisibility);
+  stopActivity();
   motionPreference.removeEventListener('change', onMotionPreference);
   animations.forEach((animation) => animation.cancel());
   clearTimeout(resizeT);

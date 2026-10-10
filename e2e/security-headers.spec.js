@@ -64,7 +64,6 @@ for (const path of [
 test('no CSP violations in the Lounge and the admin lounge (signed in)', async ({ page }) => {
   const violations = await withPolicy(page);
   await mockSupabase(page, { as: 'sa' });
-  await page.addInitScript(() => localStorage.setItem('lounge-e-tour-seen', '1'));
   await page.goto('/#/lounge');
   await expect(page.locator('.home')).toBeVisible();
   await page.goto('/#/admin?tab=events');

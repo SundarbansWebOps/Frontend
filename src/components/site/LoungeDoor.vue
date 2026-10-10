@@ -1,10 +1,12 @@
 <!--
-  The members' lounge, seen from outside. The door swings open as it scrolls in
-  and warm light spills onto the floor; the rooms inside are listed beside it. On House it is
-  a teaser that leads to sign-in; entry mode keeps the door, the sign-in slot and what is inside.
+  The members' lounge, seen from outside. The door swings open as it scrolls in and warm light
+  spills onto the floor; the rooms inside are listed beside it. On House it is a teaser that leads
+  to sign-in. In entry mode it is the sign-in door, closed until the member enters. With `overlay`
+  it is that same door laid over the live Lounge: it starts exactly on the sign-in door's opening,
+  swings open, the camera passes through, and it emits `done` once the Lounge is in view.
 -->
 <template>
-  <div ref="root" class="lounge" :class="{ open, entry }">
+  <div ref="root" class="lounge" :class="{ open, entry: entry || overlay, overlay }">
     <div v-if="!entry" class="copy">
       <p class="eyebrow mono">Members only</p>
       <component :is="teaser ? 'h2' : 'h1'" id="lounge-h">The lounge</component>
@@ -28,8 +30,8 @@
       </div>
     </div>
 
-    <div class="doorway" aria-hidden="true">
-      <div class="arch">
+    <div class="doorway" aria-hidden="true" :style="overlay ? doorStyle : undefined">
+      <div ref="arch" class="arch">
         <div class="light">
           <i v-for="m in MOTES" :key="m.k" class="mote" :style="m.style" />
         </div>
@@ -41,7 +43,7 @@
       </div>
       <div class="spill" />
     </div>
-    <div v-if="entry" class="entry-actions">
+    <div v-if="entry && !overlay" class="entry-actions">
       <slot />
       <ul class="inside" aria-label="Inside the lounge">
         <li v-for="(r, i) in LOUNGE_ROOMS" :key="r.key" :style="{ '--i': i }">
@@ -54,12 +56,19 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import LineIcon from './LineIcon.vue';
 import { LOUNGE_ROOMS } from './lounge-rooms.js';
 import { nav } from '../../lib/store.js';
 
-defineProps({ teaser: Boolean, entry: Boolean });
+// rect: the opening the overlay starts on, as measured from the sign-in door (see archRect).
+const props = defineProps({
+  teaser: Boolean,
+  entry: Boolean,
+  overlay: Boolean,
+  rect: { type: Object, default: null },
+});
+const emit = defineEmits(['done']);
 
 // Dust in the light: scattered positions, speeds and drift, fixed per mote.
 const MOTES = Array.from({ length: 16 }, (_, k) => ({
@@ -73,8 +82,61 @@ const MOTES = Array.from({ length: 16 }, (_, k) => ({
 }));
 
 const root = ref(null);
+const arch = ref(null);
 const open = ref(false);
 let openTimer;
+let raf = 0;
+
+const doorStyle = computed(() =>
+  props.rect
+    ? {
+        left: `${props.rect.left}px`,
+        top: `${props.rect.top}px`,
+        width: `${props.rect.width}px`,
+        height: `${props.rect.height}px`,
+      }
+    : undefined
+);
+
+// The opening as a plain box, for the overlay to start on.
+function archRect() {
+  const { left, top, width, height } = arch.value.getBoundingClientRect();
+  return { left, top, width, height };
+}
+
+// The overlay's film, in ms from the start: the leaf swings open with a slow start (0-850); the light
+// goes out as the opening clears; the camera pushes through from 600; the scene fades over 1400-1900,
+// when `done` fires. It runs on requestAnimationFrame, not Web Animations or CSS animations: the
+// Lounge's motion gate pauses both while the door holds the Lounge, and the door must keep moving.
+const FILM_MS = 1900;
+const segment = (t, from, len) => Math.min(Math.max((t - from) / len, 0), 1);
+const easeInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+function playDoor() {
+  const vw = document.documentElement.clientWidth;
+  const vh = document.documentElement.clientHeight;
+  const r = props.rect;
+  // Enough to carry the opening past every corner of the viewport before the fade.
+  const scale = (Math.hypot(vw, vh) / r.width) * 1.1;
+  root.value.style.transformOrigin = `${r.left + r.width / 2}px ${r.top + r.height / 2}px`;
+  const leaf = arch.value.querySelector('.door');
+  const light = arch.value.querySelector('.light');
+  const start = performance.now();
+  const frame = (now) => {
+    const t = now - start;
+    leaf.style.transform = `rotateY(${-90 * easeInOut(segment(t, 0, 850))}deg)`;
+    leaf.style.opacity = String(1 - segment(t, 850, 150));
+    light.style.opacity = String(0.25 * (1 - segment(t, 0, 700)));
+    root.value.style.transform = `scale(${1 + (scale - 1) * easeInOut(segment(t, 600, 1300))})`;
+    root.value.style.opacity = String(1 - segment(t, 1400, 500));
+    if (t < FILM_MS) raf = requestAnimationFrame(frame);
+    else emit('done');
+  };
+  raf = requestAnimationFrame(frame);
+}
+
+defineExpose({ archRect });
+
+// Entry mode waits for the member: the door stays closed until they press the button.
 const io = new IntersectionObserver(
   ([en]) => {
     if (en.isIntersecting) {
@@ -84,10 +146,14 @@ const io = new IntersectionObserver(
   },
   { threshold: 0.4 }
 );
-onMounted(() => io.observe(root.value));
+onMounted(() => {
+  if (props.overlay) playDoor();
+  else if (!props.entry) io.observe(root.value);
+});
 onBeforeUnmount(() => {
   io.disconnect();
   clearTimeout(openTimer);
+  cancelAnimationFrame(raf);
 });
 </script>
 
@@ -122,7 +188,7 @@ onBeforeUnmount(() => {
 }
 .entry .arch,
 .entry .spill {
-  width: clamp(150px, 24vh, 210px);
+  width: min(clamp(200px, 40vh, 340px), 70vw);
 }
 .entry .spill {
   height: 60px;
@@ -288,6 +354,8 @@ a.room:hover {
   align-content: end;
   perspective: 1200px;
 }
+/* The arch's own shadow is its frame; in the overlay --wall adds the room wall around it, so the
+   opening is the only hole in it. */
 .arch {
   position: relative;
   width: min(250px, 80%);
@@ -296,7 +364,8 @@ a.room:hover {
   background: #0b0907;
   box-shadow:
     0 0 0 10px #2a211a,
-    0 0 0 11px #3a3027;
+    0 0 0 11px #3a3027,
+    var(--wall, 0 0 transparent);
   transform-style: preserve-3d;
 }
 .light {
@@ -383,6 +452,41 @@ a.room:hover {
   clip-path: polygon(0 0, 100% 0, 150% 100%, -50% 100%);
 }
 
+/* The sign-in door stands large: roughly two thirds of the space under the navbar, so it reads
+   as a door you are about to walk through. */
+.lounge.entry:not(.overlay) .arch {
+  width: min(400px, 70vw, calc((100svh - var(--nav-h) - 230px) * 5 / 8));
+}
+
+/* ---- Overlay: the same door over the live Lounge. The scene is the whole viewport; the door's
+   opening sits where the sign-in door was, so the first frame matches it. The scene's transform
+   (set by playDoor) moves from the opening's centre, and the room wall is what rushes past. */
+.lounge.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+.lounge.overlay .doorway {
+  position: absolute;
+  display: block; /* a grid would size the arch's percentage height to 0 */
+}
+.lounge.overlay .arch {
+  --wall: 0 0 0 100vmax var(--l-bg);
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  /* Nothing solid behind the leaf: the opening shows the live Lounge. */
+  background: transparent;
+}
+.lounge.overlay .spill {
+  display: none;
+}
+/* The film sets these every frame; a CSS transition would lag behind it. */
+.lounge.overlay .door,
+.lounge.overlay .light {
+  transition: none;
+}
+
 @media (max-width: 860px) {
   .lounge {
     grid-template-columns: minmax(0, 1fr);
@@ -393,6 +497,9 @@ a.room:hover {
   }
   .arch {
     width: 150px;
+  }
+  .lounge.entry:not(.overlay) .arch {
+    width: min(300px, 74vw, calc((100svh - var(--nav-h) - 350px) * 5 / 8));
   }
   .spill {
     width: 150px;
