@@ -148,4 +148,11 @@ function hasSavedSession() {
     return false;
   }
 }
-if (callback || hasSavedSession()) authReady();
+const savedSession = hasSavedSession();
+// True from the first paint for a returning member, before their session is verified: a saved
+// session on this device is the hint. The navbar shows "Lounge" and the avatar at once, then
+// settles on the verified answer (no session or no member row flips it to "Sign in").
+export const signedIn = computed(() =>
+  auth.ready ? Boolean(auth.session && auth.profile) : savedSession
+);
+if (callback || savedSession) authReady();

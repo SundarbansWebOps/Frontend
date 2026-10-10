@@ -15,12 +15,7 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const calls = await mockSupabase(page, { profile: firstTime });
-    await page.goto('/#/resources');
-    await page
-      .getByRole('link', { name: /Lounge/ })
-      .filter({ visible: true })
-      .click();
-    await expect(page).toHaveURL(/#\/login$/);
+    await page.goto('/#/login');
     await expect(page.getByRole('button', { name: 'Enter the lounge', exact: true })).toBeVisible();
     await expect(page.locator('.nav')).toBeVisible();
     await expect(page.locator('.tabbar')).toBeVisible({ visible: viewport.width <= 760 });
@@ -108,14 +103,42 @@ test('normal-motion sign-in cross-dissolves into the painted tour', async ({ pag
   await expect(page.locator('.home')).toHaveCount(0);
 });
 
-test('sign out returns to the sign-in door', async ({ page }) => {
+test('signed-in member reaches the Lounge from the navbar in one tap, no door', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockSupabase(page, { profile: { preferred_name: 'Riya' } });
+  await page.goto('/#/resources');
+  await expect(page.getByRole('button', { name: /Your account, Riya/ })).toBeVisible();
+  await page
+    .getByRole('link', { name: /Lounge/ })
+    .filter({ visible: true })
+    .click();
+  await expect(page).toHaveURL(/#\/lounge$/);
+  await expect(page.locator('.home')).toBeVisible();
+});
+
+test('the Lounge header leads back to the website, still signed in', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await mockSupabase(page, { profile: { preferred_name: 'Riya' } });
+  await page.goto('/#/lounge');
+  await page.getByRole('link', { name: 'Back to the website' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+  await expect(page.getByRole('button', { name: /Your account, Riya/ })).toBeVisible();
+});
+
+test('sign out lives in the navbar, not the Lounge profile menu', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockSupabase(page, { profile: { preferred_name: 'Riya' } });
   await page.goto('/#/lounge');
   await page.getByRole('button', { name: /Your profile/ }).click();
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  await expect(page).toHaveURL(/#\/login$/);
-  await expect(
-    page.getByRole('button', { name: 'Sign in with Google', exact: true })
-  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toHaveCount(0);
+  await page.goBack();
+  await page.goto('/#/resources');
+  await page.getByRole('button', { name: /Your account, Riya/ }).click();
+  await page.getByRole('menuitem', { name: 'Sign out' }).click();
+  await expect(page.getByRole('link', { name: /Sign in/ }).filter({ visible: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Your account/ })).toHaveCount(0);
+  await page.goto('/#/lounge');
+  await expect(page).toHaveURL(/#\/login/);
 });

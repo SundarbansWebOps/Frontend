@@ -1,6 +1,6 @@
 <!--
   The Lounge header, shared by Home and Events: the crest and wordmark (left), Home / Events
-  (centred), and the notices bell (badge = unread), the theme toggle and the profile avatar
+  and the way back out to the public site (centred; Sign out lives in the site's navbar), and the notices bell (badge = unread), theme toggle and profile avatar
   (right). No progress bar. Under it, the newest urgent notice as a slim paper strip with a
   vermilion rule, dismissible (verdict §9.5).
 -->
@@ -18,6 +18,10 @@
       <a href="#/lounge?view=events" :aria-current="view === 'events' ? 'page' : undefined"
         >Events</a
       >
+      <a class="lnav-site" href="#/" aria-label="Back to the website">
+        <span>Website</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+      </a>
     </nav>
     <div class="lnav-acts">
       <button
@@ -75,6 +79,10 @@
     <a href="#/lounge?view=events" :aria-current="view === 'events' ? 'page' : undefined">
       <LineIcon name="cal" />
       <span>Events</span>
+    </a>
+    <a href="#/">
+      <LineIcon name="door" />
+      <span>Website</span>
     </a>
   </nav>
 
@@ -197,6 +205,33 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
 
 :where(html.lounge-active) .lnav-links a[aria-current='page'] {
   color: var(--t-1);
+}
+
+/* The way out to the public site: set apart from the two Lounge views by a hairline. */
+:where(html.lounge-active) .lnav-links a.lnav-site {
+  display: inline-flex;
+  gap: 5px;
+  margin-left: 8px;
+}
+
+:where(html.lounge-active) .lnav-links a.lnav-site::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: var(--line-strong);
+}
+
+:where(html.lounge-active) .lnav-site svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* The current page: a short marigold rule under the word. */
@@ -446,7 +481,7 @@ html:where(.lounge-active).vt-page .lnav-strip {
     inset: auto 0 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 4px;
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: color-mix(in srgb, var(--bg) 92%, transparent);

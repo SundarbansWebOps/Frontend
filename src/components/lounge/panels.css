@@ -342,10 +342,6 @@
   text-align: center;
 }
 
-:where(html.lounge-active) .pm-out {
-  color: var(--t-3) !important;
-}
-
 /* ---------- The name card (ProfileEdit) ---------- */
 
 :where(html.lounge-active) .pe {

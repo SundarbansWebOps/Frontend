@@ -1,7 +1,8 @@
 <!--
   The profile menu from the avatar: a sheet of ghat paper with the band on top. Who you are
   (preferred name as the title, never the roll number; then roll, region and Regional
-  Coordinator), then My certificates, Edit profile, Retake the tour, the theme and Sign out.
+  Coordinator), then My certificates, Edit profile, Retake the tour and the theme. Sign out is
+  in the public site's navbar, one tap away via the Lounge header's Website link.
   Comes down from under the header on every width (the drop variant in LoungeDialog.vue).
 -->
 <template>
@@ -90,15 +91,6 @@
             <span>Admin lounge</span>
           </button>
         </li>
-        <li>
-          <button type="button" class="pm-out" @click="signOut">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
-              <path d="M10 8 6 12l4 4M6 12h10" />
-            </svg>
-            <span>Sign out</span>
-          </button>
-        </li>
       </ul>
     </div>
   </LoungeDialog>
@@ -112,7 +104,7 @@ import LoungeDialog from './LoungeDialog.vue';
 import * as ev from './events.js';
 import { member } from './fixtures.js';
 import { callName, initialsOf, theme } from './state.js';
-import { canAdmin, signOut as endSession } from '../../lib/auth.js';
+import { canAdmin } from '../../lib/auth.js';
 
 const emit = defineEmits(['close', 'edit', 'certs', 'tour', 'theme']);
 const router = useRouter();
@@ -133,11 +125,6 @@ async function leaveTo(path) {
   await dlg.value?.close();
   await backDone;
   router.push({ path });
-}
-/* Sign out ends the Supabase session, then returns to the sign-in door. */
-async function signOut() {
-  await endSession().catch(() => {});
-  await leaveTo('/login');
 }
 /* Edit and My certificates replace this menu (same Back entry); tour and theme close it. */
 async function go(what) {

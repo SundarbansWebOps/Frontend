@@ -49,7 +49,7 @@ test('a normal member cannot open the admin lounge', async ({ page }) => {
   await page.goto('/#/admin');
   await expect(page).toHaveURL(/#\/lounge$/);
   await page.getByRole('button', { name: /Your profile/ }).click();
-  await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /My certificates/ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Admin lounge' })).toHaveCount(0);
 });
 
