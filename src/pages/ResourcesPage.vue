@@ -162,7 +162,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import SearchBar from '../components/site/SearchBar.vue';
 import TideLine from '../components/site/TideLine.vue';
 import DeltaMap from '../components/site/DeltaMap.vue';
@@ -171,15 +171,20 @@ import ToolLinks from '../components/site/ToolLinks.vue';
 import { openCourse, search, store } from '../lib/store.js';
 import { byCode } from '../lib/courses.js';
 import { BRANCHES } from '../data/branches.js';
+import { theme } from '../lib/theme.js';
 
 const q = ref(store.q);
 const branch = ref(null);
 const level = ref(null);
 store.q = '';
 
-// The page is always full black, whatever the site theme. The token block lives in tokens.css.
-onMounted(() => document.documentElement.classList.add('resources-dark'));
+// The Resources page is pure black in dark mode; in light mode it uses the normal paper tokens.
+// The token block lives in tokens.css under :root.resources-dark.
+const syncDark = () =>
+  document.documentElement.classList.toggle('resources-dark', theme.value === 'dark');
+onMounted(syncDark);
 onBeforeUnmount(() => document.documentElement.classList.remove('resources-dark'));
+watch(theme, syncDark);
 
 // ---------- levels ----------
 const LEVELS = [
