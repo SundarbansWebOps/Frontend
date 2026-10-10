@@ -27,6 +27,7 @@
 | specs/003-admin-lounge-and-sign-in.md | Spec 003 — Google sign-in (roster only), roles, two-person rule, admin lounge, dashboard setup steps |
 | specs/003-backend-data-decisions.md | Confirmed backend design Q1–Q30: requirements, inherited defaults and implementation facts |
 | specs/001-tickets.md | Spec 001 — ticket list + **live status board** (T-01…T-29) |
+| reports/2026-10-10-sky-motion.md | Primary-source bird/cloud motion research and scene-specific animation choices |
 | reports/2026-10-10-audit-fixes.md | Implemented non-certificate corrections, independent review, final local gates and remaining source/policy limits |
 | reports/2026-10-09-local-e2e-audit.md | Twenty native Luna audits, real Chrome local fixtures, live aggregate hygiene, verified gaps and prioritized corrections |
 | reports/sundarbans-rag-chatbot-audit-2026-09-03.md | Live RAG chatbot audit findings and probes |
