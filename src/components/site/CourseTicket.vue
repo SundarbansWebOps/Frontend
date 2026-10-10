@@ -56,7 +56,7 @@ const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentW
   --stub: 44px;
   position: relative;
   display: grid;
-  grid-template-columns: var(--stub) 1fr;
+  grid-template-columns: var(--stub) minmax(0, 1fr);
   min-width: 0;
   border-radius: 14px;
   background: var(--card);

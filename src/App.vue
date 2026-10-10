@@ -10,6 +10,14 @@
       />
     </filter>
   </svg>
+  <a
+    v-if="!isLounge && route.name !== 'NotFound'"
+    class="skip"
+    href="#main-content"
+    @click.prevent="skipToMain"
+  >
+    Skip to main content
+  </a>
   <TopNav v-if="!isLounge" />
   <RouterView />
   <SiteFooter v-if="route.path !== '/' && !isStandalone" />
@@ -31,16 +39,23 @@ const route = useRoute();
 const isLounge = computed(
   () =>
     route.name === 'Lounge' ||
+    route.name === 'LoungeForm' ||
     (!route.matched.length && document.documentElement.classList.contains('lounge-active'))
 );
 const isStandalone = computed(
   () =>
     route.name === 'Lounge' ||
+    route.name === 'LoungeForm' ||
     route.name === 'Login' ||
     (!route.matched.length &&
       (document.documentElement.classList.contains('lounge-active') ||
         document.documentElement.classList.contains('sign-in-active')))
 );
+function skipToMain() {
+  const main = document.getElementById('main-content');
+  main?.focus({ preventScroll: true });
+  main?.scrollIntoView({ block: 'start' });
+}
 </script>
 
 <style scoped>
@@ -48,6 +63,20 @@ const isStandalone = computed(
   position: absolute;
   width: 0;
   height: 0;
+}
+.skip {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 300;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--paper);
+  transform: translateY(-160%);
+}
+.skip:focus {
+  transform: translateY(0);
 }
 .toast {
   position: fixed;

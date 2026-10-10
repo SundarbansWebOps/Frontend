@@ -280,6 +280,37 @@ textarea.adm-input {
   overflow-wrap: anywhere;
 }
 
+.adm-table-wrap {
+  overflow-x: auto;
+}
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.adm-table th,
+.adm-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.adm-table th {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.adm-file {
+  display: grid;
+  gap: 6px;
+}
+.adm-stack {
+  display: grid;
+  gap: 12px;
+}
+
 @media (max-width: 640px) {
   .adm-form {
     grid-template-columns: minmax(0, 1fr);

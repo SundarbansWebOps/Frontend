@@ -1,9 +1,11 @@
 <!--
-  The admin lounge, opened from the Lounge's profile menu by Regional Coordinators and Super
-  Admins (the router keeps everyone else out; the database checks every call again).
-  RC: students and roster of their region, all events, their own requests.
-  Super Admin: everything an RC can do in every region, plus the approval queue, positions and
-  the audit log. Every change to a student is a request that a different Super Admin approves.
+  The admin lounge, opened from the Lounge's profile menu by Regional Coordinators, community
+  Heads/Co-Heads and Super Admins (the router keeps everyone else out; the database checks every
+  call again). RC: students and roster of their region, own-region events/forms/notices, requests.
+  Head/Co-Head: own community events and forms. Super Admin: house-wide plus every region and
+  community, the approval queue, positions and the audit log. Admin-initiated student changes
+  still need a different Super Admin. Student region corrections are reviewed by the current-region
+  RC or a Super Admin.
 -->
 <template>
   <main class="wrap">
@@ -53,7 +55,12 @@
 
     <p v-if="loadError" class="adm-msg err" role="alert">{{ loadError }}</p>
 
-    <section v-if="lookups" class="sec rise" style="--i: 2" :aria-labelledby="`${tab}-h`">
+    <section
+      v-if="lookups && current"
+      class="sec rise"
+      style="--i: 2"
+      :aria-labelledby="`${tab}-h`"
+    >
       <h2 :id="`${tab}-h`" class="sec-h">
         <span class="mono">{{
           String(tabs.findIndex((t) => t.id === tab) + 1).padStart(2, '0')
@@ -73,71 +80,96 @@ import LineIcon from '../components/site/LineIcon.vue';
 import AdminStudents from '../components/admin/AdminStudents.vue';
 import AdminRoster from '../components/admin/AdminRoster.vue';
 import AdminEvents from '../components/admin/AdminEvents.vue';
+import AdminForms from '../components/admin/AdminForms.vue';
+import AdminNotices from '../components/admin/AdminNotices.vue';
 import AdminRequests from '../components/admin/AdminRequests.vue';
 import AdminPositions from '../components/admin/AdminPositions.vue';
 import AdminAudit from '../components/admin/AdminAudit.vue';
 import '../components/admin/admin.css';
-import { auth, errorText, isSuperAdmin, signOut } from '../lib/auth.js';
+import { auth, errorText, isRc, isSuperAdmin, signOut } from '../lib/auth.js';
 import { loadCounts, loadLookups } from '../lib/admin.js';
 
 const route = useRoute();
 const router = useRouter();
+
+const position = computed(() => auth.dashboard?.position);
+const isHead = computed(() => position.value === 'head' || position.value === 'co_head');
+const membersTabs = computed(() => isSuperAdmin.value || isRc.value);
 
 const ALL_TABS = [
   {
     id: 'students',
     label: 'Students',
     component: AdminStudents,
-    sub: 'Find a student, see their details and ask for a change. A Super Admin approves every change.',
+    members: true,
+    sub: 'Find a student, see their details and ask for a change. A Super Admin approves every admin-initiated change.',
   },
   {
     id: 'roster',
     label: 'Roster',
     component: AdminRoster,
-    sub: 'Add students before their first sign-in. Only emails on the roster can sign in with Google.',
+    members: true,
+    sub: 'Add students before their first sign-in. Only emails on the roster can sign in with Google. Name and region may be left empty.',
   },
   {
     id: 'events',
     label: 'Events',
     component: AdminEvents,
-    sub: 'Create, edit, cancel or remove house and community events.',
+    sub: 'Draft, publish and unpublish events in your scope. Attendance and certificates live on each event.',
+  },
+  {
+    id: 'forms',
+    label: 'Forms',
+    component: AdminForms,
+    sub: 'House-themed forms, group applications and event registration. Invite links appear to students only after they submit.',
+  },
+  {
+    id: 'notices',
+    label: 'Notices',
+    component: AdminNotices,
+    sub: 'House, region or community notices, with optional cohort targeting. Group applications live on Forms, with the WhatsApp invite shown after submit.',
   },
   {
     id: 'requests',
     label: 'Requests',
     component: AdminRequests,
+    members: true,
     sub: '',
   },
   {
     id: 'positions',
     label: 'Positions',
     component: AdminPositions,
-    sub: 'Who coordinates each region and leads each community. Changes need a second Super Admin.',
     superAdmin: true,
+    sub: 'Up to two Regional Coordinators per region, and a Head and Co-Head per community. Super Admin accounts are fixed.',
   },
   {
     id: 'audit',
     label: 'Audit log',
     component: AdminAudit,
-    sub: 'Every change, who made it and when. Nothing here can be edited.',
     superAdmin: true,
+    sub: 'Every change, who made it and when. Nothing here can be edited.',
   },
 ];
 
 const tabs = computed(() =>
-  ALL_TABS.filter((t) => !t.superAdmin || isSuperAdmin.value).map((t) =>
+  ALL_TABS.filter((t) => {
+    if (t.superAdmin) return isSuperAdmin.value;
+    if (t.members) return membersTabs.value;
+    return true;
+  }).map((t) =>
     t.id === 'requests'
       ? {
           ...t,
           sub: isSuperAdmin.value
-            ? 'Changes waiting for a Super Admin. You can approve anyone’s request except your own.'
-            : 'Your requests and what a Super Admin decided.',
+            ? 'Student region corrections, certificate-name corrections, and admin changes waiting for a different Super Admin.'
+            : 'Student region corrections for your region, and the admin changes you asked for.',
         }
       : t
   )
 );
 const tab = computed(() =>
-  tabs.value.some((t) => t.id === route.query.tab) ? route.query.tab : 'students'
+  tabs.value.some((t) => t.id === route.query.tab) ? route.query.tab : tabs.value[0]?.id
 );
 const current = computed(() => tabs.value.find((t) => t.id === tab.value));
 function setTab(id) {
@@ -157,16 +189,21 @@ const loadError = ref('');
 const regionName = computed(
   () => lookups.value?.regions.find((r) => r.id === auth.dashboard?.region_id)?.name ?? ''
 );
-const roleLabel = computed(() =>
-  isSuperAdmin.value
-    ? 'Super Admin'
-    : `Regional Coordinator${regionName.value ? ` · ${regionName.value}` : ''}`
+const communityName = computed(
+  () => lookups.value?.communities.find((c) => c.id === auth.dashboard?.community_id)?.name ?? ''
 );
-const scopeNote = computed(() =>
-  isSuperAdmin.value
-    ? 'You see every region.'
-    : `You see students in ${regionName.value || 'your region'} and every event.`
-);
+const roleLabel = computed(() => {
+  if (isSuperAdmin.value) return 'Super Admin';
+  if (isHead.value)
+    return `${position.value === 'co_head' ? 'Co-Head' : 'Head'}${communityName.value ? ` · ${communityName.value}` : ''}`;
+  return `Regional Coordinator${regionName.value ? ` · ${regionName.value}` : ''}`;
+});
+const scopeNote = computed(() => {
+  if (isSuperAdmin.value) return 'You see every region and community.';
+  if (isHead.value)
+    return `You manage events, forms and notices for ${communityName.value || 'your community'}. You cannot open the student list.`;
+  return `You see students in ${regionName.value || 'your region'}, and events, forms and notices for that region.`;
+});
 
 async function refreshCounts() {
   try {

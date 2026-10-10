@@ -127,7 +127,7 @@ function untilt() {
   display: grid;
   /* minmax(0, …): an auto column grows to the unwrapped name, so fit.js saw no overflow. */
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
   height: 100%;
   overflow: hidden;
   background: var(--card);
@@ -213,7 +213,7 @@ function untilt() {
 }
 .info {
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 2px;
   min-width: 0;
   padding: 11px 12px 12px;

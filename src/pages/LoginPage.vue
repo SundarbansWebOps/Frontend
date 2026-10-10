@@ -1,6 +1,6 @@
 <!-- The sign-in door: Google sign-in for members on the house roster, then into the Lounge. -->
 <template>
-  <main class="sign-in" :class="{ leaving }" :aria-busy="busy">
+  <main id="main-content" class="sign-in" tabindex="-1" :class="{ leaving }" :aria-busy="busy">
     <section aria-labelledby="login-h">
       <LoungeDoor entry>
         <h1 id="login-h">The lounge</h1>
@@ -23,8 +23,16 @@ import { auth, authReady, signInWithGoogle, takeNext } from '../lib/auth.js';
 
 const router = useRouter();
 const route = useRoute();
+const requestedNext = computed(() => {
+  if (typeof route.query.next === 'string') return route.query.next;
+  const room = ['live', 'groups', 'certificates'].includes(route.query.room)
+    ? route.query.room
+    : null;
+  return room ? `/lounge?room=${room}` : '/lounge';
+});
 // Only members-only paths are honoured, so a crafted ?next= cannot send anyone off-site.
-const safeNext = (p) => (typeof p === 'string' && /^\/(lounge|admin)\b/.test(p) ? p : '/lounge');
+const safeNext = (p) =>
+  typeof p === 'string' && /^\/(lounge|admin)(?:[/?#]|$)/.test(p) ? p : '/lounge';
 const label = computed(() => (auth.session ? 'Enter the lounge' : 'Sign in with Google'));
 document.documentElement.classList.add('sign-in-active');
 const busy = ref(false);
@@ -48,13 +56,13 @@ async function signIn() {
     busy.value = true;
     error.value = '';
     try {
-      await signInWithGoogle(safeNext(route.query.next));
+      await signInWithGoogle(safeNext(requestedNext.value));
     } catch {
       busy.value = false;
     }
     return;
   }
-  enter(safeNext(route.query.next));
+  enter(safeNext(requestedNext.value));
 }
 
 async function enter(next) {
@@ -66,16 +74,14 @@ async function enter(next) {
   }
   try {
     // Load both scenes before fading, so a slow chunk cannot leave an empty screen.
-    const [, , state] = await Promise.all([
+    await Promise.all([
       import('./LoungePage.vue'),
       import('../components/lounge/WelcomeTour.vue'),
       import('../components/lounge/state.js'),
     ]);
     if (disposed) return;
-    // Deliberately replay on every sign-in until the backend owns the seen flag.
-    state.resetTour();
-    if (document.startViewTransition && !reducedMotion()) await crossfadeToLounge();
-    else await fadeToLounge();
+    if (document.startViewTransition && !reducedMotion()) await crossfadeToLounge(next);
+    else await fadeToLounge(next);
   } catch {
     if (!disposed) fail();
   }
@@ -83,13 +89,11 @@ async function enter(next) {
 
 // The door and the lounge's first frame cross-dissolve in one 900ms overlap. Fading the sign-in
 // out first would leave a dark gap before the tour could appear.
-async function crossfadeToLounge() {
+async function crossfadeToLounge(next) {
   const root = document.documentElement;
   root.classList.add('sign-in-cross');
   try {
-    const transition = document.startViewTransition(() =>
-      router.push({ path: '/lounge' }).then(() => nextTick())
-    );
+    const transition = document.startViewTransition(() => router.push(next).then(() => nextTick()));
     // A transition skipped by a hidden tab or a quick second navigation still swaps the page.
     transition.ready.catch(() => {});
     await transition.finished;
@@ -102,11 +106,17 @@ async function crossfadeToLounge() {
 
 // No View Transitions (or reduced motion): fade the sign-in out, then arrive with the lounge's
 // own fade-in.
-async function fadeToLounge() {
+async function fadeToLounge(next) {
   leaving.value = true;
   const enter = async () => {
     try {
-      await router.push({ path: '/lounge', state: { signIn: true } });
+      const target = router.resolve(next);
+      await router.push({
+        path: target.path,
+        query: target.query,
+        hash: target.hash,
+        state: { signIn: true },
+      });
     } catch {
       if (!disposed) fail();
     }

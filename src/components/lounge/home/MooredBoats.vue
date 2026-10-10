@@ -14,14 +14,18 @@
         <h2 id="moor-h">Your WhatsApp groups</h2>
         <p class="moor-sub">Tap a boat to board. Each one opens in WhatsApp.</p>
       </header>
-      <ul ref="list" class="moor-row">
+      <p v-if="!boats.length" class="moor-sub">
+        Your community and regional groups will appear here when available.
+      </p>
+      <ul v-else ref="list" class="moor-row">
         <li
-          v-for="(g, i) in groups"
+          v-for="(g, i) in boats"
           v-loop
           :key="g.id"
           :style="{ '--i': i, '--p': `${PERIODS[i % 5]}s` }"
         >
           <a
+            v-if="g.href"
             class="mb"
             :href="g.href"
             target="_blank"
@@ -58,9 +62,42 @@
                 <b>{{ g.label }}</b>
                 <small>{{ g.why }}</small>
               </span>
-              <span class="mb-go">Join <span aria-hidden="true">↗</span></span>
+              <span class="mb-go">Open invite <span aria-hidden="true">↗</span></span>
             </span>
           </a>
+          <RouterLink v-else class="mb" :to="g.to" @pointerdown="splash" @keydown.enter="splash">
+            <span class="mb-hullw" aria-hidden="true">
+              <span class="mb-ring"></span>
+              <span class="mb-bob">
+                <span class="mb-hull">
+                  <picture>
+                    <source type="image/avif" :srcset="MOORED.avif[mode]" />
+                    <img :src="MOORED[mode]" data-art alt="" draggable="false" loading="lazy" />
+                  </picture>
+                </span>
+              </span>
+              <span class="mb-water"></span>
+              <span class="mb-splash"></span>
+            </span>
+            <span class="mb-rope" aria-hidden="true"></span>
+            <span class="mb-tag">
+              <span class="mb-eye" aria-hidden="true"></span>
+              <span class="mb-wa" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    fill="#fff"
+                    d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3Zm4.4 12.4c-.2.5-1.1 1-1.6 1-.4.1-.9.1-3-.7-2.5-1-4-3.5-4.1-3.7-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.8c.1.2.1.4 0 .5l-.4.6c-.1.2-.2.3 0 .6.4.7 1 1.3 1.6 1.8.7.5 1.1.6 1.3.7.2.1.4 0 .5-.1l.6-.8c.2-.2.3-.2.5-.1l1.7.8c.2.1.4.2.4.3.1.2.1.7-.1 1.1Z"
+                  />
+                </svg>
+              </span>
+              <span class="mb-txt">
+                <em v-if="kick(g)">{{ kick(g) }}</em>
+                <b>{{ g.label }}</b>
+                <small>{{ g.why }}</small>
+              </span>
+              <span class="mb-go">{{ g.applied ? 'Applied' : 'Apply' }}</span>
+            </span>
+          </RouterLink>
         </li>
       </ul>
     </div>
@@ -68,8 +105,8 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
-import { groups, member } from '../fixtures.js';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { lounge, openGroupForms } from '../session.js';
 import { mode } from '../state.js';
 import { MOORED } from './art.js';
 import { animate, reduced, vLoop } from './motion.js';
@@ -78,14 +115,45 @@ const PERIODS = [7.5, 8.1, 8.7, 9.3, 9.9];
 const list = ref(null);
 const shown = ref(false);
 
+const boats = computed(() => {
+  const joined = lounge.groups.map((g) => ({
+    id: g.id,
+    label: g.name || g.label,
+    why: [
+      g.purpose,
+      g.invite_error
+        ? 'Invite link could not be loaded. Open to retry.'
+        : !g.invite_url && g.applied
+          ? 'No invite link is available yet. Your application is saved.'
+          : '',
+    ]
+      .filter(Boolean)
+      .join(' '),
+    href: g.invite_url || g.href,
+    to: `/lounge/forms/${g.id}`,
+    applied: true,
+    kind: g.community_id ? 'community' : g.region_id ? 'region' : 'house',
+  }));
+  const apply = openGroupForms.value.map((f) => ({
+    id: f.id,
+    label: f.group_label || f.title,
+    why: f.group_purpose || '',
+    href: '',
+    to: `/lounge/forms/${f.id}`,
+    applied: false,
+    kind: f.community_id ? 'community' : f.region_id ? 'region' : 'house',
+  }));
+  return [...apply, ...joined];
+});
+
 const kick = (g) =>
-  g.id === 'house'
+  g.kind === 'house'
     ? 'Start here'
-    : g.id === 'region'
+    : g.kind === 'region'
       ? 'Your region'
-      : member.communities?.includes(g.id)
-        ? 'You registered'
-        : '';
+      : g.applied
+        ? 'You applied'
+        : 'Apply';
 
 let io = null;
 onMounted(() => {
@@ -219,6 +287,7 @@ function splash(ev) {
 }
 .moor-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 18px;
   margin: 0;
@@ -227,7 +296,7 @@ function splash(ev) {
 }
 .moor-row li {
   display: flex;
-  flex: 1 1 0;
+  flex: 1 1 180px;
   min-width: 0;
   max-width: 214px;
 }

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mockSupabase, PEOPLE } from './supabase-mock.js';
+import { mockSupabase, PEOPLE, callTo } from './supabase-mock.js';
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
@@ -16,7 +16,6 @@ test('signed-out visitors are sent to the sign-in door', async ({ page }) => {
 
 test('Google sign-in for a rostered member lands in the Lounge', async ({ page }) => {
   const calls = await mockSupabase(page, { signedIn: false, google: 'ok' });
-  await page.addInitScript(() => localStorage.setItem('lounge-e-tour-seen', '1'));
   await page.goto('/#/login');
   await page.getByRole('button', { name: 'Sign in with Google', exact: true }).click();
   await expect(page.locator('.lounge-active, .home, .tour').first()).toBeVisible();
@@ -24,7 +23,8 @@ test('Google sign-in for a rostered member lands in the Lounge', async ({ page }
   const authorize = calls.find((c) => c.path === '/auth/v1/authorize');
   const params = new URL(authorize.url).searchParams;
   expect(params.get('provider')).toBe('google');
-  expect(params.get('hd')).toBe('ds.study.iitm.ac.in');
+  expect(params.get('prompt')).toBe('select_account');
+  expect(params.has('hd')).toBe(false);
   expect(params.get('code_challenge_method')).toBe('s256');
   // The code was exchanged and the address bar is clean again.
   expect(calls.some((c) => c.path === '/auth/v1/token')).toBe(true);
@@ -37,14 +37,15 @@ test('Google sign-in for someone not on the roster is refused with a clear messa
   await mockSupabase(page, { signedIn: false, google: 'refused' });
   await page.goto('/#/login');
   await page.getByRole('button', { name: 'Sign in with Google', exact: true }).click();
-  await expect(page.getByRole('alert')).toContainText('not on the house roster');
+  await expect(page.getByRole('alert')).toHaveText(
+    'Access Denied. Sign in with your IITM student email or ask your regional coordinator to add you.'
+  );
   await expect(page).toHaveURL(/#\/login$/);
   await expect(page.locator('.home, .tour')).toHaveCount(0);
 });
 
 test('a normal member cannot open the admin lounge', async ({ page }) => {
   await mockSupabase(page, { as: 'member' });
-  await page.addInitScript(() => localStorage.setItem('lounge-e-tour-seen', '1'));
   await page.goto('/#/admin');
   await expect(page).toHaveURL(/#\/lounge$/);
   await page.getByRole('button', { name: /Your profile/ }).click();
@@ -54,7 +55,6 @@ test('a normal member cannot open the admin lounge', async ({ page }) => {
 
 test('a Regional Coordinator opens the admin lounge from the Lounge', async ({ page }) => {
   const calls = await mockSupabase(page, { as: 'rc', data: { roster_add: 'ok' } });
-  await page.addInitScript(() => localStorage.setItem('lounge-e-tour-seen', '1'));
   await page.goto('/#/lounge');
   await page.getByRole('button', { name: /Your profile/ }).click();
   await page.getByRole('button', { name: 'Admin lounge' }).click();
@@ -62,17 +62,17 @@ test('a Regional Coordinator opens the admin lounge from the Lounge', async ({ p
   await expect(page.getByRole('heading', { name: 'Admin lounge', level: 1 })).toBeVisible();
   await expect(page.getByText('Regional Coordinator · Patna')).toBeVisible();
   const tabs = page.getByRole('tab');
-  await expect(tabs).toHaveText(['Students', 'Roster', 'Events', 'Requests']);
+  await expect(tabs).toHaveText(['Students', 'Roster', 'Events', 'Forms', 'Notices', 'Requests']);
   await page.getByRole('tab', { name: 'Roster' }).click();
   await expect(page.getByText('Added to Patna.')).toBeVisible();
   // Phone is optional: a student can be added with email and name only.
   await page.getByLabel('IITM email').fill('21f1000001@ds.study.iitm.ac.in');
-  await page.getByLabel('Full name', { exact: true }).fill('No Phone Student');
+  await page.getByLabel(/^Full name/).fill('No Phone Student');
   await page.getByRole('button', { name: 'Add to roster' }).first().click();
   await expect(
     page.getByText('21f1000001@ds.study.iitm.ac.in can now sign in with Google.')
   ).toBeVisible();
-  const added = calls.find((c) => c.path === '/rest/v1/rpc/roster_add');
+  const added = await callTo(calls, '/rest/v1/rpc/roster_add');
   expect(JSON.parse(added.body)).toMatchObject({
     p_email: '21f1000001@ds.study.iitm.ac.in',
     p_phone: null,
@@ -109,6 +109,8 @@ test('a Super Admin approves another admin’s request', async ({ page }) => {
     'Students',
     'Roster',
     'Events',
+    'Forms',
+    'Notices',
     /Requests/,
     'Positions',
     'Audit log',
@@ -145,7 +147,7 @@ test('a login email change is approved through change-member-contact', async ({ 
   await expect(page.getByRole('status')).toHaveText(
     'Approved. Their sign-in now uses the new email.'
   );
-  const fn = calls.find((c) => c.path === '/functions/v1/change-member-contact');
+  const fn = await callTo(calls, '/functions/v1/change-member-contact');
   expect(JSON.parse(fn.body)).toEqual({ request_id: request.id, note: 'Checked with the student' });
   expect(calls.some((c) => c.path === '/rest/v1/rpc/approve_request')).toBe(false);
 });

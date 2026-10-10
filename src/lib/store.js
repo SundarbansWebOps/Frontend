@@ -22,6 +22,8 @@ export const store = reactive({
   // A search typed on Home, carried into the Resources search bar.
   q: '',
 });
+let courseOpener = null;
+export const getCourseOpener = () => courseOpener;
 
 watch(
   () => [...store.mine],
@@ -45,16 +47,22 @@ const PATHS = {
   login: '/login',
 };
 export const nav = {
-  go(page, anchor = null) {
+  go(page, anchor = null, query = {}) {
     const path = PATHS[page] ?? '/';
-    const hash = anchor ? `#${anchor}` : '';
+    const loungeRoom = page === 'lounge' && anchor ? anchor : null;
+    const hash = anchor && !loungeRoom ? `#${anchor}` : '';
+    const nextQuery = { ...query, ...(loungeRoom ? { room: loungeRoom } : {}) };
     const here = router.currentRoute.value;
     // Same place again: vue-router drops duplicate navigations, so scroll directly.
-    if (here.path === path && here.hash === hash) {
+    if (
+      here.path === path &&
+      here.hash === hash &&
+      JSON.stringify(here.query) === JSON.stringify(nextQuery)
+    ) {
       if (anchor) document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
-    router.push({ path, hash });
+    router.push({ path, hash, query: nextQuery });
   },
 };
 
@@ -76,6 +84,7 @@ export function toast(msg) {
 // Opening a course pushes a history entry so the phone back button closes the sheet
 // instead of leaving the site. The ?course= URL is shareable on WhatsApp.
 export function openCourse(code, opts = {}, event) {
+  courseOpener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   const origin = event
     ? originFrom(event)
     : { x: window.innerWidth / 2, y: window.innerHeight / 2 };

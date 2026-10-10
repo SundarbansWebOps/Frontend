@@ -10,11 +10,19 @@ const PUBLISHABLE_KEY =
 
 // PKCE: Google sends the visitor back with ?code=… (before the #/route), which suits the hash
 // router; the implicit flow would put tokens in the # and collide with it.
-export const supabase = createClient(SUPABASE_URL, PUBLISHABLE_KEY, {
-  auth: {
-    flowType: 'pkce',
-    detectSessionInUrl: true,
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
+// Explicit loopback-only fixture session. Vite removes this branch from production builds.
+const localLounge =
+  import.meta.env.DEV &&
+  ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) &&
+  new URLSearchParams(location.search).get('local-lounge') === '1';
+
+export const supabase = localLounge
+  ? (await import('./local-lounge.js')).localSupabase
+  : createClient(SUPABASE_URL, PUBLISHABLE_KEY, {
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    });

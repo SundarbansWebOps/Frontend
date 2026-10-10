@@ -4,7 +4,7 @@
   communities → the crew. A coordinator's region chip opens that region on House.
 -->
 <template>
-  <main class="wrap">
+  <main id="main-content" class="wrap" tabindex="-1">
     <header class="head rise" style="--i: 0">
       <h1>Teams</h1>
       <dl class="stats">
@@ -30,7 +30,7 @@
         One council, three channels, one house. Tap any part to meet the people in it.
         <em class="draft mono">structure to confirm</em>
       </p>
-      <HouseFlow @go="(id) => rail.goTo(id)" />
+      <HouseFlow @go="goToNode" />
     </section>
 
     <section id="uhc" class="sec" aria-labelledby="uhc-h">
@@ -63,12 +63,13 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { nextTick, onMounted, reactive, ref } from 'vue';
 import SectionRail from '../components/site/SectionRail.vue';
 import HouseFlow from '../components/site/HouseFlow.vue';
 import CouncilDeck from '../components/site/CouncilDeck.vue';
 import TeamCards from '../components/site/TeamCards.vue';
 import { council, house, lower, regions, upper } from '../lib/house.js';
+import { regionById } from '../lib/house.js';
 import { COMMUNITIES, CREW } from '../data/teams.js';
 import { nav } from '../lib/store.js';
 
@@ -102,6 +103,19 @@ onMounted(() => {
 });
 
 const rail = ref(null);
+async function goToNode(section, itemId) {
+  if (section === 'lhc' && itemId && regionById[itemId]) {
+    toRegion(itemId);
+    return;
+  }
+  rail.value.goTo(section);
+  if (section === 'communities' && itemId) {
+    await nextTick();
+    document
+      .getElementById(`team-${itemId}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
 function toRegion(id) {
   house.region = id;
   house.meetup = null;
@@ -120,7 +134,7 @@ function toRegion(id) {
 }
 .head {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: end;
   gap: 4px 28px;
 }
@@ -200,7 +214,7 @@ h1 {
 }
 @media (max-width: 900px) {
   .head {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .stats {
     justify-content: flex-start;

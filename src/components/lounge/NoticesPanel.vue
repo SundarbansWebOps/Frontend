@@ -18,6 +18,7 @@
           </button>
         </p>
       </div>
+      <p v-if="noticeError" class="np-error" role="alert">{{ noticeError }}</p>
 
       <template v-for="g in grouped" :key="g.label">
         <h3 class="np-group">{{ g.label }}</h3>
@@ -49,6 +50,15 @@
               </button>
               <div v-show="openId === n.id" :id="`ntb-${n.id}`" class="nt-body">
                 <p>{{ n.body }}</p>
+                <a
+                  v-if="n.link"
+                  class="nt-link"
+                  :href="n.link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open notice link <span aria-hidden="true">↗</span>
+                </a>
                 <p class="nt-by">{{ n.by }}</p>
               </div>
               <p v-show="openId !== n.id" class="nt-peek" aria-hidden="true">{{ n.body }}</p>
@@ -70,6 +80,7 @@ let swung = false;
 import { computed, nextTick, onMounted, ref } from 'vue';
 import LoungeDialog from './LoungeDialog.vue';
 import * as ev from './events.js';
+import { lounge } from './session.js';
 
 const props = defineProps({ focus: { type: String, default: '' } });
 const emit = defineEmits(['close']);
@@ -77,17 +88,19 @@ const emit = defineEmits(['close']);
 const swing = !swung;
 swung = true;
 
-const list = computed(() => ev.notices ?? []);
+const list = computed(() => ev.notices?.value ?? []);
 const unread = computed(() => ev.unreadCount?.value ?? 0);
 const isRead = (n) => ev.isRead?.(n) ?? true;
 const ago = (t) => ev.ago?.(t) ?? '';
+const noticeError = computed(() => lounge.noticeError);
 
 const openId = ref(props.focus || null);
 const WEEK = 7 * 86_400_000;
 const grouped = computed(() => {
   const now = ev.clock.value;
-  const recent = list.value.filter((n) => now - Date.parse(n.posted_at) < WEEK);
-  const older = list.value.filter((n) => now - Date.parse(n.posted_at) >= WEEK);
+  const age = (n) => now - Date.parse(n.posted_at);
+  const recent = list.value.filter((n) => age(n) >= 0 && age(n) < WEEK);
+  const older = list.value.filter((n) => Number.isFinite(age(n)) && age(n) >= WEEK);
   return [
     { label: 'This week', items: recent },
     { label: 'Earlier', items: older },

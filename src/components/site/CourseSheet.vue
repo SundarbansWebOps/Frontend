@@ -14,6 +14,7 @@
           aria-modal="true"
           :aria-label="`${course.short} resources`"
           tabindex="-1"
+          @keydown="trapTab"
         >
           <header class="head">
             <div class="top">
@@ -58,15 +59,19 @@
               {{ pinned ? 'In my courses' : 'Add to my courses' }}
             </button>
 
-            <nav class="tabs" role="tablist">
+            <nav class="tabs" role="tablist" aria-label="Course materials">
               <button
                 v-for="t in TABS"
                 :key="t.id"
+                :id="`course-tab-${t.id}`"
                 role="tab"
                 type="button"
                 :aria-selected="tab === t.id"
+                aria-controls="course-panel"
+                :tabindex="tab === t.id ? 0 : -1"
                 :class="{ on: tab === t.id }"
                 @click="tab = t.id"
+                @keydown="tabKeydown"
               >
                 {{ t.label }}
                 <small>{{ t.id === 'pyqs' ? course.pyqs.length : course.notes.length }}</small>
@@ -111,7 +116,14 @@
             </template>
           </div>
 
-          <div ref="body" class="body">
+          <div
+            id="course-panel"
+            ref="body"
+            class="body"
+            role="tabpanel"
+            :aria-labelledby="`course-tab-${tab}`"
+            tabindex="0"
+          >
             <Transition name="swap" mode="out-in">
               <div :key="tab + exam + week">
                 <section v-for="(g, gi) in groups" :key="g.label" class="group">
@@ -131,8 +143,11 @@
                   </a>
                 </section>
                 <p v-if="!groups.length" class="none">
-                  Nothing here yet. Got notes for this? Send them to the house — they’ll show up for
-                  everyone.
+                  {{
+                    tab === 'pyqs'
+                      ? 'No past papers match this exam yet.'
+                      : 'No notes match this week yet.'
+                  }}
                 </p>
               </div>
             </Transition>
@@ -144,8 +159,8 @@
 </template>
 
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue';
-import { byCode, closeCourse, isMine, store, togglePin } from '../../lib/store.js';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { byCode, closeCourse, getCourseOpener, isMine, store, togglePin } from '../../lib/store.js';
 import { currentWeek, nextExam } from '../../lib/courses.js';
 
 const LEVEL = {
@@ -168,11 +183,74 @@ const week = ref(null);
 const panel = ref(null);
 const body = ref(null);
 const copied = ref(false);
+let modalOpener = null;
+let appWasInert = false;
+
+function restoreModalState() {
+  const app = document.getElementById('app');
+  if (app) app.inert = appWasInert;
+  const opener = modalOpener;
+  modalOpener = null;
+  if (opener?.isConnected && !opener.closest('[inert]')) nextTick(() => opener.focus());
+}
+
+function trapTab(event) {
+  if (event.key !== 'Tab') return;
+  const controls = [
+    ...panel.value.querySelectorAll(
+      'a[href], button:not(:disabled), input:not(:disabled), [tabindex]:not([tabindex="-1"])'
+    ),
+  ].filter((el) => !el.hidden && el.getClientRects().length);
+  if (!controls.length) {
+    event.preventDefault();
+    panel.value.focus();
+    return;
+  }
+  const first = controls[0];
+  const last = controls.at(-1);
+  if (
+    event.shiftKey &&
+    (document.activeElement === first ||
+      document.activeElement === panel.value ||
+      !panel.value.contains(document.activeElement))
+  ) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function tabKeydown(event) {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  const index = TABS.findIndex((item) => item.id === tab.value);
+  const next =
+    event.key === 'Home'
+      ? 0
+      : event.key === 'End'
+        ? TABS.length - 1
+        : (index + (event.key === 'ArrowRight' ? 1 : -1) + TABS.length) % TABS.length;
+  tab.value = TABS[next].id;
+  nextTick(() => panel.value?.querySelector(`#course-tab-${tab.value}`)?.focus());
+}
 
 watch(
   () => store.sheet?.code,
-  () => {
-    if (!store.sheet) return;
+  (code) => {
+    if (!code) {
+      restoreModalState();
+      return;
+    }
+    const app = document.getElementById('app');
+    modalOpener =
+      getCourseOpener() ??
+      (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    if (app) {
+      appWasInert = app.inert;
+      app.inert = true;
+    }
     tab.value = store.sheet.tab ?? 'pyqs';
     exam.value = store.sheet.exam ?? 'All';
     week.value = store.sheet.week ?? null;
@@ -181,6 +259,7 @@ watch(
   },
   { immediate: true }
 );
+onBeforeUnmount(restoreModalState);
 
 const examOptions = computed(() => {
   const c = course.value;
@@ -264,6 +343,7 @@ function enter(el, done) {
   ).finished.then(done);
 }
 function leave(el, done) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return done();
   const p = el.querySelector('.panel');
   const b = el.querySelector('.backdrop');
   b.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: 'forwards' });
@@ -409,7 +489,7 @@ h2 {
 .tabs {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 18px;
 }
 .tabs button {
@@ -510,7 +590,7 @@ h2 {
 }
 .row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas: 't arr' 'm arr';
   column-gap: 16px;
   padding: 12px 12px;

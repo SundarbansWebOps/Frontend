@@ -3,6 +3,7 @@
 // `google` decides what the Google round-trip returns ('ok' or 'refused' for an email that is
 // not on the roster, which Supabase reports as "Database error saving new user").
 import { Buffer } from 'node:buffer';
+import { expect } from '@playwright/test';
 
 const REF = 'bqoejoznqudcyeaebmsm';
 const ORIGIN = `https://${REF}.supabase.co`;
@@ -73,9 +74,13 @@ function profileOf(person) {
     id: person.id,
     member_code: person.email.split('@')[0],
     full_name: person.full_name,
-    preferred_name: null,
+    preferred_name: person.full_name,
     email: person.email,
     phone: '+919990000004',
+    cohort: '26F1',
+    tour_seen_at: '2026-10-01T00:00:00Z',
+    certificate_name: null,
+    certificate_name_confirmed_at: null,
     gender: null,
     region_id: 1,
     account_status: 'active',
@@ -93,11 +98,26 @@ const CORS = {
   'access-control-expose-headers': 'content-range',
 };
 
+// What the Lounge hydrates from when a test supplies nothing. A data value may be a function
+// `(body) => result` to model server state that changes between calls.
+const LOUNGE_DEFAULTS = {
+  list_lounge_events: [],
+  list_lounge_forms: [],
+  list_my_notices: [],
+  list_my_certificates: [],
+  list_public_past_events: [],
+  get_available_cohorts: { current: '26F2', next: '26F3', options: ['26F1', '26F2'] },
+};
+
+// `profile` overrides members columns (e.g. tour_seen_at: null for a first-time member). The
+// profile is mutable so update_my_profile / set_my_tour_seen persist across reloads like the
+// real rows do.
 export async function mockSupabase(
   page,
-  { as = 'member', signedIn = true, google = 'ok', data = {} } = {}
+  { as = 'member', signedIn = true, google = 'ok', data = {}, profile = {} } = {}
 ) {
   const person = PEOPLE[as];
+  const row = { ...profileOf(person), ...profile };
   const calls = [];
   if (signedIn) {
     await page.addInitScript(
@@ -137,8 +157,24 @@ export async function mockSupabase(
 
     if (path.startsWith('/functions/v1/')) return json(data[path] ?? { ok: true });
     if (path === '/rest/v1/rpc/get_my_dashboard') return json(person.dashboard);
-    if (path.startsWith('/rest/v1/rpc/'))
-      return json(data[path.slice('/rest/v1/rpc/'.length)] ?? null);
+    if (path.startsWith('/rest/v1/rpc/')) {
+      const name = path.slice('/rest/v1/rpc/'.length);
+      const args = req.postData() ? JSON.parse(req.postData()) : {};
+      if (!(name in data)) {
+        if (name === 'set_my_tour_seen') {
+          row.tour_seen_at = args.p_seen ? new Date().toISOString() : null;
+          return json(row.tour_seen_at);
+        }
+        if (name === 'update_my_profile') {
+          row.preferred_name = args.p_preferred_name;
+          row.phone = args.p_phone;
+          return json(row);
+        }
+        if (name in LOUNGE_DEFAULTS) return json(LOUNGE_DEFAULTS[name]);
+      }
+      const value = data[name];
+      return json((typeof value === 'function' ? value(args) : value) ?? null);
+    }
 
     const table = path.replace('/rest/v1/', '');
     if (req.method() === 'HEAD')
@@ -149,7 +185,8 @@ export async function mockSupabase(
     if (table === 'regions') return json(REGIONS);
     if (table === 'communities') return json(COMMUNITIES);
     if (table === 'members' && url.searchParams.get('id') === `eq.${person.id}`)
-      return json([profileOf(person)]);
+      // .single() asks PostgREST for one object, not an array.
+      return json(/pgrst\.object/.test(req.headers().accept ?? '') ? row : [row]);
     // Single-row lookups (?id=eq.…) get only that row.
     const id = url.searchParams.get('id')?.replace(/^eq\./, '');
     if (id && req.method() === 'GET') return json((data[table] ?? []).filter((r) => r.id === id));
@@ -157,4 +194,12 @@ export async function mockSupabase(
   });
 
   return calls;
+}
+
+// The first recorded request whose path matches, once it has arrived (the UI click returns
+// before the request leaves the browser, so reading `calls` straight away races).
+export async function callTo(calls, path, method) {
+  const match = (c) => c.path === path && (!method || c.method === method);
+  await expect.poll(() => calls.some(match), { message: `request to ${path}` }).toBe(true);
+  return calls.find(match);
 }

@@ -76,7 +76,7 @@ onBeforeUnmount(() => io.disconnect());
 <style scoped>
 .deck {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(184px, 100%), 1fr));
   gap: 16px;
   margin: 0;
   padding: 0;

@@ -61,7 +61,9 @@
               Download PDF
             </a>
           </div>
-          <p v-else class="note">The certificate file hasn’t been uploaded yet.</p>
+          <p v-else-if="!result.valid" class="note">
+            The certificate file hasn’t been uploaded yet.
+          </p>
         </section>
 
         <section v-else-if="errorMsg" :key="errorMsg" class="record miss">
@@ -78,6 +80,7 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import LineIcon from '../components/site/LineIcon.vue';
+import { verifyCertificate } from '../lib/lounge.js';
 
 const certificateId = ref('');
 const loading = ref(false);
@@ -109,6 +112,12 @@ const certType = computed(() => {
 const fields = computed(() => {
   const c = result.value;
   if (!c) return [];
+  if (c.valid) {
+    return [
+      { label: 'Certificate ID', value: c.id, mono: true },
+      { label: 'Issued', value: c.issued_at || c.date },
+    ].filter((f) => f.value);
+  }
   const dept = certType.value === 'department';
   return [
     { label: 'Certificate ID', value: c.id, mono: true },
@@ -154,7 +163,7 @@ function certificateDownloadUrl(cert) {
 
 async function verify() {
   const mine = ++request;
-  const id = certificateId.value.trim().toUpperCase();
+  const id = certificateId.value.trim();
   result.value = null;
   errorMsg.value = '';
   if (!id) {
@@ -164,13 +173,18 @@ async function verify() {
   loading.value = true;
 
   try {
-    const res = await fetch('/data/certificates.json');
-    if (!res.ok) throw new Error('Failed to load certificate database');
-    const db = await res.json();
+    const cert = await verifyCertificate(id);
     if (mine !== request) return;
-    const cert = db[id];
-    if (cert) {
-      result.value = cert;
+    if (cert && cert.valid) {
+      result.value = {
+        id: cert.id,
+        event: cert.event_name,
+        name: cert.event_name,
+        issued_at: cert.issued_at,
+        date: cert.issued_at,
+        valid: true,
+        type: 'event',
+      };
     } else {
       missTitle.value = 'No certificate with that ID';
       errorMsg.value = `We couldn’t find “${id}”. Check the ID printed on your certificate and try again.`;

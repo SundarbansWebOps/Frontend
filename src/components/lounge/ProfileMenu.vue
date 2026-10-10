@@ -1,7 +1,7 @@
 <!--
   The profile menu from the avatar: a sheet of ghat paper with the band on top. Who you are
   (preferred name as the title, never the roll number; then roll, region and Regional
-  Coordinator), then My certificates, Edit name, Retake the tour, the theme and Sign out.
+  Coordinator), then My certificates, Edit profile, Retake the tour, the theme and Sign out.
   Comes down from under the header on every width (the drop variant in LoungeDialog.vue).
 -->
 <template>
@@ -29,7 +29,7 @@
         </div>
         <div>
           <dt>Region</dt>
-          <dd>{{ member.region.name }}</dd>
+          <dd>{{ member.region.name || 'Not set' }}</dd>
         </div>
         <div>
           <dt>Regional Coordinator</dt>
@@ -54,7 +54,7 @@
               <path d="M4 20h4L19 9l-4-4L4 16v4Z" />
               <path d="m13.5 6.5 4 4" />
             </svg>
-            <span>Edit name</span>
+            <span>Edit profile</span>
           </button>
         </li>
         <li>
@@ -119,7 +119,7 @@ const router = useRouter();
 const dlg = ref(null);
 
 const initials = computed(() => initialsOf(callName.value));
-const certCount = computed(() => ev.certificates?.length ?? 0);
+const certCount = computed(() => ev.certificates?.value?.length ?? 0);
 
 /* Closing the menu from the UI pops its history entry (layers.js) asynchronously; a push made
    before that Back lands would be cancelled by it, so wait for it first. */

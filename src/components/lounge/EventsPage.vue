@@ -101,7 +101,6 @@
             <i v-if="c.cls" aria-hidden="true"></i>{{ c.label }}
           </button>
         </div>
-
         <div
           :id="`panel-${tab}`"
           :key="`${tab}-${comm}`"
@@ -168,7 +167,7 @@
                     <template v-if="status(e) === 'live'">
                       <a
                         class="er-join gp-btn"
-                        :href="e.meet_link"
+                        :href="e.meet_link || e.gmail_link"
                         target="_blank"
                         rel="noopener noreferrer"
                         >Join on Meet <span aria-hidden="true">→</span
@@ -180,6 +179,9 @@
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                           <path d="m5 12.5 4.2 4L19 7" /></svg
                         >Registered
+                      </span>
+                      <span v-else-if="!registrationOpen(e)" class="mark">
+                        Registration closed
                       </span>
                       <button
                         v-else
@@ -273,6 +275,7 @@ import {
   endsIn,
   eventById,
   eventsTab,
+  eventYear,
   isRegistered,
   markOf,
   mine,
@@ -288,6 +291,7 @@ import { MOORED, PLATE } from './home/art.js';
 import { vLoop } from './home/motion.js';
 import RiverBoat from './home/RiverBoat.vue';
 import { mode } from './state.js';
+import { formByEvent } from './session.js';
 
 const emit = defineEmits(['cert']);
 
@@ -311,6 +315,10 @@ const CHIPS = [
 
 const comm = ref('all');
 const tab = eventsTab;
+const registrationOpen = (event) => {
+  const form = formByEvent(event.id);
+  return !!form && (form.accepting_responses ?? form.is_open ?? false);
+};
 
 /* On a phone the chips are one row that scrolls sideways; a soft fade at the edge that
    has more chips beyond it says so. Set from the row's own scroll events. */
@@ -370,8 +378,12 @@ const lists = computed(() => {
   const by = (s) => visible.value.filter((e) => status(e) === s);
   return {
     live: by('live'),
-    upcoming: by('upcoming').sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
-    past: by('past').sort((a, b) => b.starts_at.localeCompare(a.starts_at)),
+    upcoming: by('upcoming').sort((a, b) =>
+      String(a.starts_at || '').localeCompare(String(b.starts_at || ''))
+    ),
+    past: by('past').sort((a, b) =>
+      String(b.starts_at || '').localeCompare(String(a.starts_at || ''))
+    ),
     mine: mine.value,
   };
 });
@@ -394,7 +406,10 @@ watch(tab, (t) => {
 });
 
 const pick = (list) =>
-  comm.value === 'all' ? list : list.filter((e) => commKey(e) === comm.value);
+  list.filter((e) => {
+    if (comm.value !== 'all' && commKey(e) !== comm.value) return false;
+    return true;
+  });
 const counts = computed(() =>
   Object.fromEntries(TABS.map((t) => [t.id, pick(lists.value[t.id]).length]))
 );
@@ -405,7 +420,7 @@ const groups = computed(() => {
   if (tab.value !== 'past') return [{ label: '', items: shown.value }];
   const out = [];
   for (const e of shown.value) {
-    const y = String(new Date(e.starts_at).getFullYear());
+    const y = eventYear(e) == null ? 'Undated' : String(eventYear(e));
     if (out.at(-1)?.label !== y) out.push({ label: y, items: [] });
     out.at(-1).items.push(e);
   }

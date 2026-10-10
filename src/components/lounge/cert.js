@@ -222,3 +222,34 @@ export async function renderCertificate({
 
   return cv.toDataURL('image/png');
 }
+
+/* An organizer's signed blank template, with the confirmed name and verify line pressed on.
+   Templates carry no placement metadata, so the name sits on the centre line; organizers are
+   asked to leave that band clear. Storage serves templates with CORS, so the canvas stays
+   exportable; a template that cannot load rejects and the caller shows its retry state. */
+export async function renderOnTemplate({ templateUrl, name, certId }) {
+  await document.fonts.load('800 80px "Anek Latin Lounge"').catch(() => {});
+  const t = await new Promise((ok, no) => {
+    const i = new Image();
+    i.crossOrigin = 'anonymous';
+    i.onload = () => ok(i);
+    i.onerror = no;
+    i.src = templateUrl;
+  });
+  const w = t.naturalWidth;
+  const h = t.naturalHeight;
+  const cv = document.createElement('canvas');
+  cv.width = w;
+  cv.height = h;
+  const c = cv.getContext('2d');
+  c.drawImage(t, 0, 0, w, h);
+  c.fillStyle = INK;
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  fit(c, name, 800, Math.round(w * 0.055), Math.round(w * 0.025), w * 0.8);
+  c.fillText(name, w / 2, h / 2);
+  c.fillStyle = INK2;
+  c.font = `600 ${Math.max(12, Math.round(w * 0.011))}px "Anek Latin Lounge"`;
+  c.fillText(`${certId}  ·  verify at ${location.host}${verifyHref(certId)}`, w / 2, h * 0.95);
+  return cv.toDataURL('image/png');
+}

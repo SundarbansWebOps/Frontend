@@ -4,6 +4,7 @@
   <dialog
     ref="dlg"
     class="sheet"
+    :class="{ wide }"
     :aria-labelledby="`${uid}-h`"
     @close="emit('close')"
     @click.self="close"
@@ -25,7 +26,10 @@
 import { onMounted, ref, useId } from 'vue';
 import LineIcon from '../site/LineIcon.vue';
 
-defineProps({ title: { type: String, required: true } });
+defineProps({
+  title: { type: String, required: true },
+  wide: { type: Boolean, default: false },
+});
 const emit = defineEmits(['close']);
 const dlg = ref(null);
 const uid = useId();
@@ -47,6 +51,9 @@ defineExpose({ close });
   background: var(--card);
   color: var(--ink);
   box-shadow: var(--shadow);
+}
+.sheet.wide {
+  width: min(860px, calc(100vw - 32px));
 }
 .sheet[open] {
   animation: up 0.35s var(--ease-out);
