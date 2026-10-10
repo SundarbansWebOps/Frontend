@@ -69,7 +69,7 @@
               class="node item"
               :class="{ in: seen(`${c.id}:${it.id}`), open: it.open }"
               :data-k="`${c.id}:${it.id}`"
-              @click="$emit('go', c.to)"
+              @click="$emit('go', c.to, it.id)"
             >
               <span class="mark" :style="it.color ? { '--c': it.color } : null">
                 <img

@@ -10,6 +10,8 @@
 -->
 <template>
   <main
+    id="main-content"
+    tabindex="-1"
     ref="root"
     class="pat"
     :class="{ rolling, ff, settled, rm: RM }"
@@ -117,9 +119,9 @@
               </div>
             </dl>
             <PatSearch />
-            <button type="button" class="cta" @click="nav.go('resources')">
+            <RouterLink class="cta" to="/resources">
               Open Resources <LineIcon name="arrow" />
-            </button>
+            </RouterLink>
           </div>
         </section>
 
@@ -156,9 +158,9 @@
                 <dd>{{ shown[s.key] }}</dd>
               </div>
             </dl>
-            <button type="button" class="cta" @click="nav.go('events')">
+            <RouterLink class="cta" to="/events">
               See the archive <LineIcon name="arrow" />
-            </button>
+            </RouterLink>
           </div>
           <div class="posters">
             <PatPosters :live="live.ev" />
@@ -213,9 +215,9 @@
                 <small>{{ pp.role }}</small>
               </li>
             </ul>
-            <button type="button" class="cta" @click="nav.go('house')">
+            <RouterLink class="cta" to="/house">
               Meet the house <LineIcon name="arrow" />
-            </button>
+            </RouterLink>
           </div>
         </section>
 
@@ -268,9 +270,9 @@
               <p>{{ c.what }}</p>
             </li>
           </ol>
-          <button type="button" class="cta" @click="nav.go('teams', 'how')">
+          <RouterLink class="cta" to="/teams#how">
             See how it works <LineIcon name="arrow" />
-          </button>
+          </RouterLink>
         </section>
 
         <div class="band" aria-hidden="true" />
@@ -1559,7 +1561,7 @@ h3 {
 
 /* Teams: the whole crew in one boat. */
 .teams {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   text-align: center;
 }
@@ -1613,7 +1615,7 @@ h3 {
 }
 .crew li {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
   column-gap: 12px;
   transition:
@@ -1663,7 +1665,7 @@ h3 {
 
 /* Close: the last panel before the roll. */
 .close {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 18px;
   padding-block: 56px 96px;
@@ -1824,7 +1826,7 @@ h3 {
     margin-inline: -16px;
   }
   .crew {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .marker {
     width: 24px;

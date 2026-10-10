@@ -1,28 +1,39 @@
-<!-- Positions (Super Admin): one RC per region, a Head and Co-Head per community. Revoking or
-     giving a position is a request another Super Admin approves; give one from the Students tab. -->
+<!-- Positions (Super Admin): 0–2 RCs per region, a Head and Co-Head per community. International
+     has no RC. Revoking or giving a position is a request another Super Admin approves; give one
+     from the Students tab. Super Admin accounts are fixed — there is no add/remove here. -->
 <template>
   <div class="grid">
     <div>
       <p class="adm-kicker">Regional Coordinators</p>
+      <p class="adm-note">A region may have none, one or two coordinators.</p>
       <ul class="adm-list">
         <li v-for="r in lookups.regions" :key="r.id" class="adm-row">
           <div>
             <b>{{ r.name }}</b>
             <div class="adm-meta">
-              <span v-if="rcOf(r.id)"
-                >{{ rcOf(r.id).member.full_name }} · since {{ day(rcOf(r.id).started_at) }}</span
-              >
+              <template v-if="isInternationalRegion(r)">
+                <span class="adm-badge">no RC</span>
+              </template>
+              <template v-else-if="rcsOf(r.id).length">
+                <span v-for="p in rcsOf(r.id)" :key="p.id">
+                  {{ p.member?.full_name }} · since {{ day(p.started_at) }}
+                </span>
+                <span v-if="rcsOf(r.id).length < 2" class="adm-badge">1 of 2</span>
+              </template>
               <span v-else class="adm-badge">vacant</span>
             </div>
           </div>
-          <button
-            v-if="rcOf(r.id)"
-            type="button"
-            class="adm-btn ghost small"
-            @click="ask(rcOf(r.id))"
-          >
-            Revoke
-          </button>
+          <div class="adm-chips">
+            <button
+              v-for="p in rcsOf(r.id)"
+              :key="p.id"
+              type="button"
+              class="adm-btn ghost small"
+              @click="ask(p)"
+            >
+              Revoke {{ p.member?.full_name }}
+            </button>
+          </div>
         </li>
       </ul>
     </div>
@@ -51,6 +62,7 @@
       </ul>
       <p class="adm-note spaced">
         To fill a vacant post, open the student on the Students tab and choose Give a position.
+        Super Admin login emails stay the three fixed accounts.
       </p>
     </div>
     <p v-if="error" class="adm-msg err wide" role="alert">{{ error }}</p>
@@ -79,7 +91,12 @@
 import { onMounted, ref } from 'vue';
 import AdminDialog from './AdminDialog.vue';
 import { errorText } from '../../lib/auth.js';
-import { POSITION_LABEL, listPositions, requestPosition } from '../../lib/admin.js';
+import {
+  POSITION_LABEL,
+  isInternationalRegion,
+  listPositions,
+  requestPosition,
+} from '../../lib/admin.js';
 
 defineProps({ lookups: { type: Object, required: true } });
 const emit = defineEmits(['changed']);
@@ -93,8 +110,8 @@ const formError = ref('');
 const busy = ref(false);
 const dlg = ref(null);
 
-const rcOf = (regionId) =>
-  positions.value.find((p) => p.position === 'rc' && p.region_id === regionId);
+const rcsOf = (regionId) =>
+  positions.value.filter((p) => p.position === 'rc' && p.region_id === regionId);
 const leadOf = (communityId, position) =>
   positions.value.find((p) => p.position === position && p.community_id === communityId);
 const day = (iso) =>

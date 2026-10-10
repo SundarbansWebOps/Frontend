@@ -24,18 +24,21 @@
         <p class="evd-when">
           <span>{{ spanOf(event) }}</span>
           <span class="sep" aria-hidden="true">·</span>
-          <span>{{ event.platform }}</span>
+          <span>{{ event.platform || event.location || 'Google Meet' }}</span>
         </p>
         <p class="evd-desc">{{ event.description }}</p>
 
-        <div v-if="st === 'live'" class="evd-air gp-inset">
+        <p v-if="event.cancelled_at || event.cancelled" class="evd-plain">
+          This event was cancelled.
+        </p>
+        <div v-else-if="st === 'live'" class="evd-air gp-inset">
           <p class="gp-title">On air now</p>
           <p class="gp-meta">
             Started {{ ago(event.starts_at) }} · <b>{{ endsIn(event) }}</b>
           </p>
           <a
             class="gp-btn is-big"
-            :href="event.meet_link"
+            :href="event.meet_link || event.gmail_link"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -54,10 +57,13 @@
               {{ until(event.starts_at) }}.</span
             >
           </p>
-          <template v-else>
+          <template
+            v-else-if="regForm && (regForm.accepting_responses ?? regForm.is_open ?? false)"
+          >
             <button type="button" class="gp-btn is-big" @click="step = 'form'">Register</button>
             <p class="evd-small">Starts {{ until(event.starts_at) }}.</p>
           </template>
+          <p v-else class="evd-plain">Registration is not open for this event.</p>
         </div>
 
         <div v-else class="evd-act">
@@ -98,44 +104,20 @@
           <b>{{ spanOf(event) }}</b> · {{ until(event.starts_at) }}
         </p>
         <form class="evd-form" @submit.prevent="submit">
-          <label>
-            <span>Your name <small>so the hosts know who is coming</small></span>
-            <input
-              ref="nameEl"
-              v-model="form.name"
-              type="text"
-              required
-              pattern=".*\S.*"
-              title="Enter your name"
-              autocomplete="name"
-              maxlength="60"
-            />
-          </label>
-          <label>
-            <span>Roll number</span>
-            <input :value="member.roll" type="text" readonly />
-          </label>
-          <fieldset>
-            <legend>Been to a house event before?</legend>
-            <label class="evd-opt"
-              ><input v-model="form.first" type="radio" value="no" /> This is my first</label
-            >
-            <label class="evd-opt"
-              ><input v-model="form.first" type="radio" value="yes" /> Yes</label
-            >
-          </fieldset>
-          <label>
-            <span>Anything you want the hosts to cover? <small>optional</small></span>
-            <textarea v-model="form.ask" rows="2" maxlength="300"></textarea>
-          </label>
-          <label class="evd-check">
-            <input v-model="form.remind" type="checkbox" /> Remind me in the house WhatsApp group
-          </label>
+          <FormFields
+            v-if="regForm"
+            ref="fieldsEl"
+            v-model:save-phone="savePhone"
+            :fields="regForm.fields || []"
+          />
+          <p v-if="error" class="ff-err" role="alert">{{ error }}</p>
           <p class="evd-final">
             Registering is final. It can't be undone, so check the date first.
           </p>
           <div class="evd-acts">
-            <button type="submit" class="gp-btn is-big">Register</button>
+            <button type="submit" class="gp-btn is-big" :disabled="busy">
+              {{ busy ? 'Sending…' : 'Register' }}
+            </button>
             <button type="button" class="gp-btn is-ghost" @click="step = 'info'">Back</button>
           </div>
         </form>
@@ -152,6 +134,12 @@
           <b>{{ event.name }}</b> starts {{ until(event.starts_at) }}. The Join button shows up in
           your Lounge then. Stay 20 minutes and you get a certificate.
         </p>
+        <p v-if="invite" class="ff-invite">
+          WhatsApp invite:
+          <a :href="invite" target="_blank" rel="noopener noreferrer">Open the group</a>. Request
+          entry there. An admin checks house membership before they add you. Registration is not
+          admission.
+        </p>
         <button ref="doneEl" type="button" class="gp-btn is-ghost" @click="dlg?.close()">
           Back to the river
         </button>
@@ -161,8 +149,10 @@
 </template>
 
 <script setup>
-import { computed, nextTick, reactive, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
+import { errorText } from '../../lib/auth.js';
 import { KITE_MINE, LANTERN } from './home/art.js';
+import FormFields from './FormFields.vue';
 import LoungeDialog from './LoungeDialog.vue';
 import {
   ago,
@@ -171,13 +161,12 @@ import {
   endsIn,
   isRegistered,
   markOf,
-  register,
   spanOf,
   status,
   until,
 } from './events.js';
-import { member } from './fixtures.js';
-import { firstName, mode, shownName } from './state.js';
+import { firstName, mode } from './state.js';
+import { fetchInvite, formByEvent, submitLoungeForm } from './session.js';
 
 /* The member's own lantern and kite: Home's art (home/art.js). */
 
@@ -190,39 +179,61 @@ const props = defineProps({
 const emit = defineEmits(['close', 'cert']);
 
 const dlg = ref(null);
-const nameEl = ref(null);
+const fieldsEl = ref(null);
 const doneEl = ref(null);
+const savePhone = ref(false);
+const busy = ref(false);
+const error = ref('');
+const invite = ref('');
 const st = computed(() => status(props.event));
 const mark = computed(() => markOf(props.event));
 const cert = computed(() => certOf(props.event));
+const regForm = computed(() => formByEvent(props.event.id));
 
 /* Already registered: never show the form again. */
 const step = ref(
-  props.start === 'form' && !isRegistered(props.event) && st.value === 'upcoming' ? 'form' : 'info'
+  props.start === 'form' &&
+    !isRegistered(props.event) &&
+    st.value === 'upcoming' &&
+    formByEvent(props.event.id)
+    ? 'form'
+    : 'info'
 );
-const form = reactive({ name: shownName.value, first: 'no', ask: '', remind: true });
 const youreIn = computed(() => {
-  const f = form.name.trim().split(' ')[0] || firstName.value;
+  const f = firstName.value;
   return f ? `You're in, ${f}.` : "You're in.";
 });
 
 watch(step, async (s) => {
   await nextTick();
-  if (s === 'form') nameEl.value?.focus();
   if (s === 'done') doneEl.value?.focus();
 });
-if (step.value === 'form') nextTick(() => nameEl.value?.focus());
 
-function submit() {
-  /* An event can start while its registration sheet is open. Return to its current
-     state rather than showing a success for a registration the store rejected. */
+async function submit() {
   if (st.value !== 'upcoming') {
     step.value = 'info';
     return;
   }
-  if (!form.name.trim()) return;
-  register(props.event);
-  step.value = 'done';
+  if (!regForm.value || busy.value) return;
+  if (!(await fieldsEl.value?.validate())) return;
+  busy.value = true;
+  error.value = '';
+  try {
+    const result = await submitLoungeForm(
+      regForm.value.id,
+      fieldsEl.value?.answers() ?? {},
+      savePhone.value
+    );
+    invite.value = result?.invite_url || '';
+    if (!invite.value && result?.response_id) {
+      invite.value = (await fetchInvite(regForm.value.id).catch(() => '')) || '';
+    }
+    step.value = 'done';
+  } catch (err) {
+    error.value = errorText(err);
+  } finally {
+    busy.value = false;
+  }
 }
 
 function toCert() {

@@ -117,7 +117,7 @@ import { lanternWords, layout, fontsReady } from '../name-fit.js';
 import { mode } from '../state.js';
 import { fadeReady } from '../tide.js';
 import { KITE_MINE, LANTERN, LANTERN_UNLIT } from './art.js';
-import { animate, reduced } from './motion.js';
+import { animate, motionTimeout, reduced } from './motion.js';
 
 const props = defineProps({
   name: { type: String, default: '' },
@@ -205,12 +205,12 @@ onMounted(async () => {
 });
 
 /* Start after the new view-transition image exists. Keep the old paper until edge-on. */
-let turnTimer = 0;
+let turnTimer = () => {};
 let turnGeneration = 0;
 watch(desired, async (paper) => {
   const generation = ++turnGeneration;
   tagOpen.value = false;
-  clearTimeout(turnTimer);
+  turnTimer();
   if (reduced() || !spinEl.value) {
     shown.value = paper;
     return;
@@ -226,7 +226,7 @@ watch(desired, async (paper) => {
     ],
     { duration: TURN, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' }
   );
-  turnTimer = setTimeout(() => {
+  turnTimer = motionTimeout(() => {
     if (generation === turnGeneration) shown.value = paper;
   }, TURN / 2);
 });
@@ -258,13 +258,13 @@ watch(
   }
 );
 
-let tagT = 0;
+let tagT = () => {};
 function tap() {
   emit('tap');
   if (dropped.value) {
     tagOpen.value = true;
-    clearTimeout(tagT);
-    tagT = setTimeout(() => (tagOpen.value = false), 3000);
+    tagT();
+    tagT = motionTimeout(() => (tagOpen.value = false), 3000);
   }
   if (reduced() || !tapEl.value) return;
   const kite = shown.value === 'kite';
@@ -290,9 +290,9 @@ function tap() {
 
 onBeforeUnmount(() => {
   turnGeneration++;
-  clearTimeout(turnTimer);
+  turnTimer();
   ro?.disconnect();
-  clearTimeout(tagT);
+  tagT();
   root.value?.getAnimations({ subtree: true }).forEach((a) => a.cancel());
 });
 

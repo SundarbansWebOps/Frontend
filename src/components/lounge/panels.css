@@ -342,10 +342,6 @@
   text-align: center;
 }
 
-:where(html.lounge-active) .pm-out {
-  color: var(--t-3) !important;
-}
-
 /* ---------- The name card (ProfileEdit) ---------- */
 
 :where(html.lounge-active) .pe {
@@ -872,6 +868,22 @@
 :where(html.lounge-active) .np-empty {
   margin: 16px 0 0;
   color: var(--t-3);
+}
+
+:where(html.lounge-active) .np-error {
+  margin: 8px 0 0;
+  color: var(--live);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+:where(html.lounge-active) .nt-link {
+  display: inline-flex;
+  gap: 5px;
+  margin: 8px 0 0;
+  color: var(--accent);
+  font-weight: 650;
+  text-underline-offset: 0.16em;
 }
 
 /* ---------- Phones: pop-ups become bottom sheets, menus panels from the top ---------- */

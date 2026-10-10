@@ -1,6 +1,8 @@
 <!--
   Top bar on desktop, thumb-reach tab bar on phones. Five destinations; the
-  members-only Lounge is set apart as a lit doorway at the end.
+  members-only Lounge is set apart as a lit doorway at the end. The doorway knows the
+  visitor: "Sign in" goes straight to Google, "Lounge" goes straight in, and the avatar menu
+  (signed in) holds Sign out so the Lounge itself doesn't need one.
 -->
 <template>
   <header class="nav">
@@ -13,19 +15,60 @@
         </span>
       </RouterLink>
       <nav class="links" aria-label="Main">
-        <RouterLink
-          v-for="l in LINKS"
-          :key="l.to"
-          :to="l.to"
-          active-class="on"
-          :class="{ lounge: l.lounge }"
-        >
-          <i v-if="l.lounge" class="glow" aria-hidden="true" />
+        <RouterLink v-for="l in LINKS" :key="l.to" :to="l.to" active-class="on">
           <span>{{ l.label }}</span>
-          <small v-if="l.lounge">members</small>
         </RouterLink>
       </nav>
       <div class="acts">
+        <a
+          class="lounge"
+          :class="{ on: route.path === '/login', busy }"
+          href="#/login"
+          :aria-busy="busy"
+          @click="enterLounge"
+        >
+          <i class="glow" aria-hidden="true" />
+          <span>{{ loungeLabel }}</span>
+          <small v-if="!signedIn">members</small>
+        </a>
+        <div v-if="signedIn" ref="meEl" class="me-wrap">
+          <button
+            type="button"
+            class="me"
+            aria-haspopup="menu"
+            :aria-expanded="menuOpen"
+            :aria-label="callName ? `Your account, ${callName}` : 'Your account'"
+            @click="menuOpen = !menuOpen"
+          >
+            <img
+              v-if="avatarUrl"
+              :src="avatarUrl"
+              alt=""
+              referrerpolicy="no-referrer"
+              @error="avatarFailed"
+            />
+            <span v-else-if="initials" aria-hidden="true">{{ initials }}</span>
+            <img v-else :src="CREST" alt="" />
+          </button>
+          <div v-if="menuOpen" class="menu" role="menu" @keydown.esc="menuOpen = false">
+            <p v-if="callName" class="who">{{ callName }}</p>
+            <RouterLink to="/lounge" role="menuitem" @click="menuOpen = false">
+              <LineIcon name="door" />
+              Open the Lounge
+            </RouterLink>
+            <RouterLink v-if="canAdmin" to="/admin" role="menuitem" @click="menuOpen = false">
+              <LineIcon name="people" />
+              Admin lounge
+            </RouterLink>
+            <button type="button" role="menuitem" class="out" @click="leave">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
+                <path d="M10 8 6 12l4 4M6 12h10" />
+              </svg>
+              Sign out
+            </button>
+          </div>
+        </div>
         <button
           type="button"
           class="theme"
@@ -47,41 +90,120 @@
             </g>
           </svg>
         </button>
-        <a class="wa" :href="WHATSAPP" target="_blank" rel="noopener">
-          <LineIcon name="wa" />
-          <span>WhatsApp Channel</span>
-        </a>
       </div>
     </div>
   </header>
 
   <nav class="tabbar" aria-label="Main">
-    <RouterLink
-      v-for="l in LINKS"
-      :key="l.to"
-      :to="l.to"
-      active-class="on"
-      :class="{ lounge: l.lounge }"
-    >
+    <RouterLink v-for="l in LINKS" :key="l.to" :to="l.to" active-class="on">
       <LineIcon :name="l.icon" />
       <span>{{ l.label }}</span>
     </RouterLink>
+    <a
+      class="lounge"
+      :class="{ on: route.path === '/login', busy }"
+      href="#/login"
+      :aria-busy="busy"
+      @click="enterLounge"
+    >
+      <LineIcon name="door" />
+      <span>{{ loungeLabel }}</span>
+    </a>
   </nav>
 </template>
 
 <script setup>
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import CREST from '../../assets/crest.webp';
 import LineIcon from './LineIcon.vue';
-import { WHATSAPP } from '../../lib/courses.js';
 import { theme, toggleTheme } from '../../lib/theme.js';
+import {
+  auth,
+  avatarFailed,
+  avatarUrl,
+  canAdmin,
+  signedIn,
+  signInWithGoogle,
+  signOut,
+} from '../../lib/auth.js';
+import { toast } from '../../lib/store.js';
 
 const LINKS = [
   { to: '/resources', label: 'Resources', icon: 'book' },
   { to: '/events', label: 'Events', icon: 'cal' },
   { to: '/house', label: 'House', icon: 'house' },
   { to: '/teams', label: 'Teams', icon: 'people' },
-  { to: '/login', label: 'Lounge', icon: 'door', lounge: true },
 ];
+
+const route = useRoute();
+const router = useRouter();
+const busy = ref(false);
+const menuOpen = ref(false);
+const meEl = ref(null);
+
+// Same rule as the Lounge's own avatar: the preferred name, never the roll number; the crest
+// until a name is set.
+const callName = computed(() => auth.profile?.preferred_name?.trim() || '');
+const initials = computed(() =>
+  callName.value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('')
+);
+const loungeLabel = computed(() =>
+  busy.value && !signedIn.value ? 'Opening Google…' : signedIn.value ? 'Lounge' : 'Sign in'
+);
+
+// One tap in either state. Signed in: straight to the Lounge. Signed out: straight to Google,
+// which brings the member back through the sign-in door and on into the Lounge. If Google
+// cannot be reached, the door itself explains.
+async function enterLounge(e) {
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+  e.preventDefault();
+  if (busy.value) return;
+  if (signedIn.value) {
+    router.push('/lounge');
+    return;
+  }
+  busy.value = true;
+  try {
+    await signInWithGoogle('/lounge');
+  } catch {
+    busy.value = false;
+    router.push('/login');
+  }
+}
+
+async function leave() {
+  menuOpen.value = false;
+  await signOut().catch(() => {});
+  // A members-only page (Admin) has nothing left to show once signed out.
+  if (route.meta.member) await router.push('/');
+  toast('Signed out');
+}
+
+function away(e) {
+  if (!meEl.value?.contains(e.target)) menuOpen.value = false;
+}
+function onKey(e) {
+  if (e.key === 'Escape') menuOpen.value = false;
+}
+watch(menuOpen, (open) => {
+  const op = open ? addEventListener : removeEventListener;
+  op('pointerdown', away);
+  op('keydown', onKey);
+});
+watch(
+  () => route.fullPath,
+  () => (menuOpen.value = false)
+);
+onBeforeUnmount(() => {
+  removeEventListener('pointerdown', away);
+  removeEventListener('keydown', onKey);
+});
 </script>
 
 <style scoped>
@@ -159,18 +281,22 @@ const LINKS = [
 }
 
 /* The lounge: always night inside, lit from within by a slow turning edge of light. */
-.links a.lounge {
+.acts .lounge {
+  position: relative;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  margin-left: 8px;
-  padding: 8px 15px;
+  padding: 9px 16px;
+  border-radius: 99px;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
   isolation: isolate;
   overflow: hidden;
   background: #15120e;
   color: #f6d9a8;
 }
-.links a.lounge::before {
+.acts .lounge::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -202,7 +328,7 @@ const LINKS = [
     --turn: 360deg;
   }
 }
-.links a.lounge .glow {
+.acts .lounge .glow {
   position: absolute;
   inset: auto 10% -60% 10%;
   z-index: -1;
@@ -212,23 +338,20 @@ const LINKS = [
   opacity: 0.55;
   transition: opacity 0.4s;
 }
-.links a.lounge small {
+.acts .lounge small {
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #f2a93b;
 }
-.links a.lounge:hover {
+.acts .lounge:hover {
   background: #1d1813;
   color: #fff4dc;
 }
-.links a.lounge:hover .glow,
-.links a.lounge.on .glow {
+.acts .lounge:hover .glow,
+.acts .lounge.on .glow {
   opacity: 1;
-}
-.links a.lounge.on::after {
-  display: none;
 }
 .links a.on::after {
   content: '';
@@ -326,28 +449,127 @@ const LINKS = [
   }
 }
 
-.wa {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 16px 9px 12px;
-  border-radius: 99px;
+.acts .lounge.busy,
+.tabbar .lounge.busy {
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+/* Signed in: the account avatar and its small menu (Open the Lounge, Admin, Sign out). */
+.me-wrap {
+  position: relative;
+}
+.me {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 50%;
   border: 1.5px solid var(--line-strong);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
+  background: var(--card);
+  color: var(--mari-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
   transition:
     transform 0.25s var(--ease-spring),
     background 0.2s;
 }
-.wa:hover {
+.me:hover {
   background: var(--sunk);
   transform: translateY(-1px);
 }
-.wa .ic {
+.me:focus-visible {
+  outline: 2px solid var(--mari);
+  outline-offset: 2px;
+}
+.me[aria-expanded='true'] {
+  outline: 2px solid var(--mari);
+  outline-offset: 2px;
+}
+.me img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 70;
+  display: grid;
+  gap: 2px;
+  min-width: 210px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  animation: menu-in 0.22s var(--ease-out) both;
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+.menu .who {
+  margin: 0;
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.menu a,
+.menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.menu a:hover,
+.menu button:hover {
+  background: var(--sunk);
+}
+.menu :focus-visible {
+  outline: 2px solid var(--mari);
+  outline-offset: -2px;
+}
+.menu .out {
+  color: var(--verm);
+}
+.menu .ic,
+.menu svg {
   width: 18px;
   height: 18px;
+  flex: none;
+}
+.menu .out svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    animation: none;
+  }
 }
 
 .tabbar {
@@ -362,13 +584,6 @@ const LINKS = [
   .links a {
     padding-inline: 10px;
   }
-  .wa span {
-    display: none;
-  }
-  .wa {
-    padding: 9px;
-    flex-shrink: 0;
-  }
 }
 
 @media (max-width: 760px) {
@@ -379,18 +594,15 @@ const LINKS = [
     padding: 0 16px;
     justify-content: space-between;
   }
-  .wa span {
+  .acts .lounge {
     display: none;
-  }
-  .wa {
-    padding: 9px;
   }
   .tabbar {
     position: fixed;
     inset: auto 0 0;
     z-index: 60;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: color-mix(in srgb, var(--paper) 92%, transparent);
     backdrop-filter: blur(10px);
@@ -411,17 +623,17 @@ const LINKS = [
     color: var(--ink);
     background: var(--mari-soft);
   }
-  .tabbar a.lounge {
+  .tabbar .lounge {
     position: relative;
     margin: 0 2px;
     background: #15120e;
     color: #f6d9a8;
   }
-  .tabbar a.lounge :deep(svg) {
+  .tabbar .lounge :deep(svg) {
     color: #f2a93b;
     filter: drop-shadow(0 0 5px rgb(242 169 59 / 0.7));
   }
-  .tabbar a.lounge.on {
+  .tabbar .lounge.on {
     background: #15120e;
     color: #fff4dc;
     box-shadow: inset 0 0 0 1.5px #f2a93b;

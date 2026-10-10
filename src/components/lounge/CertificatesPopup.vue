@@ -13,7 +13,10 @@
         <h2 id="cp-h" ref="headEl" class="ed-h" tabindex="-1">
           My certificates <span class="gp-badge cp-n">{{ certificates.length }}</span>
         </h2>
-        <p class="cp-sub">One for every event where you stayed 20 minutes or more.</p>
+        <p class="cp-sub">
+          Released certificates for events you registered for and attended. Confirm a printed name
+          only when one is waiting.
+        </p>
         <ul v-if="certificates.length" class="cp-grid">
           <li v-for="c in certificates" :key="c.id">
             <button
@@ -56,12 +59,24 @@
           <span class="tnum">{{ current.id }}</span>
         </p>
         <h2 id="cp-h" class="ed-h">{{ current.event.name }}</h2>
-        <div v-if="!printed" class="cp-noname gp-inset">
+        <div v-if="needsConfirm" class="cp-noname gp-inset">
           <p>
-            Certificates print your name, and you haven't added one yet. Add it once and every
-            certificate carries it.
+            This event released a certificate. Confirm the name that prints. It stays locked after
+            that; Lounge name edits do not change it.
           </p>
-          <button type="button" class="gp-btn" @click="addName">Add your name</button>
+          <form class="evd-form" @submit.prevent="confirmName">
+            <label>
+              <span>Name on the certificate</span>
+              <input v-model="nameDraft" type="text" required maxlength="200" autocomplete="name" />
+            </label>
+            <p v-if="nameError" class="ff-err" role="alert">{{ nameError }}</p>
+            <button type="submit" class="gp-btn" :disabled="nameBusy">
+              {{ nameBusy ? 'Saving…' : 'Confirm name' }}
+            </button>
+          </form>
+        </div>
+        <div v-else-if="!printed" class="cp-noname gp-inset">
+          <p>No printed name is stored yet. It is asked when a released certificate needs one.</p>
         </div>
         <div v-else class="cp-cert" :class="{ ready: url }">
           <img
@@ -85,11 +100,22 @@
           <button v-if="!asked" type="button" class="gp-link" @click="asked = true">
             Request a change
           </button>
-          <span v-else role="status" class="cp-asked"
-            >In the live Lounge, this request goes to the council. This preview doesn't send
-            it.</span
-          >
         </p>
+        <form v-if="asked && printed" class="evd-form" @submit.prevent="sendChange">
+          <label>
+            <span>New printed name</span>
+            <input v-model="changeName" type="text" required maxlength="200" />
+          </label>
+          <label>
+            <span>Why</span>
+            <textarea v-model="changeReason" rows="2" required maxlength="2000"></textarea>
+          </label>
+          <p v-if="changeError" class="ff-err" role="alert">{{ changeError }}</p>
+          <p v-if="changeSent" class="pe-saved" role="status">Request sent to the council.</p>
+          <button type="submit" class="gp-btn" :disabled="changeBusy">
+            {{ changeBusy ? 'Sending…' : 'Send request' }}
+          </button>
+        </form>
 
         <div v-if="printed" class="reg-acts">
           <a
@@ -125,10 +151,12 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import CREST from '../../assets/crest.webp';
 import LoungeDialog from './LoungeDialog.vue';
-import { renderCertificate } from './cert.js';
+import { renderCertificate, renderOnTemplate } from './cert.js';
+import { errorText } from '../../lib/auth.js';
 import { certificates, commKey, commOf, longDate, verifyHref } from './events.js';
 import { member } from './fixtures.js';
-import { certName, openNameCard } from './state.js';
+import { askCertNameChange, confirmPrintedName } from './session.js';
+import { certName, preferredName } from './state.js';
 
 const props = defineProps({ start: { type: String, default: '' } });
 const emit = defineEmits(['close']);
@@ -138,12 +166,25 @@ const dlg = ref(null);
 const headEl = ref(null);
 const backEl = ref(null);
 const currentId = ref(props.start || null);
-const current = computed(() => certificates.find((c) => c.id === currentId.value) ?? null);
+const current = computed(() => certificates.value.find((c) => c.id === currentId.value) ?? null);
 const url = ref('');
 const drawError = ref(false);
 const asked = ref(false);
-/* The name certificates print. Never the roll number: with no name, the detail asks for one. */
-const printed = computed(() => certName.value);
+const nameDraft = ref(preferredName.value || member.full_name || '');
+const nameBusy = ref(false);
+const nameError = ref('');
+const changeName = ref('');
+const changeReason = ref('');
+const changeBusy = ref(false);
+const changeError = ref('');
+const changeSent = ref(false);
+const printed = computed(() => current.value?.certificate_name || certName.value);
+const needsConfirm = computed(
+  () =>
+    !!current.value &&
+    !printed.value &&
+    (current.value.event?.needs_certificate_name || current.value.needs_certificate_name)
+);
 const verifyText = computed(
   () => current.value && `${location.host}${verifyHref(current.value.id)}`
 );
@@ -157,16 +198,18 @@ async function draw(c) {
   url.value = cache.get(key) ?? '';
   if (url.value) return;
   try {
-    const png = await renderCertificate({
-      name: certName.value,
-      roll: member.roll,
-      region: member.region.name,
-      cert: c,
-      when: longDate(c.event),
-      commKey: commKey(c.event),
-      commLabel: commOf(c.event).label,
-      art: commOf(c.event).art,
-    });
+    const png = c.template_url
+      ? await renderOnTemplate({ templateUrl: c.template_url, name: printed.value, certId: c.id })
+      : await renderCertificate({
+          name: printed.value,
+          roll: member.roll,
+          region: member.region.name,
+          cert: c,
+          when: c.event?.starts_at ? longDate(c.event) : c.event_date || '',
+          commKey: commKey(c.event),
+          commLabel: commOf(c.event).label,
+          art: commOf(c.event).art,
+        });
     cache.set(key, png);
     if (mine === token) url.value = png;
   } catch (err) {
@@ -189,10 +232,29 @@ watch(
   { immediate: true }
 );
 
-/* Hand this pop-up's Back entry to the name card. */
-function addName() {
-  dlg.value?.swap();
-  openNameCard();
+async function confirmName() {
+  nameBusy.value = true;
+  nameError.value = '';
+  try {
+    await confirmPrintedName(nameDraft.value);
+  } catch (err) {
+    nameError.value = errorText(err);
+  } finally {
+    nameBusy.value = false;
+  }
+}
+
+async function sendChange() {
+  changeBusy.value = true;
+  changeError.value = '';
+  try {
+    await askCertNameChange(changeName.value, changeReason.value);
+    changeSent.value = true;
+  } catch (err) {
+    changeError.value = errorText(err);
+  } finally {
+    changeBusy.value = false;
+  }
 }
 
 async function show(id) {

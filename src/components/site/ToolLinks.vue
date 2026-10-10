@@ -32,11 +32,11 @@ import { toast } from '../../lib/store.js';
   padding: 0;
   display: grid;
   gap: 8px;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
 }
 a {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   padding: 11px 12px;

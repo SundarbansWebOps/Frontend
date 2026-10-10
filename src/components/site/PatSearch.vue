@@ -145,7 +145,7 @@ input::-webkit-search-cancel-button {
 }
 .hits button {
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: auto auto minmax(0, 1fr);
   align-items: baseline;
   gap: 10px;
   width: 100%;
@@ -221,7 +221,7 @@ input::-webkit-search-cancel-button {
 }
 @media (max-width: 760px) {
   .hits button {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
   }
   input {
     font-size: 16px;

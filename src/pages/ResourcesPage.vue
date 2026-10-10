@@ -1,6 +1,6 @@
 <!-- Resources — "Delta": branch → level → courses, quiz timeline in the side column. -->
 <template>
-  <main class="wrap" :style="accStyle">
+  <main id="main-content" class="wrap" tabindex="-1" :style="accStyle">
     <header class="head rise" style="--i: 0">
       <h1>Resources</h1>
       <p class="sub">
@@ -562,7 +562,7 @@ function launch(id) {
 }
 .tix {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr));
   gap: 12px;
 }
 .hint {

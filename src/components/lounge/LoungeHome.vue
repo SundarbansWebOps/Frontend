@@ -14,6 +14,7 @@
     :class="{
       phone,
       intro: phase === 'intro',
+      'from-door': fromDoor,
       arrive: phase === 'arrive',
       'boat-handoff': boatHandoff,
     }"
@@ -25,7 +26,7 @@
           :phone="phone"
           :calm="calm"
           :visible="heroOn"
-          :class="phase ? `is-${phase}` : ''"
+          :class="phase && !fromDoor ? `is-${phase}` : ''"
         />
         <div class="h-mangrove"><Mangrove :phone="phone" :calm="calm" :visible="heroOn" /></div>
         <div ref="boatEl" class="h-boat">
@@ -72,7 +73,7 @@ import MooredBoats from './home/MooredBoats.vue';
 import NameBeacon from './home/NameBeacon.vue';
 import RiverBoat from './home/RiverBoat.vue';
 import { PLATE } from './home/art.js';
-import { animate, onScreen, reduced, vLoop } from './home/motion.js';
+import { animate, motionHeld, motionTimeout, onScreen, reduced, vLoop } from './home/motion.js';
 import { nameFlight, openNameCard, shownName } from './state.js';
 
 const props = defineProps({ entry: { type: [String, Object], default: 'none' } });
@@ -134,6 +135,10 @@ let ro = null;
    classes carry the one-shot CSS animations; removing them leaves nothing animating but
    the slow loops. */
 const phase = ref(reduced() || loadEntry === 'none' || firstArrival ? '' : 'intro');
+/* Fresh load behind the sign-in door (motion held at its first frame, see LoungePage): the
+   lantern starts mid-screen (lounge.css .from-door) and the painted scene is already in place,
+   so the river is not rebuilt once the door lifts. */
+const fromDoor = phase.value === 'intro' && motionHeld();
 const calm = ref(!phase.value);
 const lit = ref(reduced() || !firstArrival);
 /* The boat's lamp catches as it finishes gliding in (load), at once otherwise. */
@@ -141,7 +146,7 @@ const lampDelay = computed(() =>
   phase.value === 'intro' ? 2600 : phase.value === 'arrive' ? 900 : 0
 );
 let timers = [];
-const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+const later = (fn, ms) => timers.push(motionTimeout(fn, ms));
 let dead = false;
 const flights = new Set();
 function play(el, frames, options) {
@@ -215,7 +220,7 @@ async function arrive(from, boatFrom) {
   if (dead || reduced()) return;
   flights.forEach((a) => a.cancel());
   boatHandoff.value = !!boatFrom;
-  timers.forEach(clearTimeout);
+  timers.forEach((cancel) => cancel());
   timers = [];
   calm.value = false;
   lit.value = false;
@@ -334,7 +339,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   dead = true;
   ro?.disconnect();
-  timers.forEach(clearTimeout);
+  timers.forEach((cancel) => cancel());
   flights.forEach((a) => a.cancel());
 });
 

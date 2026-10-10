@@ -46,7 +46,7 @@ const INK = {
 .tp {
   position: relative;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   width: 100%;
   height: 100%;
   padding: 16px 16px 14px;

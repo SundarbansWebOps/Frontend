@@ -3,6 +3,7 @@
 -- leaves nothing behind. Fixture ids start with a9000000-, emails with 99f9.
 begin;
 select no_plan();
+select vault.create_secret(repeat('local-pgtap-only-',3),'blacklist_hash_pepper') where not exists(select 1 from vault.decrypted_secrets where name='blacklist_hash_pepper');
 
 -- ── Fixtures (as postgres) ──────────────────────────────────────────────────
 create temp table fx (k text primary key, id uuid, email text);
@@ -23,6 +24,12 @@ select throws_ok($$ insert into auth.users (id, email, aud, role)
   values ('a9000000-0000-4000-8000-000000000008', 'someone@gmail.com', 'authenticated', 'authenticated') $$,
   '42501', null, 'sign-in is refused for another email domain');
 
+-- A fresh local database has no real Auth accounts. A fixture-only member supplies the
+-- roster added_by FK, then the normal Google claim path creates the bootstrap admin.
+insert into public.members(id,member_code,email,region_id) values('a9000000-0000-4000-8000-000000000098','99f9000098','99f9000098@ds.study.iitm.ac.in',(select id from public.regions where code='region_01'));
+insert into public.member_roster(email,region_id,added_by) values('99f9000099@ds.study.iitm.ac.in',(select id from public.regions where code='region_01'),'a9000000-0000-4000-8000-000000000098');
+insert into auth.users(id,email,aud,role,raw_app_meta_data) values('a9000000-0000-4000-8000-000000000099','99f9000099@ds.study.iitm.ac.in','authenticated','authenticated','{"provider":"google"}');
+insert into public.super_admin_allowlist(user_id,label) values('a9000000-0000-4000-8000-000000000099','Test bootstrap');
 -- Roster rows for everyone (added_by: any existing member).
 insert into public.member_roster (email, full_name, phone, region_id, added_by)
   select fx.email, 'Fixture ' || fx.k, '+9199900000' || right(fx.id::text, 2),
@@ -31,8 +38,8 @@ insert into public.member_roster (email, full_name, phone, region_id, added_by)
 from fx;
 
 -- First (Google) sign-in: the member is created from the roster row, metadata is ignored.
-insert into auth.users (id, email, aud, role, raw_user_meta_data)
-  select fx.id, fx.email, 'authenticated', 'authenticated', '{"full_name":"Google Name"}'::jsonb from fx;
+insert into auth.users (id, email, aud, role, raw_user_meta_data,raw_app_meta_data)
+  select fx.id, fx.email, 'authenticated', 'authenticated', '{"full_name":"Google Name"}'::jsonb,'{"provider":"google"}'::jsonb from fx;
 
 select results_eq($$ select full_name, phone from public.members where id = 'a9000000-0000-4000-8000-000000000004' $$,
   $$ values ('Fixture s1'::text, '+919990000004'::text) $$, 'the member profile comes from the roster, not Google');
@@ -69,14 +76,18 @@ select results_eq($$ select phone from public.members where id = 'a9000000-0000-
 select throws_ok($$ select public.request_status_change('a9000000-0000-4000-8000-000000000004', 'suspend', 'x') $$,
   '42501', null, 'RC cannot file status changes');
 
-select lives_ok($$ insert into public.events (name, starts_at, ends_at, community_id)
+select throws_ok($$ insert into public.events (name, starts_at, ends_at, community_id)
                    values ('Tech night', now() + interval '1 day', now() + interval '2 days',
                            (select id from public.communities where code = 'technical')) $$,
-  'RC creates a community event (RCs manage all events)');
-select lives_ok($$ update public.events set description = 'Edited' where name = 'Tech night' $$,
-  'RC edits a community event');
-select results_eq($$ select description from public.events where name = 'Tech night' $$,
-  $$ values ('Edited'::text) $$, 'the RC''s edit is saved');
+  '42501', null, 'RC cannot create another community event');
+select lives_ok($$ insert into public.events (name, starts_at, ends_at, region_id)
+                   values ('Region night', now() + interval '1 day', now() + interval '2 days',
+                           (select id from public.regions where code = 'region_01')) $$,
+  'RC creates an event in their own region');
+select lives_ok($$ update public.events set description = 'Edited' where name = 'Region night' $$,
+  'RC edits own-region event');
+select results_eq($$ select description from public.events where name = 'Region night' $$,
+  $$ values ('Edited'::text) $$, 'the RC edit is saved');
 reset role;
 
 -- ── Super Admins: two-person rule ───────────────────────────────────────────
@@ -149,8 +160,8 @@ select throws_ok($$ select public.roster_add('99f9000022@ds.study.iitm.ac.in', '
   '22023', null, 'a phone that is given must still be valid');
 reset role;
 
-insert into auth.users (id, email, aud, role)
-  values ('a9000000-0000-4000-8000-000000000020', '99f9000020@ds.study.iitm.ac.in', 'authenticated', 'authenticated');
+insert into auth.users (id, email, aud, role,raw_app_meta_data)
+  values ('a9000000-0000-4000-8000-000000000020', '99f9000020@ds.study.iitm.ac.in', 'authenticated', 'authenticated','{"provider":"google"}');
 select results_eq($$ select full_name, phone from public.members where id = 'a9000000-0000-4000-8000-000000000020' $$,
   $$ values ('No Phone'::text, null::text) $$, 'a student without a phone can sign in');
 
