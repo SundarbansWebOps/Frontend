@@ -160,7 +160,14 @@
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { closeCourse, courseFor, getCourseOpener, isMine, store, togglePin } from '../../lib/store.js';
+import {
+  closeCourse,
+  courseFor,
+  getCourseOpener,
+  isMine,
+  store,
+  togglePin,
+} from '../../lib/store.js';
 import { currentWeek, nextExam } from '../../lib/courses.js';
 
 const LEVEL = {
