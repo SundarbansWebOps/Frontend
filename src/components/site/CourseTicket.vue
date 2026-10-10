@@ -13,7 +13,7 @@
     @keydown.enter="openCourse(c.code, {}, $event)"
   >
     <div class="stub">
-      <span class="mono">{{ c.short }}</span>
+      <span class="mono">{{ c.code }}</span>
     </div>
     <div class="main">
       <span class="name">

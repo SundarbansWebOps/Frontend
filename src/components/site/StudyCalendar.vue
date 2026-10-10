@@ -1,9 +1,7 @@
 <!-- Monthly view for the sample quiz dates shown on the Resources page. -->
 <template>
-  <section class="calendar" aria-labelledby="calendar-h">
+  <section class="calendar">
     <header class="calendar-head">
-      <span class="calendar-mark" aria-hidden="true" />
-      <h2 id="calendar-h">Schedule</h2>
     </header>
 
     <div class="month-nav">

@@ -165,6 +165,7 @@
     <!-- ============ RED: the quiz timeline column ============ -->
     <aside class="side rise" style="--i: 2">
       <TideLine @pick="pick" />
+      <StudyCalendar />
     </aside>
 
     <!-- Quick links: full-width row under both columns, centred -->
@@ -179,6 +180,7 @@
 import { computed, ref } from 'vue';
 import SearchBar from '../components/site/SearchBar.vue';
 import TideLine from '../components/site/TideLine.vue';
+import StudyCalendar from '../components/site/StudyCalendar.vue';
 import DeltaMap from '../components/site/DeltaMap.vue';
 import CourseTicket from '../components/site/CourseTicket.vue';
 import ToolLinks from '../components/site/ToolLinks.vue';
