@@ -367,6 +367,33 @@ html:where(.lounge-active).theme-move .h-mine {
   }
 }
 
+/* Behind the sign-in door (.from-door, set only when LoungePage held motion at mount): the
+   lantern holds at its mid-screen pose, which is the first frame of h-sail, so a paused
+   animation shows it. Release resumes at the same frame: the turn, then the sail (1300-3300ms). */
+:where(html.lounge-active) .intro.from-door .h-mine-in {
+  animation: h-sail 2000ms 1300ms cubic-bezier(0.45, 0, 0.2, 1) backwards;
+}
+
+:where(html.lounge-active) .intro.from-door .h-mine .nb-spin {
+  animation: h-beacon-turn 1300ms 0ms var(--ease-swing) backwards;
+}
+
+@keyframes h-sail {
+  from {
+    opacity: 1;
+    transform: translate3d(
+        calc(var(--hw, 100vw) * 0.5 - var(--mcx)),
+        calc(var(--hh, 700px) * 0.47 - var(--mcy) - var(--lift)),
+        0
+      )
+      scale(var(--rise-s));
+  }
+
+  to {
+    transform: none;
+  }
+}
+
 :where(html.lounge-active) .intro .h-refl {
   animation: m-fade-in 900ms 3900ms linear backwards;
 }
@@ -403,6 +430,12 @@ html:where(.lounge-active).building .lnav-strip {
 
 html:where(.lounge-active).building .lab {
   animation: m-fade-in 500ms 3300ms linear backwards;
+}
+
+/* Phones, behind the sign-in door only (html.from-door, LoungePage): the bottom tab bar is held
+   hidden and fades in with the build. Without the door it shows at once, as before. */
+html:where(.lounge-active).from-door .lnav-tabs {
+  animation: m-fade-in 500ms 2300ms linear backwards;
 }
 
 @keyframes h-drift {

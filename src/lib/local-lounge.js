@@ -129,7 +129,8 @@ const defaults = {
 };
 let state = defaults;
 try {
-  state = JSON.parse(sessionStorage.getItem(KEY)) || defaults;
+  // ?local-tour=1 is always a first visit: a reload starts the tour again.
+  if (params.get('local-tour') !== '1') state = JSON.parse(sessionStorage.getItem(KEY)) || defaults;
 } catch {
   // Storage can be blocked; the fixture still works for this page load.
 }

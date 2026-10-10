@@ -8,6 +8,9 @@ export { boot };
 
 // Document lifetime only: route returns stay settled; a browser refresh replays arrival.
 export const loungeArrived = ref(false);
+// True while the sign-in door still covers the Lounge. The Lounge (or its tour) is mounted and
+// rests in its first pose underneath; it starts moving when this turns false.
+export const doorHold = ref(false);
 export const theme = ref(boot.theme);
 export const rosterName = computed(() => member.full_name ?? '');
 export const preferredName = ref(null);

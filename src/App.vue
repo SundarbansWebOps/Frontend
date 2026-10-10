@@ -22,6 +22,7 @@
   <RouterView />
   <SiteFooter v-if="route.path !== '/' && !isStandalone" />
   <CourseSheet />
+  <LoungeDoor v-if="door.rect" overlay entry :rect="door.rect" @done="endDoor" />
   <Transition name="toast">
     <div v-if="store.toast" class="toast" role="status">{{ store.toast }}</div>
   </Transition>
@@ -29,13 +30,21 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import TopNav from './components/site/TopNav.vue';
 import SiteFooter from './components/site/SiteFooter.vue';
 import CourseSheet from './components/site/CourseSheet.vue';
+import LoungeDoor from './components/site/LoungeDoor.vue';
 import { store } from './lib/store.js';
+import { door, endDoor } from './lib/door.js';
 
 const route = useRoute();
+const router = useRouter();
+// The sign-in door covers the page until it has opened onto the Lounge. Going anywhere else during
+// it ends the door, so nothing is left covering a page.
+router.afterEach((to) => {
+  if (door.rect && to.path !== door.target) endDoor();
+});
 const isLounge = computed(
   () =>
     route.name === 'Lounge' ||

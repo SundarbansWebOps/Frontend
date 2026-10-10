@@ -35,7 +35,6 @@ for (const viewport of [
       expect(rect.y + rect.height).toBeLessThan(bar.y);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(viewport.width);
-    await expect(page.locator('.lounge.entry')).toHaveClass(/open/);
     await page.screenshot({ path: `/tmp/lounge-sign-in-${viewport.width}.png` });
     await page.getByRole('button', { name: 'Enter the lounge', exact: true }).press('Enter');
     await expect(page.locator('.tour')).toBeVisible();
@@ -56,51 +55,49 @@ for (const viewport of [
   });
 }
 
-test('sign-in fades slowly and cannot navigate after leaving the page', async ({ page }) => {
+test('leaving the Lounge during the door cancels the arrival', async ({ page }) => {
   await mockSupabase(page, { profile: firstTime });
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  // Without View Transitions the sign-in takes its timed fade instead of the cross-dissolve.
-  await page.addInitScript(() => {
-    document.startViewTransition = undefined;
-  });
-  await page.clock.install();
   await page.goto('/#/login');
   await page.getByRole('button', { name: 'Enter the lounge', exact: true }).click();
-  await expect(page.locator('.sign-in')).toHaveClass(/leaving/);
-  await expect(page.getByRole('button', { name: 'Entering…' })).toBeDisabled();
-  await expect(page.locator('.sign-in')).toHaveCSS('transition-duration', '0.9s');
-  await expect
-    .poll(async () =>
-      Number(await page.locator('.sign-in').evaluate((el) => getComputedStyle(el).opacity))
-    )
-    .toBeLessThan(0.95);
+  await expect(page.locator('.lounge.overlay')).toBeVisible();
   await page.evaluate(() => {
     location.hash = '/resources';
   });
-  await expect(
-    page.getByRole('link', { name: 'Resources', exact: true }).filter({ visible: true })
-  ).toBeVisible();
-  // The shared navbar is already visible on sign-in; wait for actual page teardown.
-  await expect(page.locator('.sign-in')).toHaveCount(0);
+  await expect(page.locator('.lounge.overlay')).toHaveCount(0);
   await expect(page).toHaveURL(/#\/resources$/);
-  // Cross the fade deadline after unmount: the stale click must not send us to the Tour.
-  await page.clock.runFor(2000);
+  // The door's film would have run for about 1.9s; nothing may move the page after the cancel.
+  await page.waitForTimeout(2200);
   await expect(page).toHaveURL(/#\/resources$/);
-  await expect(page.locator('html')).not.toHaveClass(
-    /sign-in-active|sign-in-arrival|lounge-active/
-  );
+  await expect(page.locator('.tour, .home')).toHaveCount(0);
+  await expect(page.locator('html')).not.toHaveClass(/sign-in-active/);
 });
 
-test('normal-motion sign-in cross-dissolves into the painted tour', async ({ page }) => {
+test('normal-motion sign-in opens the door onto the tour', async ({ page }) => {
   await mockSupabase(page, { profile: firstTime });
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/#/login');
   await page.getByRole('button', { name: 'Enter the lounge', exact: true }).click();
+  await expect(page.locator('.lounge.overlay')).toBeVisible();
+  // The Lounge is mounted under the door from the start, and the site nav is gone.
   await expect(page.locator('.tour')).toBeVisible();
+  await expect(page.locator('.nav, .tabbar')).toHaveCount(0);
+  await expect(page.locator('.lounge.overlay')).toHaveCount(0, { timeout: 4000 });
   await expect(page.locator('.sign-in')).toHaveCount(0);
-  await expect(page.locator('html')).not.toHaveClass(/sign-in-cross|sign-in-arrival/);
-  await expect(page.locator('.tour')).toHaveCSS('opacity', '1');
+  await expect(page.locator('html')).not.toHaveClass(/sign-in-active/);
+  await expect(page.locator('.tour')).toBeVisible();
   await expect(page.locator('.home')).toHaveCount(0);
+});
+
+test('normal-motion returning member opens the door onto the Lounge home', async ({ page }) => {
+  await mockSupabase(page, { profile: { preferred_name: 'Riya' } });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/#/login');
+  await page.getByRole('button', { name: 'Enter the lounge', exact: true }).click();
+  await expect(page.locator('.lounge.overlay')).toBeVisible();
+  await expect(page.locator('.lounge.overlay')).toHaveCount(0, { timeout: 4000 });
+  await expect(page.locator('.home')).toBeVisible();
+  await expect(page.locator('.tour')).toHaveCount(0);
 });
 
 test('signed-in member reaches the Lounge from the navbar in one tap, no door', async ({

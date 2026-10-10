@@ -21,7 +21,17 @@ const animations = new Map();
 const suspended = new Set();
 let focused = document.hasFocus();
 let enabled = true;
-export const motionActive = () => enabled && focused && !document.hidden;
+/* The sign-in door covers the Lounge (LoungePage): every motion clock stays paused at its
+   first frame until the door lifts. Same gate as a hidden tab, so timers keep their remaining
+   time and CSS/Web Animations resume from where they were paused. */
+let held = false;
+export const motionHeld = () => held;
+export function setMotionHeld(on) {
+  if (held === on) return;
+  held = on;
+  syncActivity();
+}
+export const motionActive = () => enabled && focused && !document.hidden && !held;
 let inactiveSince = motionActive() ? null : performance.now();
 let inactiveDuration = 0;
 export const motionNow = () => (inactiveSince ?? performance.now()) - inactiveDuration;
@@ -109,6 +119,7 @@ export function activateMotion() {
 }
 export function stopMotion() {
   enabled = false;
+  held = false;
   syncActivity();
   rm.removeEventListener('change', syncActivity);
   document.removeEventListener('visibilitychange', visibility);

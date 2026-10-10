@@ -2,7 +2,7 @@
 <template>
   <main id="main-content" class="sign-in" tabindex="-1" :class="{ leaving }" :aria-busy="busy">
     <section aria-labelledby="login-h">
-      <LoungeDoor entry>
+      <LoungeDoor ref="door" entry>
         <h1 id="login-h">The lounge</h1>
         <button type="button" class="enter" :disabled="busy" @click="signIn">
           {{ busy ? (auth.session ? 'Entering…' : 'Opening Google…') : label }}
@@ -15,11 +15,12 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import LoungeDoor from '../components/site/LoungeDoor.vue';
 import LineIcon from '../components/site/LineIcon.vue';
 import { auth, authReady, signInWithGoogle, takeNext } from '../lib/auth.js';
+import { endDoor, startDoor } from '../lib/door.js';
 
 const router = useRouter();
 const route = useRoute();
@@ -35,11 +36,11 @@ const safeNext = (p) =>
   typeof p === 'string' && /^\/(lounge|admin)(?:[/?#]|$)/.test(p) ? p : '/lounge';
 const label = computed(() => (auth.session ? 'Enter the lounge' : 'Sign in with Google'));
 document.documentElement.classList.add('sign-in-active');
+const door = ref(null);
 const busy = ref(false);
 const leaving = ref(false);
 const error = ref('');
 let disposed = false;
-let fadeTimer;
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -73,56 +74,54 @@ async function enter(next) {
     return;
   }
   try {
-    // Load both scenes before fading, so a slow chunk cannot leave an empty screen.
-    await Promise.all([
+    // Load both scenes and the Lounge's hold flag before starting, so a slow chunk cannot stall the door.
+    const [, , lounge] = await Promise.all([
       import('./LoungePage.vue'),
       import('../components/lounge/WelcomeTour.vue'),
       import('../components/lounge/state.js'),
     ]);
     if (disposed) return;
-    if (document.startViewTransition && !reducedMotion()) await crossfadeToLounge(next);
-    else await fadeToLounge(next);
+    if (reducedMotion() || !door.value) await fadeToLounge(next);
+    else await openDoor(next, lounge.doorHold);
   } catch {
     if (!disposed) fail();
   }
 }
 
-// The door and the lounge's first frame cross-dissolve in one 900ms overlap. Fading the sign-in
-// out first would leave a dark gap before the tour could appear.
-async function crossfadeToLounge(next) {
-  const root = document.documentElement;
-  root.classList.add('sign-in-cross');
-  try {
-    const transition = document.startViewTransition(() => router.push(next).then(() => nextTick()));
-    // A transition skipped by a hidden tab or a quick second navigation still swaps the page.
-    transition.ready.catch(() => {});
-    await transition.finished;
-  } catch {
-    if (!disposed) fail();
-  } finally {
-    root.classList.remove('sign-in-cross');
-  }
-}
-
-// No View Transitions (or reduced motion): fade the sign-in out, then arrive with the lounge's
-// own fade-in.
+// Reduced motion: no door. The sign-in fades out (instantly, under that preference) and the
+// Lounge arrives with its own fade-in.
 async function fadeToLounge(next) {
   leaving.value = true;
-  const enter = async () => {
-    try {
-      const target = router.resolve(next);
-      await router.push({
-        path: target.path,
-        query: target.query,
-        hash: target.hash,
-        state: { signIn: true },
-      });
-    } catch {
-      if (!disposed) fail();
-    }
-  };
-  if (reducedMotion()) await enter();
-  else fadeTimer = setTimeout(enter, 900);
+  const target = router.resolve(next);
+  try {
+    await router.push({
+      path: target.path,
+      query: target.query,
+      hash: target.hash,
+      state: { signIn: true },
+    });
+  } catch {
+    if (!disposed) fail();
+  }
+}
+
+// The Lounge (or the tour) mounts underneath while the door, laid over it, swings open and the
+// camera passes through. doorHold keeps the Lounge still until the door is gone (see endDoor).
+async function openDoor(next, doorHold) {
+  doorHold.value = true;
+  startDoor({
+    rect: door.value.archRect(),
+    target: router.resolve(next).path,
+    release: () => {
+      doorHold.value = false;
+    },
+  });
+  try {
+    await router.push(next);
+  } catch {
+    endDoor();
+    if (!disposed) fail();
+  }
 }
 
 function fail() {
@@ -133,7 +132,6 @@ function fail() {
 onBeforeUnmount(() => {
   disposed = true;
   document.documentElement.classList.remove('sign-in-active');
-  clearTimeout(fadeTimer);
 });
 </script>
 
@@ -145,8 +143,6 @@ onBeforeUnmount(() => {
   padding: 32px 24px;
   background: #15120e;
   color: #f3ebdd;
-  opacity: 1;
-  transition: opacity 900ms ease-in-out;
 }
 .sign-in.leaving {
   opacity: 0;
@@ -213,19 +209,5 @@ h1 {
   .sign-in {
     padding-bottom: calc(32px + 72px + env(safe-area-inset-bottom));
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sign-in {
-    transition: none;
-  }
-}
-</style>
-
-<style>
-/* The sign-in → lounge cross-dissolve; the same 900ms as the fallback fade. */
-:root.sign-in-cross::view-transition-old(root),
-:root.sign-in-cross::view-transition-new(root) {
-  animation-duration: 900ms;
-  animation-timing-function: ease-in-out;
 }
 </style>
