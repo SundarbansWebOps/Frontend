@@ -32,7 +32,8 @@ const MINE_KEY = 'proto-resource-hub-mine';
 
 function loadMine() {
   try {
-    return JSON.parse(localStorage.getItem(MINE_KEY)) ?? [];
+    const saved = JSON.parse(localStorage.getItem(MINE_KEY)) ?? [];
+    return Array.isArray(saved) ? saved.filter((code) => typeof code === 'string').slice(0, 4) : [];
   } catch {
     return [];
   }
@@ -94,8 +95,14 @@ export const isMine = (code) => store.mine.includes(code);
 
 export function togglePin(code) {
   const i = store.mine.indexOf(code);
-  if (i === -1) store.mine.push(code);
-  else store.mine.splice(i, 1);
+  if (i === -1) {
+    if (store.mine.length >= 4) {
+      toast('My courses can hold up to 4 courses. Remove one to pin another.');
+      return false;
+    }
+    store.mine.push(code);
+  } else store.mine.splice(i, 1);
+  return true;
 }
 
 let toastTimer;

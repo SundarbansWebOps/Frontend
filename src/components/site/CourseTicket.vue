@@ -1,38 +1,32 @@
 <!--
-  A pinned course as a ticket stub: code on the stub, the two things you
-  actually open this week on the body. Perforation is a CSS mask, not an image.
+  A pinned course as a ticket stub: code on the stub, tap anywhere on the ticket
+  to open the course in the study panel. Perforation is a CSS mask, not an image.
 -->
 <template>
-  <article v-if="c" class="ticket">
+  <article
+    v-if="c"
+    class="ticket"
+    role="button"
+    tabindex="0"
+    :aria-label="`Open ${c.short} in the study panel`"
+    @click="openCourse(c.code, {}, $event)"
+    @keydown.enter="openCourse(c.code, {}, $event)"
+  >
     <div class="stub">
-      <span class="mono">{{ c.code }}</span>
+      <span class="mono">{{ c.short }}</span>
     </div>
     <div class="main">
-      <button type="button" class="name" @click="openCourse(c.code, {}, $event)">
+      <span class="name">
         <b>{{ c.short }}</b>
-      </button>
-      <div class="acts">
-        <button
-          v-if="examCount"
-          type="button"
-          class="act hot"
-          @click="openCourse(c.code, { tab: 'pyqs', exam: nextExam.exam }, $event)"
-        >
-          {{ nextExam.label }} papers <i>{{ examCount }}</i>
-        </button>
-        <button
-          type="button"
-          class="act"
-          @click="
-            openCourse(c.code, { tab: 'notes', week: weekCount ? currentWeek : null }, $event)
-          "
-        >
-          {{ weekCount ? `Week ${currentWeek} notes` : 'Notes' }}
-          <i>{{ weekCount || c.notes.length }}</i>
-        </button>
-      </div>
+        <small v-if="c.name !== c.short">{{ c.name }}</small>
+      </span>
     </div>
-    <button type="button" class="x" :title="`Remove ${c.short}`" @click="togglePin(c.code)">
+    <button
+      type="button"
+      class="x"
+      :title="`Remove ${c.short}`"
+      @click.stop="togglePin(c.code)"
+    >
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" /></svg>
       <span class="visually-hidden">Remove {{ c.short }} from my courses</span>
     </button>
@@ -42,14 +36,9 @@
 <script setup>
 import { computed } from 'vue';
 import { courseFor, openCourse, togglePin } from '../../lib/store.js';
-import { currentWeek, nextExam } from '../../lib/courses.js';
 
 const props = defineProps({ code: String });
 const c = computed(() => courseFor(props.code));
-const examCount = computed(
-  () => c.value?.pyqs.filter((p) => p.exam === nextExam?.exam).length ?? 0
-);
-const weekCount = computed(() => c.value?.notes.filter((n) => n.week === currentWeek).length ?? 0);
 </script>
 
 <style scoped>
@@ -60,9 +49,15 @@ const weekCount = computed(() => c.value?.notes.filter((n) => n.week === current
   display: grid;
   grid-template-columns: var(--stub) minmax(0, 1fr);
   min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--acc, var(--mari)) 22%, var(--line-strong));
   border-radius: 14px;
-  background: var(--card);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--mari-soft) 28%, var(--card)),
+    var(--card) 58%
+  );
   box-shadow: var(--shadow);
+  cursor: pointer;
   /* two notches where the stub tears off */
   mask:
     radial-gradient(circle var(--notch) at var(--stub) 0, #0000 98%, #000) top / 100% 51% no-repeat,
@@ -70,8 +65,32 @@ const weekCount = computed(() => c.value?.notes.filter((n) => n.week === current
       no-repeat;
   transition: transform 0.35s var(--ease-out);
 }
+.ticket::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 1px;
+  right: 12px;
+  left: 12px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--mari) 58%, var(--card)),
+    transparent
+  );
+  pointer-events: none;
+}
+.ticket.completed {
+  border-color: var(--line-strong);
+  background: var(--sunk);
+}
 .ticket:hover {
-  transform: translateY(-2px) rotate(-0.3deg);
+  transform: translateY(-2px);
+}
+.ticket:focus-visible {
+  outline: 2px solid var(--acc, var(--mari-ink));
+  outline-offset: 2px;
 }
 .stub {
   display: grid;
@@ -89,69 +108,27 @@ const weekCount = computed(() => c.value?.notes.filter((n) => n.week === current
 }
 .main {
   display: grid;
-  align-content: space-between;
-  gap: 10px;
-  padding: 12px 36px 12px 14px;
+  align-content: center;
+  gap: 7px;
+  padding: 8px 36px 8px 12px;
   min-width: 0;
 }
 .name {
   display: grid;
   gap: 2px;
   justify-items: start;
-  padding: 0;
-  border: 0;
-  background: none;
   text-align: left;
 }
 .name b {
-  font-size: 21px;
+  font-size: 19px;
   font-weight: 750;
   letter-spacing: -0.03em;
   line-height: 1.05;
 }
-.name:hover b {
-  text-decoration: underline 2px var(--acc, var(--mari));
-  text-underline-offset: 4px;
-}
 .name small {
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.3;
   color: var(--ink-2);
-}
-.acts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.act {
-  padding: 5px 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
-  background: var(--paper);
-  font-size: 12.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  transition:
-    background 0.2s,
-    border-color 0.2s,
-    transform 0.25s var(--ease-spring);
-}
-.act i {
-  font-style: normal;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--ink-3);
-}
-.act:hover {
-  border-color: var(--ink);
-  transform: translateY(-1px);
-}
-.act.hot {
-  border-color: var(--acc, var(--verm));
-  color: var(--acc, var(--verm));
-}
-.act.hot i {
-  color: inherit;
 }
 .x {
   position: absolute;

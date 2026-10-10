@@ -9,7 +9,12 @@
         <h2 id="mine-h" class="eyebrow">
           My courses <span v-if="store.mine.length" class="mono">{{ store.mine.length }}</span>
         </h2>
-        <TransitionGroup name="tix" tag="div" class="tix">
+        <TransitionGroup
+          name="tix"
+          tag="div"
+          class="tix"
+          :class="{ 'no-courses': !store.mine.length }"
+        >
           <CourseTicket v-for="code in store.mine" :key="code" :code="code" />
           <p v-if="!store.mine.length" key="empty" class="hint">
             <span class="dot" /> Pick your branch and level, then pin your courses. Next time the
@@ -19,6 +24,16 @@
       </section>
 
       <section class="flow rise" style="--i: 3" aria-labelledby="flow-h">
+        <div class="study-mark" aria-hidden="true">
+          <svg class="study-seal" viewBox="0 0 100 100" focusable="false">
+            <circle cx="50" cy="50" r="46" />
+            <path d="M50 9v8m0 66v8M9 50h8m66 0h8M21 21l6 6m46 46 6 6m0-58-6 6m-46 46-6 6" />
+            <path
+              d="M31 63c6-5 13-5 19 0 6-5 13-5 19 0v17c-6-5-13-5-19 0-6-5-13-5-19 0zM50 63v17"
+            />
+          </svg>
+          <PatFigure :fig="FIGS.reader" name="reader" :instant="true" :live="false" />
+        </div>
         <!-- breadcrumb -->
         <nav class="crumbs" aria-label="Where you are">
           <button
@@ -50,9 +65,6 @@
           <!-- STEP 1 · branch -->
           <div v-if="!branch" key="branch">
             <h2 id="flow-h" class="flow-h">Choose your branch</h2>
-            <p class="flow-sub">
-              Everything here — the course map, calendar, notes — follows your branch.
-            </p>
             <div class="branches">
               <button
                 v-for="(b, id, i) in BRANCHES"
@@ -64,7 +76,6 @@
               >
                 <span class="mono branch-s">{{ b.short }}</span>
                 <strong>{{ b.label }}</strong>
-                <small>{{ b.blurb || b.desc || b.description || b.tagline || '' }}</small>
               </button>
             </div>
           </div>
@@ -72,9 +83,6 @@
           <!-- STEP 2 · level -->
           <div v-else-if="!level && !searching" key="level">
             <h2 id="flow-h" class="flow-h">Pick your level</h2>
-            <p class="flow-sub">
-              Every branch runs the same three levels — foundation, diploma, degree.
-            </p>
             <div class="levels">
               <button
                 v-for="(l, i) in LEVELS"
@@ -125,6 +133,12 @@
                   type="button"
                   class="pin"
                   :aria-pressed="store.mine.includes(c.code)"
+                  :aria-disabled="!store.mine.includes(c.code) && store.mine.length >= 4"
+                  :title="
+                    !store.mine.includes(c.code) && store.mine.length >= 4
+                      ? 'Remove a course from My courses before pinning another'
+                      : undefined
+                  "
                   @click="togglePin(c.code)"
                 >
                   {{ store.mine.includes(c.code) ? 'Pinned' : 'Pin' }}
@@ -162,29 +176,22 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import SearchBar from '../components/site/SearchBar.vue';
 import TideLine from '../components/site/TideLine.vue';
 import DeltaMap from '../components/site/DeltaMap.vue';
 import CourseTicket from '../components/site/CourseTicket.vue';
 import ToolLinks from '../components/site/ToolLinks.vue';
-import { openCourse, search, store } from '../lib/store.js';
+import PatFigure from '../components/site/PatFigure.vue';
+import { openCourse, search, store, togglePin } from '../lib/store.js';
 import { byCode } from '../lib/courses.js';
 import { BRANCHES } from '../data/branches.js';
-import { theme } from '../lib/theme.js';
+import { FIGS } from '../lib/pat.js';
 
 const q = ref(store.q);
 const branch = ref(null);
 const level = ref(null);
 store.q = '';
-
-// The Resources page is pure black in dark mode; in light mode it uses the normal paper tokens.
-// The token block lives in tokens.css under :root.resources-dark.
-const syncDark = () =>
-  document.documentElement.classList.toggle('resources-dark', theme.value === 'dark');
-onMounted(syncDark);
-onBeforeUnmount(() => document.documentElement.classList.remove('resources-dark'));
-watch(theme, syncDark);
 
 // ---------- levels ----------
 const LEVELS = [
@@ -277,11 +284,6 @@ function open(code, e) {
     window.location.hash = `${path || '/resources'}?${p.toString()}`;
   }
 }
-function togglePin(code) {
-  const i = store.mine.indexOf(code);
-  if (i === -1) store.mine.push(code);
-  else store.mine.splice(i, 1);
-}
 function pick(d) {
   if (d.exam) q.value = `${d.exam.toLowerCase()} pyq`;
 }
@@ -294,7 +296,7 @@ function launch(id) {
 
 <style scoped>
 .wrap {
-  --acc: var(--ink-3);
+  --acc: var(--mari-ink);
   --acc-wash: color-mix(in srgb, var(--acc) 15%, transparent);
   width: 100%;
   max-width: 1720px;
@@ -304,6 +306,24 @@ function launch(id) {
   grid-template-columns: minmax(0, 1fr) 400px;
   gap: 28px;
   align-items: start;
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--paper) 92%, transparent),
+      color-mix(in srgb, var(--paper) 92%, transparent)
+    ),
+    url('../assets/resources-study-bg-light.webp');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: scroll;
+}
+:global(:root[data-theme='dark']) .wrap {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--paper) 86%, transparent),
+      color-mix(in srgb, var(--paper) 86%, transparent)
+    ),
+    url('../assets/resources-study-bg-dark.webp');
 }
 .content {
   display: grid;
@@ -311,15 +331,55 @@ function launch(id) {
   width: 100%;
   min-width: 0;
 }
-.flow {
+.mine {
+  min-width: 0;
+}
+.tix {
   width: 100%;
-  min-height: 420px; /* keeps the box the same size across branch / level / course steps */
+  min-width: 0;
+}
+.flow {
+  position: relative;
+  width: 100%;
+}
+.study-mark {
+  position: absolute;
+  z-index: 0;
+  top: 10px;
+  right: 24px;
+  width: 74px;
+  height: 74px;
+  color: var(--mari-ink);
+  pointer-events: none;
+}
+.study-seal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.7;
+}
+.study-mark :deep(.fig) {
+  position: absolute;
+  inset: 4px;
+  width: auto;
+  filter: drop-shadow(0 2px 1px color-mix(in srgb, var(--ink) 14%, transparent));
+}
+.study-mark :deep(.part) {
+  animation: none !important;
 }
 .levels,
 .courses {
   width: 100%;
 }
 .side {
+  display: grid;
+  gap: 14px;
   position: sticky;
   top: 20px;
 }
@@ -349,6 +409,8 @@ function launch(id) {
   color: var(--ink-2);
 }
 .flow-h {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -367,13 +429,6 @@ function launch(id) {
   font-size: 12px;
   font-weight: 600;
 }
-.flow-sub {
-  margin: 0 0 22px;
-  max-width: 62ch;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--ink-2);
-}
 .branches {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -384,7 +439,7 @@ function launch(id) {
   display: grid;
   align-content: start;
   gap: 8px;
-  min-height: 190px;
+  min-height: 132px;
   padding: 20px;
   text-align: left;
   border: 1.5px solid var(--line-strong);
@@ -405,15 +460,15 @@ function launch(id) {
 .branch-s {
   font-size: 12px;
   color: var(--acc);
+  width: fit-content;
+  padding: 3px 8px;
+  border: 1px solid color-mix(in srgb, var(--acc) 38%, transparent);
+  border-radius: 99px;
+  background: var(--acc-wash);
 }
 .branch strong {
   font-size: 20px;
   line-height: 1.2;
-}
-.branch small {
-  color: var(--ink-2);
-  font-size: 13.5px;
-  line-height: 1.4;
 }
 .levels {
   display: grid;
@@ -492,17 +547,26 @@ function launch(id) {
   align-self: center;
   margin-right: 12px;
   padding: 4px 10px;
-  border: 1.5px solid var(--acc);
+  border: 1.5px solid var(--line-strong);
   border-radius: 999px;
   background: transparent;
-  color: var(--acc);
+  color: var(--ink-2);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
 .pin[aria-pressed='true'] {
-  background: var(--acc);
-  color: var(--paper);
+  border-color: var(--mari);
+  background: var(--mari);
+  color: var(--on-mari);
+}
+.pin:not([aria-pressed='true']):hover {
+  border-color: var(--mari-ink);
+  color: var(--mari-ink);
+}
+.pin[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: help;
 }
 .course .code {
   font-size: 11px;
@@ -528,8 +592,14 @@ function launch(id) {
 }
 .tix {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.tix > * {
+  min-width: 0;
+}
+.tix.no-courses {
+  grid-template-columns: minmax(0, 1fr);
 }
 .hint {
   grid-column: 1 / -1;
@@ -640,7 +710,7 @@ function launch(id) {
   overflow: hidden; /* does not clip position:fixed children, so the overlay still shows */
 }
 
-/* ---------- colour: tinted panels so light mode isn't flat white ---------- */
+/* ---------- study flow: warm marigold frame, quiet paper cards ---------- */
 .flow {
   padding: 24px;
   border: 1.5px solid color-mix(in srgb, var(--acc) 28%, var(--line-strong));
@@ -654,15 +724,41 @@ function launch(id) {
   border-top: 4px solid var(--acc);
   background: color-mix(in srgb, var(--acc) 9%, var(--card));
 }
+.branch {
+  min-height: 132px;
+  align-content: center;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--acc) 12%, var(--card)),
+    var(--card) 72%
+  );
+}
 .branch:hover,
 .level:hover,
 .course:hover {
   background: color-mix(in srgb, var(--acc) 16%, var(--card));
 }
+.course {
+  border: 1px solid color-mix(in srgb, var(--acc) 22%, var(--line-strong));
+  border-top: 4px solid color-mix(in srgb, var(--acc) 38%, var(--line-strong));
+  background: var(--card);
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.3s var(--ease-out);
+}
+.course:hover {
+  border-color: color-mix(in srgb, var(--acc) 58%, var(--line-strong));
+  background: color-mix(in srgb, var(--mari-soft) 20%, var(--card));
+  box-shadow: none;
+}
 .course.mine {
-  background: color-mix(in srgb, var(--acc) 22%, var(--card));
+  border-color: color-mix(in srgb, var(--acc) 44%, var(--line-strong));
+  background: color-mix(in srgb, var(--mari-soft) 34%, var(--card));
 }
 .crumbs button.on {
+  border-color: var(--acc);
+  color: var(--acc);
   background: color-mix(in srgb, var(--acc) 14%, transparent);
 }
 
@@ -752,6 +848,10 @@ function launch(id) {
     padding: 14px 16px 100px;
     gap: 22px;
   }
+  .wrap {
+    background-position: right center;
+    background-size: cover;
+  }
   .tix {
     grid-template-columns: none;
     grid-auto-flow: column;
@@ -763,9 +863,6 @@ function launch(id) {
     padding-left: 16px;
     padding-right: 16px;
     scrollbar-width: none;
-  }
-  .tix > * {
-    scroll-snap-align: start;
   }
 }
 </style>
