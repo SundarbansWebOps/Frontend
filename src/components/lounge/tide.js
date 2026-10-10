@@ -15,6 +15,7 @@
 import { nextTick, ref } from 'vue';
 import { boot, store, theme, wait } from './state.js';
 import { otherThemeArt } from './home/art.js';
+import { animate, motionTimeout } from './home/motion.js';
 
 const FADE_MS = 1500; /* the circle's edge reaches the farthest corner */
 const FADE_EASE = 'cubic-bezier(0.7, 0, 0.25, 1)';
@@ -81,7 +82,7 @@ export function warmOther() {
    switch), so a click never waits on images. */
 function warmLater(ms) {
   const ticket = epoch;
-  const timer = setTimeout(() => {
+  const timer = motionTimeout(() => {
     warmTimers.delete(timer);
     if (current(ticket))
       (window.requestIdleCallback ?? setTimeout)(() => current(ticket) && warmOther());
@@ -129,7 +130,7 @@ function origin(event) {
   return b?.width ? [b.left + b.width / 2, b.top + b.height / 2] : [innerWidth / 2, 0];
 }
 
-let moveTimer = 0;
+let moveTimer = () => {};
 export async function toggleTheme(event) {
   const root = document.documentElement;
   if (busy || disposed) return;
@@ -152,15 +153,16 @@ export async function toggleTheme(event) {
     if (!current(ticket)) return;
     const [x, y] = origin(event);
     const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    clearTimeout(moveTimer);
+    moveTimer();
     root.classList.add('vt-theme', 'theme-move');
-    moveTimer = setTimeout(() => root.classList.remove('theme-move'), MOVE_MS);
+    moveTimer = motionTimeout(() => root.classList.remove('theme-move'), MOVE_MS);
     const vt = document.startViewTransition(() => applyTheme(next, ticket));
     own(vt);
     await vt.ready;
     if (!current(ticket)) return;
     fadeT0 = performance.now();
-    root.animate(
+    animate(
+      root,
       { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${Math.ceil(r)}px at ${x}px ${y}px)`] },
       { duration: FADE_MS, easing: FADE_EASE, pseudoElement: '::view-transition-new(root)' }
     );
@@ -282,11 +284,11 @@ export function dispose() {
   busy = false;
   pageLoop = false;
   fadeT0 = null;
-  for (const timer of warmTimers) clearTimeout(timer);
+  for (const cancel of warmTimers) cancel();
   warmTimers.clear();
   active?.skipTransition();
   pageQueued = null;
-  clearTimeout(moveTimer);
+  moveTimer();
   document.documentElement.classList.remove('vt-theme', 'theme-move', 'vt-page', 'vt-grow');
   document.documentElement.style.removeProperty('--vt-p');
 }

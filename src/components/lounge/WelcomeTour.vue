@@ -565,7 +565,16 @@ import M5 from './art/r5/manifest.json';
 import NameBeacon from './home/NameBeacon.vue';
 import RiverBoat from './home/RiverBoat.vue';
 import { BIRDS, BOAT, MOON, PLATE, SUN } from './home/art.js';
-import { animate, lite, rare, reduced } from './home/motion.js';
+import {
+  animate,
+  lite,
+  rare,
+  reduced,
+  motionActive,
+  onMotionChange,
+  motionFrame,
+  motionNow,
+} from './home/motion.js';
 import { member } from './fixtures.js';
 import { play } from './sound.js';
 import { errorText } from '../../lib/auth.js';
@@ -1585,7 +1594,7 @@ function autoAct(g, s) {
 
 function autoStep(ts) {
   autoRaf = 0;
-  if (!auto.value || dead) return;
+  if (!auto.value || dead || !motionActive()) return;
   const p = plan.value;
   const dt = autoLast ? Math.min(50, ts - autoLast) : 16;
   autoLast = ts;
@@ -1648,6 +1657,7 @@ function autoTotal() {
 /* The world dips out (220ms), the boat keeps its place, the river jumps to just before
    the ghat and the last stretch rows in (650ms), then the name card comes up. Only the
    ghat's art loads; the chapters in between are never fetched. */
+let skipFrame = () => {};
 async function skip() {
   if (skipping.value || docked.value) return;
   stopAuto();
@@ -1662,7 +1672,7 @@ async function skip() {
   update();
   await nextTick();
   skipping.value = false;
-  const t0 = performance.now();
+  const t0 = motionNow();
   const D = 650;
   await new Promise((done) => {
     const step = (ts) => {
@@ -1674,10 +1684,10 @@ async function skip() {
       const t = clamp((ts - t0) / D, 0, 1);
       const e = 1 - (1 - t) ** 3;
       window.scrollTo({ top: from + (p.end - from) * e, behavior: 'instant' });
-      if (t < 1) requestAnimationFrame(step);
+      if (t < 1) skipFrame = motionFrame(step);
       else done();
     };
-    requestAnimationFrame(step);
+    skipFrame = motionFrame(step);
   });
   if (!dead && !docked.value) dock();
 }
@@ -1847,8 +1857,12 @@ function onMotionPreference() {
     if (!props.leaving) update();
   }
 }
-function onVisibility() {
-  if (document.visibilityState === 'hidden') stopAuto();
+let stopActivity = () => {};
+function onActivity(active) {
+  cancelAnimationFrame(autoRaf);
+  autoRaf = 0;
+  autoLast = 0;
+  if (active && auto.value && !dead) autoRaf = requestAnimationFrame(autoStep);
 }
 
 onMounted(() => {
@@ -1871,7 +1885,7 @@ onMounted(() => {
   window.addEventListener('resize', onResize);
   window.addEventListener('keydown', onKey);
   window.addEventListener('pointerdown', onPointer);
-  document.addEventListener('visibilitychange', onVisibility);
+  stopActivity = onMotionChange(onActivity);
   motionPreference.addEventListener('change', onMotionPreference);
   if (!reduced()) {
     stopShoot = rare(shoot, {
@@ -1894,12 +1908,13 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   dead = true;
+  skipFrame();
   stopAuto();
   lockScroll(false);
   stopShoot?.();
   stopBirds?.();
   delete window.__loungeTour;
-  document.removeEventListener('visibilitychange', onVisibility);
+  stopActivity();
   motionPreference.removeEventListener('change', onMotionPreference);
   animations.forEach((animation) => animation.cancel());
   clearTimeout(resizeT);

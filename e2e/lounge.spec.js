@@ -310,3 +310,36 @@ test('Lounge arrival plays once per document, not after returning from a group f
   await page.reload();
   await expect(page.locator('.home')).toHaveClass(/intro/);
 });
+
+test('Lounge pauses stars when another app takes focus and resumes without replaying arrival', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await returningMember(page);
+  await expect(page.locator('.home')).not.toHaveClass(/intro/, { timeout: 10000 });
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  expect(await page.locator('html').getAttribute('class')).toMatch(/m-hidden/);
+  expect(
+    await page
+      .locator('.stars i.tw')
+      .first()
+      .evaluate((el) => getComputedStyle(el).animationPlayState)
+  ).toBe('paused');
+  const star = page.locator('.stars i.tw').first();
+  await star.evaluate(async (el) => {
+    await Promise.all(el.getAnimations().map((animation) => animation.ready));
+  });
+  const frozen = await star.evaluate((el) => el.getAnimations()[0].currentTime);
+  // A real elapsed interval proves the native CSS clock is frozen, beyond its class name.
+  await page.waitForTimeout(150);
+  expect(await star.evaluate((el) => el.getAnimations()[0].currentTime)).toBe(frozen);
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  expect(await page.locator('html').getAttribute('class')).not.toMatch(/m-hidden/);
+  expect(
+    await page
+      .locator('.stars i.tw')
+      .first()
+      .evaluate((el) => getComputedStyle(el).animationPlayState)
+  ).toBe('running');
+  expect(await page.locator('.home').getAttribute('class')).not.toMatch(/intro|arrive/);
+});

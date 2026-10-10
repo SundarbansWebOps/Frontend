@@ -72,7 +72,7 @@ import MooredBoats from './home/MooredBoats.vue';
 import NameBeacon from './home/NameBeacon.vue';
 import RiverBoat from './home/RiverBoat.vue';
 import { PLATE } from './home/art.js';
-import { animate, onScreen, reduced, vLoop } from './home/motion.js';
+import { animate, motionTimeout, onScreen, reduced, vLoop } from './home/motion.js';
 import { nameFlight, openNameCard, shownName } from './state.js';
 
 const props = defineProps({ entry: { type: [String, Object], default: 'none' } });
@@ -141,7 +141,7 @@ const lampDelay = computed(() =>
   phase.value === 'intro' ? 2600 : phase.value === 'arrive' ? 900 : 0
 );
 let timers = [];
-const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+const later = (fn, ms) => timers.push(motionTimeout(fn, ms));
 let dead = false;
 const flights = new Set();
 function play(el, frames, options) {
@@ -215,7 +215,7 @@ async function arrive(from, boatFrom) {
   if (dead || reduced()) return;
   flights.forEach((a) => a.cancel());
   boatHandoff.value = !!boatFrom;
-  timers.forEach(clearTimeout);
+  timers.forEach((cancel) => cancel());
   timers = [];
   calm.value = false;
   lit.value = false;
@@ -334,7 +334,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   dead = true;
   ro?.disconnect();
-  timers.forEach(clearTimeout);
+  timers.forEach((cancel) => cancel());
   flights.forEach((a) => a.cancel());
 });
 

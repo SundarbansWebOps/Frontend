@@ -58,6 +58,7 @@ import { eventsTab } from './events.js';
 import { loungeArrived, markTourSeen, nameCardOpen, resetTour, tourSeen } from './state.js';
 /* tide.js (theme and page switches) belongs to the motion designer; every call is optional. */
 import * as tide from './tide.js';
+import { motionTimeout } from './home/motion.js';
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
@@ -79,9 +80,9 @@ function onHash() {
 }
 watch(() => route.query.view, onHash);
 /* The build (lounge.css) is over by 4.2s; dropping the class leaves the shell at rest. */
-const built = setTimeout(() => document.documentElement.classList.remove('building'), 4200);
+const built = motionTimeout(() => document.documentElement.classList.remove('building'), 4200);
 onBeforeUnmount(() => {
-  clearTimeout(built);
+  built();
 });
 
 /* ---------- Tour gating ---------- */

@@ -37,6 +37,7 @@ let passing = false;
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { enter, handOver, leave } from './layers.js';
+import { animate } from './home/motion.js';
 import { boot } from './state.js';
 
 const props = defineProps({
@@ -74,7 +75,7 @@ async function close() {
   dlg.value.classList.add('ld-out');
   if (!reduced()) {
     const [to, ms] = OUT[phone() && props.variant !== 'drop' ? 'sheet' : props.variant];
-    a = dlg.value.animate([{ opacity: 1, transform: 'none' }, to], {
+    a = animate(dlg.value, [{ opacity: 1, transform: 'none' }, to], {
       duration: ms,
       easing: EASE_IN,
       fill: 'forwards',
