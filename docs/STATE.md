@@ -1,14 +1,18 @@
 # Sundarbans House — State
-> IITM BS frontend/backend · Last checkpoint: 2026-10-10 01:29 IST
+> IITM BS frontend/backend · Last checkpoint: 2026-10-10 11:24 IST
 
 ## In progress / next
+- **Inactive Lounge motion fixed and committed locally.** Shared runtime pauses CSS/Web Animations on blur or hidden document, suspends decorative timers, restarts rare effects with fresh delays, and freezes tour scroll time. No frontend deployment. Gates/evidence in today’s session; native OS app switching still needs real-host verification.
+- **Lantern return animation fixed and committed locally.** Document-lifetime `loungeArrived` guards both Home intro and shell build; first Lounge arrival/refresh animate, form/route returns stay settled. No frontend deployment authorized/performed. Regression and preview verified; see today’s session.
+- **WhatsApp group catalog fixed live with explicit user approval.** `20261009200000_lounge_group_catalog.sql` applied alone via `/tmp/sundarbans-group-rollout`; pending audit migration now depends on it. Live member RPC verified Technical/Esports/Cultural plus Kolkata for a Kolkata member; region filtering PASS. Actual signed-in browser unavailable; ask user to refresh affected Lounge. Cultural invite remains missing.
 - **Non-certificate audit fixes complete locally**, independently reviewed. Read `reports/2026-10-10-audit-fixes.md` for changes, fresh evidence and limits; original twenty-worker findings remain in `reports/2026-10-09-local-e2e-audit.md`.
 - Certificates explicitly deferred: confirmation before issuance, renderer/name behavior, correction/revocation and download integration remain unresolved. Certificate feature files unchanged from this correction task's starting checkout.
-- Matching frontend + `supabase/migrations/20261010000000_audit_fixes.sql` need an explicitly authorized rollout. No commit/push/PR/deploy/live mutation performed by this correction task.
+- Remaining frontend/audit changes + `supabase/migrations/20261010000000_audit_fixes.sql` need an explicitly authorized rollout. No commit/push/PR/deploy/live mutation performed by this correction task.
 - Authentic missing group sources, images, dates and allocations need approved inputs; community notice membership and historical audit retention still need product policy. No values invented.
-- Branch `feat/lounge-backend-wiring`; substantial prior interview/wiring work remains uncommitted. Preserve it. Starting checkout captured at `/tmp/sundarbans-fix-baseline` for review.
+- Branch `feat/lounge-backend-wiring`; group migration (`ad90985`), lantern arrival (`c2c4a85`), and inactivity motion (`97a0065`) committed at user request. Prior wiring/audit work is already in branch history. No push or frontend deployment. Preserve unrelated `supabase/tests/__pycache__/`. Starting audit checkout captured at `/tmp/sundarbans-fix-baseline`.
 
 ## Status
+- Fresh group audit (2026-10-10): live has 43 events, 17 forms / 15 published, 9 invites, 1 response; group metadata column absent before fix, now applied. Ten verified forms: Technical/Cultural/Esports + Bengaluru/Chandigarh/Chennai/Delhi/Kolkata/Mumbai/Patna. Cultural lacks invite. Targeted migration proved old RPC returns 0 groups before and 10 after, preserves titles/general forms; disposable transaction rolled back. Full 232 pgTAP + 9 concurrency checks, build, 2 relevant Playwright tests PASS. Logs `/tmp/sundarbans-group-{regression,db-tests,browser-tests,build}.log`. Post-rollout live catalog: 10 group forms / 9 invites; 43 events preserved; broader audit migration remains unapplied. Signed-in real browser unavailable in current CUA inventory; rendered live member UI still unverified.
 - Member Events removes region/term browsing controls; audience enforcement remains. Lifecycle updates with clock, cancellation/availability respected, exact 1200-second attendance threshold and source-preserving archive dates fixed.
 - Group discovery uses form metadata instead of frontend UUID allowlist; ten previously verified membership sources classified. Applied/invite/error states persist; routed forms use Lounge shell/theme. Missing approved house-wide source remains missing.
 - Auth account-switch races guarded; optional preferred name stays independent of roster/certificate name. Region picker refreshes related data. Form validation, notices and public navigation/accessibility corrected.
@@ -28,7 +32,7 @@
 
 ## Stack & run
 - Vue3/router4/Vite6/supabase-js2.117.2. Node^22 declared; gates used installed Node26.8.2 directly because npm shim has had AppImage failures.
-- Owned dev server: `http://127.0.0.1:5202/?local-lounge=1#/lounge`, **PID995098**, exec96929. Command `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5202 --strictPort`. Port5210 belongs to Frontend-maintenance; leave it.
+- Owned preview: `http://127.0.0.1:5202/?local-lounge=1#/lounge`, **PID259636**, exec59071. Started this session; synthetic member only. Port5210 belongs to Frontend-maintenance; leave it.
 - Build: `node node_modules/vite/bin/vite.js build`. E2E after build: `LOCAL_LOUNGE_TEST_URL='http://127.0.0.1:5202/?local-lounge=1' node node_modules/@playwright/test/cli.js test --workers=3`.
 - Gates: `node node_modules/eslint/bin/eslint.js .`, `node scripts/check-study-data.mjs`, `node scripts/check-design.mjs`. Backend: `bash supabase/tests/run-local.sh`, disposable5452x/self-cleaning.
 - Linked Supabase `bqoejoznqudcyeaebmsm`. Query CLI returns last row-returning result; use aggregate-only read-only transactions for source audits.
