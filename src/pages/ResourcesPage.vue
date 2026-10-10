@@ -1,14 +1,6 @@
 <!-- Resources — "Delta": branch → level → courses, quiz timeline in the side column. -->
 <template>
-  <main id="main-content" class="wrap" tabindex="-1" :style="accStyle">
-    <header class="head rise" style="--i: 0">
-      <h1>Resources</h1>
-      <p class="sub">
-        Pick your branch and level, then pin the courses you take. Notes and past papers stay a tap
-        away.
-      </p>
-    </header>
-
+  <main id="main-content" class="wrap" tabindex="-1">
     <!-- ============ the resources column ============ -->
     <div class="content">
       <SearchBar v-model="q" class="rise" style="--i: 1" />
@@ -67,7 +59,7 @@
                 :key="id"
                 type="button"
                 class="branch"
-                :style="{ '--acc': ACCENTS[id] || 'var(--verm)', '--d': i * 70 + 'ms' }"
+                :style="{ '--d': i * 70 + 'ms' }"
                 @click="launch(id)"
               >
                 <span class="mono branch-s">{{ b.short }}</span>
@@ -89,7 +81,7 @@
                 :key="l.id"
                 type="button"
                 class="level"
-                :style="{ '--acc': LEVEL_COLOR[l.id], '--d': i * 90 + 'ms' }"
+                :style="{ '--d': i * 90 + 'ms' }"
                 @click="level = l.id"
               >
                 <span class="mono level-n">0{{ l.n }}</span>
@@ -117,7 +109,7 @@
               </RouterLink>
             </div>
 
-            <div v-else class="courses" :style="level ? { '--acc': LEVEL_COLOR[level] } : null">
+            <div v-else class="courses">
               <div
                 v-for="(c, i) in shown"
                 :key="c.code"
@@ -170,7 +162,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import SearchBar from '../components/site/SearchBar.vue';
 import TideLine from '../components/site/TideLine.vue';
 import DeltaMap from '../components/site/DeltaMap.vue';
@@ -185,17 +177,16 @@ const branch = ref(null);
 const level = ref(null);
 store.q = '';
 
+// The page is always full black, whatever the site theme. The token block lives in tokens.css.
+onMounted(() => document.documentElement.classList.add('resources-dark'));
+onBeforeUnmount(() => document.documentElement.classList.remove('resources-dark'));
+
 // ---------- levels ----------
 const LEVELS = [
   { id: 'foundation', n: 1, label: 'Foundation', hint: 'Maths, Stats, CT, English' },
   { id: 'diploma', n: 2, label: 'Diploma', hint: 'Programming & Data Science tracks' },
   { id: 'degree', n: 3, label: 'Degree', hint: 'Advanced and elective courses' },
 ];
-const LEVEL_COLOR = {
-  foundation: 'var(--w-tech)',
-  diploma: 'var(--verm)',
-  degree: 'var(--w-cultural)',
-};
 const levelMeta = computed(() => LEVELS.find((l) => l.id === level.value) || LEVELS[0]);
 
 // The branch catalogue (BRANCHES) is the source of truth for which courses belong to a branch.
@@ -290,17 +281,6 @@ function pick(d) {
   if (d.exam) q.value = `${d.exam.toLowerCase()} pyq`;
 }
 
-// ---------- accent ----------
-const ACCENTS = {
-  ds: 'var(--verm)',
-  es: 'var(--w-tech)',
-  ae: 'var(--w-talks)',
-  mg: 'var(--w-cultural)',
-};
-const accStyle = computed(() => ({
-  '--acc': ACCENTS[branch.value] || 'var(--verm)',
-}));
-
 function launch(id) {
   branch.value = id;
   level.value = null; // next step: choose a level
@@ -309,7 +289,7 @@ function launch(id) {
 
 <style scoped>
 .wrap {
-  --acc: var(--verm);
+  --acc: var(--ink-3);
   --acc-wash: color-mix(in srgb, var(--acc) 15%, transparent);
   width: 100%;
   max-width: 1720px;
@@ -319,25 +299,6 @@ function launch(id) {
   grid-template-columns: minmax(0, 1fr) 400px;
   gap: 28px;
   align-items: start;
-}
-.head {
-  grid-column: 1 / -1;
-  display: grid;
-  gap: 6px;
-}
-.head h1 {
-  margin: 0;
-  font-size: clamp(34px, 4.4vw, 48px);
-  font-weight: 750;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
-}
-.head .sub {
-  margin: 0;
-  max-width: 62ch;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--ink-2);
 }
 .content {
   display: grid;

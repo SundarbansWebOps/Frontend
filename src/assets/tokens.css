@@ -63,6 +63,34 @@
   --w-meetups: #d4ab80;
 }
 
+/* Resources page (class set/removed in ResourcesPage.vue): a full-black page. The rest of the
+ * palette is the dark theme; only the surfaces go pure black. */
+:root.resources-dark {
+  --paper: #000;
+  --sunk: #0c0b09;
+  --card: #121110;
+  --ink: #f3ebdd;
+  --ink-2: #b9ac9a;
+  --ink-3: #8f8373;
+  --line: #2e271f;
+  --line-strong: #4a4035;
+  --mari: #f4b04a;
+  --mari-soft: #3a2b14;
+  --mari-ink: #f6bb5e;
+  --on-mari: #1d1915;
+  --verm: #ff7a5c;
+  --verm-soft: #3b1d15;
+  --channel: #4a4035;
+  --flow: #f4b04a;
+  --shadow: 0 1px 0 rgb(0 0 0 / 0.3), 0 16px 40px -20px rgb(0 0 0 / 0.7);
+  --grain-opacity: 0.12;
+  --w-cultural: #f4b04a;
+  --w-games: #ff7a5c;
+  --w-tech: #93a9ff;
+  --w-talks: #e394d4;
+  --w-meetups: #d4ab80;
+}
+
 :root {
   --font: 'Anek Latin', ui-sans-serif, system-ui, sans-serif;
   --mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
