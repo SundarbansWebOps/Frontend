@@ -83,7 +83,7 @@
     <section class="chart rise" style="--i: 2" aria-label="Events over time">
       <SwellChart
         ref="chart"
-        :list="dated"
+        :list="chartEvents"
         :active="activeIds"
         @open="(id, e) => openEvent(id, e)"
         @jump="jump"
@@ -163,6 +163,12 @@ const chart = ref(null);
 
 const dated = computed(() => events.filter((e) => e.at));
 const first = computed(() => dated.value.at(-1));
+// The swell chart shows last calendar year and this year up to today; the log below keeps the full archive.
+const chartEvents = computed(() => {
+  const now = new Date();
+  const since = new Date(now.getFullYear() - 1, 0, 1);
+  return dated.value.filter((e) => e.at >= since && e.at <= now);
+});
 
 const inWing = (e) => wing.value === 'all' || e.wing === wing.value;
 const inRegion = (e) => regionId.value === 'all' || String(e.region_id) === regionId.value;
