@@ -1,61 +1,50 @@
 # Sundarbans House — State
-> IITM BS frontend and backend · Last checkpoint: 2026-10-08 15:16
+> IITM BS frontend/backend · Last checkpoint: 2026-10-10 01:29 IST
 
 ## In progress / next
-- **PR #145** (`fix/home-hero-boat-tiger-ground` → `upstream/main`, open, not draft): Lounge boat on the Home river, tiger on a mud bank (`78ed11d`), Resources art shrunk ~4% (`48e16ad`). Next: Raja reviews Home on desktop and phone in a visible window, then merges. No merge done by the agent.
-- **Next chat: backend + Google sign-in.** Design agreed (no code yet): the Lounge has **sign-in only, no sign-up**. Accounts are pre-created from the student roster (real full name + roll/code); Google sign-in only logs into an existing account; no seeded account means "not on the roster". Full name field may be removed later (not now). Raja sends details later. Open: roster source, matching key (suggest IITM email), seed users vs link on first sign-in, profile fields/editability, turn off public sign-up (live change, ask first). Requirements: `docs/specs/002-lounge-backend-needs.md`.
-- Frontend has no Supabase code yet (`@supabase/supabase-js` not installed). The sign-up trigger needing `full_name`/`phone`/`region_code` is moot if accounts are pre-created.
-- Cloud Supabase `Website Backend` (`bqoejoznqudcyeaebmsm`): CLI logged in, repo linked, 31/31 migrations in sync. Google provider/redirect settings in the cloud not verified (no readable API token); check the dashboard. `db push` and function deploys write to the live project: ask first.
-- Council: Bengaluru status is not to be changed silently.
-- **Admin lounge + real Google sign-in** on `feat/admin-panel-supabase` (spec `docs/specs/003-admin-lounge-and-sign-in.md`). Backend applied to the cloud (roster-only sign-up, two-person rule, RCs manage all events; 53/53 pgTAP in a rolled-back run; phone optional; email changes two-person; security headers in `vercel.json`). Front end: `/login` signs in with Google, `/lounge` and `/admin` are guarded, Lounge profile menu has "Admin lounge" for RCs/Super Admins. Gates: format, lint, design, study, build, Playwright 40/40 (Supabase mocked), shots OK.
-- **Before merge:** rename the five `20261008120000/120100/130000/140000/140100_*.sql` migration files to the versions `supabase migration list --linked` shows for `admin_request_types` / `admin_panel_backend` / `optional_phone` / `contact_change_request_type` / `contact_change_two_person` (applied via MCP; versions differ). Then enable the Google provider + redirect URLs + `ALLOWED_ORIGINS` (spec 003, Setup) and test a real Google sign-in.
-- **Lounge E port, Raja's review round.** Worktree `/home/raja/Anuraj-dev/Frontend-lounge-port`, branch `feat/lounge-production-entry`, local commits only (not pushed, no PR). Preview http://127.0.0.1:5202/#/login (owned Vite PID 106037).
-- Next: Raja reviews House card, sign-in door, boat on Events, and sign-out in real Chrome. Chrome tabs in the background pause animations; verify motion in a visible window.
-- Once-only tour seen flag and the rest of spec 002 are pending backend work. Sign-out now ends the Supabase session (this device) and returns to `/login`.
-- Backend wiring is separate work: `docs/specs/002-lounge-backend-needs.md`. No backend writes, push, PR, merge, or deployment requested.
-- Council change pushed on `fix/council-deputy-secretary` (`bb81c16`); no PR. Do not silently change Bengaluru's status.
-- Cloud Supabase `Website Backend` (`bqoejoznqudcyeaebmsm`) is the source of truth; repo mirror in sync. Frontend auth/dashboard integration pending.
+- **Non-certificate audit fixes complete locally**, independently reviewed. Read `reports/2026-10-10-audit-fixes.md` for changes, fresh evidence and limits; original twenty-worker findings remain in `reports/2026-10-09-local-e2e-audit.md`.
+- Certificates explicitly deferred: confirmation before issuance, renderer/name behavior, correction/revocation and download integration remain unresolved. Certificate feature files unchanged from this correction task's starting checkout.
+- Matching frontend + `supabase/migrations/20261010000000_audit_fixes.sql` need an explicitly authorized rollout. No commit/push/PR/deploy/live mutation performed by this correction task.
+- Authentic missing group sources, images, dates and allocations need approved inputs; community notice membership and historical audit retention still need product policy. No values invented.
+- Branch `feat/lounge-backend-wiring`; substantial prior interview/wiring work remains uncommitted. Preserve it. Starting checkout captured at `/tmp/sundarbans-fix-baseline` for review.
 
 ## Status
-- **Lounge is merged to `main`** (PR #144, `1d45fcd`): sign-in door, welcome tour, Lounge Home/Events, sign-out to `/login`. Still fixtures + local storage; Google auth and once-only tour flag pending backend.
-- **Home hero (PR #145):** the Lounge boatman replaces the painted boat and rocks/sinks on the river; the tiger stands on `tiger-bank.webp` and is smaller on phones.
-- **Resources panel art (PR #145, `48e16ad`):** `.art` is `width: 96%; max-width: 650px` (was 100% / 680px). Measured: 390px phone 346→332, 1836px desktop 680→650, no horizontal scroll at 360–2560px.
-- Gates at `48e16ad`: format:check, lint, check:design, build pass; `test:smoke` 33/33.
-- Repo: one worktree, only `main` locally plus this branch. Remotes: `origin` = Anuraj-dev/Frontend (fork), `upstream` = SundarbansWebOps/Frontend (PRs and `main` live here).
-- CI: `build-and-smoke` runs format, lint, `check:study`, `check:design`, build, smoke, shots. `scripts/check-design.mjs` exempts `src/components/lounge/`, `LoungePage.vue`, `LoginPage.vue` (own palette, self-hosted Anek Latin for the name fitter, global styles). Bringing the Lounge onto tokens is an open option.
-- Archive outside the repo: `~/Anuraj-dev/Sundarbans-prototype/` (all lounge prototypes, old worktrees, `study-utility-salvage/`).
+- Member Events removes region/term browsing controls; audience enforcement remains. Lifecycle updates with clock, cancellation/availability respected, exact 1200-second attendance threshold and source-preserving archive dates fixed.
+- Group discovery uses form metadata instead of frontend UUID allowlist; ten previously verified membership sources classified. Applied/invite/error states persist; routed forms use Lounge shell/theme. Missing approved house-wide source remains missing.
+- Auth account-switch races guarded; optional preferred name stays independent of roster/certificate name. Region picker refreshes related data. Form validation, notices and public navigation/accessibility corrected.
+- Backend migration adds source-owned attendance merge/replace, shared-source conflict rejection, canonical roster locking/opaque RC replies, form source/archive/invite protections, guarded event removal and operational erasure redaction. Admin scope, paging, import preview and CSV fixed.
+- Final gates: **86 Playwright tests; 232 pgTAP assertions + 9 concurrency cases; build; full ESLint; Prettier for 54 changed source/test files; design; study data; diff whitespace — all PASS.** Full-repo formatting not run. Independent Standards and Spec review found no remaining verified actionable non-certificate finding.
+- Screenshot sweep: 36 public/anonymous light/dark desktop/phone shots, no page errors/sideways overflow. Real Google Chrome separately checked synthetic member Events, routed group submission/reload/theme, public contrast and Resources keyboard/modal behavior. Evidence `/tmp/sundarbans-fixes/`, `test-results/shots/`; logs `/tmp/sundarbans-fix-*.log`.
+- Local bypass requires Vite DEV + loopback + `?local-lounge=1`; synthetic member, no Admin role or Supabase writes. Production code excludes the fixture and flag still lands at Login. `local-region=0` tests initial selection.
+- Prior live read-only audit (2026-10-09): 5 members, 3803 roster; 2 member cohorts and 2 roster regions unknown. 43 archive events with NULL schedules, 8 missing images, 22 approximate turnout labels; public adapter exposes 40 after intended meetup exclusion. 17 forms/15 published; no registrations/attendance/certificates/templates. Details in original report; no fresh live audit this correction task.
+- Earlier session applied migrations 150000/150100/150200 live and added the exact testing OAuth redirect. Testing deployment still serves sample boats; current frontend/migration fixes are local. Live OAuth/Admin writes were not revalidated.
 
 ## Architecture map
-- Home hero + panels: `src/pages/HomePage.vue` (boat sprite `.boat`, tiger `.stage`/`.bank`, panel art `.art`); plate and boat coords in `src/lib/pat.js`.
-- Lounge entry: `src/pages/LoungePage.vue` → `src/components/lounge/App.vue`; `src/pages/LoginPage.vue` (sign-in door).
-- House teaser: `src/components/site/LoungeDoor.vue` (teaser and entry modes); room data `src/components/site/lounge-rooms.js`.
-- Home ↔ Events transition and boat: `src/components/lounge/tide.js` (switchPage, view transitions), `EventsPage.vue`, `events.css`, `lounge.css` (boat view-transition-name), `home/RiverBoat.vue`.
-- Pop-up history: `src/components/lounge/layers.js` (one history entry per open pop-up); dialogs `LoungeDialog.vue`, `ProfileMenu.vue`.
-- Public site: pages `src/pages/*Page.vue`, components `src/components/site/`, shared state `src/lib/{store,events,house,courses,pat,theme}.js`, data `src/data/`.
-- Router: `src/router/index.js` (hash history; skips the generic view transition for Lounge entry/exit).
-- Backend: `supabase/migrations/`, functions `{apply-account-status,change-member-contact,hard-delete-member,_shared}`. No frontend backend calls yet.
-- Glossary `CONTEXT.md`; decisions `docs/decisions.md`; conventions `docs/conventions.md`.
+- Auth/client/router: `src/lib/auth.js`, `auth-profile.js`, `supabase.js`, `src/router/index.js`; synthetic client `src/lib/local-lounge.js`.
+- Lounge: `src/lib/lounge.js`, `src/components/lounge/{session,events}.js`, `src/pages/{LoungePage,FormPage}.vue`.
+- Admin: `src/pages/AdminPage.vue`, `src/components/admin/`, `src/lib/admin.js`.
+- Public archive/navigation: `src/lib/events.js`, `src/components/site/`, public pages; DB first, `src/data/events.data.js` fallback.
+- Tests: `e2e/`, `supabase/tests/{020,031,concurrency.py,run-local.sh}`. New migration: `supabase/migrations/20261010000000_audit_fixes.sql`.
 
 ## Stack & run
-- Vue 3, vue-router 4 (hash history), Vite 6; static hosting; cloud Supabase mirror.
-- Node: `export PATH=$HOME/.local/share/mise/installs/node/26.8.1/bin:$PATH` if the mise shim fails.
-- Run: `npm run dev -- --host 127.0.0.1 --port 5202 --strictPort` from the repo root. `vite preview` binds `localhost:4173` (not 127.0.0.1).
-- Gates: `npm run format:check`, `npm run lint`, `npm run check:design`, `npm run build`, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:smoke` (rebuild before smoke after source edits).
-- Backend `supabase db push` / function deploy writes to the live project: only with Raja's explicit go-ahead.
+- Vue3/router4/Vite6/supabase-js2.117.2. Node^22 declared; gates used installed Node26.8.2 directly because npm shim has had AppImage failures.
+- Owned dev server: `http://127.0.0.1:5202/?local-lounge=1#/lounge`, **PID995098**, exec96929. Command `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5202 --strictPort`. Port5210 belongs to Frontend-maintenance; leave it.
+- Build: `node node_modules/vite/bin/vite.js build`. E2E after build: `LOCAL_LOUNGE_TEST_URL='http://127.0.0.1:5202/?local-lounge=1' node node_modules/@playwright/test/cli.js test --workers=3`.
+- Gates: `node node_modules/eslint/bin/eslint.js .`, `node scripts/check-study-data.mjs`, `node scripts/check-design.mjs`. Backend: `bash supabase/tests/run-local.sh`, disposable5452x/self-cleaning.
+- Linked Supabase `bqoejoznqudcyeaebmsm`. Query CLI returns last row-returning result; use aggregate-only read-only transactions for source audits.
+- Real-browser gate: actual Google Chrome AJS connection, browser ID3. Generic Chrome alias can select Helium; inspect inventory. No signed-state substitution.
 
-## Key decisions (top 5)
-- E is B's painted look plus D's story, with expressive optimized motion. Porting preserves approved source behavior.
-- Sign-in cross-dissolves into the lounge; the lounge owns its own arrival. Full log: `docs/decisions.md`.
-- Sign-out returns to the sign-in door until a real session exists.
-- Home (Pat) ignores theme by design; public nav/footer follow it.
-- Cloud schema is authoritative; repo backend mirrors it.
+## Key decisions
+- Roster-gated first Google login; optional editable name/phone; profile phone saved only with consent; tour seen flag persisted on Enter/Not now.
+- Exactly three fixed SAs, 0–2 RCs/region; International no RC. Initial NULL region self-service; corrections approved by current-region RC or SA.
+- Upcoming/live audience enforced; published past public. Preserve source date precision/NULL schedule and approximate turnout instead of manufacturing data.
+- Forms members-only; response gates invitation, application is not admission. Group catalog uses verified metadata. Default attendance merge; explicit replacement removes only that source's ownership and rejects shared conflicts.
+- Certificate design unchanged and deferred. Full decisions in `decisions.md` and `specs/003-backend-data-decisions.md`.
 
 ## Gotchas
-- Closing a Lounge pop-up from the UI runs `history.back()` asynchronously (`layers.js`). A router push issued right after close is cancelled by that Back. Wait for the popstate first (see `ProfileMenu.signOut`).
-- Background or hidden Chrome tabs pause Web Animations. Anything awaiting `animation.finished` (dialog close, view transitions) stalls there. Test motion in a visible window; headless Playwright is fine.
-- `e2e/lounge.spec.js` theme-on-art test flaked once; rerun before blaming the change.
-- Never stop the ports 5432x containers (other Supabase project); this repo uses 5442x. Never commit keys or member data. Edge functions need `ALLOWED_ORIGINS`.
-- Native overlays preserve Vue Router history state; certificate name is the first confirmed name. Fixtures are not issued certificates or member data.
-- Home phone grids require `minmax(0,1fr)`; bare `1fr` can stretch to poster width.
-- A `max-width` cap on Home panel art only bites above ~1490px viewports (column width is the limit below that). To resize art at every width, change the percentage width too.
-- Never commit to `main`; branch first. Design-system hard limits: `src/assets/tokens.css`, `index.html` font link, `scripts/design-baseline.json`, `package.json` deps (see `.agents/skills/sundarbans-design/SKILL.md`).
+- Preserve all unrelated changes. No raw member contacts, private invite URLs or secrets in docs/output; private imports stay outside repo.
+- Fail closed and recheck authorization after locks. STABLE export reads share statement MVCC snapshot; suspected export race was rejected.
+- Never touch5432x/metaverse or stale5442x stacks. Owned5452x test stack cleaned up; preserve other agents/servers.
+- No source-form submissions/access requests/messages without scope. Blank optional roster names are intentional, not corruption.
+- Lounge dialogs close through async history.back; tests wait for dialog disappearance and settled URL before reload. Fixed-clock tests pause in the future.
+- Synthetic/mocked browser and disposable database tests do not prove live OAuth, external WhatsApp admission or deployment. Concurrent HMR can retain stale router state; real Chrome checks used clean loads.

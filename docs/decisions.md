@@ -144,3 +144,37 @@
 ## 2026-10-08 — Login email changes need a second Super Admin; security headers on Vercel
 **Why:** The owner asked that `change-member-contact` be filed by one Super Admin and approved by another. The function now executes only a `member_contact_change` request (id) and refuses its filer; the old direct database path is revoked. `vercel.json` adds a CSP and the usual hardening headers; a Playwright test replays the CSP so a changed inline script cannot silently break the site. Edge Function CORS accepts one-label wildcards for Vercel previews (tokens are bearer, not cookies); Auth redirect URLs stay exact.
 
+## 2026-10-09 — Roster-gated first sign-in replaces pre-created student accounts
+**Why:** After inspecting the updated main, Raja chose to keep approved emails in the roster
+and create each account on first Google sign-in, avoiding unused pre-created accounts.
+The product remains sign-in only and unlisted emails are refused. This supersedes the
+2026-10-08 pre-creation decision; existing accounts and optional-profile requirements
+remain intact. See `docs/adr/0001-roster-gated-first-sign-in.md` and interview Q14.
+
+
+## 2026-10-09 — Exactly three fixed super-admin email accounts
+**Why:** Raja clarified that council office-holders may change, but the three super-admin
+login emails remain the same. No add/remove-super-admin feature is wanted. Interview
+Q17 supersedes Q9's earlier allowance for additional super admins; public office-holder
+records remain separate from the fixed login accounts. See `docs/specs/003-backend-data-decisions.md`.
+
+## 2026-10-09 — Roster additions use CSV import or manual entry (Q28)
+**Why:** Raja maintains approved membership in Google Sheets and wants bulk additions through a script that deduplicates emails, plus manual single additions. This retains deliberate roster updates rather than automatic Sheet polling. Imports add eligibility; first Google sign-in creates the account. Existing identities/details and approval workflows are preserved.
+
+## 2026-10-09 — Backend design confirmed after Q1–Q30
+**Why:** Raja confirmed the consolidated roster, profile, governance, event audience, member-only forms, CSV recordkeeping, WhatsApp verification and certificate design. The final review explicitly retains the >=20-minute Meet attendance rule and separately confirmed certificate name. Requirements are in `specs/003-backend-data-decisions.md`; this replaces conflicting older decisions where marked. Confirmation completes design only; implementation and live delivery remain separate requests.
+
+## 2026-10-09 — Archive events import keeps source text; Sports recruitment is house-scoped
+**Why:** The 43 site archive records have mixed dates ("May 2026", "Online Submission") and turnout like "50+". Import keeps `display_date` text with NULL schedules and stores turnout in a text `attendee_display`, not an exact `attendee_count`, so nothing is fabricated. Offline Meetups get their region and stay off the public Events page (House page owns them). The Sports Core Team recruitment form goes to house scope (Super Admin), because no Sports community exists and E-Sports is a different community; rejected: assigning it to E-Sports heads.
+
+## 2026-10-10 — Attendance replacement reconciles source ownership
+**Why:** A corrected source may omit rows, while another source may still own the same canonical attendance. Default merge preserves omitted rows; explicit replacement removes only the named source's ownership and deletes ownerless records. Shared sources with conflicting duration/verdict fail closed instead of silently overwriting each other. Released attendance remains locked.
+
+## 2026-10-10 — Group discovery uses verified form metadata
+**Why:** Frontend UUID lists and long application titles made membership discovery brittle. Store form kind, short group label and optional purpose on the server; classify only the ten already verified membership sources. Missing authentic sources and purposes remain unset instead of being guessed.
+
+## 2026-10-10 — RC bulk additions preserve opaque identity results
+**Why:** Single roster additions already hide whether a global identity exists. Bulk results must keep the same privacy contract: RC success reports processed identities without added/existing classification, while SAs retain accurate counts. Canonical email locking protects concurrent single and bulk additions.
+
+## 2026-10-10 — Erasure redacts operational free text; historical retention awaits policy
+**Why:** Approval snapshots, requested changes, reasons and review notes can retain personal data after hard deletion. Clear them without copying free text into new audit payloads. Existing immutable audit history is preserved pending an explicit retention decision rather than silently rewriting history.
