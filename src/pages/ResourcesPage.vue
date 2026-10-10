@@ -1,77 +1,152 @@
-<!-- Resources — "Delta": the course map is the navigator. -->
+<!-- Resources — "Delta": branch → level → courses, quiz timeline in the side column. -->
 <template>
-  <BranchPicker v-if="!branch && !launching" @pick="launch" />
+  <main class="wrap" :style="accStyle">
+    <header class="head rise" style="--i: 0">
+      <h1>Resources</h1>
+      <p class="sub">
+        Pick your branch and level, then pin the courses you take. Notes and past papers stay a tap
+        away.
+      </p>
+    </header>
 
-  <Transition name="launch">
-    <div v-if="launching" class="launch" :style="accStyle" aria-hidden="true">
-      <p class="mono launch-txt">TAKEOFF · {{ launchLabel }}</p>
-
-      <!-- paper plane drawn in a full-screen SVG and re-rendered as vectors every frame,
-           so it stays razor sharp even when it grows to fill the screen -->
-      <svg class="stage" width="100%" height="100%">
-        <g ref="planeEl" class="plane" style="opacity: 0">
-          <!-- flat sticker look: hard offset shadow, one flat fill, bold outline, one fold line -->
-          <path d="M7 38 L63 12 L47 62 L33 46 Z" fill="var(--ink)" opacity="0.2" />
-          <path
-            d="M4 34 L60 8 L44 58 L30 42 Z"
-            fill="var(--acc)"
-            stroke="var(--ink)"
-            stroke-width="3"
-            stroke-linejoin="round"
-            vector-effect="non-scaling-stroke"
-          />
-          <path
-            d="M30 42 L60 8"
-            fill="none"
-            stroke="var(--ink)"
-            stroke-width="3"
-            stroke-linejoin="round"
-            stroke-linecap="round"
-            vector-effect="non-scaling-stroke"
-          />
-        </g>
-      </svg>
-
-      <div class="flood" />
-    </div>
-  </Transition>
-
-  <!-- v-if is just "branch", so the page mounts underneath the overlay -->
-  <main v-if="branch" class="wrap" :style="accStyle">
-    <button class="branch-chip" type="button" @click="branch = null">
-      {{ BRANCHES[branch].short }} · switch branch
-    </button>
-
-    <div class="bar">
+    <!-- ============ the resources column ============ -->
+    <div class="content">
       <SearchBar v-model="q" class="rise" style="--i: 1" />
-      <TideLine class="rise" style="--i: 2" @pick="pick" />
+
+      <section class="mine rise" style="--i: 2" aria-labelledby="mine-h">
+        <h2 id="mine-h" class="eyebrow">
+          My courses <span v-if="store.mine.length" class="mono">{{ store.mine.length }}</span>
+        </h2>
+        <TransitionGroup name="tix" tag="div" class="tix">
+          <CourseTicket v-for="code in store.mine" :key="code" :code="code" />
+          <p v-if="!store.mine.length" key="empty" class="hint">
+            <span class="dot" /> Pick your branch and level, then pin your courses. Next time the
+            site opens straight to them.
+          </p>
+        </TransitionGroup>
+      </section>
+
+      <section class="flow rise" style="--i: 3" aria-labelledby="flow-h">
+        <!-- breadcrumb -->
+        <nav class="crumbs" aria-label="Where you are">
+          <button
+            type="button"
+            :class="{ on: !branch }"
+            :aria-current="!branch ? 'step' : undefined"
+            @click="resetBranch"
+          >
+            Branch
+          </button>
+          <template v-if="branch">
+            <span class="sep" aria-hidden="true">›</span>
+            <button
+              type="button"
+              :class="{ on: !level }"
+              :aria-current="!level ? 'step' : undefined"
+              @click="level = null"
+            >
+              {{ BRANCHES[branch].short }}
+            </button>
+          </template>
+          <template v-if="level">
+            <span class="sep" aria-hidden="true">›</span>
+            <button type="button" class="on" aria-current="step">{{ levelMeta.label }}</button>
+          </template>
+        </nav>
+
+        <Transition name="step" mode="out-in">
+          <!-- STEP 1 · branch -->
+          <div v-if="!branch" key="branch">
+            <h2 id="flow-h" class="flow-h">Choose your branch</h2>
+            <p class="flow-sub">
+              Everything here — the course map, calendar, notes — follows your branch.
+            </p>
+            <div class="branches">
+              <button
+                v-for="(b, id, i) in BRANCHES"
+                :key="id"
+                type="button"
+                class="branch"
+                :style="{ '--acc': ACCENTS[id] || 'var(--verm)', '--d': i * 70 + 'ms' }"
+                @click="launch(id)"
+              >
+                <span class="mono branch-s">{{ b.short }}</span>
+                <strong>{{ b.label }}</strong>
+                <small>{{ b.blurb || b.desc || b.description || b.tagline || '' }}</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2 · level -->
+          <div v-else-if="!level && !searching" key="level">
+            <h2 id="flow-h" class="flow-h">Pick your level</h2>
+            <p class="flow-sub">Courses group by the first digit of their code.</p>
+            <div class="levels">
+              <button
+                v-for="(l, i) in LEVELS"
+                :key="l.id"
+                type="button"
+                class="level"
+                :style="{ '--acc': LEVEL_COLOR[l.id], '--d': i * 90 + 'ms' }"
+                @click="level = l.id"
+              >
+                <span class="mono level-n">0{{ l.n }}</span>
+                <strong>{{ l.label }}</strong>
+                <small>{{ l.hint }}</small>
+                <span class="mono level-c">{{ countFor(l.id) }} courses</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3 · courses (or search results across every level) -->
+          <div v-else :key="searching ? 'search' : level">
+            <h2 id="flow-h" class="flow-h">
+              {{ searching ? 'Search results' : levelMeta.label + ' courses' }}
+              <span class="mono count">{{ shown.length }}</span>
+            </h2>
+            <div class="courses" :style="level ? { '--acc': LEVEL_COLOR[level] } : null">
+              <div
+                v-for="(c, i) in shown"
+                :key="c.code"
+                class="course"
+                :class="{ mine: store.mine.includes(c.code) }"
+                :style="{ '--d': Math.min(i, 14) * 45 + 'ms' }"
+              >
+                <button type="button" class="course-main" @click="open(c.code, $event)">
+                  <span class="mono code">{{ c.code }}</span>
+                  <strong>{{ c.name || c.title || c.code }}</strong>
+                </button>
+                <button
+                  type="button"
+                  class="pin"
+                  :aria-pressed="store.mine.includes(c.code)"
+                  @click="togglePin(c.code)"
+                >
+                  {{ store.mine.includes(c.code) ? 'Pinned' : 'Pin' }}
+                </button>
+              </div>
+              <p v-if="!shown.length" class="hint">
+                <span class="dot" /> No courses found here yet.
+              </p>
+            </div>
+          </div>
+        </Transition>
+      </section>
+
+      <!-- The map itself is hidden, but DeltaMap stays mounted because it hosts the course
+           overlay (drawer) that opens when you click a course or a ticket. -->
+      <div v-if="branch" class="map-host">
+        <DeltaMap :mine="store.mine" :match="match" :branch="branch" @open="open" />
+      </div>
     </div>
 
-    <section class="mine rise" style="--i: 3" aria-labelledby="mine-h">
-      <h2 id="mine-h" class="eyebrow">
-        My courses <span v-if="store.mine.length" class="mono">{{ store.mine.length }}</span>
-      </h2>
-      <TransitionGroup name="tix" tag="div" class="tix">
-        <CourseTicket v-for="code in store.mine" :key="code" :code="code" />
-        <p v-if="!store.mine.length" key="empty" class="hint">
-          <span class="dot" /> Tap your courses on the map below and pin them. Next time the site
-          opens straight to them.
-        </p>
-      </TransitionGroup>
-    </section>
+    <!-- ============ RED: the quiz timeline column ============ -->
+    <aside class="side rise" style="--i: 2">
+      <TideLine @pick="pick" />
+    </aside>
 
-    <section class="map rise" style="--i: 4" aria-labelledby="map-h">
-      <div class="map-head">
-        <h2 id="map-h" class="eyebrow">Every course, as the degree flows</h2>
-        <p class="legend">
-          <span><i class="k-mine" /> yours</span>
-          <span class="only-h"><i class="k-trail" /> hover to trace the route</span>
-        </p>
-      </div>
-      <DeltaMap :mine="store.mine" :match="match" :branch="branch" @open="open" />
-    </section>
-
-    <section class="rise" style="--i: 5" aria-labelledby="tools-h">
+    <!-- Quick links: full-width row under both columns, centred -->
+    <section class="tools rise" style="--i: 5" aria-labelledby="tools-h">
       <h2 id="tools-h" class="eyebrow">Quick links</h2>
       <ToolLinks />
     </section>
@@ -79,26 +154,92 @@
 </template>
 
 <script setup>
-import { computed, nextTick, ref } from 'vue';
+import { computed, ref } from 'vue';
 import SearchBar from '../components/site/SearchBar.vue';
 import TideLine from '../components/site/TideLine.vue';
 import DeltaMap from '../components/site/DeltaMap.vue';
 import CourseTicket from '../components/site/CourseTicket.vue';
 import ToolLinks from '../components/site/ToolLinks.vue';
-import BranchPicker from '../components/site/BranchPicker.vue';
 import { openCourse, search, store } from '../lib/store.js';
 import { byCode } from '../lib/courses.js';
-import { BRANCHES, courseUrl } from '../data/branches.js';
+import { BRANCHES } from '../data/branches.js';
 
 const q = ref(store.q);
 const branch = ref(null);
-const launching = ref(false);
-const launchLabel = ref('');
-const launchId = ref(null);
+const level = ref(null);
 store.q = '';
 
-// The page's accent: vermilion by default, a wing tint per branch. Set on the
-// roots as --acc; every resources component reads var(--acc, var(--mari)).
+// ---------- levels ----------
+const LEVELS = [
+  { id: 'foundation', n: 1, label: 'Foundation', hint: 'Maths, Stats, CT, English' },
+  { id: 'diploma', n: 2, label: 'Diploma', hint: 'Programming & Data Science tracks' },
+  { id: 'degree', n: 3, label: 'Degree', hint: 'Advanced and elective courses' },
+];
+const LEVEL_COLOR = {
+  foundation: 'var(--w-tech)',
+  diploma: 'var(--verm)',
+  degree: 'var(--w-cultural)',
+};
+// Level comes from the course code: BSMA1001 → 1xxx foundation, 2xxx diploma, 3xxx+ degree.
+function levelOf(code) {
+  const d = Number((code.match(/\d/) || ['1'])[0]);
+  return d <= 1 ? 'foundation' : d === 2 ? 'diploma' : 'degree';
+}
+const levelMeta = computed(() => LEVELS.find((l) => l.id === level.value) || LEVELS[0]);
+
+const allCourses = computed(() =>
+  Object.entries(byCode)
+    .map(([code, c]) => ({ ...c, code: c.code || code }))
+    .filter((c) => !c.branch || c.branch === branch.value)
+);
+const countFor = (id) => allCourses.value.filter((c) => levelOf(c.code) === id).length;
+
+const searching = computed(() => !!q.value.trim());
+const res = computed(() => search(q.value));
+const match = computed(() =>
+  searching.value
+    ? new Set([...res.value.courses.map((c) => c.code), ...res.value.resources.map((r) => r.code)])
+    : null
+);
+const shown = computed(() =>
+  allCourses.value.filter((c) =>
+    match.value ? match.value.has(c.code) : levelOf(c.code) === level.value
+  )
+);
+const parsed = computed(() => ({
+  tab: res.value.parsed.tab ?? 'pyqs',
+  exam: res.value.parsed.exam ?? 'All',
+  week: res.value.parsed.week,
+}));
+
+function resetBranch() {
+  branch.value = null;
+  level.value = null;
+}
+function open(code, e) {
+  try {
+    openCourse(code, parsed.value, e);
+  } catch (err) {
+    console.error('openCourse failed', err);
+  }
+  // Fallback: the drawer is driven by ?course=CODE in the hash route, so make sure it is set.
+  if (!/[?&]course=/.test(window.location.hash)) {
+    const [path, qs = ''] = window.location.hash.slice(1).split('?');
+    const p = new URLSearchParams(qs);
+    p.set('course', code);
+    window.location.hash = `${path || '/resources'}?${p.toString()}`;
+  }
+}
+function togglePin(code) {
+  const i = store.mine.indexOf(code);
+  if (i === -1) store.mine.push(code);
+  else store.mine.splice(i, 1);
+}
+function pick(d) {
+  if (d.exam) q.value = `${d.exam.toLowerCase()} pyq`;
+}
+
+// ---------- accent ----------
 const ACCENTS = {
   ds: 'var(--verm)',
   es: 'var(--w-tech)',
@@ -106,113 +247,12 @@ const ACCENTS = {
   mg: 'var(--w-cultural)',
 };
 const accStyle = computed(() => ({
-  '--acc': ACCENTS[branch.value || launchId.value] || 'var(--verm)',
+  '--acc': ACCENTS[branch.value] || 'var(--verm)',
 }));
 
-const planeEl = ref(null);
-const FLY_MS = 1900; // keep in sync with the CSS 1.9s on .flood and .launch-txt
-
-// Control points the plane passes through: [x vw, y vh, depth-scale].
-// Starts bottom-left, flies away into the distance, U-turns on the right,
-// then swoops back toward the viewer from the top-right and swells to fill the screen.
-const PATH = [
-  [-46, 40, 0.9],
-  [-22, 14, 0.5],
-  [-2, -6, 0.2],
-  [14, -18, 0.13], // farthest point
-  [30, -22, 0.25],
-  [38, -14, 0.7],
-  [26, -2, 3],
-  [6, 4, 14],
-  [0, 0, 50],
-];
-function catmull(p0, p1, p2, p3, t) {
-  return (
-    0.5 *
-    (2 * p1 +
-      (-p0 + p2) * t +
-      (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t +
-      (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t)
-  );
-}
-function samplePath(u) {
-  const n = PATH.length;
-  const seg = u * (n - 1);
-  const i = Math.min(Math.floor(seg), n - 2);
-  const t = seg - i;
-  const P = (k) => PATH[Math.max(0, Math.min(n - 1, k))];
-  const out = [0, 1, 2].map((c) => catmull(P(i - 1)[c], P(i)[c], P(i + 1)[c], P(i + 2)[c], t));
-  // depth-scale is interpolated in log space so growth feels like real perspective
-  const ls = catmull(
-    Math.log(P(i - 1)[2]),
-    Math.log(P(i)[2]),
-    Math.log(P(i + 1)[2]),
-    Math.log(P(i + 2)[2]),
-    t
-  );
-  return { x: out[0], y: out[1], s: Math.exp(ls) };
-}
-function flyPlane(g) {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  const t0 = performance.now();
-  let prev = 0;
-  function frame(now) {
-    const u = Math.min(1, (now - t0) / FLY_MS);
-    const p = samplePath(u);
-    const a = samplePath(Math.max(0, u - 0.01));
-    const b = samplePath(Math.min(1, u + 0.01));
-    // heading follows the on-screen direction of travel (plane nose points ~25deg above east)
-    let r = (Math.atan2((b.y - a.y) * H, (b.x - a.x) * W) * 180) / Math.PI + 25;
-    while (r - prev > 180) r -= 360;
-    while (r - prev < -180) r += 360;
-    prev = r;
-    const x = W / 2 + (p.x * W) / 100;
-    const y = H / 2 + (p.y * H) / 100;
-    g.setAttribute(
-      'transform',
-      `translate(${x} ${y}) rotate(${r}) scale(${(p.s * 72) / 64}) translate(-32 -32)`
-    );
-    g.style.opacity = Math.min(1, u / 0.05);
-    if (u < 1) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-}
-
-async function launch(id) {
-  launchId.value = id;
-  launchLabel.value = BRANCHES[id].short + ' · ' + BRANCHES[id].label.toUpperCase();
-  launching.value = true;
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce) {
-    await nextTick();
-    if (planeEl.value) flyPlane(planeEl.value);
-  }
-  setTimeout(
-    () => {
-      branch.value = id; // page mounts behind the colored screen
-      requestAnimationFrame(() => (launching.value = false)); // overlay fades out = reveal
-    },
-    reduce ? 200 : FLY_MS
-  );
-}
-function open(code, e) {
-  if (byCode[code]) openCourse(code, parsed.value, e);
-  else window.open(courseUrl(branch.value, code), '_blank');
-}
-const res = computed(() => search(q.value));
-const parsed = computed(() => ({
-  tab: res.value.parsed.tab ?? 'pyqs',
-  exam: res.value.parsed.exam ?? 'All',
-  week: res.value.parsed.week,
-}));
-const match = computed(() =>
-  q.value.trim()
-    ? new Set([...res.value.courses.map((c) => c.code), ...res.value.resources.map((r) => r.code)])
-    : null
-);
-function pick(d) {
-  if (d.exam) q.value = `${d.exam.toLowerCase()} pyq`;
+function launch(id) {
+  branch.value = id;
+  level.value = null; // next step: choose a level
 }
 </script>
 
@@ -220,18 +260,238 @@ function pick(d) {
 .wrap {
   --acc: var(--verm);
   --acc-wash: color-mix(in srgb, var(--acc) 15%, transparent);
-  max-width: 1240px;
+  width: 100%;
+  max-width: 1720px;
   margin: 0 auto;
-  padding: 20px 24px 60px;
+  padding: 20px 32px 60px;
   display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
   gap: 28px;
-}
-.bar {
-  display: grid;
-  grid-template-columns: 1fr minmax(360px, 440px);
-  gap: 16px;
   align-items: start;
 }
+.head {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+}
+.head h1 {
+  margin: 0;
+  font-size: clamp(34px, 4.4vw, 48px);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+.head .sub {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.content {
+  display: grid;
+  gap: 28px;
+  width: 100%;
+  min-width: 0;
+}
+.flow {
+  width: 100%;
+  min-height: 420px; /* keeps the box the same size across branch / level / course steps */
+}
+.levels,
+.courses {
+  width: 100%;
+}
+.side {
+  position: sticky;
+  top: 20px;
+}
+
+/* ---------- flow: crumbs, levels, courses ---------- */
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 12.5px;
+}
+.crumbs button {
+  padding: 4px 10px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font-weight: 600;
+  cursor: pointer;
+}
+.crumbs button.on {
+  border-color: var(--acc);
+  color: var(--acc);
+}
+.crumbs .sep {
+  color: var(--ink-2);
+}
+.flow-h {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+.flow-h .count {
+  align-self: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--acc-wash);
+  color: var(--acc);
+  font-size: 12px;
+  font-weight: 600;
+}
+.flow-sub {
+  margin: 0 0 22px;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.branches {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+.branch {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 190px;
+  padding: 20px;
+  text-align: left;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--ease-out),
+    border-color 0.2s,
+    box-shadow 0.3s var(--ease-out);
+}
+.branch:hover {
+  transform: translateY(-3px);
+  border-color: var(--acc);
+  box-shadow: var(--shadow);
+}
+.branch-s {
+  font-size: 12px;
+  color: var(--acc);
+}
+.branch strong {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.branch small {
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.level {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  text-align: left;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--ease-out),
+    border-color 0.2s,
+    box-shadow 0.3s var(--ease-out);
+}
+.level:hover {
+  transform: translateY(-3px);
+  border-color: var(--acc);
+  box-shadow: var(--shadow);
+}
+.level strong {
+  font-size: 18px;
+}
+.level small {
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.level-n,
+.level-c {
+  font-size: 11px;
+  color: var(--acc);
+}
+.courses {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+.course {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.3s var(--ease-out);
+}
+.course:hover {
+  border-color: var(--acc);
+  box-shadow: var(--shadow);
+}
+.course.mine {
+  border-color: var(--acc);
+  background: var(--acc-wash);
+}
+.course-main {
+  flex: 1;
+  display: grid;
+  gap: 4px;
+  padding: 14px 0 14px 16px;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.pin {
+  align-self: center;
+  margin-right: 12px;
+  padding: 4px 10px;
+  border: 1.5px solid var(--acc);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--acc);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pin[aria-pressed='true'] {
+  background: var(--acc);
+  color: var(--paper);
+}
+.course .code {
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
 .eyebrow {
   display: flex;
   align-items: center;
@@ -300,154 +560,131 @@ function pick(d) {
   }
 }
 
-/* ---------- takeoff overlay ---------- */
-.launch {
-  --acc: var(--verm);
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  background:
-    url('../assets/pat/grain.webp') 0 0 / 512px 512px,
-    var(--paper);
-  background-blend-mode: multiply, normal;
+/* ---------- course map ---------- */
+.tools {
+  grid-column: 1 / -1;
+  width: 100%;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
 }
-.launch .stage {
+.map-host {
   position: absolute;
-  inset: 0;
-  z-index: 2;
+  width: 0;
+  height: 0;
+  overflow: hidden; /* does not clip position:fixed children, so the overlay still shows */
 }
-.flood {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  background: var(--acc);
+
+/* ---------- colour: tinted panels so light mode isn't flat white ---------- */
+.flow {
+  padding: 24px;
+  border: 1.5px solid color-mix(in srgb, var(--acc) 28%, var(--line-strong));
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--acc) 4%, var(--card));
+}
+.branch,
+.level,
+.course {
+  border-color: color-mix(in srgb, var(--acc) 32%, var(--line-strong));
+  border-top: 4px solid var(--acc);
+  background: color-mix(in srgb, var(--acc) 9%, var(--card));
+}
+.branch:hover,
+.level:hover,
+.course:hover {
+  background: color-mix(in srgb, var(--acc) 16%, var(--card));
+}
+.course.mine {
+  background: color-mix(in srgb, var(--acc) 22%, var(--card));
+}
+.crumbs button.on {
+  background: color-mix(in srgb, var(--acc) 14%, transparent);
+}
+
+/* ---------- motion ---------- */
+.step-enter-active,
+.step-leave-active {
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s var(--ease-out);
+}
+.step-enter-from {
   opacity: 0;
-  animation: flood 1.9s ease-in both;
+  transform: translateX(28px);
 }
-.launch-txt {
-  position: absolute;
-  bottom: 22vh;
-  left: 50%;
-  transform: translateX(-50%);
-  letter-spacing: 0.2em;
-  color: var(--ink-2);
-  font-size: 12px;
-  animation: txt 1.9s ease both;
-}
-
-/* as the plane swoops in and swells, its color takes over the page */
-@keyframes flood {
-  0%,
-  78% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes txt {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 8px);
-  }
-  10% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  45% {
-    opacity: 1;
-  }
-  65%,
-  100% {
-    opacity: 0;
-  }
-}
-
-/* reveal: the colored screen dissolves and the page is already underneath */
-.launch-leave-active {
-  transition: opacity 0.6s ease;
-}
-.launch-leave-to {
+.step-leave-to {
   opacity: 0;
+  transform: translateX(-28px);
 }
-
+.crumbs {
+  animation: fade-up 0.5s var(--ease-out) backwards;
+}
+.branch,
+.level,
+.course {
+  animation: pop-in 0.55s var(--ease-out) backwards;
+  animation-delay: var(--d, 0ms);
+}
+.branch:active,
+.level:active,
+.course:active {
+  transform: scale(0.97);
+}
+.pin {
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.2s var(--ease-out);
+}
+.pin:active {
+  transform: scale(0.88);
+}
+.pin[aria-pressed='true'] {
+  animation: pinned 0.4s var(--ease-out);
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes pinned {
+  50% {
+    transform: scale(1.18);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .flood,
-  .launch-txt {
+  .branch,
+  .level,
+  .course,
+  .crumbs,
+  .pin {
     animation: none;
   }
-  .launch .plane {
-    opacity: 1 !important;
+  .step-enter-active,
+  .step-leave-active {
+    transition: none;
   }
 }
 
-/* ---------- rest of page ---------- */
-.branch-chip {
-  position: sticky;
-  top: 14px;
-  justify-self: end;
-  z-index: 5;
-  padding: 6px 12px;
-  border: 1.5px solid var(--acc, var(--line-strong));
-  border-radius: 999px;
-  background: var(--card);
-  color: var(--acc, var(--ink));
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.map {
-  margin: 0 -8px;
-  padding: 18px 8px 8px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.map-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-}
-.legend {
-  display: flex;
-  gap: 16px;
-  margin: 0;
-  font-size: 12.5px;
-  color: var(--ink-2);
-}
-.legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.k-mine {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--acc);
-  border: 1.5px solid var(--ink);
-}
-.k-trail {
-  width: 18px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--acc);
-}
-@media (max-width: 900px) {
-  .bar {
-    grid-template-columns: 1fr;
+/* ---------- responsive ---------- */
+@media (max-width: 1020px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .side {
+    position: static;
   }
 }
 @media (max-width: 760px) {
   .wrap {
     padding: 14px 16px 100px;
     gap: 22px;
-  }
-  .only-h {
-    display: none;
   }
   .tix {
     grid-template-columns: none;
@@ -463,11 +700,6 @@ function pick(d) {
   }
   .tix > * {
     scroll-snap-align: start;
-  }
-  .tix:has(> .hint) {
-    display: block;
-    margin: 0;
-    padding: 0;
   }
 }
 </style>
