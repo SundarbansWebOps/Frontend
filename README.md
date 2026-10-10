@@ -3,16 +3,11 @@ A centralized platform for managing events, resources, team collaboration, and d
 
 <img width="1902" height="925" alt="image" src="https://github.com/user-attachments/assets/f0063f90-d829-442f-be5e-528be3d34f21" />
 
+<img width="1903" height="926" alt="image" src="https://github.com/user-attachments/assets/8c514650-59d6-46cb-bb17-8edaf51febb8" />
 
+<img width="1905" height="922" alt="image" src="https://github.com/user-attachments/assets/9e1a0f36-4d63-485f-b799-d4dc5d0d633a" />
 
-<img width="1470" height="803" alt="Screenshot 2026-04-15 at 11 50 18" src="https://github.com/user-attachments/assets/65d285ed-e47b-4ba9-ac84-96444b8f1f2d" />
-
-
-<img width="1470" height="728" alt="Screenshot 2026-04-02 at 10 57 30" src="https://github.com/user-attachments/assets/890ea9bb-9ed4-4cb8-b451-e50d6f2c563f" />
-
-<img width="1111" height="677" alt="Screenshot 2026-04-15 at 11 51 30" src="https://github.com/user-attachments/assets/bfa0416c-d0cc-4473-ba4e-94eee8d91757" />
-
-<img width="1470" height="434" alt="Screenshot 2026-04-15 at 11 52 05" src="https://github.com/user-attachments/assets/713db9a5-2d45-4e5b-b52f-4f247284ec49" />
+<img width="1903" height="925" alt="image" src="https://github.com/user-attachments/assets/2846ce19-51da-428b-80fe-fa84fd89b447" />
 
 
 Structure
