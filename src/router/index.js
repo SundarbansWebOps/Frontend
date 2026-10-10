@@ -38,6 +38,11 @@ const routes = [
   },
   { path: '/login', name: 'Login', component: () => import('../pages/LoginPage.vue') },
   { path: '/verify-certificate', component: () => import('../pages/VerifyPage.vue') },
+  // Hands the reader to the contribution form; the raw Google Form link lives only there.
+  {
+    path: '/contribute-resources',
+    component: () => import('../pages/ContributeResourcesPage.vue'),
+  },
 
   // Links from the previous site (shared on WhatsApp, bookmarked) land on the page that
   // now holds that content.

@@ -2,13 +2,38 @@
 // and query parsing for the resource search.
 import { reactive, watch } from 'vue';
 import { router } from '../router/index.js';
-import { courses, byCode } from './courses.js';
+import { catalogByCode } from '../data/branches.js';
+import { courses, byCode, byName } from './courses.js';
+
+// A course the site knows about. Data Science courses come with notes and past papers; every
+// other branch resolves through the catalogue, which says the course exists but has no files
+// attached yet. Null only for a code no branch has ever heard of.
+// A catalogue course that shares its subject name with a Data Science course (e.g. AE/ES
+// "English I") borrows that course's notes and past papers — same subject, different code.
+const CATALOG = Object.fromEntries(
+  Object.entries(catalogByCode).map(([code, c]) => {
+    const twin = byName[c.name.toLowerCase()];
+    return [
+      code,
+      {
+        ...c,
+        short: twin?.short ?? c.short,
+        aliases: twin?.aliases ?? [],
+        desc: twin?.desc ?? '',
+        notes: twin?.notes ?? [],
+        pyqs: twin?.pyqs ?? [],
+      },
+    ];
+  })
+);
+export const courseFor = (code) => byCode[code] ?? CATALOG[code] ?? null;
 
 const MINE_KEY = 'proto-resource-hub-mine';
 
 function loadMine() {
   try {
-    return JSON.parse(localStorage.getItem(MINE_KEY)) ?? [];
+    const saved = JSON.parse(localStorage.getItem(MINE_KEY)) ?? [];
+    return Array.isArray(saved) ? saved.filter((code) => typeof code === 'string').slice(0, 4) : [];
   } catch {
     return [];
   }
@@ -70,8 +95,14 @@ export const isMine = (code) => store.mine.includes(code);
 
 export function togglePin(code) {
   const i = store.mine.indexOf(code);
-  if (i === -1) store.mine.push(code);
-  else store.mine.splice(i, 1);
+  if (i === -1) {
+    if (store.mine.length >= 4) {
+      toast('My courses can hold up to 4 courses. Remove one to pin another.');
+      return false;
+    }
+    store.mine.push(code);
+  } else store.mine.splice(i, 1);
+  return true;
 }
 
 let toastTimer;
@@ -127,7 +158,7 @@ export function closeCourse() {
 watch(
   () => router.currentRoute.value.query.course,
   (code) => {
-    if (!code || !byCode[code]) store.sheet = null;
+    if (!courseFor(code)) store.sheet = null;
     else if (store.sheet?.code !== code)
       store.sheet = {
         code,

@@ -65,8 +65,8 @@ a:hover {
     transform 0.4s var(--ease-spring);
 }
 a:hover .ico {
-  background: var(--mari);
-  color: var(--on-mari);
+  background: var(--acc-wash, var(--mari-soft));
+  color: var(--acc, var(--mari-ink));
   transform: rotate(-6deg);
 }
 .txt {

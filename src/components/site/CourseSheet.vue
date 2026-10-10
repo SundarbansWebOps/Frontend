@@ -160,13 +160,21 @@
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { byCode, closeCourse, getCourseOpener, isMine, store, togglePin } from '../../lib/store.js';
+import {
+  closeCourse,
+  courseFor,
+  getCourseOpener,
+  isMine,
+  store,
+  togglePin,
+} from '../../lib/store.js';
 import { currentWeek, nextExam } from '../../lib/courses.js';
 
 const LEVEL = {
   foundation: 'Foundation',
   programming: 'Diploma · Programming',
   datascience: 'Diploma · Data Science',
+  diploma: 'Diploma',
   degree: 'BS Degree',
 };
 const TABS = [
@@ -175,7 +183,7 @@ const TABS = [
 ];
 const EXAM_ORDER = ['All', 'Quiz 1', 'Quiz 2', 'End term', 'OPPE', 'Qualifier', 'Other'];
 
-const course = computed(() => (store.sheet ? byCode[store.sheet.code] : null));
+const course = computed(() => (store.sheet ? courseFor(store.sheet.code) : null));
 const pinned = computed(() => course.value && isMine(course.value.code));
 const tab = ref('pyqs');
 const exam = ref('All');
@@ -377,13 +385,16 @@ function leave(el, done) {
   width: min(660px, 100%);
   display: flex;
   flex-direction: column;
-  background: var(--paper);
+  border-top: 3px solid var(--mari);
+  border-left: 1px solid color-mix(in srgb, var(--mari) 32%, var(--line));
+  background: color-mix(in srgb, var(--mari) 3%, var(--card));
   box-shadow: -30px 0 80px -40px rgb(0 0 0 / 0.5);
   outline: none;
 }
 .head {
   padding: 18px 28px 0;
   border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--mari) 5%, var(--card));
 }
 .top {
   display: flex;
@@ -396,13 +407,17 @@ function leave(el, done) {
 .code {
   font-size: 12.5px;
   padding: 3px 8px;
-  border-radius: 6px;
-  background: var(--ink);
-  color: var(--paper);
+  border: 1px solid color-mix(in srgb, var(--mari) 38%, var(--line-strong));
+  border-radius: 99px;
+  background: var(--mari-soft);
+  color: var(--mari-ink);
 }
 .lvl {
   font-size: 12.5px;
   color: var(--ink-2);
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
 }
 .icon {
   display: grid;
@@ -454,7 +469,7 @@ h2 {
   align-items: center;
   gap: 8px;
   padding: 8px 14px 8px 11px;
-  border: 1.5px solid var(--ink);
+  border: 1.5px solid var(--mari-ink);
   border-radius: 99px;
   background: transparent;
   font-size: 14px;
@@ -518,7 +533,7 @@ h2 {
   width: 50%;
   height: 3px;
   border-radius: 3px 3px 0 0;
-  background: var(--ink);
+  background: var(--mari);
   transform: translateX(calc(var(--x) * 100%));
   transition: transform 0.45s var(--ease-spring);
 }
@@ -530,14 +545,14 @@ h2 {
   overflow-x: auto;
   scrollbar-width: none;
   border-bottom: 1px solid var(--line);
-  background: var(--sunk);
+  background: color-mix(in srgb, var(--mari) 6%, var(--sunk));
 }
 .chip {
   flex: none;
   padding: 6px 11px;
-  border: 1px solid var(--line-strong);
+  border: 1px solid color-mix(in srgb, var(--mari) 22%, var(--line-strong));
   border-radius: 99px;
-  background: var(--card);
+  background: color-mix(in srgb, var(--mari) 5%, var(--card));
   font-size: 13px;
   font-weight: 550;
   white-space: nowrap;
@@ -556,9 +571,9 @@ h2 {
   border-color: var(--verm);
 }
 .chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+  background: var(--mari);
+  border-color: var(--mari);
+  color: var(--on-mari);
 }
 .chip.on small {
   color: inherit;
@@ -580,7 +595,7 @@ h2 {
   z-index: 1;
   margin: 0;
   padding: 16px 0 8px;
-  background: var(--paper);
+  background: color-mix(in srgb, var(--mari) 3%, var(--card));
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 500;
@@ -594,19 +609,15 @@ h2 {
   grid-template-areas: 't arr' 'm arr';
   column-gap: 16px;
   padding: 12px 12px;
-  margin: 0 -12px;
+  margin: 4px 0;
+  border-left: 2px solid color-mix(in srgb, var(--mari) 28%, var(--line));
   border-radius: 10px;
   text-decoration: none;
   transition: background 0.18s;
 }
-.row + .row {
-  box-shadow: inset 0 1px 0 var(--line);
-}
 .row:hover {
-  background: var(--card);
-  box-shadow: none;
-}
-.row:hover + .row {
+  background: color-mix(in srgb, var(--mari) 6%, var(--card));
+  border-left-color: var(--mari);
   box-shadow: none;
 }
 .t {

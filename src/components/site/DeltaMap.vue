@@ -11,53 +11,96 @@
       :height="height"
       :viewBox="`0 0 ${width} ${height}`"
       role="group"
-      aria-label="Course map: Foundation, then Diploma in Programming or Data Science, then BS Degree"
+      :aria-label="ariaLabel"
     >
       <!-- sea: layered swells beyond the coast -->
-      <g class="sea">
+      <g class="sea" v-if="!isSnake">
         <path v-for="(w, i) in waves" :key="'w' + i" :d="w" :style="{ '--i': i }" />
       </g>
 
       <!-- creeks: thin distributaries that make it read as a delta -->
-      <path
-        v-for="c in creeks"
-        :key="c.id"
-        class="creek draw"
-        :d="c.d"
-        pathLength="1"
-        :style="{ '--delay': c.delay + 'ms', '--dur': '700ms' }"
-      />
+      <template v-if="!isSnake">
+        <path
+          v-for="c in creeks"
+          :key="c.id"
+          class="creek draw"
+          :class="{ dim: dimSeg(c.seg) }"
+          :d="c.d"
+          pathLength="1"
+          :style="{ '--delay': c.delay + 'ms', '--dur': '700ms' }"
+        />
+      </template>
 
       <!-- main channels -->
-      <path
-        v-for="s in segs"
-        :key="s.id"
-        :ref="(el) => (segEls[s.id] = el)"
-        class="channel draw"
-        :class="s.id"
-        :d="s.d"
-        pathLength="1"
-        :style="{ '--delay': s.start + 'ms', '--dur': s.dur + 'ms' }"
-      />
-      <!-- current: dashes that keep drifting downstream once drawn -->
-      <path v-for="s in segs" :key="'f' + s.id" class="flow" :d="s.d" />
+      <template v-if="!isSnake">
+        <path
+          v-for="s in segs"
+          :key="s.id"
+          :ref="(el) => (segEls[s.id] = el)"
+          class="channel draw"
+          :class="[s.id, { dim: dimSeg(s.id) }]"
+          :d="s.d"
+          pathLength="1"
+          :style="{ '--delay': s.start + 'ms', '--dur': s.dur + 'ms' }"
+        />
+        <!-- current: dashes that keep drifting downstream once drawn -->
+        <path v-for="s in segs" :key="'f' + s.id" class="flow" :d="s.d" />
 
-      <!-- hover trail: lights the route from the qualifier to the hovered course -->
-      <path
-        v-for="s in segs"
-        :key="'h' + s.id"
-        class="trail"
-        :d="s.d"
-        pathLength="1"
-        :style="{ strokeDasharray: `${trail[s.id] ?? 0} 2`, opacity: trail[s.id] ? 1 : 0 }"
-      />
+        <!-- hover trail: lights the route from the qualifier to the hovered course -->
+        <path
+          v-for="s in segs"
+          :key="'h' + s.id"
+          class="trail"
+          :d="s.d"
+          pathLength="1"
+          :style="{ strokeDasharray: `${trail[s.id] ?? 0} 2`, opacity: trail[s.id] ? 1 : 0 }"
+        />
+      </template>
+      <!-- snake channel split into level sections (single-diploma branches) -->
+      <template v-if="isSnake">
+        <template v-for="g in snakeGroups" :key="g.id">
+          <path
+            :ref="(el) => (segEls['snake-' + g.id] = el)"
+            class="channel draw"
+            :d="g.d"
+            pathLength="1"
+            :style="{ '--delay': '150ms', '--dur': '1200ms' }"
+          />
+          <path class="flow" :d="g.d" />
+          <path
+            class="trail"
+            :d="g.d"
+            pathLength="1"
+            :style="{
+              strokeDasharray: `${trail['snake-' + g.id] ?? 0} 2`,
+              opacity: trail['snake-' + g.id] ? 1 : 0,
+            }"
+          />
+        </template>
+        <text
+          v-for="g in snakeGroups"
+          :key="'g' + g.id"
+          class="section region"
+          :x="g.lx"
+          :y="g.ly"
+          text-anchor="start"
+        >
+          {{ g.label }}
+        </text>
+      </template>
 
       <!-- section names ride the channels -->
       <template v-if="orient === 'h'">
-        <text v-for="s in segLabels" :key="'t' + s.id" class="section" :dy="s.dy">
+        <text
+          v-for="s in segLabels"
+          :key="'t' + s.id"
+          class="section"
+          :class="{ dim: dimSeg(s.id) }"
+          :dy="s.dy"
+        >
           <textPath :href="`#seg-${s.id}-${uid}`" :startOffset="s.offset">{{ s.text }}</textPath>
         </text>
-        <path v-for="s in segs" :id="`seg-${s.id}-${uid}`" :key="'p' + s.id" :d="s.d" fill="none" />
+        <path v-for="s in segs" :key="'p' + s.id" :id="`seg-${s.id}-${uid}`" :d="s.d" fill="none" />
         <text
           v-if="regionLabel"
           class="section region"
@@ -82,7 +125,7 @@
       </template>
 
       <!-- source -->
-      <g v-if="source" class="source" :transform="`translate(${source.x} ${source.y})`">
+      <g v-if="source && !isSnake" class="source" :transform="`translate(${source.x} ${source.y})`">
         <circle r="9" class="ring" />
         <circle r="3.5" />
         <text :x="orient === 'h' ? -16 : 16" :y="4" :text-anchor="orient === 'h' ? 'end' : 'start'">
@@ -129,7 +172,7 @@
           <circle class="halo" r="13" />
           <circle class="dot" r="6.5" />
           <g :transform="`translate(${n.lx} ${n.ly})`" class="label">
-            <text :text-anchor="n.anchor" :y="n.ty1" class="short">{{ n.course.short }}</text>
+            <text :text-anchor="n.anchor" :y="n.ty1" class="name">{{ n.name }}</text>
             <text :text-anchor="n.anchor" :y="n.ty2" class="code">{{ n.code }}</text>
           </g>
         </g>
@@ -158,12 +201,21 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, nextTick, watch } from 'vue';
 import { courses } from '../../lib/courses.js';
+import { BRANCHES } from '../../data/branches.js';
 
 const props = defineProps({
   mine: { type: Array, default: () => [] },
   match: { type: Object, default: null }, // Set of codes or null
   tall: { type: Boolean, default: false },
+  branch: { type: String, default: 'all' }, // 'all' | 'programming' | 'datascience'
 });
+
+const dimSeg = (id) => {
+  if (id !== 'programming' && id !== 'datascience') return false;
+  const b = props.branch && BRANCHES[props.branch];
+  if (!b) return false;
+  return id === 'programming' ? !b.channels[0] : !b.channels[1];
+};
 defineEmits(['open']);
 
 const uid = Math.random().toString(36).slice(2, 7);
@@ -179,10 +231,29 @@ onMounted(() => {
 onBeforeUnmount(() => ro?.disconnect());
 
 const orient = computed(() => (width.value >= 720 ? 'h' : 'v'));
+const isSnake = computed(() => {
+  const b = props.branch && BRANCHES[props.branch];
+  return !!b;
+});
+const ariaLabel = computed(() =>
+  isSnake.value
+    ? `Course map for ${BRANCHES[props.branch].label}, foundation to diploma to degree`
+    : 'Course map: Foundation, then Diploma in Programming or Data Science, then BS Degree'
+);
+const snakeShape = computed(() => {
+  if (!isSnake.value) return null;
+  const b = BRANCHES[props.branch];
+  const cols = orient.value === 'h' ? 8 : 4;
+  const groups = [b.foundation, b.channels.flatMap((ch) => ch.courses), b.degree];
+  const rowsPer = groups.map((l) => Math.max(1, Math.ceil(l.length / cols)));
+  return { cols, total: rowsPer.reduce((a, r) => a + r, 0), rowsPer };
+});
 const height = computed(() =>
-  orient.value === 'h'
-    ? Math.round(Math.min(500, Math.max(400, width.value * 0.36)) * (props.tall ? 1.1 : 1))
-    : 1080
+  isSnake.value && snakeShape.value
+    ? snakeShape.value.total * 90 + 2 * 74 + 130
+    : orient.value === 'h'
+      ? Math.round(Math.min(500, Math.max(400, width.value * 0.36)) * (props.tall ? 1.1 : 1))
+      : 1080
 );
 
 // Abstract space: u = downstream 0..1, v = across -1..1.
@@ -271,19 +342,30 @@ const segs = computed(() =>
     : []
 );
 
-const segLabels = [
-  { id: 'programming', text: 'DIPLOMA · PROGRAMMING', offset: '34%', dy: 22 },
-  { id: 'datascience', text: 'DIPLOMA · DATA SCIENCE', offset: '34%', dy: -12 },
-];
+const segLabels = computed(() => {
+  if (isSnake.value) return [];
+  const b = props.branch && BRANCHES[props.branch];
+  if (!b)
+    return [
+      { id: 'programming', text: 'DIPLOMA · PROGRAMMING', offset: '34%', dy: 22 },
+      { id: 'datascience', text: 'DIPLOMA · DATA SCIENCE', offset: '34%', dy: -12 },
+    ];
+  const out = [];
+  if (b.channels[0])
+    out.push({ id: 'programming', text: b.channels[0].label, offset: '34%', dy: 22 });
+  if (b.channels[1])
+    out.push({ id: 'datascience', text: b.channels[1].label, offset: '34%', dy: -12 });
+  return out;
+});
 
 const regionLabel = computed(() => {
-  if (!width.value || orient.value !== 'h') return null;
+  if (!width.value || orient.value !== 'h' || isSnake.value) return null;
   const [x, y] = P([0.2, -0.62]);
   return { x, y };
 });
 
 const vLabels = computed(() => {
-  if (!width.value) return [];
+  if (!width.value || isSnake.value) return [];
   const [xS, yS] = P([0, 0]);
   const [xF, yF] = P([0.06, 0]);
   const [xM, yM] = P([0.64, 0]);
@@ -302,7 +384,7 @@ const source = computed(() => {
 });
 
 const seaLabel = computed(() => {
-  if (!width.value) return null;
+  if (!width.value || isSnake.value) return null;
   if (orient.value === 'h') {
     const [x, y] = P([1.0, -0.9]);
     return { x: x + 30, y: y - 6, text: 'BS DEGREE', anchor: 'end' };
@@ -343,10 +425,140 @@ const segEls = reactive({});
 const nodes = ref([]);
 const creeks = ref([]);
 
-function measure() {
+function shortName(s) {
+  return s.length > 26 ? s.slice(0, 25).trimEnd() + '…' : s;
+}
+
+function smoothAbs(pts) {
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] ?? pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] ?? p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C${c1.map((n) => n.toFixed(1)).join(' ')} ${c2.map((n) => n.toFixed(1)).join(' ')} ${p2.map((n) => n.toFixed(1)).join(' ')}`;
+  }
+  return d;
+}
+
+const snakeGroups = computed(() => {
+  if (!width.value || !isSnake.value) return [];
+  const b = BRANCHES[props.branch];
+  const groups = [
+    { id: 'foundation', label: 'FOUNDATION LEVEL', list: b.foundation },
+    {
+      id: 'diploma',
+      label: 'DIPLOMA LEVEL',
+      list: b.channels.flatMap((ch) => ch.courses),
+    },
+    { id: 'degree', label: 'DEGREE LEVEL', list: b.degree },
+  ];
+  const W = width.value;
+  const cols = snakeShape.value.cols;
+  const padX = orient.value === 'h' ? 90 : 60;
+  const padR = orient.value === 'h' ? 60 : 40;
+  const top = 100;
+  const gap = 74;
+  const rowH = 90;
+  const rowsPer = snakeShape.value.rowsPer;
+  let y = top;
+  let parity = 0;
+  return groups.map((g, gi) => {
+    const rows = rowsPer[gi];
+    const pts = [];
+    for (let r = 0; r < rows; r++) {
+      const yy = y + r * rowH;
+      const L = padX;
+      const R = W - padR;
+      const row =
+        parity % 2 === 0
+          ? [
+              [L, yy],
+              [(L + R) / 2, yy],
+              [R, yy],
+            ]
+          : [
+              [R, yy],
+              [(L + R) / 2, yy],
+              [L, yy],
+            ];
+      pts.push(...row);
+      parity++;
+    }
+    const out = { ...g, d: smoothAbs(pts), lx: padX, ly: y - 20 };
+    y += rows * rowH + gap;
+    return out;
+  });
+});
+
+function measureSnake() {
   const out = [];
+  snakeGroups.value.forEach((g) => {
+    const el = segEls['snake-' + g.id];
+    if (!el) return;
+    const len = el.getTotalLength();
+    g.list.forEach((course, i) => {
+      const t = (i + 0.5) / g.list.length;
+      const pt = el.getPointAtLength(t * len);
+      const a = el.getPointAtLength(Math.max(0, t * len - 4));
+      const z = el.getPointAtLength(Math.min(len, t * len + 4));
+      let nx = -(z.y - a.y);
+      let ny = z.x - a.x;
+      const m = Math.hypot(nx, ny) || 1;
+      nx /= m;
+      ny /= m;
+      const side = i % 2 ? 1 : -1;
+      const off = 16;
+      const dx = nx * side;
+      const dy = ny * side;
+      let anchor = 'middle';
+      let ty1 = dy < 0 ? -14 : 13;
+      let ty2 = dy < 0 ? -1 : 26;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        anchor = dx > 0 ? 'start' : 'end';
+        ty1 = -1;
+        ty2 = 12;
+      }
+      out.push({
+        code: course.code,
+        course,
+        name: shortName(course.name),
+        x: pt.x,
+        y: pt.y,
+        lx: dx * off,
+        ly: dy * off,
+        anchor,
+        ty1,
+        ty2,
+        seg: 'snake',
+        group: g.id,
+        t,
+        delay: Math.round(150 + t * 1200),
+      });
+    });
+  });
+  nodes.value = out;
+  creeks.value = [];
+}
+
+function measure() {
+  if (isSnake.value) {
+    measureSnake();
+    return;
+  }
+  const out = [];
+  const b = props.branch && BRANCHES[props.branch];
   const tracks = { foundation: [], programming: [], datascience: [], degree: [] };
-  for (const c of courses) tracks[c.track].push(c);
+  if (b) {
+    tracks.foundation = b.foundation;
+    tracks.programming = b.channels[0]?.courses ?? [];
+    tracks.datascience = b.channels[1]?.courses ?? [];
+    tracks.degree = b.degree;
+  } else {
+    for (const c of courses) tracks[c.track].push(c);
+  }
 
   for (const [track, list] of Object.entries(tracks)) {
     const segId = TRACK_SEG[track];
@@ -394,6 +606,7 @@ function measure() {
       out.push({
         code: course.code,
         course,
+        name: shortName(course.name),
         x: pt.x,
         y: pt.y,
         lx: dx * off,
@@ -424,6 +637,7 @@ function measure() {
     const c = [p.x + (tx * 0.2 + nx * 0.6) * L, p.y + (ty * 0.2 + ny * 0.6) * L];
     return {
       id: 'c' + i,
+      seg: segId,
       d: `M${p.x.toFixed(1)} ${p.y.toFixed(1)} Q${c[0].toFixed(1)} ${c[1].toFixed(1)} ${e[0].toFixed(1)} ${e[1].toFixed(1)}`,
       delay: TIMING[segId].start + t * TIMING[segId].dur,
     };
@@ -431,6 +645,11 @@ function measure() {
 }
 
 watch([width, orient], () => nextTick(measure), { flush: 'post' });
+watch(
+  () => props.branch,
+  () => nextTick(measure),
+  { flush: 'post' }
+);
 
 // Hover trail
 const hovered = ref(null);
@@ -438,12 +657,21 @@ const trail = reactive({});
 const tip = ref(null);
 function hover(n) {
   for (const k of Object.keys(GEOM)) trail[k] = 0;
+  trail['snake-foundation'] = 0;
+  trail['snake-diploma'] = 0;
+  trail['snake-degree'] = 0;
   hovered.value = n?.code ?? null;
   if (!n) {
     tip.value = null;
     return;
   }
-  if (n.seg === 'trunk') trail.trunk = n.t;
+  if (n.seg === 'snake') {
+    const order = ['foundation', 'diploma', 'degree'];
+    const gi = order.indexOf(n.group);
+    order.forEach((g, i) => {
+      trail['snake-' + g] = i < gi ? 1 : i === gi ? n.t : 0;
+    });
+  } else if (n.seg === 'trunk') trail.trunk = n.t;
   else if (n.seg === 'coast') {
     trail.trunk = 1;
     trail.programming = 1;
@@ -487,6 +715,12 @@ svg {
   stroke-linecap: round;
   opacity: 0.8;
 }
+.channel.dim,
+.creek.dim,
+.section.dim {
+  opacity: 0.08;
+  transition: opacity 0.4s;
+}
 .draw {
   stroke-dasharray: 1 1;
   stroke-dashoffset: 1;
@@ -522,7 +756,7 @@ svg {
 
 .trail {
   fill: none;
-  stroke: var(--mari);
+  stroke: var(--acc, var(--mari));
   stroke-width: 5;
   stroke-linecap: round;
   transition:
@@ -580,7 +814,7 @@ svg {
 }
 .sea-label {
   font-size: 11px;
-  fill: var(--mari-ink);
+  fill: var(--acc, var(--mari-ink));
   animation-delay: 2.5s;
 }
 @keyframes fade {
@@ -648,7 +882,7 @@ svg {
     stroke 0.25s;
 }
 .halo {
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
   opacity: 0;
   transform: scale(0.4);
   transform-box: fill-box;
@@ -663,8 +897,8 @@ svg {
   stroke-width: 5px;
   stroke-linejoin: round;
 }
-.short {
-  font-size: 13.5px;
+.name {
+  font-size: 11.5px;
   font-weight: 650;
   fill: var(--ink);
   letter-spacing: -0.01em;
@@ -679,7 +913,7 @@ svg {
 .node.hover .dot,
 .node:focus-visible .dot {
   r: 8.5;
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
 }
 .node:focus-visible .halo,
 .node.hover .halo {
@@ -688,7 +922,7 @@ svg {
 }
 
 .node.mine .dot {
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
   stroke: var(--ink);
   r: 8;
 }
@@ -704,14 +938,14 @@ svg {
   }
 }
 .node.mine .code {
-  fill: var(--mari-ink);
+  fill: var(--acc, var(--mari-ink));
 }
 
 .searching .node.miss .pop {
   opacity: 0.16;
 }
 .searching .node.hit .dot {
-  fill: var(--mari);
+  fill: var(--acc, var(--mari));
   r: 9;
 }
 .searching .node.hit .halo {

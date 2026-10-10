@@ -92,26 +92,46 @@ for (const [level, list] of Object.entries(raw)) {
 
 export const byCode = Object.fromEntries(courses.map((c) => [c.code, c]));
 
-// ---- SAMPLE term calendar (Sep 2026 term). Replace with Supabase data (no table for term dates yet). ----
-export const TODAY = new Date('2026-09-27T10:00:00+05:30');
+// The same subject can run under a different code in another branch (AE English I is BSHS1101,
+// Data Science English I is BSHS1001). Keyed by subject name so those branches can borrow the
+// resources that exist under the Data Science code.
+export const byName = Object.fromEntries(courses.map((c) => [c.name.toLowerCase(), c]));
+
+// ---- 26F3 term dates supplied for the Resources calendar. ----
+export const TODAY = new Date();
 export const TERM = {
-  label: 'Sep 2026 term',
-  start: new Date('2026-09-07T00:00:00+05:30'),
-  end: new Date('2026-12-20T00:00:00+05:30'),
+  label: '26F3',
+  start: new Date('2026-10-02T00:00:00+05:30'),
+  end: new Date('2027-01-10T00:00:00+05:30'),
   weeks: 12,
 };
 export const DATES = [
-  { id: 'a3', label: 'Week 3 assignments due', short: 'W3 due', date: '2026-10-01', kind: 'due' },
-  { id: 'q1', label: 'Quiz 1', short: 'Quiz 1', date: '2026-10-18', kind: 'exam', exam: 'Quiz 1' },
-  { id: 'o1', label: 'OPPE 1', short: 'OPPE 1', date: '2026-10-25', kind: 'exam', exam: 'OPPE' },
-  { id: 'q2', label: 'Quiz 2', short: 'Quiz 2', date: '2026-11-22', kind: 'exam', exam: 'Quiz 2' },
+  {
+    id: 'q1',
+    label: 'Quiz 1',
+    short: 'Quiz 1',
+    date: '2026-11-15',
+    kind: 'exam',
+    exam: 'Quiz 1',
+    detail: '2–6 pm · In person at centres',
+  },
+  {
+    id: 'q2',
+    label: 'Quiz 2',
+    short: 'Quiz 2',
+    date: '2026-12-05',
+    kind: 'exam',
+    exam: 'Quiz 2',
+    detail: '2–6 pm · In person at centres',
+  },
   {
     id: 'et',
     label: 'End term',
     short: 'End term',
-    date: '2026-12-20',
+    date: '2027-01-10',
     kind: 'exam',
     exam: 'End term',
+    detail: '9 am–12 pm and 2–5 pm · In person at centres',
   },
 ].map((d) => ({ ...d, at: new Date(`${d.date}T09:00:00+05:30`) }));
 
