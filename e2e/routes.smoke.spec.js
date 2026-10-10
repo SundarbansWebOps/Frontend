@@ -16,6 +16,9 @@ const ROUTES = {
   '/admin': '/login',
   '/login': '/login',
   '/verify-certificate': '/verify-certificate',
+  // Doorway to the Google Form. Safe while the form URL is a placeholder (no auto-redirect);
+  // once the real URL lands in ContributeResourcesPage.vue, assert before its timer or neutralize it.
+  '/contribute-resources': '/contribute-resources',
   // Old site
   '/study': '/resources',
   '/about': '/house',

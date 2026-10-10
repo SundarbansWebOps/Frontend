@@ -112,9 +112,9 @@
               <span class="empty-mark" aria-hidden="true" />
               <h3>No resources available right now</h3>
               <p>Be the first to contribute — share your notes and past papers for this level.</p>
-              <a class="empty-cta" :href="CONTRIBUTE_FORM" target="_blank" rel="noopener">
-                Open the contribution form <span aria-hidden="true">↗</span>
-              </a>
+              <RouterLink class="empty-cta" to="/contribute-resources">
+                Open the contribution form
+              </RouterLink>
             </div>
 
             <div v-else class="courses" :style="level ? { '--acc': LEVEL_COLOR[level] } : null">
@@ -252,8 +252,7 @@ function matchesName(c, text) {
 }
 
 // Degree level of AE and MG has no curated notes/PYQs yet, so instead of empty cards we invite
-// the first contribution. Placeholder form — swap in the real one when it exists.
-const CONTRIBUTE_FORM = 'https://forms.gle/your-form-id';
+// the first contribution. The form itself lives behind the /contribute-resources doorway.
 const NO_RESOURCE_DEGREE = new Set(['ae', 'mg']);
 const noResources = computed(
   () => !searching.value && level.value === 'degree' && NO_RESOURCE_DEGREE.has(branch.value)
