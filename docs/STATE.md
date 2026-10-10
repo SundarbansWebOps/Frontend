@@ -1,5 +1,5 @@
 # Sundarbans House — State
-> IITM BS frontend/backend · Last checkpoint: 2026-10-10 11:24 IST
+> IITM BS frontend/backend · Last checkpoint: 2026-10-10 13:34 IST
 
 ## In progress / next
 - **Inactive Lounge motion fixed and committed locally.** Shared runtime pauses CSS/Web Animations on blur or hidden document, suspends decorative timers, restarts rare effects with fresh delays, and freezes tour scroll time. No frontend deployment. Gates/evidence in today’s session; native OS app switching still needs real-host verification.
@@ -12,6 +12,7 @@
 - Branch `feat/lounge-backend-wiring`; group migration (`ad90985`), lantern arrival (`c2c4a85`), and inactivity motion (`97a0065`) committed at user request. Prior wiring/audit work is already in branch history. No push or frontend deployment. Preserve unrelated `supabase/tests/__pycache__/`. Starting audit checkout captured at `/tmp/sundarbans-fix-baseline`.
 
 ## Status
+- Deputy Secretary added live to `public.super_admin_allowlist` using Supabase CLI at user request; active member and `private.is_super_admin() = true` verified. Existing admins preserved; total now four. No migration push or frontend changes.
 - Fresh group audit (2026-10-10): live has 43 events, 17 forms / 15 published, 9 invites, 1 response; group metadata column absent before fix, now applied. Ten verified forms: Technical/Cultural/Esports + Bengaluru/Chandigarh/Chennai/Delhi/Kolkata/Mumbai/Patna. Cultural lacks invite. Targeted migration proved old RPC returns 0 groups before and 10 after, preserves titles/general forms; disposable transaction rolled back. Full 232 pgTAP + 9 concurrency checks, build, 2 relevant Playwright tests PASS. Logs `/tmp/sundarbans-group-{regression,db-tests,browser-tests,build}.log`. Post-rollout live catalog: 10 group forms / 9 invites; 43 events preserved; broader audit migration remains unapplied. Signed-in real browser unavailable in current CUA inventory; rendered live member UI still unverified.
 - Member Events removes region/term browsing controls; audience enforcement remains. Lifecycle updates with clock, cancellation/availability respected, exact 1200-second attendance threshold and source-preserving archive dates fixed.
 - Group discovery uses form metadata instead of frontend UUID allowlist; ten previously verified membership sources classified. Applied/invite/error states persist; routed forms use Lounge shell/theme. Missing approved house-wide source remains missing.
@@ -40,7 +41,7 @@
 
 ## Key decisions
 - Roster-gated first Google login; optional editable name/phone; profile phone saved only with consent; tour seen flag persisted on Enter/Not now.
-- Exactly three fixed SAs, 0–2 RCs/region; International no RC. Initial NULL region self-service; corrections approved by current-region RC or SA.
+- Four SAs after the explicitly requested Deputy Secretary addition on 2026-10-10; 0–2 RCs/region; International no RC. Initial NULL region self-service; corrections approved by current-region RC or SA.
 - Upcoming/live audience enforced; published past public. Preserve source date precision/NULL schedule and approximate turnout instead of manufacturing data.
 - Forms members-only; response gates invitation, application is not admission. Group catalog uses verified metadata. Default attendance merge; explicit replacement removes only that source's ownership and rejects shared conflicts.
 - Certificate design unchanged and deferred. Full decisions in `decisions.md` and `specs/003-backend-data-decisions.md`.

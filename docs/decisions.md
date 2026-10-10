@@ -178,3 +178,6 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 
 ## 2026-10-10 — Erasure redacts operational free text; historical retention awaits policy
 **Why:** Approval snapshots, requested changes, reasons and review notes can retain personal data after hard deletion. Clear them without copying free text into new audit payloads. Existing immutable audit history is preserved pending an explicit retention decision rather than silently rewriting history.
+
+## 2026-10-10 — Fourth super-admin account authorized
+**Why:** Raja explicitly requested adding the Deputy Secretary account. Preserved all existing admins; live allowlist now has four entries, superseding the previous exactly-three limit.
