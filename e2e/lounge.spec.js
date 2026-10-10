@@ -11,7 +11,7 @@ async function returningMember(page, options = {}) {
   const calls = await mockSupabase(page, options);
   await page.addInitScript(() => {
     localStorage.setItem('lounge-e-theme', 'dark');
-    localStorage.setItem('sundarbans-theme', 'light');
+    localStorage.setItem('sundarbans-theme', 'dark');
   });
   await page.goto('/#/lounge');
   await expect(page.locator('.home')).toBeVisible();
@@ -121,7 +121,7 @@ test('a theme switch waiting on art cannot mutate the public page after route ex
     const root = document.documentElement;
     new MutationObserver(() => {
       if (
-        root.dataset.theme !== 'light' ||
+        root.dataset.theme !== 'dark' ||
         /vt-theme|theme-move|vt-page|lounge-active/.test(root.className)
       ) {
         window.loungeExitMutations.push({ theme: root.dataset.theme, classes: root.className });
@@ -131,7 +131,7 @@ test('a theme switch waiting on art cannot mutate the public page after route ex
   // Advance through the held 250 ms cap only after the public view is mounted.
   await page.clock.runFor(300);
   expect(await page.evaluate(() => window.loungeExitMutations)).toEqual([]);
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.locator('html')).not.toHaveClass(/lounge-active|vt-theme|theme-move|vt-page/);
   await page.evaluate(() => window.restoreLoungeDecode());
   await page.clock.resume();
