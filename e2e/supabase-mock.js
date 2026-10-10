@@ -49,7 +49,7 @@ const COMMUNITIES = [
 
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
 
-function sessionFor(person) {
+function sessionFor(person, photo) {
   const exp = Math.floor(Date.now() / 1000) + 24 * 3600;
   return {
     access_token: `${b64({ alg: 'HS256', typ: 'JWT' })}.${b64({ sub: person.id, email: person.email, role: 'authenticated', aud: 'authenticated', exp })}.test`,
@@ -63,7 +63,7 @@ function sessionFor(person) {
       aud: 'authenticated',
       role: 'authenticated',
       app_metadata: { provider: 'google', providers: ['google'] },
-      user_metadata: {},
+      user_metadata: photo ? { avatar_url: photo } : {},
       created_at: '2026-10-01T00:00:00Z',
     },
   };
@@ -114,7 +114,7 @@ const LOUNGE_DEFAULTS = {
 // real rows do.
 export async function mockSupabase(
   page,
-  { as = 'member', signedIn = true, google = 'ok', data = {}, profile = {} } = {}
+  { as = 'member', signedIn = true, google = 'ok', data = {}, profile = {}, photo } = {}
 ) {
   const person = PEOPLE[as];
   const row = { ...profileOf(person), ...profile };
@@ -122,7 +122,7 @@ export async function mockSupabase(
   if (signedIn) {
     await page.addInitScript(
       ([key, value]) => localStorage.setItem(key, value),
-      [STORAGE_KEY, JSON.stringify(sessionFor(person))]
+      [STORAGE_KEY, JSON.stringify(sessionFor(person, photo))]
     );
   }
 

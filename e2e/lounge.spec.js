@@ -165,7 +165,7 @@ test('leaving with the name card open does not reopen it on return', async ({ pa
   await page.evaluate(() => {
     location.hash = '/resources';
   });
-  await expect(page.locator('.links .lounge')).toBeVisible();
+  await expect(page.locator('.acts .lounge')).toBeVisible();
   // Direct revisit tests runtime recovery; the public Lounge link now opens sign-in.
   await page.evaluate(() => {
     location.hash = '/lounge';
@@ -252,7 +252,7 @@ test('Lounge font registration leaves the public site font family intact', async
   await page.evaluate(() => {
     location.hash = '/resources';
   });
-  await expect(page.locator('.links .lounge')).toBeVisible();
+  await expect(page.locator('.acts .lounge')).toBeVisible();
   expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).not.toContain(
     'Anek Latin Lounge'
   );

@@ -3,7 +3,7 @@
 // from get_my_dashboard(). Imported first by main.js so a Google redirect is handled before the
 // router reads the URL. supabase-js is loaded only when a member page or a Google redirect needs
 // it, so the public pages stay light.
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { createProfileSession } from './auth-profile.js';
 
 let client;
@@ -156,3 +156,15 @@ export const signedIn = computed(() =>
   auth.ready ? Boolean(auth.session && auth.profile) : savedSession
 );
 if (callback || savedSession) authReady();
+
+// The Google profile photo, when Google gave one. Only https; a photo that fails to load
+// falls back to initials or the crest everywhere it is shown.
+const photoBroken = ref(false);
+export const avatarUrl = computed(() => {
+  const meta = auth.session?.user?.user_metadata ?? {};
+  const url = meta.avatar_url || meta.picture || '';
+  return !photoBroken.value && url.startsWith('https://') ? url : '';
+});
+export const avatarFailed = () => {
+  photoBroken.value = true;
+};

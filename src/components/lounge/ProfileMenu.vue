@@ -9,8 +9,15 @@
   <LoungeDialog ref="dlg" variant="drop" labelledby="pm-h" @close="emit('close')">
     <div class="pm">
       <div class="pm-who">
-        <span class="pm-av" :class="{ crest: !initials }" aria-hidden="true">
-          <span v-if="initials">{{ initials }}</span>
+        <span class="pm-av" :class="{ crest: !initials && !avatarUrl }" aria-hidden="true">
+          <img
+            v-if="avatarUrl"
+            :src="avatarUrl"
+            alt=""
+            referrerpolicy="no-referrer"
+            @error="avatarFailed"
+          />
+          <span v-else-if="initials">{{ initials }}</span>
           <img v-else :src="CREST" alt="" />
         </span>
         <div class="pm-id">
@@ -104,7 +111,7 @@ import LoungeDialog from './LoungeDialog.vue';
 import * as ev from './events.js';
 import { member } from './fixtures.js';
 import { callName, initialsOf, theme } from './state.js';
-import { canAdmin } from '../../lib/auth.js';
+import { avatarFailed, avatarUrl, canAdmin } from '../../lib/auth.js';
 
 const emit = defineEmits(['close', 'edit', 'certs', 'tour', 'theme']);
 const router = useRouter();

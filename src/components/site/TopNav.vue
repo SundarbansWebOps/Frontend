@@ -18,6 +18,8 @@
         <RouterLink v-for="l in LINKS" :key="l.to" :to="l.to" active-class="on">
           <span>{{ l.label }}</span>
         </RouterLink>
+      </nav>
+      <div class="acts">
         <a
           class="lounge"
           :class="{ on: route.path === '/login', busy }"
@@ -29,8 +31,6 @@
           <span>{{ loungeLabel }}</span>
           <small v-if="!signedIn">members</small>
         </a>
-      </nav>
-      <div class="acts">
         <div v-if="signedIn" ref="meEl" class="me-wrap">
           <button
             type="button"
@@ -40,7 +40,14 @@
             :aria-label="callName ? `Your account, ${callName}` : 'Your account'"
             @click="menuOpen = !menuOpen"
           >
-            <span v-if="initials" aria-hidden="true">{{ initials }}</span>
+            <img
+              v-if="avatarUrl"
+              :src="avatarUrl"
+              alt=""
+              referrerpolicy="no-referrer"
+              @error="avatarFailed"
+            />
+            <span v-else-if="initials" aria-hidden="true">{{ initials }}</span>
             <img v-else :src="CREST" alt="" />
           </button>
           <div v-if="menuOpen" class="menu" role="menu" @keydown.esc="menuOpen = false">
@@ -83,10 +90,6 @@
             </g>
           </svg>
         </button>
-        <a class="wa" :href="WHATSAPP" target="_blank" rel="noopener">
-          <LineIcon name="wa" />
-          <span>WhatsApp Channel</span>
-        </a>
       </div>
     </div>
   </header>
@@ -114,9 +117,16 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import CREST from '../../assets/crest.webp';
 import LineIcon from './LineIcon.vue';
-import { WHATSAPP } from '../../lib/courses.js';
 import { theme, toggleTheme } from '../../lib/theme.js';
-import { auth, canAdmin, signedIn, signInWithGoogle, signOut } from '../../lib/auth.js';
+import {
+  auth,
+  avatarFailed,
+  avatarUrl,
+  canAdmin,
+  signedIn,
+  signInWithGoogle,
+  signOut,
+} from '../../lib/auth.js';
 import { toast } from '../../lib/store.js';
 
 const LINKS = [
@@ -271,18 +281,22 @@ onBeforeUnmount(() => {
 }
 
 /* The lounge: always night inside, lit from within by a slow turning edge of light. */
-.links .lounge {
+.acts .lounge {
+  position: relative;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  margin-left: 8px;
-  padding: 8px 15px;
+  padding: 9px 16px;
+  border-radius: 99px;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
   isolation: isolate;
   overflow: hidden;
   background: #15120e;
   color: #f6d9a8;
 }
-.links .lounge::before {
+.acts .lounge::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -314,7 +328,7 @@ onBeforeUnmount(() => {
     --turn: 360deg;
   }
 }
-.links .lounge .glow {
+.acts .lounge .glow {
   position: absolute;
   inset: auto 10% -60% 10%;
   z-index: -1;
@@ -324,23 +338,20 @@ onBeforeUnmount(() => {
   opacity: 0.55;
   transition: opacity 0.4s;
 }
-.links .lounge small {
+.acts .lounge small {
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #f2a93b;
 }
-.links .lounge:hover {
+.acts .lounge:hover {
   background: #1d1813;
   color: #fff4dc;
 }
-.links .lounge:hover .glow,
-.links .lounge.on .glow {
+.acts .lounge:hover .glow,
+.acts .lounge.on .glow {
   opacity: 1;
-}
-.links .lounge.on::after {
-  display: none;
 }
 .links a.on::after {
   content: '';
@@ -438,31 +449,7 @@ onBeforeUnmount(() => {
   }
 }
 
-.wa {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 16px 9px 12px;
-  border-radius: 99px;
-  border: 1.5px solid var(--line-strong);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition:
-    transform 0.25s var(--ease-spring),
-    background 0.2s;
-}
-.wa:hover {
-  background: var(--sunk);
-  transform: translateY(-1px);
-}
-.wa .ic {
-  width: 18px;
-  height: 18px;
-}
-
-.links .lounge.busy,
+.acts .lounge.busy,
 .tabbar .lounge.busy {
   opacity: 0.75;
   pointer-events: none;
@@ -597,13 +584,6 @@ onBeforeUnmount(() => {
   .links a {
     padding-inline: 10px;
   }
-  .wa span {
-    display: none;
-  }
-  .wa {
-    padding: 9px;
-    flex-shrink: 0;
-  }
 }
 
 @media (max-width: 760px) {
@@ -614,11 +594,8 @@ onBeforeUnmount(() => {
     padding: 0 16px;
     justify-content: space-between;
   }
-  .wa span {
+  .acts .lounge {
     display: none;
-  }
-  .wa {
-    padding: 9px;
   }
   .tabbar {
     position: fixed;

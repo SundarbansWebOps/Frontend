@@ -64,7 +64,14 @@
         :aria-expanded="profileOpen ? 'true' : 'false'"
         @click="emit('profile')"
       >
-        <span v-if="initials" aria-hidden="true">{{ initials }}</span>
+        <img
+          v-if="avatarUrl"
+          :src="avatarUrl"
+          alt=""
+          referrerpolicy="no-referrer"
+          @error="avatarFailed"
+        />
+        <span v-else-if="initials" aria-hidden="true">{{ initials }}</span>
         <img v-else :src="CREST" alt="" />
       </button>
     </div>
@@ -110,6 +117,7 @@ import CREST from '../../assets/crest.webp';
 import LineIcon from '../site/LineIcon.vue';
 import * as ev from './events.js';
 import { callName, initialsOf, theme } from './state.js';
+import { avatarFailed, avatarUrl } from '../../lib/auth.js';
 import * as tide from './tide.js';
 
 defineProps({ view: { type: String, default: 'home' }, profileOpen: Boolean });

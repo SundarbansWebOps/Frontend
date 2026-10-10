@@ -142,3 +142,31 @@ test('sign out lives in the navbar, not the Lounge profile menu', async ({ page 
   await page.goto('/#/lounge');
   await expect(page).toHaveURL(/#\/login/);
 });
+
+test('the Google profile photo is the avatar in the navbar and the Lounge', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const photo = 'https://lh3.googleusercontent.com/a/riya=s96-c';
+  await page.route('https://lh3.googleusercontent.com/**', (route) =>
+    route.fulfill({
+      contentType: 'image/svg+xml',
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>',
+    })
+  );
+  await mockSupabase(page, { profile: { preferred_name: 'Riya' }, photo });
+  await page.goto('/#/resources');
+  const nav = page.getByRole('button', { name: /Your account, Riya/ });
+  await expect(nav.locator('img')).toHaveAttribute('src', photo);
+  await expect(nav.locator('img')).toHaveAttribute('referrerpolicy', 'no-referrer');
+  await page.goto('/#/lounge');
+  await expect(
+    page.getByRole('button', { name: /Your profile, Riya/ }).locator('img')
+  ).toHaveAttribute('src', photo);
+});
+
+test('the navbar has no WhatsApp button; the Lounge door sits at the right', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 900 });
+  await mockSupabase(page, { signedIn: false });
+  await page.goto('/#/resources');
+  await expect(page.locator('.nav').getByText('WhatsApp')).toHaveCount(0);
+  await expect(page.locator('.nav .acts .lounge')).toBeVisible();
+});
