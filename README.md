@@ -1,7 +1,8 @@
 Sundarbans-House
 A centralized platform for managing events, resources, team collaboration, and digital initiatives of Sundarbans House.
 
-<img width="1432" height="783" alt="Screenshot 2026-04-02 at 10 53 46" src="https://github.com/user-attachments/assets/04fef05d-a7f3-4fe1-8ef9-20a104ec3600" />
+<img width="1902" height="925" alt="image" src="https://github.com/user-attachments/assets/f0063f90-d829-442f-be5e-528be3d34f21" />
+
 
 
 <img width="1470" height="803" alt="Screenshot 2026-04-15 at 11 50 18" src="https://github.com/user-attachments/assets/65d285ed-e47b-4ba9-ac84-96444b8f1f2d" />
