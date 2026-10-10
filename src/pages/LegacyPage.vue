@@ -48,7 +48,7 @@
       @pointerup="onPointerUp"
       @pointercancel="onPointerCancel"
     >
-      <div ref="councilRef" class="council" :class="phase">
+      <div ref="councilRef" class="council" :class="[phase, { hold }]">
         <h2 id="council-h" class="visually-hidden">Council {{ shownYear }}</h2>
         <p class="visually-hidden" aria-live="polite">{{ liveText }}</p>
         <p class="year-mark arrive" style="--i: 0" aria-hidden="true">{{ shownYear }}</p>
@@ -158,6 +158,7 @@ const docked = ref(true);
 const dockRight = ref(false);
 const boatStill = ref(true);
 const boatReady = ref(false);
+const hold = ref(false);
 const postArt = reactive(YEARS.map(() => false));
 const archReady = reactive({ secretary: false, deputy: false });
 
@@ -281,11 +282,27 @@ function syncUrl(year) {
     });
 }
 
+// Used when the year changes without motion (hidden tab, reduced motion). The council's
+// transitions are held off until the next frame so the end state is not animated, even when
+// a transition was already in flight. Two frames pass before the hold lifts, so the snap style
+// is computed first and lifting it never starts a transition.
+let holdFrame = 0;
+function holdStill() {
+  hold.value = true;
+  cancelAnimationFrame(holdFrame);
+  holdFrame = requestAnimationFrame(() => {
+    holdFrame = requestAnimationFrame(() => {
+      hold.value = false;
+    });
+  });
+}
+
 function snap() {
   token += 1;
   clearTimeout(timer);
   timer = 0;
   if (selected.value == null) return;
+  holdStill();
   shownYear.value = selected.value;
   phase.value = '';
   docked.value = true;
@@ -303,6 +320,7 @@ function go(year, { instant = false } = {}) {
 
   const jump = first || instant || motionOff();
   if (jump) {
+    holdStill();
     shownYear.value = year;
     phase.value = '';
     docked.value = true;
@@ -800,6 +818,10 @@ h1 {
   opacity: 0;
   transition: none;
 }
+.council.hold .arrive,
+.council.hold .member {
+  transition: none;
+}
 
 @media (min-width: 761px) and (max-width: 1020px) {
   .board {
@@ -865,6 +887,25 @@ h1 {
   .member-cap {
     font-size: 10.5px;
     letter-spacing: 0.04em;
+  }
+}
+
+/* Short landscape phones leave the stage ~120px high, below the stacked council. The council
+   keeps its natural height and the stage scrolls, so every card stays reachable. */
+@media (max-width: 760px) and (orientation: landscape) {
+  .stage {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .council {
+    inset: 0 auto auto 0;
+    width: 100%;
+    min-height: 100%;
+  }
+  /* The stage scrolls here, so cards can be wide enough for their captions (7.6vh is only
+     right for the fitted portrait stack). */
+  .board {
+    --m-w: min(64px, calc((100vw - 88px) / 5));
   }
 }
 </style>
