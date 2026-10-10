@@ -145,13 +145,14 @@
 
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue';
-import { byCode, closeCourse, isMine, store, togglePin } from '../../lib/store.js';
+import { closeCourse, courseFor, isMine, store, togglePin } from '../../lib/store.js';
 import { currentWeek, nextExam } from '../../lib/courses.js';
 
 const LEVEL = {
   foundation: 'Foundation',
   programming: 'Diploma · Programming',
   datascience: 'Diploma · Data Science',
+  diploma: 'Diploma',
   degree: 'BS Degree',
 };
 const TABS = [
@@ -160,7 +161,7 @@ const TABS = [
 ];
 const EXAM_ORDER = ['All', 'Quiz 1', 'Quiz 2', 'End term', 'OPPE', 'Qualifier', 'Other'];
 
-const course = computed(() => (store.sheet ? byCode[store.sheet.code] : null));
+const course = computed(() => (store.sheet ? courseFor(store.sheet.code) : null));
 const pinned = computed(() => course.value && isMine(course.value.code));
 const tab = ref('pyqs');
 const exam = ref('All');

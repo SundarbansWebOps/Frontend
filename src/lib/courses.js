@@ -92,6 +92,11 @@ for (const [level, list] of Object.entries(raw)) {
 
 export const byCode = Object.fromEntries(courses.map((c) => [c.code, c]));
 
+// The same subject can run under a different code in another branch (AE English I is BSHS1101,
+// Data Science English I is BSHS1001). Keyed by subject name so those branches can borrow the
+// resources that exist under the Data Science code.
+export const byName = Object.fromEntries(courses.map((c) => [c.name.toLowerCase(), c]));
+
 // ---- SAMPLE term calendar (Oct 2026 term). Replace with Supabase data (no table for term dates yet). ----
 export const TODAY = new Date();
 export const TERM = {

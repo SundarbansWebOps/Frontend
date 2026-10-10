@@ -80,7 +80,9 @@
           <!-- STEP 2 · level -->
           <div v-else-if="!level && !searching" key="level">
             <h2 id="flow-h" class="flow-h">Pick your level</h2>
-            <p class="flow-sub">Courses group by the first digit of their code.</p>
+            <p class="flow-sub">
+              Every branch runs the same three levels — foundation, diploma, degree.
+            </p>
             <div class="levels">
               <button
                 v-for="(l, i) in LEVELS"
@@ -102,9 +104,20 @@
           <div v-else :key="searching ? 'search' : level">
             <h2 id="flow-h" class="flow-h">
               {{ searching ? 'Search results' : levelMeta.label + ' courses' }}
-              <span class="mono count">{{ shown.length }}</span>
+              <span v-if="!noResources" class="mono count">{{ shown.length }}</span>
             </h2>
-            <div class="courses" :style="level ? { '--acc': LEVEL_COLOR[level] } : null">
+
+            <!-- Degree level of AE and MG has no curated resources yet — invite contributions. -->
+            <div v-if="noResources" class="empty">
+              <span class="empty-mark" aria-hidden="true" />
+              <h3>No resources available right now</h3>
+              <p>Be the first to contribute — share your notes and past papers for this level.</p>
+              <a class="empty-cta" :href="CONTRIBUTE_FORM" target="_blank" rel="noopener">
+                Open the contribution form <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+
+            <div v-else class="courses" :style="level ? { '--acc': LEVEL_COLOR[level] } : null">
               <div
                 v-for="(c, i) in shown"
                 :key="c.code"
@@ -126,7 +139,10 @@
                 </button>
               </div>
               <p v-if="!shown.length" class="hint">
-                <span class="dot" /> No courses found here yet.
+                <span class="dot" />
+                {{
+                  searching ? 'Nothing in this branch matches that yet.' : 'No courses here yet.'
+                }}
               </p>
             </div>
           </div>
@@ -180,19 +196,36 @@ const LEVEL_COLOR = {
   diploma: 'var(--verm)',
   degree: 'var(--w-cultural)',
 };
-// Level comes from the course code: BSMA1001 → 1xxx foundation, 2xxx diploma, 3xxx+ degree.
-function levelOf(code) {
-  const d = Number((code.match(/\d/) || ['1'])[0]);
-  return d <= 1 ? 'foundation' : d === 2 ? 'diploma' : 'degree';
-}
 const levelMeta = computed(() => LEVELS.find((l) => l.id === level.value) || LEVELS[0]);
 
-const allCourses = computed(() =>
-  Object.entries(byCode)
-    .map(([code, c]) => ({ ...c, code: c.code || code }))
-    .filter((c) => !c.branch || c.branch === branch.value)
-);
-const countFor = (id) => allCourses.value.filter((c) => levelOf(c.code) === id).length;
+// The branch catalogue (BRANCHES) is the source of truth for which courses belong to a branch.
+// byCode only holds courses that already have notes/PYQs (Data Science today), so it is used
+// purely to enrich matching entries — never to decide membership.
+function branchLevels(id) {
+  const b = BRANCHES[id];
+  if (!b) return { foundation: [], diploma: [], degree: [] };
+  return {
+    foundation: b.foundation ?? [],
+    diploma: (b.channels ?? []).flatMap((ch) => ch.courses ?? []),
+    degree: b.degree ?? [],
+  };
+}
+const branchCourses = computed(() => {
+  if (!branch.value) return [];
+  const levels = branchLevels(branch.value);
+  return Object.entries(levels).flatMap(([lvl, list]) =>
+    list.map((c) => {
+      const study = byCode[c.code];
+      return {
+        ...c,
+        level: lvl,
+        notes: study?.notes ?? c.notes ?? [],
+        pyqs: study?.pyqs ?? c.pyqs ?? [],
+      };
+    })
+  );
+});
+const countFor = (id) => branchCourses.value.filter((c) => c.level === id).length;
 
 const searching = computed(() => !!q.value.trim());
 const res = computed(() => search(q.value));
@@ -201,10 +234,29 @@ const match = computed(() =>
     ? new Set([...res.value.courses.map((c) => c.code), ...res.value.resources.map((r) => r.code)])
     : null
 );
-const shown = computed(() =>
-  allCourses.value.filter((c) =>
-    match.value ? match.value.has(c.code) : levelOf(c.code) === level.value
-  )
+const shown = computed(() => {
+  if (!match.value) return branchCourses.value.filter((c) => c.level === level.value);
+  return branchCourses.value.filter(
+    (c) => match.value.has(c.code) || matchesName(c, res.value.parsed.text)
+  );
+});
+
+// The Study Corner index only holds Data Science courses, so a search inside another branch also
+// scores that branch's own catalogue by code and name — otherwise "aerodynamics" in AE finds nothing.
+function matchesName(c, text) {
+  const t = text.trim().toLowerCase();
+  if (!t) return false;
+  const tight = t.replace(/\s+/g, '');
+  if (tight.length >= 2 && c.code.toLowerCase().includes(tight)) return true;
+  return c.name.toLowerCase().includes(t);
+}
+
+// Degree level of AE and MG has no curated notes/PYQs yet, so instead of empty cards we invite
+// the first contribution. Placeholder form — swap in the real one when it exists.
+const CONTRIBUTE_FORM = 'https://forms.gle/your-form-id';
+const NO_RESOURCE_DEGREE = new Set(['ae', 'mg']);
+const noResources = computed(
+  () => !searching.value && level.value === 'degree' && NO_RESOURCE_DEGREE.has(branch.value)
 );
 const parsed = computed(() => ({
   tab: res.value.parsed.tab ?? 'pyqs',
@@ -533,6 +585,55 @@ function launch(id) {
   border-radius: 50%;
   background: var(--acc);
   box-shadow: 0 0 0 5px var(--acc-wash);
+}
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 44px 24px;
+  text-align: center;
+  border: 1.5px dashed color-mix(in srgb, var(--acc) 42%, var(--line-strong));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--acc) 5%, var(--card));
+}
+.empty-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 0 6px var(--acc-wash);
+}
+.empty h3 {
+  margin: 8px 0 0;
+  font-size: 20px;
+  font-weight: 720;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.empty p {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.empty-cta {
+  margin-top: 12px;
+  padding: 9px 18px;
+  border: 1.5px solid var(--acc);
+  border-radius: 99px;
+  background: var(--acc);
+  color: var(--paper);
+  font-size: 13.5px;
+  font-weight: 620;
+  text-decoration: none;
+  transition:
+    transform 0.2s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+.empty-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 .tix-enter-active {
   animation: print 0.7s var(--ease-out) both;

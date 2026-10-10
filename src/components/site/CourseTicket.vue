@@ -3,7 +3,7 @@
   actually open this week on the body. Perforation is a CSS mask, not an image.
 -->
 <template>
-  <article class="ticket">
+  <article v-if="c" class="ticket">
     <div class="stub">
       <span class="mono">{{ c.code }}</span>
     </div>
@@ -41,13 +41,15 @@
 
 <script setup>
 import { computed } from 'vue';
-import { byCode, openCourse, togglePin } from '../../lib/store.js';
+import { courseFor, openCourse, togglePin } from '../../lib/store.js';
 import { currentWeek, nextExam } from '../../lib/courses.js';
 
 const props = defineProps({ code: String });
-const c = computed(() => byCode[props.code]);
-const examCount = computed(() => c.value.pyqs.filter((p) => p.exam === nextExam?.exam).length);
-const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentWeek).length);
+const c = computed(() => courseFor(props.code));
+const examCount = computed(
+  () => c.value?.pyqs.filter((p) => p.exam === nextExam?.exam).length ?? 0
+);
+const weekCount = computed(() => c.value?.notes.filter((n) => n.week === currentWeek).length ?? 0);
 </script>
 
 <style scoped>

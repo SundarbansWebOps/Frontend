@@ -67,11 +67,16 @@ export const BRANCHES = {
       c('Math for Electronics I', 'MA1101'),
       c('English II', 'HS1102'),
       c('Electronic Systems Thinking and Circuits', 'EE1101'),
+      c('Electronic Systems Thinking and Circuits Lab', 'EE1901'),
       c('Introduction to C Programming', 'CS1101'),
+      c('C Programming Laboratory', 'CS1901'),
       c('Introduction to Linux and Programming', 'CS1102'),
+      c('Linux Systems Laboratory', 'CS1902'),
       c('Digital Systems', 'EE1102'),
       c('Electrical and Electronic Circuits', 'EE1103'),
+      c('Electronics Laboratory', 'EE1902'),
       c('Embedded C Programming', 'CS2101'),
+      c('Embedded C Programming Laboratory', 'CS2901'),
     ],
     channels: [
       {
@@ -80,18 +85,24 @@ export const BRANCHES = {
         courses: [
           c('Signals and Systems', 'EE2101'),
           c('Analog Electronic Systems', 'EE2102'),
+          c('Analog Electronics Laboratory', 'EE2901'),
           c('Python Programming', 'CS1002'),
           c('Digital System Design', 'EE2103'),
+          c('Digital System Design Laboratory', 'EE2902'),
           c('Digital Signal Processing', 'EE3101'),
           c('Sensors and Applications', 'EE3103'),
+          c('Sensors Laboratory', 'EE3901'),
           c('Electronic Testing and Measurement', 'EE4108'),
           c('Computer Organisation', 'EE2106'),
+          c('Electronics System Project', 'EE3999'),
+          c('Signals and Systems Project', 'EE4999'),
         ],
       },
     ],
     degree: [
       c('Math for Electronics II', 'MA2101'),
       c('Embedded Linux and FPGAs', 'EE4101'),
+      c('Embedded Linux and FPGAs Lab', 'EE4901'),
       c('Electromagnetic Fields and Transmission Lines', 'EE3104'),
       c('Electronic Product Design', 'EE4102'),
       c('Strategies for Professional Growth', 'GN3001'),
@@ -99,7 +110,11 @@ export const BRANCHES = {
       c('Probability and Statistics', 'MA3101'),
       c('Communication Systems', 'EE4103'),
       c('Internet of Things (IoT)', 'EE5101'),
+      c('Semiconductor Devices and VLSI Technology', 'EE3106'),
       c('Analog circuits', 'EE3107'),
+      c('Digital IC Design', 'EE5102'),
+      c('Power Management for Electronic Systems', 'EE5103'),
+      c('Biomedical Electronic Systems', 'EE5104'),
     ],
   },
   ae: {
@@ -128,12 +143,17 @@ export const BRANCHES = {
           c('Math for Aeronautical Engineering', 'BSMA2102'),
           c('Signals and Systems', 'BSEE2101'),
           c('Materials & Manufacture for Aeronautical Engineers', 'BSAS2003'),
+          c('Solid Modeling of Aircraft & Spacecraft Systems', 'BSAS2011'),
           c('Machine Learning Foundations', 'BSCS2004'),
           c('Aerodynamics', 'BSAS3001'),
           c('Gas Dynamics', 'BSAS3002'),
           c('Flight Dynamics I', 'BSAS3003'),
-          c('Applied Computational Fluid Dynamics', 'BSAS3004'),
-          c('Finite Element Analysis', 'BSAS3005'),
+          c('Aerodynamics Lab', 'BSAS3011'),
+          c('Flight Dynamics and Simulation Lab', 'BSAS3012'),
+          c('Applied Computational Fluid Dynamics (CFD)', 'BSAS3004'),
+          c('Finite Element Analysis (FEA)', 'BSAS3005'),
+          c('Project 1: Aerodynamic Design of Aircraft and Spacecraft using CFD', 'BSAS3013'),
+          c('Project 2: Design of Aircraft and Spacecraft Structures using FEA', 'BSAS3014'),
         ],
       },
     ],
@@ -144,8 +164,10 @@ export const BRANCHES = {
       c('Vibrations and Aero-Elasticity', 'BSAS4004'),
       c('Rocket Propulsion for Space Applications', 'BSAS4005'),
       c('Aircraft Structures', 'BSAS4006'),
+      c('Structures Lab', 'BSAS4011'),
       c('Aerospace Systems Control and Estimation', 'BSAS4007'),
       c('Managerial Economics', 'BSMS3033'),
+      c('Design project: Design of MAVs and UAVs', 'BSAS4012'),
     ],
   },
   mg: {
@@ -176,6 +198,8 @@ export const BRANCHES = {
           c('Financial Analytics', 'BSMS3203'),
           c('Operations Management', 'BSMS2204'),
           c('Supply Chain Analytics', 'BSMS3204'),
+          c('Business Management Project', 'BSMS3901'),
+          c('Business Analytics Project', 'BSMS3902'),
         ],
       },
       {
@@ -201,6 +225,16 @@ export const BRANCHES = {
     ],
   },
 };
+
+// Every course of every branch, keyed by code. The Study Corner data only covers Data Science,
+// so anything opened from another branch resolves through here instead.
+export const catalogByCode = {};
+for (const b of Object.values(BRANCHES)) {
+  const add = (list, track) => list.forEach((c) => (catalogByCode[c.code] = { ...c, track }));
+  add(b.foundation, 'foundation');
+  b.channels.forEach((ch) => add(ch.courses, 'diploma'));
+  add(b.degree, 'degree');
+}
 
 export const courseUrl = (branchId, code) =>
   `https://study.iitm.ac.in/${branchId}/course_pages/${code}.html`;
