@@ -12,6 +12,11 @@ const routes = [
   { path: '/house', component: () => import('../pages/HousePage.vue') },
   { path: '/teams', component: () => import('../pages/TeamsPage.vue') },
   {
+    path: '/teams/legacy',
+    name: 'Legacy',
+    component: () => import('../pages/LegacyPage.vue'),
+  },
+  {
     path: '/lounge',
     name: 'Lounge',
     component: () => import('../pages/LoungePage.vue'),
