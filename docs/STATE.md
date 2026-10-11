@@ -1,7 +1,8 @@
 # Sundarbans House — State
-> IITM BS frontend/backend · Last checkpoint: 2026-10-11 12:26 IST
+> IITM BS frontend/backend · Last checkpoint: 2026-10-11 20:00 IST
 
 ## In progress / next
+- **Resources course board, tickets, drawer and two site fixes committed locally on `pr-156`; not pushed.** Commits `12bd110` (single-board subject picker, ticket and drawer redesign), `8726234` (calendar hover label readable), `b992411` (quick-link underline removed), `a5ef3ac` (calendar dialog uses smooth ease-out, no bounce). Lint, `scripts/check-design.mjs` and Playwright hover/motion/link checks pass. **Next: Raja reviews the calendar and quick links, then says whether to push and open the PR.** Do not open a PR before that. Carried over and unverified: dark-theme check of the new ticket and drawer, 360px width, phone word-breaking of long subject names.
 - **PR #156 CI formatting fix passed.** Formatted `src/components/site/CourseTicket.vue` and `src/data/branches.js`. GitHub Actions run [38139553891](https://github.com/SundarbansWebOps/Frontend/actions/runs/38139553891) passes all checks. Maintainer @Anuraj-dev tagged on the PR. Vercel remains a separate failed status because the team must authorize the deployment.
 - **Resources quick links use conditional anchored expansion.** Only branch-dependent links morph open: Student portal groups AE/ES at `es.study.iitm.ac.in` and DS/MG at `ds.study.iitm.ac.in`; Student handbook lists each branch choice. Other cards stay direct links or coming-soon actions. The floating window grows from the clicked card without shifting layout, using warm marigold-tinted paper, distinct choice cards and a themed scrollbar. Escape, outside click, close button, focus return and reduced-motion handling are supported. Design check, scoped ESLint, production build and diff whitespace pass. Screenshot sweep passed (36 shots, no errors). Local only; no commit/deployment. See today's session log.
 - **Resources 26F3 calendar compacted and expanded as an overlay.** The side card now shows only the month grid and a small Open calendar action; no Schedule heading/dot, no sticky overlap over Quick links. The overlay dims the page, expands from the lower-right toward the top-left, lists the full term dates, and closes with Escape/backdrop/close button. Desktop and phone screenshots reviewed; overlay interaction verified. See today’s session log.
@@ -51,6 +52,7 @@
 - Certificate design unchanged and deferred. Full decisions in `decisions.md` and `specs/003-backend-data-decisions.md`.
 
 ## Gotchas
+- Vite dev server can keep serving a stale scoped style module after an edit (browser URL has an old `?t=` stamp, old CSS). Verify with a fresh `page` and a `touch` of the edited file before trusting a computed-style check.
 - Preserve all unrelated changes. No raw member contacts, private invite URLs or secrets in docs/output; private imports stay outside repo.
 - Fail closed and recheck authorization after locks. STABLE export reads share statement MVCC snapshot; suspected export race was rejected.
 - Never touch5432x/metaverse or stale5442x stacks. Owned5452x test stack cleaned up; preserve other agents/servers.
