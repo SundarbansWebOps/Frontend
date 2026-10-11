@@ -224,6 +224,7 @@ onBeforeUnmount(() => {
 .open-calendar:hover {
   transform: translateY(-1px);
   background: var(--mari);
+  color: var(--on-mari);
 }
 .open-calendar svg {
   width: 16px;
