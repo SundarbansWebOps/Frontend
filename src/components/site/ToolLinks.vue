@@ -3,7 +3,7 @@
   <ul class="tools">
     <li v-for="(t, i) in TOOLS" :key="t.id" :style="{ '--i': i }" class="rise">
       <a
-        :href="t.href"
+        :href="t.id === 'grade' ? '#/grade' : t.href"
         :target="t.internal ? undefined : '_blank'"
         rel="noopener"
         @click="t.soon && ($event.preventDefault(), toast(`${t.label} is coming soon`))"
