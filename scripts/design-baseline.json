@@ -15,10 +15,6 @@
     "colors": 1,
     "important": 0
   },
-  "src/components/site/CourseTicket.vue": {
-    "colors": 4,
-    "important": 0
-  },
   "src/components/site/EventSheet.vue": {
     "colors": 1,
     "important": 0

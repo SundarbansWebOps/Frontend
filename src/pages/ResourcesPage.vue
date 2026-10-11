@@ -1,162 +1,92 @@
-<!-- Resources — "Delta": branch → level → courses, quiz timeline in the side column. -->
+<!-- Resources — branch list beside every subject of that branch, quiz timeline in the side column. -->
 <template>
   <main id="main-content" class="wrap" tabindex="-1">
     <!-- ============ the resources column ============ -->
     <div class="content">
       <SearchBar v-model="q" class="rise" style="--i: 1" />
 
-      <section class="mine rise" style="--i: 2" aria-labelledby="mine-h">
-        <h2 id="mine-h" class="eyebrow">
-          My courses <span v-if="store.mine.length" class="mono">{{ store.mine.length }}</span>
-        </h2>
-        <TransitionGroup
-          name="tix"
-          tag="div"
-          class="tix"
-          :class="{ 'no-courses': !store.mine.length }"
-        >
-          <CourseTicket v-for="code in store.mine" :key="code" :code="code" />
-          <p v-if="!store.mine.length" key="empty" class="hint">
-            <span class="dot" /> Pick your branch and level, then pin your courses. Next time the
-            site opens straight to them.
-          </p>
-        </TransitionGroup>
+      <!-- Always mounted so the last ticket can leave and the row can close behind it. -->
+      <section
+        class="mine-sec rise"
+        :class="{ empty: !store.mine.length }"
+        style="--i: 2"
+        :inert="!store.mine.length"
+        aria-labelledby="mine-h"
+      >
+        <div class="mine-in">
+          <h2 id="mine-h" class="eyebrow">
+            My courses <span class="mono">{{ store.mine.length }}</span>
+          </h2>
+          <TransitionGroup
+            name="tix"
+            tag="div"
+            class="tix"
+            @enter="printIn"
+            @before-leave="lockSize"
+          >
+            <CourseTicket v-for="code in store.mine" :key="code" :code="code" />
+          </TransitionGroup>
+        </div>
       </section>
 
-      <section class="flow rise" style="--i: 3" aria-labelledby="flow-h">
-        <div class="study-mark" aria-hidden="true">
-          <svg class="study-seal" viewBox="0 0 100 100" focusable="false">
-            <circle cx="50" cy="50" r="46" />
-            <path d="M50 9v8m0 66v8M9 50h8m66 0h8M21 21l6 6m46 46 6 6m0-58-6 6m-46 46-6 6" />
-            <path
-              d="M31 63c6-5 13-5 19 0 6-5 13-5 19 0v17c-6-5-13-5-19 0-6-5-13-5-19 0zM50 63v17"
-            />
-          </svg>
-          <PatFigure :fig="FIGS.reader" name="reader" :instant="true" :live="false" />
-        </div>
-        <!-- breadcrumb -->
-        <nav class="crumbs" aria-label="Where you are">
+      <section class="study rise" style="--i: 3" aria-labelledby="study-h">
+        <h2 id="study-h" class="visually-hidden">Courses</h2>
+        <nav class="branches" aria-label="Branch">
           <button
+            v-for="(b, id) in BRANCHES"
+            :key="id"
             type="button"
-            :class="{ on: !branch }"
-            :aria-current="!branch ? 'step' : undefined"
-            @click="resetBranch"
+            class="branch"
+            :class="{ on: branch === id }"
+            :aria-current="branch === id ? 'true' : undefined"
+            @click="branch = id"
           >
-            Branch
+            <span class="branch-top">
+              <span class="mono">{{ b.short }}</span>
+              <span class="mono count">{{ readyCount(id) }}/{{ subjectCount(id) }}</span>
+            </span>
+            <span class="branch-name">{{ b.label }}</span>
+            <span class="meter" aria-hidden="true"><span :style="{ '--p': ratio(id) }" /></span>
           </button>
-          <template v-if="branch">
-            <span class="sep" aria-hidden="true">›</span>
-            <button
-              type="button"
-              :class="{ on: !level }"
-              :aria-current="!level ? 'step' : undefined"
-              @click="level = null"
-            >
-              {{ BRANCHES[branch].short }}
-            </button>
-          </template>
-          <template v-if="level">
-            <span class="sep" aria-hidden="true">›</span>
-            <button type="button" class="on" aria-current="step">{{ levelMeta.label }}</button>
-          </template>
         </nav>
 
-        <Transition name="step" mode="out-in">
-          <!-- STEP 1 · branch -->
-          <div v-if="!branch" key="branch">
-            <h2 id="flow-h" class="flow-h">Choose your branch</h2>
-            <div class="branches">
-              <button
-                v-for="(b, id, i) in BRANCHES"
-                :key="id"
-                type="button"
-                class="branch"
-                :style="{ '--d': i * 70 + 'ms' }"
-                @click="launch(id)"
-              >
-                <span class="mono branch-s">{{ b.short }}</span>
-                <strong>{{ b.label }}</strong>
-              </button>
+        <div v-if="branch" :key="branch" class="board">
+          <section
+            v-for="band in bands"
+            :key="band.key"
+            class="band"
+            :aria-labelledby="`band-${band.key}`"
+          >
+            <h3 :id="`band-${band.key}`" class="band-h">{{ band.label }}</h3>
+            <div v-for="list in band.lists" :key="list.key" class="list">
+              <p v-if="list.label" class="track">{{ list.label }}</p>
+              <ul class="tiles" :class="{ dense: list.items.length > 9 }">
+                <li v-for="(c, i) in list.items" :key="c.code">
+                  <button
+                    type="button"
+                    class="tile"
+                    :class="{ has: hasFiles(c), mine: isMine(c.code), miss: !matches(c) }"
+                    :style="{ '--i': list.offset + i }"
+                    :title="c.name"
+                    :aria-label="`${c.name}, ${hasFiles(c) ? 'notes available' : 'no notes yet'}`"
+                    @click="open(c.code, $event)"
+                  >
+                    <span class="tcode mono">{{ c.code }}</span>
+                    <span class="tname">{{ c.short }}</span>
+                  </button>
+                </li>
+              </ul>
             </div>
-          </div>
+          </section>
+        </div>
 
-          <!-- STEP 2 · level -->
-          <div v-else-if="!level && !searching" key="level">
-            <h2 id="flow-h" class="flow-h">Pick your level</h2>
-            <div class="levels">
-              <button
-                v-for="(l, i) in LEVELS"
-                :key="l.id"
-                type="button"
-                class="level"
-                :style="{ '--d': i * 90 + 'ms' }"
-                @click="level = l.id"
-              >
-                <span class="mono level-n">0{{ l.n }}</span>
-                <strong>{{ l.label }}</strong>
-                <small>{{ l.hint }}</small>
-                <span class="mono level-c">{{ countFor(l.id) }} courses</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- STEP 3 · courses (or search results across every level) -->
-          <div v-else :key="searching ? 'search' : level">
-            <h2 id="flow-h" class="flow-h">
-              {{ searching ? 'Search results' : levelMeta.label + ' courses' }}
-              <span v-if="!noResources" class="mono count">{{ shown.length }}</span>
-            </h2>
-
-            <!-- Degree level of AE and MG has no curated resources yet — invite contributions. -->
-            <div v-if="noResources" class="empty">
-              <span class="empty-mark" aria-hidden="true" />
-              <h3>No resources available right now</h3>
-              <p>Be the first to contribute — share your notes and past papers for this level.</p>
-              <RouterLink class="empty-cta" to="/contribute-resources">
-                Open the contribution form
-              </RouterLink>
-            </div>
-
-            <div v-else class="courses">
-              <div
-                v-for="(c, i) in shown"
-                :key="c.code"
-                class="course"
-                :class="{ mine: store.mine.includes(c.code) }"
-                :style="{ '--d': Math.min(i, 14) * 45 + 'ms' }"
-              >
-                <button type="button" class="course-main" @click="open(c.code, $event)">
-                  <span class="mono code">{{ c.code }}</span>
-                  <strong>{{ c.name || c.title || c.code }}</strong>
-                </button>
-                <button
-                  type="button"
-                  class="pin"
-                  :aria-pressed="store.mine.includes(c.code)"
-                  :aria-disabled="!store.mine.includes(c.code) && store.mine.length >= 4"
-                  :title="
-                    !store.mine.includes(c.code) && store.mine.length >= 4
-                      ? 'Remove a course from My courses before pinning another'
-                      : undefined
-                  "
-                  @click="togglePin(c.code)"
-                >
-                  {{ store.mine.includes(c.code) ? 'Pinned' : 'Pin' }}
-                </button>
-              </div>
-              <p v-if="!shown.length" class="hint">
-                <span class="dot" />
-                {{
-                  searching ? 'Nothing in this branch matches that yet.' : 'No courses here yet.'
-                }}
-              </p>
-            </div>
-          </div>
-        </Transition>
+        <p class="legend" aria-hidden="true">
+          <span class="key has" /> Notes <span class="key" /> Not yet
+        </p>
       </section>
 
       <!-- The map itself is hidden, but DeltaMap stays mounted because it hosts the course
-           overlay (drawer) that opens when you click a course or a ticket. -->
+           overlay (drawer) that opens when you click a course. -->
       <div v-if="branch" class="map-host">
         <DeltaMap :mine="store.mine" :match="match" :branch="branch" @open="open" />
       </div>
@@ -177,74 +107,98 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import SearchBar from '../components/site/SearchBar.vue';
 import TideLine from '../components/site/TideLine.vue';
 import StudyCalendar from '../components/site/StudyCalendar.vue';
 import DeltaMap from '../components/site/DeltaMap.vue';
-import CourseTicket from '../components/site/CourseTicket.vue';
 import ToolLinks from '../components/site/ToolLinks.vue';
-import PatFigure from '../components/site/PatFigure.vue';
-import { openCourse, search, store, togglePin } from '../lib/store.js';
-import { byCode } from '../lib/courses.js';
+import CourseTicket from '../components/site/CourseTicket.vue';
+import { courseFor, isMine, openCourse, search, store } from '../lib/store.js';
 import { BRANCHES } from '../data/branches.js';
-import { FIGS } from '../lib/pat.js';
 
 const q = ref(store.q);
-const branch = ref(null);
-const level = ref(null);
 store.q = '';
 
-// ---------- levels ----------
-const LEVELS = [
-  { id: 'foundation', n: 1, label: 'Foundation', hint: 'Maths, Stats, CT, English' },
-  { id: 'diploma', n: 2, label: 'Diploma', hint: 'Programming & Data Science tracks' },
-  { id: 'degree', n: 3, label: 'Degree', hint: 'Advanced and elective courses' },
-];
-const levelMeta = computed(() => LEVELS.find((l) => l.id === level.value) || LEVELS[0]);
-
-// The branch catalogue (BRANCHES) is the source of truth for which courses belong to a branch.
-// byCode only holds courses that already have notes/PYQs (Data Science today), so it is used
-// purely to enrich matching entries — never to decide membership.
-function branchLevels(id) {
-  const b = BRANCHES[id];
-  if (!b) return { foundation: [], diploma: [], degree: [] };
-  return {
-    foundation: b.foundation ?? [],
-    diploma: (b.channels ?? []).flatMap((ch) => ch.courses ?? []),
-    degree: b.degree ?? [],
-  };
+// The last branch a student opened is the one shown, so the board is there on arrival.
+const BRANCH_KEY = 'proto-resource-branch';
+function savedBranch() {
+  try {
+    return localStorage.getItem(BRANCH_KEY);
+  } catch {
+    return null;
+  }
 }
-const branchCourses = computed(() => {
-  if (!branch.value) return [];
-  const levels = branchLevels(branch.value);
-  return Object.entries(levels).flatMap(([lvl, list]) =>
-    list.map((c) => {
-      const study = byCode[c.code];
-      return {
-        ...c,
-        level: lvl,
-        notes: study?.notes ?? c.notes ?? [],
-        pyqs: study?.pyqs ?? c.pyqs ?? [],
-      };
-    })
-  );
+const saved = savedBranch();
+const branch = ref(saved && BRANCHES[saved] ? saved : 'ds');
+watch(branch, (id) => {
+  try {
+    localStorage.setItem(BRANCH_KEY, id);
+  } catch {
+    // Storage can be blocked; the board still works without remembering.
+  }
 });
-const countFor = (id) => branchCourses.value.filter((c) => c.level === id).length;
 
-const searching = computed(() => !!q.value.trim());
+// A subject has files when its Study Corner entry has notes or past papers. Catalogue subjects
+// outside Data Science resolve through courseFor, so a same-named course counts too.
+function hasFiles(c) {
+  const r = courseFor(c.code);
+  return !!r && (r.notes.length > 0 || r.pyqs.length > 0);
+}
+function subjectsOf(id) {
+  const b = BRANCHES[id];
+  return [...b.foundation, ...b.channels.flatMap((ch) => ch.courses), ...b.degree];
+}
+const subjectCount = (id) => subjectsOf(id).length;
+const readyCount = (id) => subjectsOf(id).filter(hasFiles).length;
+const ratio = (id) => readyCount(id) / subjectCount(id);
+
+// A ticket prints in from the top edge (clip + drop). When it was pinned from the course drawer it
+// waits for the drawer to close, so the print is seen rather than played behind the backdrop.
+const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function printIn(el, done) {
+  if (reduceMotion()) return done();
+  const run = () => {
+    el.style.visibility = '';
+    el.animate(
+      [
+        { clipPath: 'inset(0 0 100% 0)', transform: 'translateY(-14px)' },
+        { clipPath: 'inset(0 0 0 0)', transform: 'none' },
+      ],
+      {
+        duration: 700,
+        easing: getComputedStyle(el).getPropertyValue('--ease-out').trim() || 'ease-out',
+        fill: 'backwards',
+      }
+    );
+  };
+  if (!store.sheet) return run();
+  el.style.visibility = 'hidden';
+  const stop = watch(
+    () => store.sheet,
+    (s) => {
+      if (s) return;
+      stop();
+      setTimeout(() => el.isConnected && run(), 260);
+    }
+  );
+}
+// A leaving ticket is taken out of the flow at its own size so its neighbours slide into the gap.
+function lockSize(el) {
+  Object.assign(el.style, {
+    width: `${el.offsetWidth}px`,
+    height: `${el.offsetHeight}px`,
+    left: `${el.offsetLeft}px`,
+    top: `${el.offsetTop}px`,
+  });
+}
+
 const res = computed(() => search(q.value));
 const match = computed(() =>
-  searching.value
+  q.value.trim()
     ? new Set([...res.value.courses.map((c) => c.code), ...res.value.resources.map((r) => r.code)])
     : null
 );
-const shown = computed(() => {
-  if (!match.value) return branchCourses.value.filter((c) => c.level === level.value);
-  return branchCourses.value.filter(
-    (c) => match.value.has(c.code) || matchesName(c, res.value.parsed.text)
-  );
-});
 
 // The Study Corner index only holds Data Science courses, so a search inside another branch also
 // scores that branch's own catalogue by code and name — otherwise "aerodynamics" in AE finds nothing.
@@ -255,23 +209,42 @@ function matchesName(c, text) {
   if (tight.length >= 2 && c.code.toLowerCase().includes(tight)) return true;
   return c.name.toLowerCase().includes(t);
 }
-
-// Degree level of AE and MG has no curated notes/PYQs yet, so instead of empty cards we invite
-// the first contribution. The form itself lives behind the /contribute-resources doorway.
-const NO_RESOURCE_DEGREE = new Set(['ae', 'mg']);
-const noResources = computed(
-  () => !searching.value && level.value === 'degree' && NO_RESOURCE_DEGREE.has(branch.value)
-);
-const parsed = computed(() => ({
-  tab: res.value.parsed.tab ?? 'pyqs',
-  exam: res.value.parsed.exam ?? 'All',
-  week: res.value.parsed.week,
-}));
-
-function resetBranch() {
-  branch.value = null;
-  level.value = null;
+function matches(c) {
+  return !match.value || match.value.has(c.code) || matchesName(c, res.value.parsed.text);
 }
+
+// The whole branch on one board: Foundation, Diploma tracks and Degree, so no level step is needed.
+const bands = computed(() => {
+  const b = BRANCHES[branch.value];
+  if (!b) return [];
+  const bandsRaw = [
+    {
+      key: 'foundation',
+      label: 'Foundation',
+      lists: [{ key: 'f', label: null, items: b.foundation ?? [] }],
+    },
+    {
+      key: 'diploma',
+      label: 'Diploma',
+      lists: (b.channels ?? []).map((ch, i) => ({
+        key: `d${i}`,
+        label: ch.label.replace(/^DIPLOMA · /, ''),
+        items: ch.courses ?? [],
+      })),
+    },
+    { key: 'degree', label: 'Degree', lists: [{ key: 'g', label: null, items: b.degree ?? [] }] },
+  ];
+  let offset = 0;
+  return bandsRaw.map((band) => ({
+    ...band,
+    lists: band.lists.map((l) => {
+      const out = { ...l, offset };
+      offset += l.items.length;
+      return out;
+    }),
+  }));
+});
+
 function open(code, e) {
   try {
     openCourse(code, parsed.value, e);
@@ -286,20 +259,18 @@ function open(code, e) {
     window.location.hash = `${path || '/resources'}?${p.toString()}`;
   }
 }
+const parsed = computed(() => ({
+  tab: res.value.parsed.tab ?? 'pyqs',
+  exam: res.value.parsed.exam ?? 'All',
+  week: res.value.parsed.week,
+}));
 function pick(d) {
   if (d.exam) q.value = `${d.exam.toLowerCase()} pyq`;
-}
-
-function launch(id) {
-  branch.value = id;
-  level.value = null; // next step: choose a level
 }
 </script>
 
 <style scoped>
 .wrap {
-  --acc: var(--mari-ink);
-  --acc-wash: color-mix(in srgb, var(--acc) 15%, transparent);
   width: 100%;
   max-width: 1720px;
   margin: 0 auto;
@@ -329,248 +300,18 @@ function launch(id) {
 }
 .content {
   display: grid;
-  gap: 28px;
   width: 100%;
   min-width: 0;
 }
-.mine {
+/* Section spacing is margin, not grid gap, so the folded-away My courses row takes no space. */
+.mine-sec,
+.study {
   min-width: 0;
-}
-.tix {
-  width: 100%;
-  min-width: 0;
-}
-.flow {
-  position: relative;
-  width: 100%;
-}
-.study-mark {
-  position: absolute;
-  z-index: 0;
-  top: 10px;
-  right: 24px;
-  width: 74px;
-  height: 74px;
-  color: var(--mari-ink);
-  pointer-events: none;
-}
-.study-seal {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  opacity: 0.7;
-}
-.study-mark :deep(.fig) {
-  position: absolute;
-  inset: 4px;
-  width: auto;
-  filter: drop-shadow(0 2px 1px color-mix(in srgb, var(--ink) 14%, transparent));
-}
-.study-mark :deep(.part) {
-  animation: none !important;
-}
-.levels,
-.courses {
-  width: 100%;
+  margin-top: 28px;
 }
 .side {
   display: grid;
   gap: 14px;
-}
-
-/* ---------- flow: crumbs, levels, courses ---------- */
-.crumbs {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  font-size: 12.5px;
-}
-.crumbs button {
-  padding: 4px 10px;
-  border: 1.5px solid var(--line-strong);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-2);
-  font-weight: 600;
-  cursor: pointer;
-}
-.crumbs button.on {
-  border-color: var(--acc);
-  color: var(--acc);
-}
-.crumbs .sep {
-  color: var(--ink-2);
-}
-.flow-h {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin: 0 0 6px;
-  font-size: clamp(24px, 2.6vw, 30px);
-  font-weight: 750;
-  letter-spacing: -0.035em;
-  color: var(--ink);
-}
-.flow-h .count {
-  align-self: center;
-  padding: 2px 8px;
-  border-radius: 99px;
-  background: var(--acc-wash);
-  color: var(--acc);
-  font-size: 12px;
-  font-weight: 600;
-}
-.branches {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
-  width: 100%;
-}
-.branch {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  min-height: 132px;
-  padding: 20px;
-  text-align: left;
-  border: 1.5px solid var(--line-strong);
-  border-radius: var(--r);
-  background: var(--card);
-  color: var(--ink);
-  cursor: pointer;
-  transition:
-    transform 0.2s var(--ease-out),
-    border-color 0.2s,
-    box-shadow 0.3s var(--ease-out);
-}
-.branch:hover {
-  transform: translateY(-3px);
-  border-color: var(--acc);
-  box-shadow: var(--shadow);
-}
-.branch-s {
-  font-size: 12px;
-  color: var(--acc);
-  width: fit-content;
-  padding: 3px 8px;
-  border: 1px solid color-mix(in srgb, var(--acc) 38%, transparent);
-  border-radius: 99px;
-  background: var(--acc-wash);
-}
-.branch strong {
-  font-size: 20px;
-  line-height: 1.2;
-}
-.levels {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-.level {
-  display: grid;
-  gap: 6px;
-  padding: 18px;
-  text-align: left;
-  border: 1.5px solid var(--line-strong);
-  border-radius: var(--r);
-  background: var(--card);
-  color: var(--ink);
-  cursor: pointer;
-  transition:
-    transform 0.2s var(--ease-out),
-    border-color 0.2s,
-    box-shadow 0.3s var(--ease-out);
-}
-.level:hover {
-  transform: translateY(-3px);
-  border-color: var(--acc);
-  box-shadow: var(--shadow);
-}
-.level strong {
-  font-size: 18px;
-}
-.level small {
-  color: var(--ink-2);
-  font-size: 13px;
-}
-.level-n,
-.level-c {
-  font-size: 11px;
-  color: var(--acc);
-}
-.courses {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 12px;
-}
-.course {
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-  border: 1.5px solid var(--line-strong);
-  border-radius: 12px;
-  background: var(--card);
-  color: var(--ink);
-  transition:
-    border-color 0.2s,
-    box-shadow 0.3s var(--ease-out);
-}
-.course:hover {
-  border-color: var(--acc);
-  box-shadow: var(--shadow);
-}
-.course.mine {
-  border-color: var(--acc);
-  background: var(--acc-wash);
-}
-.course-main {
-  flex: 1;
-  display: grid;
-  gap: 4px;
-  padding: 14px 0 14px 16px;
-  text-align: left;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-}
-.pin {
-  align-self: center;
-  margin-right: 12px;
-  padding: 4px 10px;
-  border: 1.5px solid var(--line-strong);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-2);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.pin[aria-pressed='true'] {
-  border-color: var(--mari);
-  background: var(--mari);
-  color: var(--on-mari);
-}
-.pin:not([aria-pressed='true']):hover {
-  border-color: var(--mari-ink);
-  color: var(--mari-ink);
-}
-.pin[aria-disabled='true'] {
-  opacity: 0.5;
-  cursor: help;
-}
-.course .code {
-  font-size: 11px;
-  color: var(--ink-2);
 }
 
 .eyebrow {
@@ -585,99 +326,47 @@ function launch(id) {
 }
 .eyebrow .mono {
   font-size: 11px;
-  padding: 1px 6px;
-  border-radius: 5px;
-  background: var(--acc-wash);
-  color: var(--acc);
+  color: var(--ink-3);
+}
+
+/* ---------- My courses: tickets ---------- */
+/* The row folds shut when empty (grid rows 1fr to 0fr) so the last ticket can leave first and the
+ * page below slides up instead of jumping. */
+.mine-sec {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows 0.5s var(--ease-out),
+    margin-top 0.5s var(--ease-out);
+}
+.mine-sec.empty {
+  grid-template-rows: 0fr;
+  margin-top: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.5s var(--ease-out) 0.2s,
+    margin-top 0.5s var(--ease-out) 0.2s,
+    visibility 0s 0.7s;
+}
+.mine-in {
+  min-height: 0;
+  overflow: hidden;
 }
 .tix {
+  position: relative;
+  /* room inside the clip for the ticket's hover lift and tilt */
+  padding-bottom: 6px;
+  margin-bottom: -6px;
   display: grid;
+  /* at most four courses, so four fixed columns; the phone block below wraps to two */
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
-.tix > * {
-  min-width: 0;
-}
-.tix.no-courses {
-  grid-template-columns: minmax(0, 1fr);
-}
-.hint {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  padding: 16px 18px;
-  border: 1.5px dashed var(--line-strong);
-  border-radius: 14px;
-  color: var(--ink-2);
-  font-size: 14.5px;
-}
-.hint .dot {
-  flex: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 0 5px var(--acc-wash);
-}
-.empty {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  padding: 44px 24px;
-  text-align: center;
-  border: 1.5px dashed color-mix(in srgb, var(--acc) 42%, var(--line-strong));
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--acc) 5%, var(--card));
-}
-.empty-mark {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 0 6px var(--acc-wash);
-}
-.empty h3 {
-  margin: 8px 0 0;
-  font-size: 20px;
-  font-weight: 720;
-  letter-spacing: -0.03em;
-  color: var(--ink);
-}
-.empty p {
-  margin: 0;
-  max-width: 52ch;
-  font-size: 14.5px;
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-.empty-cta {
-  margin-top: 12px;
-  padding: 9px 18px;
-  border: 1.5px solid var(--acc);
-  border-radius: 99px;
-  background: var(--acc);
-  color: var(--paper);
-  font-size: 13.5px;
-  font-weight: 620;
-  text-decoration: none;
-  transition:
-    transform 0.2s var(--ease-out),
-    box-shadow 0.3s var(--ease-out);
-}
-.empty-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-.tix-enter-active {
-  animation: print 0.7s var(--ease-out) both;
-}
 .tix-leave-active {
+  position: absolute;
   transition:
     opacity 0.25s,
     transform 0.3s;
-  position: absolute;
 }
 .tix-leave-to {
   opacity: 0;
@@ -686,14 +375,206 @@ function launch(id) {
 .tix-move {
   transition: transform 0.5s var(--ease-out);
 }
-@keyframes print {
+
+/* ---------- branch list + subjects ---------- */
+.branches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.branch {
+  display: grid;
+  gap: 9px;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background-color 0.2s;
+}
+.branch:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.branch.on {
+  border-color: var(--ink);
+  background: var(--sunk);
+  color: var(--ink);
+}
+.branch-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+.branch-name {
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+.branch.on .branch-name {
+  font-weight: 650;
+}
+.count {
+  font-variant-numeric: tabular-nums;
+}
+.meter {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.meter span {
+  display: block;
+  height: 100%;
+  width: calc(var(--p) * 100%);
+  background: var(--mari);
+  transition: width 0.6s var(--ease-out);
+}
+
+.board {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+.band-h {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.list + .list {
+  margin-top: 14px;
+}
+.track {
+  margin: 0 0 6px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.tiles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+/* Long lists (AE and DS diploma tracks) go three across so the whole board stays in one screen. */
+.tiles.dense {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.tile {
+  position: relative;
+  width: 100%;
+  min-height: 46px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  animation: tile-in 0.45s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 16ms);
+  transition:
+    border-color 0.2s,
+    transform 0.2s var(--ease-out),
+    opacity 0.3s;
+}
+.tile.has::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mari);
+}
+.tile:not(.has) {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--line-strong);
+  color: var(--ink-3);
+}
+.tile:hover {
+  transform: translateY(-1px);
+  border-color: var(--ink-2);
+}
+.tile.mine {
+  box-shadow: inset 0 0 0 1.5px var(--mari);
+}
+.tile.miss {
+  opacity: 0.3;
+}
+.tcode {
+  font-size: 10.5px;
+  color: var(--ink-3);
+}
+.tname {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.tile:not(.has) .tname {
+  font-weight: 500;
+}
+@keyframes tile-in {
   from {
-    clip-path: inset(0 0 100% 0);
-    transform: translateY(-14px);
+    opacity: 0;
+    transform: translateY(6px);
   }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.key {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  vertical-align: -3px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 4px;
+}
+.key.has {
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.key.has::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--mari);
 }
 
 /* ---------- course map ---------- */
@@ -710,130 +591,6 @@ function launch(id) {
   overflow: hidden; /* does not clip position:fixed children, so the overlay still shows */
 }
 
-/* ---------- study flow: warm marigold frame, quiet paper cards ---------- */
-.flow {
-  padding: 24px;
-  border: 1.5px solid color-mix(in srgb, var(--acc) 28%, var(--line-strong));
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--acc) 4%, var(--card));
-}
-.branch,
-.level,
-.course {
-  border-color: color-mix(in srgb, var(--acc) 32%, var(--line-strong));
-  border-top: 4px solid var(--acc);
-  background: color-mix(in srgb, var(--acc) 9%, var(--card));
-}
-.branch {
-  min-height: 132px;
-  align-content: center;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--acc) 12%, var(--card)),
-    var(--card) 72%
-  );
-}
-.branch:hover,
-.level:hover,
-.course:hover {
-  background: color-mix(in srgb, var(--acc) 16%, var(--card));
-}
-.course {
-  border: 1px solid color-mix(in srgb, var(--acc) 22%, var(--line-strong));
-  border-top: 4px solid color-mix(in srgb, var(--acc) 38%, var(--line-strong));
-  background: var(--card);
-  transition:
-    border-color 0.2s,
-    background 0.2s,
-    box-shadow 0.3s var(--ease-out);
-}
-.course:hover {
-  border-color: color-mix(in srgb, var(--acc) 58%, var(--line-strong));
-  background: color-mix(in srgb, var(--mari-soft) 20%, var(--card));
-  box-shadow: none;
-}
-.course.mine {
-  border-color: color-mix(in srgb, var(--acc) 44%, var(--line-strong));
-  background: color-mix(in srgb, var(--mari-soft) 34%, var(--card));
-}
-.crumbs button.on {
-  border-color: var(--acc);
-  color: var(--acc);
-  background: color-mix(in srgb, var(--acc) 14%, transparent);
-}
-
-/* ---------- motion ---------- */
-.step-enter-active,
-.step-leave-active {
-  transition:
-    opacity 0.25s ease,
-    transform 0.3s var(--ease-out);
-}
-.step-enter-from {
-  opacity: 0;
-  transform: translateX(28px);
-}
-.step-leave-to {
-  opacity: 0;
-  transform: translateX(-28px);
-}
-.crumbs {
-  animation: fade-up 0.5s var(--ease-out) backwards;
-}
-.branch,
-.level,
-.course {
-  animation: pop-in 0.55s var(--ease-out) backwards;
-  animation-delay: var(--d, 0ms);
-}
-.branch:active,
-.level:active,
-.course:active {
-  transform: scale(0.97);
-}
-.pin {
-  transition:
-    background 0.2s,
-    color 0.2s,
-    transform 0.2s var(--ease-out);
-}
-.pin:active {
-  transform: scale(0.88);
-}
-.pin[aria-pressed='true'] {
-  animation: pinned 0.4s var(--ease-out);
-}
-@keyframes pop-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-}
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-}
-@keyframes pinned {
-  50% {
-    transform: scale(1.18);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .branch,
-  .level,
-  .course,
-  .crumbs,
-  .pin {
-    animation: none;
-  }
-  .step-enter-active,
-  .step-leave-active {
-    transition: none;
-  }
-}
-
 /* ---------- responsive ---------- */
 @media (max-width: 1020px) {
   .wrap {
@@ -847,22 +604,66 @@ function launch(id) {
   .wrap {
     padding: 14px 16px 100px;
     gap: 22px;
-  }
-  .wrap {
     background-position: right center;
     background-size: cover;
   }
+  .board {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 560px) {
   .tix {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 82%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 6px;
-    margin: 0 -16px;
-    padding-left: 16px;
-    padding-right: 16px;
-    scrollbar-width: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .branches {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .branch {
+    padding: 9px 8px 10px;
+  }
+  /* Phone: the four codes and counts carry the choice; the full name stays in aria-label. */
+  .branch-name {
+    display: none;
+  }
+  .board {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 12px;
+    gap: 14px;
+  }
+  /* Phone: the whole branch has to read in one screen. The code (also in the drawer and the
+   * aria-label) gives way to the name, and tiles drop to one or two lines of it. */
+  .tiles,
+  .tiles.dense {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .tile {
+    min-height: 40px;
+    padding: 5px 6px;
+    align-content: center;
+  }
+  .tile.has::after {
+    top: 6px;
+    right: 6px;
+  }
+  .tcode {
+    display: none;
+  }
+  .tname {
+    font-size: 11.5px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  .band-h {
+    margin-bottom: 6px;
+  }
+  .list + .list {
+    margin-top: 10px;
+  }
+  .legend {
+    margin-top: 10px;
   }
 }
 </style>
