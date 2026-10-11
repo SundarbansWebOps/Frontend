@@ -21,12 +21,7 @@
         <small v-if="c.name !== c.short">{{ c.name }}</small>
       </span>
     </div>
-    <button
-      type="button"
-      class="x"
-      :title="`Remove ${c.short}`"
-      @click.stop="togglePin(c.code)"
-    >
+    <button type="button" class="x" :title="`Remove ${c.short}`" @click.stop="togglePin(c.code)">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" /></svg>
       <span class="visually-hidden">Remove {{ c.short }} from my courses</span>
     </button>

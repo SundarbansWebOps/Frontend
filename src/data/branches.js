@@ -1,5 +1,12 @@
 // Branch map data, mirrored from https://study.iitm.ac.in/<branch>/academics.html
-const c = (name, code, short) => ({ code, name, short: short ?? code, track: null, notes: [], pyqs: [] });
+const c = (name, code, short) => ({
+  code,
+  name,
+  short: short ?? code,
+  track: null,
+  notes: [],
+  pyqs: [],
+});
 
 export const BRANCHES = {
   ds: {
@@ -152,8 +159,16 @@ export const BRANCHES = {
           c('Flight Dynamics and Simulation Lab', 'BSAS3012', 'Flight Dyn Lab'),
           c('Applied Computational Fluid Dynamics (CFD)', 'BSAS3004', 'CFD'),
           c('Finite Element Analysis (FEA)', 'BSAS3005', 'FEA'),
-          c('Project 1: Aerodynamic Design of Aircraft and Spacecraft using CFD', 'BSAS3013', 'Project 1 (CFD)'),
-          c('Project 2: Design of Aircraft and Spacecraft Structures using FEA', 'BSAS3014', 'Project 2 (FEA)'),
+          c(
+            'Project 1: Aerodynamic Design of Aircraft and Spacecraft using CFD',
+            'BSAS3013',
+            'Project 1 (CFD)'
+          ),
+          c(
+            'Project 2: Design of Aircraft and Spacecraft Structures using FEA',
+            'BSAS3014',
+            'Project 2 (FEA)'
+          ),
         ],
       },
     ],
