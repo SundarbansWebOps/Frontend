@@ -7,12 +7,15 @@
   <main id="main-content" class="wrap" tabindex="-1">
     <header class="head rise" style="--i: 0">
       <h1>Teams</h1>
-      <dl class="stats">
-        <div v-for="s in STATS" :key="s.label">
-          <dt>{{ s.label }}</dt>
-          <dd class="mono">{{ shown[s.key] }}</dd>
-        </div>
-      </dl>
+      <div class="side">
+        <LegacyEntry />
+        <dl class="stats">
+          <div v-for="s in STATS" :key="s.label">
+            <dt>{{ s.label }}</dt>
+            <dd class="mono">{{ shown[s.key] }}</dd>
+          </div>
+        </dl>
+      </div>
       <p class="sub">The people who run Sundarbans in 2026–27, and how the house fits together.</p>
     </header>
 
@@ -64,6 +67,7 @@
 
 <script setup>
 import { nextTick, onMounted, reactive, ref } from 'vue';
+import LegacyEntry from '../components/site/LegacyEntry.vue';
 import SectionRail from '../components/site/SectionRail.vue';
 import HouseFlow from '../components/site/HouseFlow.vue';
 import CouncilDeck from '../components/site/CouncilDeck.vue';
@@ -160,6 +164,13 @@ h1 {
   font-size: 12px;
   color: var(--ink-2);
 }
+.side {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 22px;
+  min-width: 0;
+}
 .stats dd {
   margin: 0;
   font-size: 24px;
@@ -215,6 +226,12 @@ h1 {
 @media (max-width: 900px) {
   .head {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .side {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 14px;
   }
   .stats {
     justify-content: flex-start;
