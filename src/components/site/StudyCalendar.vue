@@ -253,7 +253,6 @@ onBeforeUnmount(() => {
   border-radius: 22px;
   background: var(--paper);
   box-shadow: var(--shadow);
-  transform-origin: bottom right;
   outline: none;
 }
 .dialog-head {
@@ -375,11 +374,15 @@ onBeforeUnmount(() => {
 .calendar-overlay-leave-active {
   transition: opacity 0.28s var(--ease-out);
 }
-.calendar-overlay-enter-active .calendar-dialog,
+.calendar-overlay-enter-active .calendar-dialog {
+  transition:
+    transform 0.36s var(--ease-out),
+    opacity 0.28s var(--ease-out);
+}
 .calendar-overlay-leave-active .calendar-dialog {
   transition:
-    transform 0.42s var(--ease-spring),
-    opacity 0.24s var(--ease-out);
+    transform 0.22s var(--ease-out),
+    opacity 0.2s var(--ease-out);
 }
 .calendar-overlay-enter-from,
 .calendar-overlay-leave-to {
@@ -387,8 +390,8 @@ onBeforeUnmount(() => {
 }
 .calendar-overlay-enter-from .calendar-dialog,
 .calendar-overlay-leave-to .calendar-dialog {
-  opacity: 0.4;
-  transform: translate(14vw, 10vh) scale(0.35);
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
 }
 @media (max-width: 760px) {
   .calendar-backdrop {
