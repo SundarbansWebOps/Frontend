@@ -152,6 +152,18 @@ export const TOOLS = [
     hint: 'Dashboard, marks',
     href: 'https://app.onlinedegree.iitm.ac.in/',
     icon: 'portal',
+    options: [
+      {
+        label: 'AE + ES student dashboard',
+        hint: 'es.study.iitm.ac.in',
+        href: 'https://es.study.iitm.ac.in/',
+      },
+      {
+        label: 'DS + MG student dashboard',
+        hint: 'ds.study.iitm.ac.in',
+        href: 'https://ds.study.iitm.ac.in/',
+      },
+    ],
   },
   {
     id: 'discourse',
@@ -175,6 +187,24 @@ export const TOOLS = [
     hint: 'Rules, grading, policies',
     href: 'https://study.iitm.ac.in/ds/academics.html',
     icon: 'book',
+    options: [
+      {
+        label: 'Data Science & Applications handbook',
+        href: 'https://study.iitm.ac.in/ds/academics.html',
+      },
+      {
+        label: 'Aeronautics and Space Technology handbook',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vRadnRadP6fNAvriKIM5mwKW2QBSrVx_f5b66VD_BTAYT1Kz_NxkWtYKavevPL6Cw/pub',
+      },
+      {
+        label: 'Management and Data Science handbook',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vTnw4G6smKsm_EJqeksqBE2qX9tFcn2PYkC2b4QH_TTInjUCQg5-jZjW-paQ4L3g6CLdTKj_zyyDs31/pub',
+      },
+      {
+        label: 'Electronic Systems handbook',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vSD1ldcEz7GatzyEJyMkQMZmSyf4INBZ8AlD3b8SV8jksl7HgYyKqOsR5QjuVYz8A/pub',
+      },
+    ],
   },
   {
     id: 'cities',
