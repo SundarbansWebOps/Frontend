@@ -243,6 +243,7 @@ onBeforeUnmount(() => {
   background: var(--card);
   color: var(--ink);
   font: inherit;
+  text-decoration: none;
   cursor: pointer;
   transition:
     border-color 0.2s,
