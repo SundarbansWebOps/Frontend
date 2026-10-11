@@ -92,26 +92,46 @@ for (const [level, list] of Object.entries(raw)) {
 
 export const byCode = Object.fromEntries(courses.map((c) => [c.code, c]));
 
-// ---- SAMPLE term calendar (Sep 2026 term). Replace with Supabase data (no table for term dates yet). ----
-export const TODAY = new Date('2026-09-27T10:00:00+05:30');
+// The same subject can run under a different code in another branch (AE English I is BSHS1101,
+// Data Science English I is BSHS1001). Keyed by subject name so those branches can borrow the
+// resources that exist under the Data Science code.
+export const byName = Object.fromEntries(courses.map((c) => [c.name.toLowerCase(), c]));
+
+// ---- 26F3 term dates supplied for the Resources calendar. ----
+export const TODAY = new Date();
 export const TERM = {
-  label: 'Sep 2026 term',
-  start: new Date('2026-09-07T00:00:00+05:30'),
-  end: new Date('2026-12-20T00:00:00+05:30'),
+  label: '26F3',
+  start: new Date('2026-10-02T00:00:00+05:30'),
+  end: new Date('2027-01-10T00:00:00+05:30'),
   weeks: 12,
 };
 export const DATES = [
-  { id: 'a3', label: 'Week 3 assignments due', short: 'W3 due', date: '2026-10-01', kind: 'due' },
-  { id: 'q1', label: 'Quiz 1', short: 'Quiz 1', date: '2026-10-18', kind: 'exam', exam: 'Quiz 1' },
-  { id: 'o1', label: 'OPPE 1', short: 'OPPE 1', date: '2026-10-25', kind: 'exam', exam: 'OPPE' },
-  { id: 'q2', label: 'Quiz 2', short: 'Quiz 2', date: '2026-11-22', kind: 'exam', exam: 'Quiz 2' },
+  {
+    id: 'q1',
+    label: 'Quiz 1',
+    short: 'Quiz 1',
+    date: '2026-11-15',
+    kind: 'exam',
+    exam: 'Quiz 1',
+    detail: '2–6 pm · In person at centres',
+  },
+  {
+    id: 'q2',
+    label: 'Quiz 2',
+    short: 'Quiz 2',
+    date: '2026-12-05',
+    kind: 'exam',
+    exam: 'Quiz 2',
+    detail: '2–6 pm · In person at centres',
+  },
   {
     id: 'et',
     label: 'End term',
     short: 'End term',
-    date: '2026-12-20',
+    date: '2027-01-10',
     kind: 'exam',
     exam: 'End term',
+    detail: '9 am–12 pm and 2–5 pm · In person at centres',
   },
 ].map((d) => ({ ...d, at: new Date(`${d.date}T09:00:00+05:30`) }));
 
@@ -132,6 +152,18 @@ export const TOOLS = [
     hint: 'Dashboard, marks',
     href: 'https://app.onlinedegree.iitm.ac.in/',
     icon: 'portal',
+    options: [
+      {
+        label: 'AE + ES student dashboard',
+        hint: 'es.study.iitm.ac.in',
+        href: 'https://es.study.iitm.ac.in/',
+      },
+      {
+        label: 'DS + MG student dashboard',
+        hint: 'ds.study.iitm.ac.in',
+        href: 'https://ds.study.iitm.ac.in/',
+      },
+    ],
   },
   {
     id: 'discourse',
@@ -155,6 +187,24 @@ export const TOOLS = [
     hint: 'Rules, grading, policies',
     href: 'https://study.iitm.ac.in/ds/academics.html',
     icon: 'book',
+    options: [
+      {
+        label: 'Data Science & Applications handbook',
+        href: 'https://study.iitm.ac.in/ds/academics.html',
+      },
+      {
+        label: 'Aeronautics and Space Technology handbook',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vRadnRadP6fNAvriKIM5mwKW2QBSrVx_f5b66VD_BTAYT1Kz_NxkWtYKavevPL6Cw/pub',
+      },
+      {
+        label: 'Management and Data Science handbook',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vTnw4G6smKsm_EJqeksqBE2qX9tFcn2PYkC2b4QH_TTInjUCQg5-jZjW-paQ4L3g6CLdTKj_zyyDs31/pub',
+      },
+      {
+        label: 'Electronic Systems handbook',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vSD1ldcEz7GatzyEJyMkQMZmSyf4INBZ8AlD3b8SV8jksl7HgYyKqOsR5QjuVYz8A/pub',
+      },
+    ],
   },
   {
     id: 'cities',
