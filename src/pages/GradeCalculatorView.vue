@@ -1489,13 +1489,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 .grade-calculator {
   font-family: var(--font);
   background: var(--card);
   color: var(--ink);
 }
-
 
 .grade-calculator * {
   box-sizing: border-box;
@@ -2051,5 +2049,55 @@ onMounted(() => {
   .grade-calculator .pill {
     padding: 8px 12px;
   }
+}
+
+/* Match Diploma and Degree fields with Foundation styling */
+.grade-calculator :deep(#diplomaFields .score-grid) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+
+.grade-calculator :deep(#diplomaFields .field) {
+  min-width: 0;
+  margin-bottom: 19px;
+}
+
+.grade-calculator :deep(#diplomaFields label) {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.grade-calculator :deep(#diplomaFields input[type='number']) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 13px 14px;
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+  transition: 0.2s;
+}
+
+.grade-calculator :deep(#diplomaFields input[type='number']:focus) {
+  border-color: var(--mari);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mari) 10%, transparent);
+}
+
+@media (max-width: 560px) {
+  .grade-calculator :deep(#diplomaFields .score-grid) {
+    grid-template-columns: 1fr;
+  }
+}
+.grade-calculator .primary {
+  color: var(--card);
+  -webkit-text-fill-color: var(--card);
 }
 </style>
