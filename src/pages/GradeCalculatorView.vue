@@ -208,7 +208,7 @@
                   display: block;
                   font-size: 9px;
                   font-weight: 500;
-                  color: var(--muted);
+                  color: var(--ink-2);
                   text-align: center;
                 "
                 >points</small
@@ -922,7 +922,7 @@ onMounted(() => {
     $('gradeName').textContent = 'Letter grade';
     $('gradeDescription').textContent = 'Your estimated grade appears here.';
     $('gradePoints').innerHTML =
-      '—<small style="display:block;font-size:9px;font-weight:500;color:var(--muted);text-align:center">points</small>';
+      '—<small style="display:block;font-size:9px;font-weight:500;color:var(--ink-2);text-align:center">points</small>';
   }
   function diplomaFormulaText(type) {
     const f = {
@@ -973,7 +973,7 @@ onMounted(() => {
     $('gradeName').textContent = `${grade.letter} grade · ${grade.name}`;
     $('gradeDescription').textContent = grade.desc;
     $('gradePoints').innerHTML =
-      `${grade.points}<small style="display:block;font-size:9px;font-weight:500;color:var(--muted);text-align:center">points</small>`;
+      `${grade.points}<small style="display:block;font-size:9px;font-weight:500;color:var(--ink-2);text-align:center">points</small>`;
     $('status').textContent = status;
     $('bonusResult').textContent = bonusText;
   }
@@ -1488,25 +1488,14 @@ onMounted(() => {
 });
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+<style scoped>
+
 .grade-calculator {
-  font-family: 'Poppins', sans-serif;
-  background: var(--cream);
+  font-family: var(--font);
+  background: var(--card);
   color: var(--ink);
 }
-.grade-calculator {
-  --cream: #f7f1e6;
-  --paper: #fffdf8;
-  --ink: #211c17;
-  --muted: #70665a;
-  --line: #e4d7c3;
-  --orange: #d87916;
-  --orange-soft: #f7e6cc;
-  --green: #28583e;
-  --green-soft: #e8f0e7;
-  --shadow: 0 12px 35px #3a2a1410;
-}
+
 
 .grade-calculator * {
   box-sizing: border-box;
@@ -1514,9 +1503,9 @@ onMounted(() => {
 
 .grade-calculator {
   margin: 0;
-  background: var(--cream);
+  background: var(--card);
   color: var(--ink);
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font);
 }
 
 .grade-calculator button,
@@ -1528,7 +1517,7 @@ onMounted(() => {
 .grade-calculator .topbar {
   height: 68px;
   border-bottom: 1px solid var(--line);
-  background: #fbf7efdd;
+  background: color-mix(in srgb, var(--card) 90%, transparent);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1551,12 +1540,12 @@ onMounted(() => {
   width: 39px;
   height: 39px;
   border-radius: 50%;
-  background: #19150f;
-  color: #e8a74f;
+  background: var(--ink);
+  color: var(--mari-ink);
   display: grid;
   place-items: center;
   font-size: 20px;
-  border: 2px solid #c28b3e;
+  border: 2px solid var(--mari);
 }
 
 .grade-calculator .brand-name {
@@ -1567,7 +1556,7 @@ onMounted(() => {
 
 .grade-calculator .brand-sub {
   font-size: 10px;
-  color: var(--muted);
+  color: var(--ink-2);
   margin-top: 3px;
 }
 
@@ -1575,7 +1564,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 24px;
-  color: #64594d;
+  color: var(--ink-2);
   font-size: 13px;
   font-weight: 600;
 }
@@ -1586,13 +1575,13 @@ onMounted(() => {
 
 .grade-calculator .nav .active {
   color: var(--ink);
-  border-bottom: 2px solid var(--orange);
+  border-bottom: 2px solid var(--mari);
 }
 
 .grade-calculator .pill {
-  border: 1px solid #2a2118;
-  background: #17130f;
-  color: #fff2d9;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--on-mari);
   padding: 10px 17px;
   border-radius: 30px;
   font-size: 12px;
@@ -1614,7 +1603,7 @@ onMounted(() => {
 }
 
 .grade-calculator .eyebrow {
-  color: #a65b0c;
+  color: var(--mari-ink);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.7px;
@@ -1629,7 +1618,7 @@ onMounted(() => {
 }
 
 .grade-calculator .subtitle {
-  color: var(--muted);
+  color: var(--ink-2);
   font-size: 14px;
   max-width: 660px;
   line-height: 1.7;
@@ -1650,14 +1639,14 @@ onMounted(() => {
 
 .grade-calculator .stat small {
   font-size: 11px;
-  color: var(--muted);
+  color: var(--ink-2);
 }
 
 .grade-calculator .tabs {
   display: flex;
   gap: 5px;
   padding: 5px;
-  background: #eee5d6;
+  background: var(--sunk);
   border-radius: 30px;
   width: max-content;
   max-width: 100%;
@@ -1669,7 +1658,7 @@ onMounted(() => {
   background: transparent;
   padding: 10px 17px;
   border-radius: 24px;
-  color: #62584c;
+  color: var(--ink-2);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -1677,7 +1666,7 @@ onMounted(() => {
 
 .grade-calculator .tab.active {
   background: var(--ink);
-  color: #fffaf0;
+  color: var(--on-mari);
 }
 
 .grade-calculator .layout {
@@ -1688,7 +1677,7 @@ onMounted(() => {
 }
 
 .grade-calculator .panel {
-  background: var(--paper);
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 25px;
@@ -1704,7 +1693,7 @@ onMounted(() => {
 }
 
 .grade-calculator .section-number {
-  color: #a65b0c;
+  color: var(--mari-ink);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -1718,7 +1707,7 @@ onMounted(() => {
 
 .grade-calculator .helper {
   font-size: 12px;
-  color: var(--muted);
+  color: var(--ink-2);
   line-height: 1.6;
 }
 
@@ -1732,8 +1721,8 @@ onMounted(() => {
 .grade-calculator select,
 .grade-calculator input[type='number'] {
   width: 100%;
-  background: #fffefa;
-  border: 1px solid #d9cbb7;
+  background: var(--card);
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
   padding: 13px 14px;
   color: var(--ink);
@@ -1743,8 +1732,8 @@ onMounted(() => {
 
 .grade-calculator select:focus,
 .grade-calculator input:focus {
-  border-color: var(--orange);
-  box-shadow: 0 0 0 3px #d879161a;
+  border-color: var(--mari);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mari) 10%, transparent);
 }
 
 .grade-calculator .field {
@@ -1753,7 +1742,7 @@ onMounted(() => {
 
 .grade-calculator .field small {
   display: block;
-  color: var(--muted);
+  color: var(--ink-2);
   font-size: 10px;
   margin-top: 6px;
 }
@@ -1765,18 +1754,18 @@ onMounted(() => {
 }
 
 .grade-calculator .note {
-  border: 1px solid #ead8bd;
-  background: #fbf2e4;
+  border: 1px solid var(--line);
+  background: var(--mari-soft);
   border-radius: 12px;
   padding: 13px 15px;
   font-size: 11px;
-  color: #65513a;
+  color: var(--ink-2);
   line-height: 1.65;
   margin: 6px 0 22px;
 }
 
 .grade-calculator .note strong {
-  color: #382a19;
+  color: var(--ink);
 }
 
 .grade-calculator .exam-toggle {
@@ -1798,19 +1787,19 @@ onMounted(() => {
 .grade-calculator .choice span {
   display: block;
   text-align: center;
-  border: 1px solid #d9cbb7;
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
   padding: 12px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
-  background: #fffefa;
+  background: var(--card);
 }
 
 .grade-calculator .choice input:checked + span {
   background: var(--ink);
   border-color: var(--ink);
-  color: #fff8ec;
+  color: var(--on-mari);
 }
 
 .grade-calculator .primary {
@@ -1818,7 +1807,7 @@ onMounted(() => {
   border: 0;
   border-radius: 11px;
   background: var(--ink);
-  color: #fff7e9;
+  color: var(--on-mari);
   padding: 15px 18px;
   font-size: 13px;
   font-weight: 700;
@@ -1828,7 +1817,7 @@ onMounted(() => {
 }
 
 .grade-calculator .primary:hover {
-  background: #44301c;
+  background: var(--mari-ink);
   transform: translateY(-1px);
 }
 
@@ -1836,7 +1825,7 @@ onMounted(() => {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: transparent;
-  color: var(--muted);
+  color: var(--ink-2);
   padding: 10px 13px;
   font-size: 11px;
   cursor: pointer;
@@ -1848,8 +1837,8 @@ onMounted(() => {
 }
 
 .grade-calculator .result-top {
-  background: #f4e5cf;
-  border: 1px solid #ead4b2;
+  background: var(--mari-soft);
+  border: 1px solid var(--line);
   border-radius: 15px;
   padding: 19px;
   margin-bottom: 17px;
@@ -1857,7 +1846,7 @@ onMounted(() => {
 
 .grade-calculator .result-label {
   font-size: 11px;
-  color: #76542e;
+  color: var(--mari-ink);
   font-weight: 600;
 }
 
@@ -1867,19 +1856,19 @@ onMounted(() => {
   letter-spacing: -2px;
   line-height: 1.25;
   margin: 3px 0;
-  color: #2a2118;
+  color: var(--ink);
 }
 
 .grade-calculator .score span {
   font-size: 15px;
   font-weight: 500;
   letter-spacing: 0;
-  color: #806b52;
+  color: var(--ink-2);
 }
 
 .grade-calculator .result-status {
   font-size: 11px;
-  color: #65513a;
+  color: var(--ink-2);
   line-height: 1.6;
 }
 
@@ -1891,7 +1880,7 @@ onMounted(() => {
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fffefa;
+  background: var(--card);
 }
 
 .grade-calculator .grade-letter {
@@ -1901,8 +1890,8 @@ onMounted(() => {
   border-radius: 13px;
   display: grid;
   place-items: center;
-  background: var(--green-soft);
-  color: var(--green);
+  background: var(--mari-soft);
+  color: var(--mari-ink);
   font-size: 25px;
   font-weight: 800;
 }
@@ -1918,7 +1907,7 @@ onMounted(() => {
 
 .grade-calculator .grade-meta small {
   display: block;
-  color: var(--muted);
+  color: var(--ink-2);
   font-size: 10px;
   margin-top: 3px;
 }
@@ -1933,7 +1922,7 @@ onMounted(() => {
   justify-content: space-between;
   gap: 14px;
   padding: 12px 0;
-  border-bottom: 1px solid #eee4d6;
+  border-bottom: 1px solid var(--line);
   font-size: 12px;
 }
 
@@ -1942,7 +1931,7 @@ onMounted(() => {
 }
 
 .grade-calculator .result-line span {
-  color: var(--muted);
+  color: var(--ink-2);
 }
 
 .grade-calculator .result-line strong {
@@ -1951,18 +1940,18 @@ onMounted(() => {
 
 .grade-calculator .formula {
   margin-top: 17px;
-  background: #f9f5ed;
+  background: var(--sunk);
   border-radius: 12px;
   padding: 14px;
   font-size: 11px;
   line-height: 1.8;
-  color: #645545;
+  color: var(--ink-2);
   overflow-wrap: anywhere;
 }
 
 .grade-calculator .formula code {
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  color: #3d2b19;
+  font-family: var(--mono);
+  color: var(--ink);
 }
 
 .grade-calculator .result-title {
@@ -1975,13 +1964,13 @@ onMounted(() => {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #a65b0c;
+  color: var(--mari-ink);
   font-weight: 700;
   margin: 21px 0 8px;
 }
 
 .grade-calculator .hidden {
-  display: none !important;
+  display: none;
 }
 
 .grade-calculator footer {
@@ -1989,10 +1978,10 @@ onMounted(() => {
   padding: 20px 24px;
   text-align: center;
   font-size: 11px;
-  color: #887b6b;
+  color: var(--ink-3);
 }
 
-@media (max-width: 820px) {
+@media (max-width: 860px) {
   .grade-calculator .topbar {
     padding: 12px 18px;
     height: auto;
@@ -2032,7 +2021,7 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
   .grade-calculator main {
     padding: 28px 14px 45px;
   }
