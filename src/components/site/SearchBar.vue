@@ -224,7 +224,7 @@ defineExpose({ focus: () => input.value?.focus() });
 .focused .field {
   border-color: var(--ink);
   box-shadow:
-    0 0 0 4px color-mix(in srgb, var(--mari) 35%, transparent),
+    0 0 0 4px color-mix(in srgb, var(--acc, var(--mari)) 35%, transparent),
     var(--shadow);
 }
 .open .field {
@@ -302,8 +302,8 @@ input::-webkit-search-cancel-button {
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 99px;
-  background: var(--mari);
-  color: var(--on-mari);
+  background: var(--acc-wash, var(--mari-soft));
+  color: var(--acc, var(--mari-ink));
   white-space: nowrap;
 }
 .chip-enter-active {
@@ -375,7 +375,7 @@ kbd {
 }
 .item .code {
   font-size: 12px;
-  color: var(--mari-ink);
+  color: var(--acc, var(--mari-ink));
 }
 .what {
   display: grid;

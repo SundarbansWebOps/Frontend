@@ -9,6 +9,11 @@ on:
 permissions:
   contents: read
 
+# One run per PR: a new push cancels the stale run so the latest status is the one shown.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build-and-smoke:
     runs-on: ubuntu-latest

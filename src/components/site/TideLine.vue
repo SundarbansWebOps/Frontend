@@ -1,6 +1,6 @@
-<!-- The term as a tide line: how far in we are, what is next. SAMPLE dates. -->
+<!-- The term as a tide line: how far in we are, what is next. -->
 <template>
-  <section class="tide" aria-label="Term calendar (sample dates)">
+  <section class="tide" aria-label="26F3 term timeline">
     <header>
       <p class="week">
         <span class="mono">WEEK</span> <b>{{ currentWeek }}</b
@@ -33,7 +33,7 @@
       <span class="today" :style="{ left: nowPct }"><i /></span>
     </div>
 
-    <p class="sample mono">SAMPLE DATES · {{ TERM.label.toUpperCase() }}</p>
+    <p class="sample mono">{{ TERM.label.toUpperCase() }} TERM</p>
   </section>
 </template>
 
@@ -159,7 +159,7 @@ header p {
 }
 .fill {
   width: var(--now);
-  background: var(--mari);
+  background: var(--acc, var(--mari));
   transform-origin: left;
   animation: tide 1.4s var(--ease-out) 0.3s both;
 }
@@ -213,8 +213,8 @@ header p {
   }
 }
 .mark.past i {
-  background: var(--mari);
-  border-color: var(--mari);
+  background: var(--acc, var(--mari));
+  border-color: var(--acc, var(--mari));
 }
 .mark span {
   position: absolute;

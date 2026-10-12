@@ -178,9 +178,9 @@ html:where(.lounge-active).theme-move .h-mine {
 :where(html.lounge-active) .h-mangrove {
   position: absolute;
   z-index: 1;
-  right: -44px;
+  right: -33px;
   bottom: 48px; /* its mud bank (Mangrove.vue) meets the water just above the scene's foot */
-  width: 270px;
+  width: 200px;
   pointer-events: none;
 }
 
@@ -817,9 +817,9 @@ html:where(.lounge-active).vt-page::view-transition-new(ev-5) {
 
   /* Its bank stays clear of the ticket that overlaps the scene's foot. */
   :where(html.lounge-active) .h-mangrove {
-    right: -72px;
+    right: -54px;
     bottom: 84px;
-    width: 160px;
+    width: 120px;
   }
 
   /* The ticket overlaps the bottom of the scene, then the groups follow. */

@@ -1,15 +1,21 @@
 <!--
-  A pinned course as a ticket stub: code on the stub, the two things you
-  actually open this week on the body. Perforation is a CSS mask, not an image.
+  A pinned course as a small ticket: code on the marigold stub, the name and the two things to open
+  this week on the body. Chips match the Delta ticket: papers for the next exam and notes for the
+  current week. The notches where the stub tears off are a CSS mask, not an image.
 -->
 <template>
-  <article class="ticket">
+  <article v-if="c" class="ticket">
     <div class="stub">
       <span class="mono">{{ c.code }}</span>
     </div>
     <div class="main">
-      <button type="button" class="name" @click="openCourse(c.code, {}, $event)">
-        <b>{{ c.short }}</b>
+      <button
+        type="button"
+        class="name"
+        :aria-label="`Open ${c.short} in the study panel`"
+        @click="openCourse(c.code, {}, $event)"
+      >
+        {{ c.short }}
       </button>
       <div class="acts">
         <button
@@ -41,31 +47,34 @@
 
 <script setup>
 import { computed } from 'vue';
-import { byCode, openCourse, togglePin } from '../../lib/store.js';
+import { courseFor, openCourse, togglePin } from '../../lib/store.js';
 import { currentWeek, nextExam } from '../../lib/courses.js';
 
 const props = defineProps({ code: String });
-const c = computed(() => byCode[props.code]);
-const examCount = computed(() => c.value.pyqs.filter((p) => p.exam === nextExam?.exam).length);
-const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentWeek).length);
+const c = computed(() => courseFor(props.code));
+const examCount = computed(
+  () => c.value?.pyqs.filter((p) => p.exam === nextExam?.exam).length ?? 0
+);
+const weekCount = computed(() => c.value?.notes.filter((n) => n.week === currentWeek).length ?? 0);
 </script>
 
 <style scoped>
 .ticket {
-  --notch: 9px;
-  --stub: 44px;
+  --notch: 7px;
+  --stub: 30px;
   position: relative;
   display: grid;
   grid-template-columns: var(--stub) minmax(0, 1fr);
   min-width: 0;
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--card);
   box-shadow: var(--shadow);
   /* two notches where the stub tears off */
   mask:
-    radial-gradient(circle var(--notch) at var(--stub) 0, #0000 98%, #000) top / 100% 51% no-repeat,
-    radial-gradient(circle var(--notch) at var(--stub) 100%, #0000 98%, #000) bottom / 100% 51%
-      no-repeat;
+    radial-gradient(circle var(--notch) at var(--stub) 0, transparent 98%, black) top / 100% 51%
+      no-repeat,
+    radial-gradient(circle var(--notch) at var(--stub) 100%, transparent 98%, black) bottom / 100%
+      51% no-repeat;
   transition: transform 0.35s var(--ease-out);
 }
 .ticket:hover {
@@ -81,62 +90,53 @@ const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentW
 .stub span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-size: 12px;
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.08em;
 }
 .main {
   display: grid;
-  align-content: space-between;
-  gap: 10px;
-  padding: 12px 36px 12px 14px;
+  align-content: center;
+  gap: 4px;
+  padding: 7px 24px 7px 9px;
   min-width: 0;
 }
 .name {
-  display: grid;
-  gap: 2px;
-  justify-items: start;
+  justify-self: start;
   padding: 0;
   border: 0;
   background: none;
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
   text-align: left;
 }
-.name b {
-  font-size: 21px;
-  font-weight: 750;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-}
-.name:hover b {
+.name:hover {
   text-decoration: underline 2px var(--mari);
-  text-underline-offset: 4px;
-}
-.name small {
-  font-size: 13px;
-  color: var(--ink-2);
+  text-underline-offset: 3px;
 }
 .acts {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 3px;
 }
 .act {
-  padding: 5px 10px;
+  padding: 1px 5px;
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
+  border-radius: 6px;
   background: var(--paper);
-  font-size: 12.5px;
+  font-size: 10.5px;
   font-weight: 600;
   white-space: nowrap;
   transition:
-    background 0.2s,
     border-color 0.2s,
     transform 0.25s var(--ease-spring);
 }
 .act i {
   font-style: normal;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 400;
   color: var(--ink-3);
 }
@@ -153,14 +153,14 @@ const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentW
 }
 .x {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 5px;
+  right: 5px;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 7px;
   background: none;
   color: var(--ink-3);
   opacity: 0;
@@ -175,12 +175,36 @@ const weekCount = computed(() => c.value.notes.filter((n) => n.week === currentW
   color: var(--ink);
 }
 .x svg {
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
+}
+/* Desktop tickets stand taller so the stub code fits and the body reads as a ticket. Phone keeps the tighter size. */
+@media (min-width: 761px) {
+  .ticket {
+    --stub: 36px;
+    min-height: 96px;
+  }
+  .stub span {
+    font-size: 11.5px;
+  }
+  .main {
+    gap: 6px;
+    padding: 12px 26px 12px 13px;
+  }
+  .name {
+    font-size: 17px;
+  }
+  .act {
+    padding: 2px 7px;
+    font-size: 11.5px;
+  }
+  .act i {
+    font-size: 10.5px;
+  }
 }
 @media (hover: none) {
   .x {
