@@ -65,9 +65,9 @@ const routes = [
   { path: '/contact', redirect: { path: '/house', hash: '#council' } },
   { path: '/dashboard', redirect: '/lounge' },
   {
-  path: '/grade',
-  name: 'GradeCalculator',
-  component: () => import('../pages/GradeCalculatorView.vue'),
+    path: '/grade',
+    name: 'GradeCalculator',
+    component: () => import('../pages/GradeCalculatorView.vue'),
   },
 
   // 404 catch-all

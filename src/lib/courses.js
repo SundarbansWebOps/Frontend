@@ -173,12 +173,12 @@ export const TOOLS = [
     icon: 'chat',
   },
   {
-  id: 'grade',
-  label: 'Grade calculator',
-  hint: 'What you need in the end term',
-  href: '/grade',
-  icon: 'calc',
-  internal: true,
+    id: 'grade',
+    label: 'Grade calculator',
+    hint: 'What you need in the end term',
+    href: '/grade',
+    icon: 'calc',
+    internal: true,
   },
   {
     id: 'handbook',
