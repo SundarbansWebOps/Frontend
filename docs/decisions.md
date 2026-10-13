@@ -181,3 +181,6 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 
 ## 2026-10-10 — Fourth super-admin account authorized
 **Why:** Raja explicitly requested adding the Deputy Secretary account. Preserved all existing admins; live allowlist now has four entries, superseding the previous exactly-three limit.
+
+## 2026-10-11 — Legacy Board keeps hash routing; year lives in `?year=`
+**Why:** Switching to clean URLs risks live OAuth redirects, shared links and about 78 `#/` references, and Vercel has no SPA rewrite; a separate change. Rejected `#2021` hashes because the hash is the route.

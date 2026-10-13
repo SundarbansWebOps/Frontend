@@ -36,5 +36,7 @@
 | reports/2026-10-08-lounge-port.md | Lounge E production port scope, agent findings, parity proof and verification limits |
 | sessions/2026-10-09.md | PR #146 review, Google login verified, backend design confirmed, Lounge/Admin/backend wiring and Opus takeover checkpoint |
 | sessions/2026-10-10.md | Non-certificate fixes, independent final review, local verification and rollout/source limits |
+| sessions/2026-10-11.md | Resources CI and quick-link follow-ups; Legacy Board port, PR #155 and testing deploy |
+| sessions/2026-10-12.md | Prototype survey and independent page/design picker |
 | sessions/ | One append-only log per day |
 | ../design/landing-concepts-2026-09-13/README.md | Five replacement homepage viewport concepts, exact imagegen prompts, corrected scope; awaiting selection |
