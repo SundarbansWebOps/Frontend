@@ -11,7 +11,19 @@
         <p class="kicker">Since {{ FOUNDED }}</p>
         <h1>Legacy Board</h1>
       </div>
-      <RouterLink class="back" to="/teams">Back to Teams</RouterLink>
+      <div class="actions">
+        <Transition name="story">
+          <RouterLink
+            v-if="shownYear === TENURE.year"
+            class="story-link"
+            to="/teams/legacy/2023-24"
+          >
+            The {{ TENURE.label }} story
+            <span aria-hidden="true">→</span>
+          </RouterLink>
+        </Transition>
+        <RouterLink class="back" to="/teams">Back to Teams</RouterLink>
+      </div>
     </header>
 
     <nav ref="riverRef" class="river" :style="riverStyle" aria-label="Years">
@@ -110,6 +122,7 @@ import crest from '../assets/crest.webp';
 import plateDay from '../components/lounge/home/art/plate-day-1536.webp';
 import plateNight from '../components/lounge/home/art/plate-night-1536.webp';
 import { FOUNDED, LEGACY } from '../data/legacy.data.js';
+import { TENURE } from '../data/tenure-2023.data.js';
 import { theme } from '../lib/theme.js';
 
 const YEARS = LEGACY.map((d) => d.year);
@@ -490,6 +503,52 @@ h1 {
 .back:hover {
   color: var(--ink);
 }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 24px);
+  min-width: 0;
+}
+/* Shown only while the 2023 council is on the board. */
+.story-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 99px;
+  background: var(--mari);
+  color: var(--on-mari);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s var(--ease-out);
+}
+.story-link:hover {
+  transform: translateY(-1px);
+}
+.story-link span {
+  transition: transform 0.25s var(--ease-out);
+}
+.story-link:hover span {
+  transform: translateX(3px);
+}
+.story-enter-active {
+  transition:
+    opacity 0.4s var(--ease-out) 0.5s,
+    transform 0.4s var(--ease-out) 0.5s;
+}
+.story-leave-active {
+  transition: opacity 0.18s var(--ease-out);
+}
+.story-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.story-leave-to {
+  opacity: 0;
+}
 
 .river {
   grid-area: river;
@@ -847,6 +906,13 @@ h1 {
   }
   .top {
     padding-top: 10px;
+  }
+  .story-link {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .actions:has(.story-link) .back {
+    display: none;
   }
   .council {
     flex-direction: column;
