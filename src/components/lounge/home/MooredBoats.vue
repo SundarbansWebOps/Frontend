@@ -17,7 +17,7 @@
       <p v-if="!boats.length" class="moor-sub">
         Your community and regional groups will appear here when available.
       </p>
-      <ul v-else ref="list" class="moor-row">
+      <ul v-else ref="list" class="moor-row" :class="{ 'moor-row--all': isSuperAdmin }">
         <li
           v-for="(g, i) in boats"
           v-loop
@@ -106,6 +106,8 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { isSuperAdmin } from '../../../lib/auth.js';
+import { member } from '../fixtures.js';
 import { lounge, openGroupForms } from '../session.js';
 import { mode } from '../state.js';
 import { MOORED } from './art.js';
@@ -134,15 +136,25 @@ const boats = computed(() => {
     applied: true,
     kind: g.community_id ? 'community' : g.region_id ? 'region' : 'house',
   }));
-  const apply = openGroupForms.value.map((f) => ({
-    id: f.id,
-    label: f.group_label || f.title,
-    why: f.group_purpose || '',
-    href: '',
-    to: `/lounge/forms/${f.id}`,
-    applied: false,
-    kind: f.community_id ? 'community' : f.region_id ? 'region' : 'house',
-  }));
+  // A joined boat already carries its invite; list each form once.
+  const joinedIds = new Set(joined.map((g) => g.id));
+  const apply = openGroupForms.value
+    .filter((f) => !joinedIds.has(f.id))
+    .map((f) => ({
+      id: f.id,
+      label: f.group_label || f.title,
+      why: f.group_purpose || '',
+      href: '',
+      to: `/lounge/forms/${f.id}`,
+      applied: !!f.submitted,
+      kind: f.community_id
+        ? 'community'
+        : f.region_id
+          ? f.region_id === member.region_id
+            ? 'region'
+            : 'other-region'
+          : 'house',
+    }));
   return [...apply, ...joined];
 });
 
@@ -151,9 +163,11 @@ const kick = (g) =>
     ? 'Start here'
     : g.kind === 'region'
       ? 'Your region'
-      : g.applied
-        ? 'You applied'
-        : 'Apply';
+      : g.kind === 'other-region'
+        ? 'Regional group'
+        : g.applied
+          ? 'You applied'
+          : 'Apply';
 
 let io = null;
 onMounted(() => {
@@ -299,6 +313,20 @@ function splash(ev) {
   flex: 1 1 180px;
   min-width: 0;
   max-width: 214px;
+}
+/* Super admins see every open form: a grid of boats, four to a row (three on tablets). */
+.moor-row--all {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px 18px;
+}
+.moor-row--all li {
+  max-width: none;
+}
+@media (max-width: 1024px) {
+  .moor-row--all {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 .mb {
   flex: 1;
@@ -510,6 +538,9 @@ function splash(ev) {
     flex-direction: column;
     gap: 0;
     padding-top: 8px;
+  }
+  .moor-row--all {
+    grid-template-columns: minmax(0, 1fr);
   }
   .moor-row li {
     max-width: none;

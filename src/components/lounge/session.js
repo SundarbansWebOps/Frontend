@@ -1,10 +1,11 @@
 // Live Lounge payload: one hydrate from loadLounge(), then member UI reads these arrays.
 // Visual art stays in events.js / home; this file holds no sample notices, groups or certificates.
 import { computed, reactive, watch } from 'vue';
-import { auth, errorText } from '../../lib/auth.js';
+import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
 import { lower } from '../../lib/house.js';
 import {
   confirmCertificateName as persistCertName,
+  formOpenNow,
   getFormInvite,
   groupFormsForMember,
   listGroups,
@@ -287,11 +288,16 @@ export const pendingRegionRequest = computed(() =>
   lounge.regionRequests.find((r) => r.status === 'pending' && r.member_id === member.id)
 );
 
-export const openGroupForms = computed(() =>
-  groupFormsForMember(lounge.forms, member.region_id).filter(
+// Members see open forms for their region. Super admins see every open group form in the house;
+// submitted ones stay in the list so they can be marked as applied.
+export const openGroupForms = computed(() => {
+  if (isSuperAdmin.value) {
+    return lounge.forms.filter((f) => f.form_kind === 'group' && !f.event_id && formOpenNow(f));
+  }
+  return groupFormsForMember(lounge.forms, member.region_id).filter(
     (f) => (f.accepting_responses ?? f.is_open) && !f.submitted
-  )
-);
+  );
+});
 
 export const formByEvent = (eventId) => lounge.forms.find((f) => f.event_id === eventId) ?? null;
 export const formById = (id) => lounge.forms.find((f) => f.id === id) ?? null;
