@@ -1,5 +1,5 @@
 <!--
-  Beside the map: every region ranked by meetups, or one region opened up —
+  Beside the map: every region as a plain pick list, or one region opened up —
   its coordinator, what it's about, and its meetup log. Picking a dot on the map
   highlights that meetup here.
 -->
@@ -17,28 +17,11 @@
           <span><i class="lg nd" /> date not recorded</span>
           <span><i class="lg ph" /> has photos</span>
         </p>
-        <ol class="rank">
-          <li v-for="(g, i) in regions" :key="g.id" :style="{ '--i': i }">
-            <button type="button" class="row" @click="house.region = g.id">
-              <span class="nm">{{ g.name }}</span>
-              <span class="faces" aria-hidden="true">
-                <img
-                  v-for="c in g.coordinators"
-                  :key="c.id"
-                  :src="portrait.face(c.img)"
-                  alt=""
-                  loading="lazy"
-                  width="26"
-                  height="26"
-                />
-              </span>
-              <span class="bar"
-                ><i :style="{ '--w': g.items.length / regions[0].items.length }"
-              /></span>
-              <span class="n mono">{{ g.items.length }}</span>
-            </button>
+        <ul class="pick">
+          <li v-for="g in byName" :key="g.id">
+            <button type="button" class="chip" @click="house.region = g.id">{{ g.name }}</button>
           </li>
-        </ol>
+        </ul>
       </div>
 
       <div v-else :key="r.id" class="one">
@@ -174,6 +157,7 @@ import {
 } from '../../lib/house.js';
 
 const r = computed(() => (house.region ? regionById[house.region] : null));
+const byName = [...regions].sort((a, b) => a.name.localeCompare(b.name));
 const rows = {};
 const opened = ref(null);
 const root = ref(null);
@@ -254,75 +238,29 @@ watch(
   background: none;
   border: 1.5px dashed var(--w-meetups);
 }
-.rank {
-  display: grid;
-  gap: 2px;
+.pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.row {
-  display: grid;
-  grid-template-columns: 104px 58px minmax(0, 1fr) 28px;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 9px 10px;
-  border: 0;
-  border-radius: 12px;
-  background: none;
-  text-align: left;
-  transition: background 0.2s;
-}
-.row:hover {
-  background: var(--sunk);
-}
-.nm {
-  font-size: 15px;
-  font-weight: 650;
-}
-.faces {
-  display: flex;
-}
-.faces img {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 2px solid var(--paper);
-  object-fit: cover;
-  background: var(--sunk);
-}
-.faces img + img {
-  margin-left: -9px;
-}
-.bar {
-  height: 8px;
+.chip {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
   border-radius: 99px;
-  background: var(--sunk);
-  overflow: hidden;
-}
-.bar i {
-  display: block;
-  height: 100%;
-  width: calc(var(--w) * 100%);
-  border-radius: 99px;
-  background: var(--w-meetups);
-  transform-origin: left;
-  animation: grow 0.9s var(--ease-out) both;
-  animation-delay: calc(200ms + var(--i) * 60ms);
-}
-li:first-child .bar i {
-  background: var(--mari);
-}
-@keyframes grow {
-  from {
-    transform: scaleX(0);
-  }
-}
-.n {
-  text-align: right;
+  background: var(--card);
   font-size: 14px;
   font-weight: 600;
+  color: var(--ink-2);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+.chip:hover {
+  color: var(--ink);
+  border-color: var(--ink-3);
 }
 
 .back {
@@ -618,13 +556,8 @@ h3 {
     grid-row: 2;
     margin-top: -4px;
   }
-  .row {
-    grid-template-columns: 96px 44px minmax(0, 1fr) 24px;
-    gap: 8px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bar i,
   .log li {
     animation: none;
   }
