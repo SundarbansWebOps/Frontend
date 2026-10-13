@@ -1,6 +1,7 @@
-<!-- Audit log (Super Admin): newest first, read-only. -->
+<!-- Audit log (Super Admin): newest first, read-only. Regional meetup ranking sits above it. -->
 <template>
   <div>
+    <AdminRegionRank />
     <p v-if="error" class="adm-msg err" role="alert">{{ error }}</p>
     <ul v-if="rows.length" class="adm-list">
       <li v-for="r in rows" :key="r.id" class="adm-row">
@@ -28,6 +29,7 @@
 import { onMounted, ref } from 'vue';
 import { errorText } from '../../lib/auth.js';
 import { PAGE, listAudit } from '../../lib/admin.js';
+import AdminRegionRank from './AdminRegionRank.vue';
 
 const rows = ref([]);
 const page = ref(0);

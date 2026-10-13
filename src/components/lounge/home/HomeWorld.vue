@@ -196,10 +196,18 @@ const bright = computed(() =>
   ).map(([x, y], i) => ({ x, y, d: 7 + i * 2.3, o: -i * 3.1 }))
 );
 
+/* Keep each drift envelope clear of the three clouds painted into the plate. On phones,
+   the centre-cropped plate needs a separate high lane. */
 const clouds = computed(() =>
   [
-    { src: CLOUDS[0], x: props.phone ? 4 : 12, y: 0.12, w: props.phone ? 92 : 150, d: 110 },
-    { src: CLOUDS[1], x: props.phone ? 52 : 58, y: 0.3, w: props.phone ? 70 : 108, d: 140 },
+    {
+      src: CLOUDS[0],
+      x: props.phone ? 6 : 52,
+      y: props.phone ? 0.02 : 0.08,
+      w: props.phone ? 70 : 130,
+      d: 240,
+    },
+    { src: CLOUDS[1], x: 62, y: 0.38, w: 96, d: 280 },
   ].slice(0, props.phone ? 1 : 2)
 );
 
@@ -340,12 +348,13 @@ function birdFlock() {
   for (let i = 0; i < n; i++) {
     const b = document.createElement('span');
     const w = 22 + Math.random() * 12;
-    b.style.cssText = `left:${(-i * (26 + Math.random() * 14)).toFixed(0)}px;top:${((i % 2 ? 1 : -1) * i * 7 + Math.random() * 6).toFixed(0)}px;width:${w.toFixed(0)}px;--f:${(0.42 + Math.random() * 0.16).toFixed(2)}s;--fo:${(-Math.random()).toFixed(2)}s`;
+    b.style.cssText = `left:${(-i * (26 + Math.random() * 14)).toFixed(0)}px;top:${((i % 2 ? 1 : -1) * i * 7 + Math.random() * 6).toFixed(0)}px;width:${w.toFixed(0)}px;--f:${(0.84 + Math.random() * 0.32).toFixed(2)}s;--fo:${(-Math.random()).toFixed(2)}s`;
     b.innerHTML = `<img src="${BIRDS}" alt="">`;
     flock.appendChild(b);
   }
   host.appendChild(flock);
-  const dur = 9000 + Math.random() * 3000;
+  // Same crossing distance, twice the duration: exactly half the former travel speed.
+  const dur = 18000 + Math.random() * 6000;
   const a = animate(
     flock,
     [
@@ -382,8 +391,8 @@ function schedule() {
   stops.push(
     rare(birdFlock, {
       first: 2500,
-      min: 18000,
-      max: 34000,
+      min: 36000,
+      max: 68000,
       when: () => when() && mode.value === 'day',
     })
   );
@@ -507,7 +516,7 @@ onBeforeUnmount(() => {
 }
 @keyframes cloud-drift {
   to {
-    transform: translate3d(6vw, 0, 0);
+    transform: translate3d(18px, 0, 0);
   }
 }
 .birds :deep(.flock) {
@@ -526,10 +535,18 @@ onBeforeUnmount(() => {
   width: 200%;
   height: 100%;
   max-width: none;
-  animation: flap var(--f) steps(1) var(--fo) infinite;
+  animation: flap calc(var(--f) * 4) steps(1) var(--fo) infinite;
 }
+/* Two slower wingbeats, then an equally long held-wing glide. Each bird has its own phase. */
 @keyframes flap {
-  50% {
+  0%,
+  25%,
+  50%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  12.5%,
+  37.5% {
     transform: translate3d(-50%, 0, 0);
   }
 }

@@ -13,7 +13,8 @@
 // Exports kept for App/Nav: switchPage, toggleTheme, warmOther, tideSrc (always '' now: D's
 // painted tide wave is cut). For lamps: fadeReady(), fadeDelay().
 import { nextTick, ref } from 'vue';
-import { boot, store, theme, wait } from './state.js';
+import { boot, theme, wait } from './state.js';
+import { setTheme } from '../../lib/theme.js';
 import { otherThemeArt } from './home/art.js';
 import { animate, motionTimeout } from './home/motion.js';
 
@@ -92,8 +93,7 @@ function warmLater(ms) {
 async function applyTheme(next, ticket) {
   if (!current(ticket)) return;
   document.documentElement.dataset.theme = next;
-  theme.value = next;
-  store('lounge-e-theme', next);
+  setTheme(next);
   await nextTick();
   /* Capped: a stalled decode must not hold the transition (or a waiting page switch). */
   await Promise.race([Promise.all(themeImgs().map((i) => i.decode().catch(() => {}))), wait(400)]);

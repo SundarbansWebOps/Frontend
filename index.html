@@ -41,7 +41,8 @@
           document.documentElement.classList.add('sign-in-active');
         let t = null;
         try {
-          t = localStorage.getItem(lounge ? 'lounge-e-theme' : 'sundarbans-theme');
+          t = localStorage.getItem('sundarbans-theme');
+          if (t !== 'light' && t !== 'dark') t = localStorage.getItem('lounge-e-theme');
         } catch {
           /* storage blocked */
         }
