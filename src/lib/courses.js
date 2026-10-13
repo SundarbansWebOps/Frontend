@@ -176,10 +176,9 @@ export const TOOLS = [
     id: 'grade',
     label: 'Grade calculator',
     hint: 'What you need in the end term',
-    href: '#grade',
+    href: '/#/grade',
     icon: 'calc',
     internal: true,
-    soon: true,
   },
   {
     id: 'handbook',
