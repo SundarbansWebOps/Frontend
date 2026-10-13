@@ -103,6 +103,47 @@ test('a poster uploads to Cloudinary through a signed request', async ({ page })
   });
 });
 
+test('a poster on a new event saves the draft first, then uploads', async ({ page }) => {
+  const calls = await mockSupabase(page, {
+    as: 'rc',
+    data: {
+      events: [{ id: EVENT_ID }],
+      '/functions/v1/sign-event-image': {
+        upload_url: 'https://api.cloudinary.com/v1_1/l59gy0g2/image/upload',
+        cloud_name: 'l59gy0g2',
+        api_key: 'k',
+        timestamp: '1',
+        signature: 's',
+        folder: `sundarbans/events/${EVENT_ID}`,
+        allowed_formats: 'jpg,png,webp',
+        transformation: 'c_limit,w_1600',
+      },
+    },
+  });
+  await page.route('https://api.cloudinary.com/**', (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' },
+      body: JSON.stringify({ version: 3, public_id: 'p', format: 'png', width: 800, height: 800 }),
+    })
+  );
+  await page.goto('/#/admin?tab=events');
+  await page.getByRole('button', { name: 'New event' }).click();
+  await expect(page.getByText('Adding one saves this event as a draft.')).toBeVisible();
+  await expect(page.getByText('Certificates (optional)')).toBeVisible();
+  await page.getByLabel('Name', { exact: true }).fill('Fresh event');
+  await page.getByLabel('Upload poster').setInputFiles({
+    name: 'p.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from([0x89, 0x50, 0x4e, 0x47]),
+  });
+  await expect(page.getByAltText('Event poster')).toBeVisible();
+  const created = JSON.parse((await callTo(calls, '/rest/v1/events', 'POST')).body);
+  expect(created.name).toBe('Fresh event');
+  const signed = JSON.parse((await callTo(calls, '/functions/v1/sign-event-image', 'POST')).body);
+  expect(signed).toEqual({ event_id: EVENT_ID });
+});
+
 test('the public Events page shows Public upcoming events above the archive', async ({ page }) => {
   await mockSupabase(page, {
     signedIn: false,

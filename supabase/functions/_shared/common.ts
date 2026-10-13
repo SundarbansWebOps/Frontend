@@ -25,14 +25,24 @@ export const admin = createClient(SUPABASE_URL, secretKey(), {
     autoRefreshToken: false
   }
 });
-// CORS: browsers are allowed only from origins listed in ALLOWED_ORIGINS (comma-separated).
-// With the secret unset, no CORS headers are sent and browsers are refused; curl still works.
-// An entry may use "*" inside a host label, e.g. Vercel previews:
+// CORS: browsers are allowed only from the house's own sites (below) plus any origins listed in the
+// ALLOWED_ORIGINS secret (comma-separated). Origins are not secret; keeping the house's own here
+// means a mistyped secret can never lock the site out. Other origins get no CORS headers; curl
+// still works. An entry may use "*" inside a host label, e.g. Vercel previews:
 // https://sundarbans-*-sundarbans-projects.vercel.app. Every "*" matches letters, digits and "-"
 // only (never a dot); everything else is matched literally. Tokens are sent as bearer headers, not
 // cookies, so another origin cannot borrow a member's session through CORS.
+const HOUSE_ORIGINS = [
+  "https://sundarbans.iitmbs.org",
+  "https://sundarbans-testing.vercel.app",
+  "https://sundarbans-*-sundarbans-projects.vercel.app",
+  "http://localhost:5173"
+];
 const escapeRegExp = (s)=>s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const allowedOrigins = (Deno.env.get("ALLOWED_ORIGINS") ?? "").split(",").map((o)=>o.trim()).filter(Boolean).map((o)=>o.includes("*") ? new RegExp(`^${o.split("*").map(escapeRegExp).join("[a-z0-9-]+")}$`) : o);
+const allowedOrigins = [
+  ...HOUSE_ORIGINS,
+  ...(Deno.env.get("ALLOWED_ORIGINS") ?? "").split(",")
+].map((o)=>o.trim().replace(/^["']+|["']+$/g, "").trim().replace(/\/+$/, "")).filter(Boolean).map((o)=>o.includes("*") ? new RegExp(`^${o.split("*").map(escapeRegExp).join("[a-z0-9-]+")}$`) : o);
 function originAllowed(origin) {
   return allowedOrigins.some((a)=>typeof a === "string" ? a === origin : a.test(origin));
 }

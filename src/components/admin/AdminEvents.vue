@@ -181,16 +181,18 @@
             />
             <div class="poster-acts">
               <input
-                v-if="form.id"
                 class="adm-input"
                 type="file"
                 :accept="POSTER_TYPES.join(',')"
                 aria-label="Upload poster"
-                :disabled="busy"
+                :disabled="busy || !form.name"
                 @change="onPoster"
               />
-              <small v-if="form.id">JPG, PNG or WebP, up to 10 MB.</small>
-              <small v-else>Save the draft first, then add a poster.</small>
+              <small>
+                The picture shown on the Events page and in the Lounge. JPG, PNG or WebP, up to 10
+                MB.<template v-if="!form.id"> Adding one saves this event as a draft.</template>
+              </small>
+              <p v-if="posterBusy" class="adm-note" role="status">Uploading the poster…</p>
               <button
                 v-if="form.image_url"
                 type="button"
@@ -206,6 +208,7 @@
           <span>Description</span>
           <textarea v-model.trim="form.description" class="adm-input" maxlength="4000" />
         </label>
+        <p class="adm-kicker wide certs-h">Certificates (optional)</p>
         <label class="adm-field">
           <span>Attendance</span>
           <select
@@ -218,7 +221,7 @@
           </select>
         </label>
         <label class="adm-field wide">
-          <span>Signed template URL</span>
+          <span>Certificate template URL</span>
           <input
             v-model.trim="form.certificate_template_url"
             class="adm-input"
@@ -226,10 +229,13 @@
             placeholder="https://…"
             :disabled="!!form.certificates_released_at"
           />
-          <small>HTTPS only. A blank signed template, not a filled certificate.</small>
+          <small>
+            The blank, signed certificate design used for participation certificates. Not the event
+            poster.
+          </small>
         </label>
         <label v-if="form.id && !form.certificates_released_at" class="adm-field wide">
-          <span>Or upload a template (PNG, JPEG or WebP, 10 MB)</span>
+          <span>Or upload a certificate template (not the poster)</span>
           <input
             class="adm-input"
             type="file"
@@ -647,18 +653,21 @@ async function save(mode) {
   }
 }
 
+const posterBusy = ref(false);
 async function onPoster(ev) {
   const file = ev.target.files?.[0];
-  if (!file || !form.value?.id) return;
+  if (!file || !form.value) return;
   formError.value = '';
-  busy.value = true;
+  busy.value = posterBusy.value = true;
   try {
+    // A poster belongs to a saved event: save the draft first if this is a new one.
+    if (!form.value.id) form.value.id = await saveEvent(payload());
     Object.assign(form.value, await uploadEventPoster(form.value.id, file));
     await saveEvent(payload());
   } catch (e) {
     formError.value = friendly(e);
   } finally {
-    busy.value = false;
+    busy.value = posterBusy.value = false;
     ev.target.value = '';
   }
 }
@@ -810,6 +819,11 @@ async function release() {
 </script>
 
 <style scoped>
+.certs-h {
+  margin: 10px 0 -4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
 .poster {
   display: flex;
   align-items: flex-start;

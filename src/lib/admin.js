@@ -913,6 +913,8 @@ export const cancelRequest = (id) =>
 
 async function invoke(name, body) {
   const { data, error } = await supabase.functions.invoke(name, { body });
+  if (error?.name === 'FunctionsFetchError')
+    throw new Error('Could not reach the server. Check your connection and try again.');
   if (error) {
     let message = error.message;
     try {
