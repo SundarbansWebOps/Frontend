@@ -87,14 +87,18 @@
               </button>
             </div>
             <figure class="why rise par-slow" style="--r: 2">
-              <img
-                class="why-plate"
-                :src="ASSET.forest800"
-                alt=""
-                width="800"
-                height="478"
-                decoding="async"
-              />
+              <div class="why-plate">
+                <img
+                  class="why-forest"
+                  :src="ASSET.forest800"
+                  alt=""
+                  width="800"
+                  height="478"
+                  decoding="async"
+                />
+                <!-- The house crest, held in the open sky between the two mangrove banks. -->
+                <img class="why-crest" :src="crest" alt="" width="256" height="256" />
+              </div>
               <figcaption class="why-body">
                 <p class="tagline">
                   <span v-for="word in TENURE.tagline" :key="word">{{ word }}</span>
@@ -297,6 +301,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import PatFigure from '../components/site/PatFigure.vue';
+import crest from '../assets/crest.webp';
 import boatArt from '../assets/legacy/a-boat.webp';
 import mooringArt from '../assets/legacy/a-mooring.webp';
 import skiffArt from '../assets/pat/gathering-boat-l.webp';
@@ -829,11 +834,26 @@ onBeforeUnmount(() => {
   box-shadow: var(--shadow);
 }
 .why-plate {
+  position: relative;
+  height: clamp(120px, 22vh, 220px);
+}
+.why-forest {
   display: block;
   width: 100%;
-  height: clamp(120px, 22vh, 220px);
+  height: 100%;
   object-fit: cover;
   object-position: center 70%;
+}
+.why-crest {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: auto;
+  height: clamp(56px, 52%, 108px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+  translate: -50% -50%;
 }
 .why-body {
   display: grid;
