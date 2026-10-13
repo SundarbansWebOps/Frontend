@@ -181,3 +181,7 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 
 ## 2026-10-10 — Fourth super-admin account authorized
 **Why:** Raja explicitly requested adding the Deputy Secretary account. Preserved all existing admins; live allowlist now has four entries, superseding the previous exactly-three limit.
+
+## 2026-10-13 — Event posters on Cloudinary (signed), Public/Members-only audience, RC house-wide events need approval
+**Why:** The owner asked for admins to upload event images, choose an audience, and see new events on the public and Lounge pages. Posters stay on the house Cloudinary account (the 35 archive posters already are) via a signed upload from an Edge Function, so the API secret never reaches the browser. A Public toggle lists upcoming events publicly; members-only events stay in the Lounge until they end. RCs publish their own region's events directly; house-wide events from an RC go live only when a Super Admin approves, after which only Super Admins edit them (owner's choice). Rejected: unsigned Cloudinary presets (anyone could upload), Supabase Storage for posters (different host, no resizing), and publishing every upcoming event publicly.
+

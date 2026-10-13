@@ -1,6 +1,7 @@
 <!--
-  Events: the public archive. Past events only; live events are announced to
-  members inside the House lounge. Swell chart → month-by-month log. (Meetups live on House.)
+  Events: "Coming up" (upcoming events an organiser marked Public), then the public archive:
+  swell chart → month-by-month log. Members-only events stay in the House lounge until they end.
+  (Meetups live on House.)
 -->
 <template>
   <main id="main-content" class="wrap" tabindex="-1">
@@ -15,10 +16,29 @@
       <p v-if="publicCatalog.error" class="sub" role="alert">{{ publicCatalog.error }}</p>
       <p v-else-if="!first" class="sub">Past events the house has published.</p>
       <p v-else class="sub">
-        Everything the house has run since {{ MONTH[first.m] }} {{ first.y }}. Upcoming events are
-        announced to members in the House lounge.
+        Everything the house has run since {{ MONTH[first.m] }} {{ first.y }}. More upcoming events
+        are announced to members in the House lounge.
       </p>
     </header>
+
+    <section
+      v-if="upcoming.length"
+      v-inview
+      class="soon rise"
+      style="--i: 1"
+      aria-labelledby="soon-h"
+    >
+      <h2 id="soon-h" class="soon-h">Coming up</h2>
+      <div class="cards">
+        <EventCard
+          v-for="(e, i) in upcoming"
+          :key="e.id"
+          :e="e"
+          :i="i"
+          @open="(id, ev2) => openEvent(id, ev2)"
+        />
+      </div>
+    </section>
 
     <div class="controls rise" style="--i: 1">
       <div ref="chipRow" class="chips" role="radiogroup" aria-label="Filter by wing">
@@ -127,7 +147,7 @@
       </TransitionGroup>
     </section>
 
-    <EventSheet :list="visible" />
+    <EventSheet :list="sheetList" />
   </main>
 </template>
 
@@ -149,6 +169,7 @@ import {
   monthLong,
   openEvent,
   publicCatalog,
+  upcoming,
 } from '../lib/events.js';
 
 // A wing filter arrives from a Teams community card (ev.wing) or an old /community/* link (?wing=).
@@ -162,6 +183,10 @@ const findEl = ref(null);
 const chart = ref(null);
 
 const dated = computed(() => events.filter((e) => e.at));
+// The sheet pages through the list the open event belongs to.
+const sheetList = computed(() =>
+  upcoming.some((e) => e.id === ev.open) ? upcoming : visible.value
+);
 const first = computed(() => dated.value.at(-1));
 // The swell chart shows last calendar year and this year up to today; the log below keeps the full archive.
 const chartEvents = computed(() => {
@@ -362,6 +387,15 @@ h1 {
   color: var(--ink-2);
 }
 
+.soon {
+  padding: 6px 0 10px;
+}
+.soon-h {
+  margin: 0 0 18px;
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
 .controls {
   display: flex;
   flex-wrap: wrap;

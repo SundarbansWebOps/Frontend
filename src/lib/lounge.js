@@ -50,6 +50,9 @@ export const reviewRegionRequest = (id, approve, note = '') =>
   rpc('review_region_change', { p_request_id: id, p_approve: approve, p_note: note || null });
 export const listLoungeEvents = () => rpc('list_lounge_events');
 export const listPublicPastEvents = () => rpc('list_public_past_events');
+// Archive + past + upcoming events marked Public (each with a stage). Falls back to the older
+// past-only RPC while a database without list_public_events is still deployed.
+export const listPublicEvents = () => rpc('list_public_events').catch(() => listPublicPastEvents());
 export const getAvailableCohorts = () => rpc('get_available_cohorts');
 export const listForms = () => rpc('list_lounge_forms');
 export const saveForm = (form) => rpc('save_lounge_form', { p_form: form });
