@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/teams/legacy/2023-24',
     name: 'Tenure2023',
-    component: () => import('../pages/TenureStoryPage.vue'),
+    component: () => import('../pages/TenureReadPage.vue'),
   },
   {
     path: '/lounge',
