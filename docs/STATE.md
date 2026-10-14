@@ -1,8 +1,9 @@
 # Sundarbans House — State
-> IITM BS frontend/backend · Last checkpoint: 2026-10-12 20:58 IST
+> IITM BS frontend/backend · Last checkpoint: 2026-10-14 11:26 IST
 
 ## In progress / next
-- **Legacy Board merged as PR #155 (2026-10-11).** `/#/teams/legacy` shows councils 2021–2025 with `?year=` and `?team=`. Deployed to sundarbans-testing through a local merge into `chore/testing-fork-gate`. Still open from the 2026-10-11 log: Sol re-review of the fixes, real-browser animation checks, physical phone swipe and hidden-tab pause.
+- **2023–24 tenure reading page + Legacy Board scroll — PR #163 (`feat/legacy-tenure-2023-story`), open.** `/#/teams/legacy/2023-24` → `src/pages/TenureReadPage.vue`: docs-style layout (Part dropdowns in a left sidebar, scroll-spy, "On this page" rail with margin art; sticky Contents dropdown under 1020px). Text is `src/data/tenure-2023.md` parsed at runtime, every word kept (Part VI and two editorial notes left out — Raja to confirm with the council). `LegacyPage.vue` now scrolls year to year (sticky view, snap, boat follows scroll, one year per wheel notch, `?year=` deep link, default 2021) with a "Read more" link on 2023. Shareable preview: https://sundarbans-legacy-2023-24.vercel.app (Vercel project `sundarbans-legacy-2023-24`, static build of a legacy-only router copy; see 2026-10-14 log). Old story view + prototype archived in `~/Anuraj-dev/legacy-board-designs/`. **Next: council/Raja review of the PR.** Unverified: real Chrome, physical phone touch scroll.
+- **Legacy Board merged as PR #155 (2026-10-11).** `/#/teams/legacy` shows councils 2021–2025 with `?year=` and `?team=`. Still open from the 2026-10-11 log: Sol re-review of the fixes, real-browser animation checks, physical phone swipe and hidden-tab pause.
 - **Prototype survey picker is on main.** `prototype/resource-hub/PrototypeSwitcher.vue`: Launch switches among three working designs and opens five static concepts. Resources keeps only Delta (A); B and C are dropped. Preview on the prototype dev server, port 5191.
 - **Resources course board, tickets, drawer and two site fixes committed locally on `pr-156`; not pushed.** Commits `12bd110` (single-board subject picker, ticket and drawer redesign), `8726234` (calendar hover label readable), `b992411` (quick-link underline removed), `a5ef3ac` (calendar dialog uses smooth ease-out, no bounce). Lint, `scripts/check-design.mjs` and Playwright hover/motion/link checks pass. **Next: Raja reviews the calendar and quick links, then says whether to push and open the PR.** Do not open a PR before that. Carried over and unverified: dark-theme check of the new ticket and drawer, 360px width, phone word-breaking of long subject names.
 - **PR #156 CI formatting fix passed.** Formatted `src/components/site/CourseTicket.vue` and `src/data/branches.js`. GitHub Actions run [38139553891](https://github.com/SundarbansWebOps/Frontend/actions/runs/38139553891) passes all checks. Maintainer @Anuraj-dev tagged on the PR. Vercel remains a separate failed status because the team must authorize the deployment.
@@ -35,6 +36,7 @@
 - Auth/client/router: `src/lib/auth.js`, `auth-profile.js`, `supabase.js`, `src/router/index.js`; synthetic client `src/lib/local-lounge.js`.
 - Lounge: `src/lib/lounge.js`, `src/components/lounge/{session,events}.js`, `src/pages/{LoungePage,FormPage}.vue`.
 - Admin: `src/pages/AdminPage.vue`, `src/components/admin/`, `src/lib/admin.js`.
+- Legacy Board: `src/pages/{LegacyPage,TenureReadPage}.vue`, `src/data/{legacy,tenure-2023}*`, art `src/assets/legacy/`.
 - Public archive/navigation: `src/lib/events.js`, `src/components/site/`, public pages; DB first, `src/data/events.data.js` fallback.
 - Tests: `e2e/`, `supabase/tests/{020,031,concurrency.py,run-local.sh}`. New migration: `supabase/migrations/20261010000000_audit_fixes.sql`.
 

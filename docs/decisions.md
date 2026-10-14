@@ -184,3 +184,6 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 
 ## 2026-10-11 — Legacy Board keeps hash routing; year lives in `?year=`
 **Why:** Switching to clean URLs risks live OAuth redirects, shared links and about 78 `#/` references, and Vercel has no SPA rewrite; a separate change. Rejected `#2021` hashes because the hash is the route.
+
+## 2026-10-14 — 2023–24 tenure is a plain reading page fed by the council's own markdown
+**Why:** The council rejected the illustrated story view; they want their words read in full. `src/data/tenure-2023.md` is a verbatim copy of their document (Parts I–V) parsed at runtime, rendered as text (no `v-html`), so edits are one file and no words are cut. Part VI (instructions to the web team) and two "note for the website" lines are left out as directions, not content. Rejected: hand-converting the text into JS data (drift, dropped words).
