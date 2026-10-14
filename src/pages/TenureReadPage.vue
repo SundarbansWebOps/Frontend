@@ -201,7 +201,7 @@ const ART = {
   16: startupArt,
 };
 
-// The markdown uses only: `# **Heading**`, `## **Sub**`, `---`, `* item`, `1. item`, indented
+// The markdown uses only: `# **Heading**`, `## **Sub**`, `---`, `* item` or `- item`, `1. item`, indented
 // continuation lines, `**bold**`, `\.` escapes, and two-space hard breaks. Each line of a
 // paragraph or item is kept as its own line.
 const unescape = (s) => s.replace(/\\\./g, '.');
@@ -280,7 +280,7 @@ function parse(src) {
       continue;
     }
 
-    const ul = /^\* (.*)$/.exec(bare);
+    const ul = /^[*-] (.*)$/.exec(bare);
     const ol = /^(\d+)\. (.*)$/.exec(bare);
     if (ul || ol) {
       const ordered = Boolean(ol);

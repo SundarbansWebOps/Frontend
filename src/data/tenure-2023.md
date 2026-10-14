@@ -30,15 +30,15 @@ However, the online nature of the IITM BS programme created several challenges. 
 We identified these gaps and decided to work on them.  
 Our major objectives were:
 
-1. **Connect students:** Help students make friends and connect with other IITM BS students living in their cities.  
-2. **Improve academic support:** Provide subject-wise communities, notes, previous-term papers, and opportunities for collaborative learning.  
-3. **Improve placement preparation:** Build a structured, end-to-end placement preparation ecosystem.  
-4. **Support GATE aspirants:** Provide structured guidance and a dedicated community for students preparing for GATE.  
-5. **Promote Generative AI:** Build a dedicated GenAI club and community to provide students with better exposure to this emerging field.  
-6. **Make the community safe and secure:** Introduce a WhatsApp verification system to improve accountability and member safety.  
-7. **Make information accessible:** Build an AI assistant that could answer students' common queries.  
-8. **Build a central digital platform:** Bring the services, resources, communities, and initiatives of Sundarbans together through a full-stack website.  
-9. **Keep students informed:** Introduce a newsletter to communicate updates and opportunities.  
+1. **Connect students:** Help students make friends and connect with other IITM BS students living in their cities.
+2. **Improve academic support:** Provide subject-wise communities, notes, previous-term papers, and opportunities for collaborative learning.
+3. **Improve placement preparation:** Build a structured, end-to-end placement preparation ecosystem.
+4. **Support GATE aspirants:** Provide structured guidance and a dedicated community for students preparing for GATE.
+5. **Promote Generative AI:** Build a dedicated GenAI club and community to provide students with better exposure to this emerging field.
+6. **Make the community safe and secure:** Introduce a WhatsApp verification system to improve accountability and member safety.
+7. **Make information accessible:** Build an AI assistant that could answer students' common queries.
+8. **Build a central digital platform:** Bring the services, resources, communities, and initiatives of Sundarbans together through a full-stack website.
+9. **Keep students informed:** Introduce a newsletter to communicate updates and opportunities.
 10. **Encourage participation:** Give members opportunities to propose and organise meaningful initiatives.
 
 It all started with the problems students were facing and our commitment to solving them.  
@@ -69,12 +69,12 @@ To connect students living near one another, help them build friendships, and ma
 We built StudyBuddy, the first social media platform of the IITM BS degree, to help students discover and connect with fellow IITM BS students living in the same city or nearby areas.  
 Through StudyBuddy, students could:
 
-* Discover other students living nearby.  
-* See the approximate distance between themselves and other students.  
-* Find fellow students in their city.  
-* Connect with other students through LinkedIn, Instagram, Snapchat, and other social platforms.  
-* Build friendships and local student networks.  
-* Find peers with whom they could study, collaborate, and share experiences.
+- Discover other students living nearby.
+- See the approximate distance between themselves and other students.
+- Find fellow students in their city.
+- Connect with other students through LinkedIn, Instagram, Snapchat, and other social platforms.
+- Build friendships and local student networks.
+- Find peers with whom they could study, collaborate, and share experiences.
 
 The purpose was simple: help students discover other IITM BS students living around them and make it easier to connect with those students.  
 StudyBuddy was not just another technical project. It was a solution to a problem created by the online nature of the degree.  
@@ -100,12 +100,12 @@ To make Sundarbans a single destination where students could find the academic r
 
 We established multiple subject-wise student communities where students could:
 
-* Ask questions and clarify academic doubts.  
-* Help other students understand difficult concepts.  
-* Discuss subject-specific topics.  
-* Prepare for examinations together.  
-* Share knowledge and learning resources.  
-* Collaborate with peers pursuing the same subjects.
+- Ask questions and clarify academic doubts.
+- Help other students understand difficult concepts.
+- Discuss subject-specific topics.
+- Prepare for examinations together.
+- Share knowledge and learning resources.
+- Collaborate with peers pursuing the same subjects.
 
 Alongside these communities, Sundarbans collaborated with TheOpenNotes to provide subject-wise notes and previous-term examination papers.  
 This brought together three important elements of academic support: learning resources, examination preparation material, and student communities.  
@@ -157,19 +157,19 @@ To provide end-to-end, structured placement preparation support to students prep
 We launched an entire placement preparation series covering both soft skills and technical skills.  
 Soft skills and professional preparation included:
 
-* Resume building.  
-* Communication skills.  
-* Professional development.  
-* Other essential skills required during the placement process.
+- Resume building.
+- Communication skills.
+- Professional development.
+- Other essential skills required during the placement process.
 
 Technical preparation included:
 
-* SQL.  
-* Machine learning.  
-* Deep learning.  
-* Generative AI.  
-* Cloud   
-* Big Data
+- SQL.
+- Machine learning.
+- Deep learning.
+- Generative AI.
+- Cloud
+- Big Data
 
 Other technical subjects and skills relevant to placement preparation.  
 We brought in subject-matter experts and professionals associated with some of the world's leading technology companies, including Google, Amazon, IBM, and Apple, among others.  
@@ -188,9 +188,9 @@ Our focus was on providing meaningful support rather than simply following the c
 We complemented the Placement Series with a dedicated placement community.  
 The community brought together:
 
-* Students currently preparing for placements.  
-* Students planning to begin their preparation.  
-* Students who had already secured placements and could share their experiences.
+- Students currently preparing for placements.
+- Students planning to begin their preparation.
+- Students who had already secured placements and could share their experiences.
 
 Members could help one another, discuss technical concepts, share preparation resources, exchange job and internship opportunities, and learn from peers and seniors.  
 If students needed guidance, Sundarbans was there.  
@@ -219,12 +219,12 @@ We launched the Sundarbans GATE Series, covering most of the relevant subjects a
 Alongside the series, we created a dedicated student community for GATE aspirants.  
 Through this community, students could:
 
-* Connect with other GATE aspirants.  
-* Discuss difficult concepts.  
-* Share preparation resources.  
-* Exchange preparation strategies.  
-* Study together.  
-* Help each other throughout their preparation journey.
+- Connect with other GATE aspirants.
+- Discuss difficult concepts.
+- Share preparation resources.
+- Exchange preparation strategies.
+- Study together.
+- Help each other throughout their preparation journey.
 
 We wanted GATE preparation to become a more organised and collaborative experience.  
 Sundarbans was the first and only house to provide this kind of planned and structured GATE preparation guidance alongside a dedicated community for GATE aspirants.  
@@ -332,18 +332,18 @@ Our vision was not to create a website that merely displayed information. We wan
 Sundarbans became the first and only house to build a full-stack website and offer its services through it, going beyond the conventional landing-page approach.  
 The website brought together:
 
-* Information about Sundarbans.  
-* Events, clubs, and initiatives.  
-* Subject-wise academic notes.  
-* Previous-term examination papers.  
-* Academic student communities.  
-* Placement preparation resources and the placement community.  
-* GATE preparation support and its dedicated community.  
-* StudyBuddy for connecting with nearby students.  
-* The WhatsApp verification system.  
-* The Sundarbans AI Assistant.  
-* The newsletter and student updates.  
-* Other resources and services offered by Sundarbans.
+- Information about Sundarbans.
+- Events, clubs, and initiatives.
+- Subject-wise academic notes.
+- Previous-term examination papers.
+- Academic student communities.
+- Placement preparation resources and the placement community.
+- GATE preparation support and its dedicated community.
+- StudyBuddy for connecting with nearby students.
+- The WhatsApp verification system.
+- The Sundarbans AI Assistant.
+- The newsletter and student updates.
+- Other resources and services offered by Sundarbans.
 
 Students could access multiple services through a single digital platform rather than having to navigate disconnected websites, resources, and communities.  
 If students needed academic resources, the website provided a central place to find them.  
@@ -399,29 +399,28 @@ The GenAI Club and community were created to provide students with a dedicated e
 We encouraged members to propose meaningful ideas and take responsibility for organising initiatives that created value for students.  
 This was the ecosystem we wanted to build.
 
-* We were not building isolated projects. We were building a comprehensive support system around the needs of IITM BS students.
+- We were not building isolated projects. We were building a comprehensive support system around the needs of IITM BS students.
 
 # **15\. Our Firsts and Major Achievements**
 
-
 1. **The First House to Build a 100% Verified WhatsApp Community**  
-   Sundarbans was the first house to build a WhatsApp community with 100% verified members.  
+   Sundarbans was the first house to build a WhatsApp community with 100% verified members.
 2. **The First House to Build a Full-Stack Website and Offer Its Services**  
-   Sundarbans was the first house to build a full-stack website that offered actual student-facing services rather than functioning only as a basic informational landing page.  
+   Sundarbans was the first house to build a full-stack website that offered actual student-facing services rather than functioning only as a basic informational landing page.
 3. **The First and Only House to Provide Notes and Previous-Term Papers**  
-   Sundarbans was the first and only house to provide subject-wise academic notes and previous-term examination papers.  
+   Sundarbans was the first and only house to provide subject-wise academic notes and previous-term examination papers.
 4. **The First House to Start an AI- or GenAI-Related Club**  
-   Sundarbans was the first house to introduce an AI- or Generative AI-related club within the IITM BS student ecosystem way before Gen AI course was introduced diploma level  
+   Sundarbans was the first house to introduce an AI- or Generative AI-related club within the IITM BS student ecosystem way before Gen AI course was introduced diploma level
 5. **The First House to Build a Platform Connecting Nearby Students**  
-   Sundarbans built StudyBuddy, the first social media platform of IITM BS, to help students discover and connect with other students living nearby.  
+   Sundarbans built StudyBuddy, the first social media platform of IITM BS, to help students discover and connect with other students living nearby.
 6. **The First and Only House to Develop Its Own AI Assistant**  
-   Sundarbans was the first and only house to develop its own AI assistant to resolve students' queries.  
+   Sundarbans was the first and only house to develop its own AI assistant to resolve students' queries.
 7. **The First and Only Student Body to Provide the Structured Placement Ecosystem We Introduced**  
-   Sundarbans was the first and only student body to provide the fully planned and structured placement guidance ecosystem we introduced, with experts associated with leading technology companies such as Google, Amazon, IBM, and Apple, among others, and a dedicated placement community.  
+   Sundarbans was the first and only student body to provide the fully planned and structured placement guidance ecosystem we introduced, with experts associated with leading technology companies such as Google, Amazon, IBM, and Apple, among others, and a dedicated placement community.
 8. **The First and Only House to Provide Structured GATE Guidance and a Dedicated Community**  
-   Sundarbans was the first and only house to provide planned and structured GATE preparation guidance alongside a dedicated student community for GATE aspirants.  
+   Sundarbans was the first and only house to provide planned and structured GATE preparation guidance alongside a dedicated student community for GATE aspirants.
 9. **One of the First Few Houses to Organise Offline Meetups**  
-   Sundarbans was among the first few houses to organise offline meetups after the initiative was introduced to the degree community in March 2024\.  
+   Sundarbans was among the first few houses to organise offline meetups after the initiative was introduced to the degree community in March 2024\.
 10. **The First Newsletter of IITM BS**  
     Sundarbans launched the first newsletter of IITM BS before any other house or society.
 
@@ -444,15 +443,15 @@ To build an environment where aspiring student entrepreneurs could learn the fun
 
 ## **The proposed roadmap**
 
-1. **Idea Generation and Validation:** Identifying meaningful problems, developing ideas, validating assumptions, and determining whether a proposed solution addresses a real need.  
-2. **Market Research:** Understanding the target market, researching customer needs, analysing competitors, and identifying business opportunities.  
-3. **Building an MVP:** Converting an idea into a minimum viable product, testing it with real users, gathering feedback, and validating demand.  
-4. **Product Development:** Understanding product design, development, iteration, user feedback, and the process of building something customers genuinely want.  
-5. **Marketing and Growth:** Learning positioning, branding, customer acquisition, marketing strategies, and business growth.  
-6. **Sales:** Understanding sales processes, customer conversations, lead generation, closing customers, and revenue generation.  
-7. **Fundraising:** Learning about pitch decks, investor outreach, funding options, fundraising strategies, and the fundraising process.  
-8. **Company Registration and Legal Foundations:** Understanding company incorporation, registration requirements, compliance basics, and the legal foundations of running a startup.  
-9. **Incubation:** Learning how to identify suitable incubators, apply for incubation programmes, and access startup resources and support.  
+1. **Idea Generation and Validation:** Identifying meaningful problems, developing ideas, validating assumptions, and determining whether a proposed solution addresses a real need.
+2. **Market Research:** Understanding the target market, researching customer needs, analysing competitors, and identifying business opportunities.
+3. **Building an MVP:** Converting an idea into a minimum viable product, testing it with real users, gathering feedback, and validating demand.
+4. **Product Development:** Understanding product design, development, iteration, user feedback, and the process of building something customers genuinely want.
+5. **Marketing and Growth:** Learning positioning, branding, customer acquisition, marketing strategies, and business growth.
+6. **Sales:** Understanding sales processes, customer conversations, lead generation, closing customers, and revenue generation.
+7. **Fundraising:** Learning about pitch decks, investor outreach, funding options, fundraising strategies, and the fundraising process.
+8. **Company Registration and Legal Foundations:** Understanding company incorporation, registration requirements, compliance basics, and the legal foundations of running a startup.
+9. **Incubation:** Learning how to identify suitable incubators, apply for incubation programmes, and access startup resources and support.
 10. **Scaling:** Understanding how to expand a customer base, build teams, develop operations, grow revenue, and scale a business sustainably.
 
 ## **Learning from experienced founders**
@@ -462,7 +461,7 @@ Our plan was to have sessions delivered by CXOs of Indian unicorn startups, brin
 We wanted students to learn from experienced leaders rather than rely only on theoretical explanations.  
 Our ambition was to build a complete startup-learning ecosystem:  
 From idea to MVP. From MVP to customers. From customers to revenue. From early traction to scaling.  
-We wanted Sundarbans to become a place where aspiring entrepreneurs could find the knowledge, guidance, and environment needed to take the first steps towards building their own startups.  
+We wanted Sundarbans to become a place where aspiring entrepreneurs could find the knowledge, guidance, and environment needed to take the first steps towards building their own startups.
 
 ---
 
@@ -507,4 +506,4 @@ That was the purpose behind everything we built.
 Sundarbans — Tenure 2023–24.  
 A vision to solve problems. A commitment to build solutions. A legacy of student-driven innovation.
 
-* Inspire. Innovate. Impact.
+- Inspire. Innovate. Impact.
