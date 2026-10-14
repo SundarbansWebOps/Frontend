@@ -1,114 +1,129 @@
 <!--
-  Legacy Board (concept A, Five Landings). One viewport: two arched leaders, a
-  ten-seat deck, and a river of five years. The boat glides to the chosen post;
-  the council fades, then rises once the boat has docked. Water never animates.
+  Legacy Board (concept A, Five Landings). A tall scroll track holds one viewport that sticks
+  under the nav, with two arched leaders, a ten-seat deck and a river of five years. Scrolling
+  moves through the years, 2021 at the top. Scroll drives one number, the year position, and
+  the boat slides between the docks either side of it, leaning into the travel and settling at
+  a post. When the scroll settles on a year the council fades, swaps and rises (at once under
+  reduced motion or in a hidden tab), and the URL follows with `?year=N` (2021 has no query).
+  Wheel notches, arrow and page keys, a stage swipe and a post click each step one year; touch
+  keeps native scrolling and lands on the snap markers. Water never animates.
   The public TopNav and theme stay; this page adds no second theme system.
 -->
 <template>
-  <main id="main-content" class="board" tabindex="-1" :style="crestStyle">
-    <header class="top rise" style="--i: 0">
-      <div class="title">
-        <p class="kicker">Since {{ FOUNDED }}</p>
-        <h1>Legacy Board</h1>
-      </div>
-      <div class="actions">
-        <Transition name="story">
-          <RouterLink
-            v-if="shownYear === TENURE.year"
-            class="story-link"
-            to="/teams/legacy/2023-24"
-          >
-            The {{ TENURE.label }} story
-            <span aria-hidden="true">→</span>
-          </RouterLink>
-        </Transition>
-        <RouterLink class="back" to="/teams">Back to Teams</RouterLink>
-      </div>
-    </header>
+  <main id="main-content" ref="mainRef" class="board" tabindex="-1" :style="boardStyle">
+    <i
+      v-for="(year, i) in YEARS"
+      :key="`snap-${year}`"
+      class="snap"
+      :style="{ top: `calc(${i} * var(--stride))` }"
+      aria-hidden="true"
+    />
 
-    <nav ref="riverRef" class="river" :style="riverStyle" aria-label="Years">
-      <button
-        v-for="(year, i) in YEARS"
-        :key="year"
-        :ref="(el) => bindPost(el, i)"
-        type="button"
-        class="post"
-        :class="{ 'has-art': postArt[i] }"
-        :style="{ '--i': i }"
-        :aria-pressed="selected === year ? 'true' : 'false'"
-        :aria-current="selected === year ? 'true' : undefined"
-        @click="go(year)"
-      >
-        <span class="stake" aria-hidden="true" />
-        <img class="post-img" :src="mooringArt" alt="" decoding="async" @load="markPost(i)" />
-        <span class="post-tag">{{ year }}</span>
-      </button>
-      <div
-        ref="boatRef"
-        class="boat"
-        :class="{ 'dock-right': dockRight, still: boatStill, docked, ready: boatReady }"
-        aria-hidden="true"
-      >
-        <img class="boat-img" :src="boatArt" alt="" width="1200" height="494" decoding="async" />
-      </div>
-    </nav>
-
-    <section
-      class="stage"
-      aria-labelledby="council-h"
-      @pointerdown="onPointerDown"
-      @pointerup="onPointerUp"
-      @pointercancel="onPointerCancel"
-    >
-      <div ref="councilRef" class="council" :class="[phase, { hold }]">
-        <h2 id="council-h" class="visually-hidden">Council {{ shownYear }}</h2>
-        <p class="visually-hidden" aria-live="polite">{{ liveText }}</p>
-        <p class="year-mark arrive" style="--i: 0" aria-hidden="true">{{ shownYear }}</p>
-        <div v-if="council" class="leaders">
-          <div
-            v-for="(person, k) in leaders"
-            :key="person.key"
-            class="leader arrive"
-            :class="k === 0 ? 'is-secretary' : 'is-deputy'"
-            :style="{ '--i': k }"
-          >
-            <div class="arch" :class="{ 'has-art': archReady[person.key] }">
-              <div class="slot">
-                <div class="frame">
-                  <img v-if="person.photo" :src="person.photo" :alt="person.name" />
-                </div>
-              </div>
-              <img
-                class="arch-art"
-                :src="archFrame"
-                alt=""
-                decoding="async"
-                @load="markArch(person.key)"
-              />
-            </div>
-            <div class="leader-text">
-              <p class="name">{{ person.name }}</p>
-              <p class="role">{{ person.role }}</p>
-            </div>
-          </div>
+    <div ref="viewRef" class="view">
+      <header class="top rise" style="--i: 0">
+        <div class="title">
+          <p class="kicker">Since {{ FOUNDED }}</p>
+          <h1>Legacy Board</h1>
         </div>
-        <div v-if="teamRows.length" class="deck arrive" style="--i: 2">
-          <div v-for="(row, ri) in teamRows" :key="ri" class="deck-row">
-            <div
-              v-for="(member, mi) in row"
-              :key="member.id"
-              class="member"
-              :style="{ '--i': seatDelay(ri, mi) }"
+        <div class="actions">
+          <Transition name="story">
+            <RouterLink
+              v-if="shownYear === TENURE.year"
+              class="story-link"
+              to="/teams/legacy/2023-24"
             >
-              <div class="frame">
-                <img v-if="member.photo" :src="member.photo" alt="Team member" />
+              Read more about {{ TENURE.label }}
+              <span aria-hidden="true">→</span>
+            </RouterLink>
+          </Transition>
+          <RouterLink class="back" to="/teams">Back to Teams</RouterLink>
+        </div>
+      </header>
+
+      <nav ref="riverRef" class="river" :style="riverStyle" aria-label="Years">
+        <button
+          v-for="(year, i) in YEARS"
+          :key="year"
+          :ref="(el) => bindPost(el, i)"
+          type="button"
+          class="post"
+          :class="{ 'has-art': postArt[i] }"
+          :style="{ '--i': i }"
+          :aria-pressed="current === year ? 'true' : 'false'"
+          :aria-current="current === year ? 'true' : undefined"
+          @click="go(i)"
+        >
+          <span class="stake" aria-hidden="true" />
+          <img class="post-img" :src="mooringArt" alt="" decoding="async" @load="markPost(i)" />
+          <span class="post-tag">{{ year }}</span>
+        </button>
+        <div
+          ref="boatRef"
+          class="boat"
+          :class="{ 'dock-right': dockRight, ready: boatReady }"
+          aria-hidden="true"
+        >
+          <img class="boat-img" :src="boatArt" alt="" width="1200" height="494" decoding="async" />
+        </div>
+      </nav>
+
+      <section
+        class="stage"
+        aria-labelledby="council-h"
+        @pointerdown="onPointerDown"
+        @pointerup="onPointerUp"
+        @pointercancel="onPointerCancel"
+      >
+        <div ref="councilRef" class="council" :class="[phase, { hold }]">
+          <h2 id="council-h" class="visually-hidden">Council {{ shownYear }}</h2>
+          <p class="visually-hidden" aria-live="polite">{{ liveText }}</p>
+          <p class="year-mark arrive" style="--i: 0" aria-hidden="true">{{ shownYear }}</p>
+          <div v-if="council" class="leaders">
+            <div
+              v-for="(person, k) in leaders"
+              :key="person.key"
+              class="leader arrive"
+              :class="k === 0 ? 'is-secretary' : 'is-deputy'"
+              :style="{ '--i': k }"
+            >
+              <div class="arch" :class="{ 'has-art': archReady[person.key] }">
+                <div class="slot">
+                  <div class="frame">
+                    <img v-if="person.photo" :src="person.photo" :alt="person.name" />
+                  </div>
+                </div>
+                <img
+                  class="arch-art"
+                  :src="archFrame"
+                  alt=""
+                  decoding="async"
+                  @load="markArch(person.key)"
+                />
               </div>
-              <p class="member-cap">Team member</p>
+              <div class="leader-text">
+                <p class="name">{{ person.name }}</p>
+                <p class="role">{{ person.role }}</p>
+              </div>
+            </div>
+          </div>
+          <div v-if="teamRows.length" class="deck arrive" style="--i: 2">
+            <div v-for="(row, ri) in teamRows" :key="ri" class="deck-row">
+              <div
+                v-for="(member, mi) in row"
+                :key="member.id"
+                class="member"
+                :style="{ '--i': seatDelay(ri, mi) }"
+              >
+                <div class="frame">
+                  <img v-if="member.photo" :src="member.photo" alt="Team member" />
+                </div>
+                <p class="member-cap">Team member</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 </template>
 
@@ -126,18 +141,36 @@ import { TENURE } from '../data/tenure-2023.data.js';
 import { theme } from '../lib/theme.js';
 
 const YEARS = LEGACY.map((d) => d.year);
-const DEFAULT_YEAR = YEARS[YEARS.length - 1];
-const DOCK_MS = 600;
+const LAST = YEARS.length - 1;
+// The first year is the top of the track, so it is the canonical URL with no query.
+const DEFAULT_YEAR = YEARS[0];
+// Scroll distance per year, as a share of the viewport height.
+const STEP_VH = 0.8;
+// Scroll quiet this long means the boat has docked: the council rises and the URL follows.
+const IDLE_MS = 140;
+// Longest the council stays faded while the boat is still moving between years.
+const HOLD_MS = 600;
+// Share of a year's travel the boat may drift before the council starts to fade.
+const UNDOCK = 0.12;
+const KEY_STEP = new Map([
+  ['ArrowLeft', -1],
+  ['ArrowUp', -1],
+  ['PageUp', -1],
+  ['ArrowRight', 1],
+  ['ArrowDown', 1],
+  ['PageDown', 1],
+]);
 
 const route = useRoute();
 const router = useRouter();
 
-const crestStyle = { '--crest': `url("${crest}")` };
+const boardStyle = { '--crest': `url("${crest}")`, '--last': LAST };
 const riverStyle = computed(() => ({
   backgroundImage: `url("${theme.value === 'dark' ? plateNight : plateDay}")`,
 }));
 
 const reduceQuery = matchMedia('(prefers-reduced-motion: reduce)');
+// No smooth scrolling, no lean and no animated swap while the reader cannot see them.
 const motionOff = () => reduceQuery.matches || document.hidden;
 
 function queryValue(value) {
@@ -151,8 +184,8 @@ function parsedYear() {
   return YEARS.includes(n) ? n : DEFAULT_YEAR;
 }
 
-// The URL is canonical when it carries exactly what this year needs: no query for the default
-// year, `?year=N` for any other.
+// The URL is canonical when it carries exactly what this year needs: no query for the first
+// year (the top of the board), `?year=N` for any other.
 function queryRepresents(year) {
   const raw = route.query.year;
   return year === DEFAULT_YEAR ? raw === undefined : raw === String(year);
@@ -165,12 +198,16 @@ const teamMax = computed(() => {
 });
 
 const shownYear = ref(parsedYear());
-const selected = ref(null);
+// Index of the year the scroll position asks for, and the year nearest the boat (which drives
+// the post highlight). `goal` is the last year asked for by a click, key or wheel notch, so
+// repeated steps stack on it even while a smooth scroll is still arriving.
+let wanted = YEARS.indexOf(shownYear.value);
+let goal = wanted;
+const current = ref(shownYear.value);
+let settledYear = shownYear.value;
 const phase = ref(motionOff() ? '' : 'pre');
-const docked = ref(true);
-const dockRight = ref(false);
-const boatStill = ref(true);
 const boatReady = ref(false);
+const dockRight = ref(false);
 const hold = ref(false);
 const postArt = reactive(YEARS.map(() => false));
 const archReady = reactive({ secretary: false, deputy: false });
@@ -202,6 +239,8 @@ function seatDelay(rowIndex, index) {
   return (2 + seat * 0.3).toFixed(2);
 }
 
+const mainRef = ref(null);
+const viewRef = ref(null);
 const riverRef = ref(null);
 const boatRef = ref(null);
 const councilRef = ref(null);
@@ -219,7 +258,7 @@ function markPost(i) {
   if (postArt[i]) return;
   postArt[i] = true;
   nextTick(() => {
-    if (selected.value != null) placeBoat(YEARS.indexOf(selected.value), false);
+    if (measure()) paint();
   });
 }
 
@@ -235,48 +274,177 @@ function adoptLoadedArt() {
   });
 }
 
-// Dock beside the selected post, on its left with the bow toward it. The first post on a
-// narrow screen has no room on the left, so the boat sits on its right instead.
-let placeGen = 0;
-function placeBoat(i, animate) {
-  const gen = ++placeGen;
-  const write = (attempt) => {
-    if (gen !== placeGen) return;
-    const riverEl = riverRef.value;
-    const boatEl = boatRef.value;
-    const post = postRefs[i];
-    if (!riverEl || !boatEl || !post || riverEl.clientWidth === 0) {
-      if (attempt < 8) requestAnimationFrame(() => write(attempt + 1));
-      return;
-    }
-    const rr = riverEl.getBoundingClientRect();
-    const stemEl = (
+// Geometry in px. `step` is the scroll distance per year; `viewTop` is where the sticky view
+// rests (under the nav); `dock[i]` is where the boat sits beside post i, on its left with the
+// bow toward it. The first post on a narrow screen has no room on the left, so the boat sits
+// on its right instead.
+let step = 0;
+let viewTop = 0;
+let dock = null;
+
+function measure() {
+  const main = mainRef.value;
+  const river = riverRef.value;
+  const boat = boatRef.value;
+  const view = viewRef.value;
+  if (!main || !river || !boat || !view || river.clientWidth === 0) return false;
+  step = Math.round(innerHeight * STEP_VH);
+  main.style.setProperty('--stride', `${step}px`);
+  viewTop = parseFloat(getComputedStyle(view).top) || 0;
+
+  const rr = river.getBoundingClientRect();
+  const bw = boat.offsetWidth;
+  const gap = 2;
+  dock = postRefs.map((post, i) => {
+    const stem = (
       postArt[i] ? post.querySelector('.post-img') : post.querySelector('.stake')
     ).getBoundingClientRect();
-    const gap = 2;
-    const centre = stemEl.left - rr.left + stemEl.width / 2;
-    const boatW = boatEl.offsetWidth;
-    let x = centre - stemEl.width / 2 - gap - boatW;
+    const centre = stem.left - rr.left + stem.width / 2;
+    let x = centre - stem.width / 2 - gap - bw;
     const right = x < 4;
-    if (right) x = centre + stemEl.width / 2 + gap;
-    const transform = `translate3d(${Math.round(x)}px,0,0)`;
-    dockRight.value = right;
-    // A failed first measure retries as a jump so the boat does not glide in from 0.
-    boatStill.value = !animate || attempt > 0;
-    nextTick(() => {
-      if (gen !== placeGen || !boatRef.value) return;
-      boatRef.value.style.transform = transform;
-      boatReady.value = true;
-    });
-  };
-  write(0);
+    if (right) x = centre + stem.width / 2 + gap;
+    return { x, right };
+  });
+  return true;
 }
 
+// Document scroll position at which year i rests: the sticky view stuck under the nav.
+function yearTop(i) {
+  return scrollY + mainRef.value.getBoundingClientRect().top - viewTop + i * step;
+}
+
+// Used when the council should change without motion. The council's transitions are held off
+// until the next frame so the end state is not animated, even when a transition was already in
+// flight. Two frames pass before the hold lifts, so the snap style is computed first and lifting
+// it never starts a transition.
+let holdFrame = 0;
+function holdStill() {
+  hold.value = true;
+  cancelAnimationFrame(holdFrame);
+  holdFrame = requestAnimationFrame(() => {
+    holdFrame = requestAnimationFrame(() => {
+      hold.value = false;
+    });
+  });
+}
+
+// `token` guards the frame that removes the rise class: any newer swap cancels it.
 let token = 0;
-let timer = 0;
+let holdTimer = 0;
+function cancelHold() {
+  clearTimeout(holdTimer);
+  holdTimer = 0;
+}
+
+function swapNow() {
+  token += 1;
+  cancelHold();
+  holdStill();
+  shownYear.value = YEARS[wanted];
+  phase.value = '';
+}
+
+// Animated change: the fade-out has already started, so swap the year and let it rise.
+function commit() {
+  token += 1;
+  cancelHold();
+  const my = token;
+  shownYear.value = YEARS[wanted];
+  phase.value = 'pre';
+  nextTick(() => {
+    if (my !== token || !councilRef.value) return;
+    void councilRef.value.offsetWidth;
+    phase.value = '';
+  });
+}
+
+let frame = 0;
+let p = 0;
+let lastP = 0;
+let settleTimer = 0;
+
+function onScroll() {
+  if (!frame) frame = requestAnimationFrame(paint);
+}
+
+// One frame of scroll: place the boat between the docks, lean it, and start or hold the council
+// change for the year the boat is nearest.
+function paint() {
+  frame = 0;
+  const main = mainRef.value;
+  if (!main || !dock) return;
+  p = Math.min(LAST, Math.max(0, (viewTop - main.getBoundingClientRect().top) / step));
+
+  const a = Math.floor(p);
+  const b = Math.min(LAST, a + 1);
+  const x = dock[a].x + (dock[b].x - dock[a].x) * (p - a);
+  const boat = boatRef.value;
+  boat.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+
+  const v = p - lastP;
+  lastP = p;
+  const lean = motionOff() ? 0 : Math.max(-4, Math.min(4, v * -90));
+  boat.style.setProperty('--lean', `${lean.toFixed(2)}deg`);
+
+  const near = Math.round(p);
+  dockRight.value = dock[near].right;
+  current.value = YEARS[near];
+  wanted = near;
+  if (YEARS[near] === shownYear.value) {
+    cancelHold();
+    // The council lets go as soon as the boat leaves its post, and returns if the boat does.
+    const away = Math.abs(p - near) > UNDOCK && !motionOff();
+    if (away) phase.value = 'out';
+    else if (phase.value === 'out') phase.value = '';
+  } else if (motionOff()) {
+    swapNow();
+  } else {
+    phase.value = 'out';
+    if (!holdTimer) {
+      holdTimer = setTimeout(() => {
+        holdTimer = 0;
+        commit();
+      }, HOLD_MS);
+    }
+  }
+
+  clearTimeout(settleTimer);
+  settleTimer = setTimeout(settle, IDLE_MS);
+}
+
+// The scroll has stopped: the boat is docked at a post (or resting between two if a drag was
+// released mid-way), so the council rises for that year and the URL records it.
+function settle() {
+  settleTimer = 0;
+  const near = Math.round(p);
+  const docked = Math.abs(p - near) < 0.02 && !motionOff();
+  boatRef.value?.style.setProperty('--lean', docked ? '2deg' : '0deg');
+  goal = near;
+  if (YEARS[near] !== shownYear.value) {
+    if (motionOff()) swapNow();
+    else commit();
+  } else if (phase.value === 'out') {
+    // Released short of the next post: the same council comes back.
+    phase.value = '';
+  }
+  settledYear = YEARS[near];
+  syncUrl(settledYear);
+}
+
+function onResize() {
+  cancelAnimationFrame(resizeFrame);
+  resizeFrame = requestAnimationFrame(() => {
+    if (!measure()) return;
+    // A new step moves every year's rest point: keep the chosen year in view. Never re-anchor
+    // in the middle of a scroll, because mobile toolbars resize the viewport while scrolling.
+    if (settleTimer) paint();
+    else {
+      go(goal, { instant: true });
+      paint();
+    }
+  });
+}
 let resizeFrame = 0;
-let startX = null;
-let startY = 0;
 
 // While a replace is in flight the route still shows the old year, so a newer choice must
 // always navigate; vue-router cancels the older pending one and the latest choice wins.
@@ -295,84 +463,33 @@ function syncUrl(year) {
     });
 }
 
-// Used when the year changes without motion (hidden tab, reduced motion). The council's
-// transitions are held off until the next frame so the end state is not animated, even when
-// a transition was already in flight. Two frames pass before the hold lifts, so the snap style
-// is computed first and lifting it never starts a transition.
-let holdFrame = 0;
-function holdStill() {
-  hold.value = true;
-  cancelAnimationFrame(holdFrame);
-  holdFrame = requestAnimationFrame(() => {
-    holdFrame = requestAnimationFrame(() => {
-      hold.value = false;
-    });
-  });
+// Scroll to a year. Smooth unless reduced motion or a hidden tab; `instant` is for deep links.
+function go(i, { instant = false } = {}) {
+  goal = Math.min(LAST, Math.max(0, i));
+  window.scrollTo({ top: yearTop(goal), behavior: instant || motionOff() ? 'auto' : 'smooth' });
 }
 
-function snap() {
-  token += 1;
-  clearTimeout(timer);
-  timer = 0;
-  if (selected.value == null) return;
-  holdStill();
-  shownYear.value = selected.value;
-  phase.value = '';
-  docked.value = true;
-  nextTick(() => placeBoat(YEARS.indexOf(selected.value), false));
-}
-
-function go(year, { instant = false } = {}) {
-  const i = YEARS.indexOf(year);
-  if (i < 0 || year === selected.value) return;
-  const first = selected.value == null;
-  selected.value = year;
-  const my = ++token;
-  clearTimeout(timer);
-  syncUrl(year);
-
-  const jump = first || instant || motionOff();
-  if (jump) {
-    holdStill();
-    shownYear.value = year;
-    phase.value = '';
-    docked.value = true;
-    placeBoat(i, false);
-    return;
-  }
-
-  docked.value = false;
-  placeBoat(i, true);
-  phase.value = 'out';
-  timer = window.setTimeout(() => {
-    if (my !== token) return;
-    shownYear.value = year;
-    phase.value = 'pre';
-    docked.value = true;
-    nextTick(() => {
-      if (my !== token || !councilRef.value) return;
-      void councilRef.value.offsetWidth;
-      if (my !== token) return;
-      phase.value = '';
-    });
-  }, DOCK_MS);
-}
-
-function step(d) {
-  const next = YEARS[YEARS.indexOf(selected.value) + d];
-  if (next !== undefined) go(next);
+function stepBy(d) {
+  const next = goal + d;
+  if (next < 0 || next > LAST) return false;
+  go(next);
+  return true;
 }
 
 function onKey(e) {
-  if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-  // Only when nothing else owns the arrows: the page itself, the year posts or the stage.
+  const d = KEY_STEP.get(e.key);
+  if (d === undefined || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+    return;
+  }
+  // Only when nothing else owns the keys: the page itself, or the board's posts, stage and links.
   const t = e.target;
-  const free = t === document.body || t === document.documentElement;
-  if (!free && !t?.closest?.('.river, .stage')) return;
-  e.preventDefault();
-  step(e.key === 'ArrowLeft' ? -1 : 1);
+  const free = t === document.body || t === document.documentElement || !!t?.closest?.('.board');
+  if (!free) return;
+  if (stepBy(d)) e.preventDefault();
 }
+
+let startX = null;
+let startY = 0;
 
 function onPointerDown(e) {
   if (e.pointerType === 'mouse') return;
@@ -386,59 +503,122 @@ function onPointerUp(e) {
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
   startX = null;
-  if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
+  if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) stepBy(dx < 0 ? 1 : -1);
 }
 
 function onPointerCancel() {
   startX = null;
 }
 
-function onResize() {
-  cancelAnimationFrame(resizeFrame);
-  resizeFrame = requestAnimationFrame(() => {
-    if (selected.value != null) placeBoat(YEARS.indexOf(selected.value), false);
-  });
+// Wheels and trackpads: one notch, or one swipe however long its glide, moves one year. Sideways
+// swipes count too. Touch keeps native scrolling and lands on the snap markers.
+let wheelSum = 0;
+let wheelAt = 0;
+let lockUntil = 0;
+function onWheel(e) {
+  if (e.ctrlKey) return;
+  // A stage that scrolls itself (short landscape phones) keeps its own wheel.
+  const stage = e.target?.closest?.('.stage');
+  if (stage && stage.scrollHeight > stage.clientHeight) return;
+  const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+  const dir = Math.sign(d);
+  if (!dir || (dir < 0 && p <= 0) || (dir > 0 && p >= LAST)) return;
+  e.preventDefault();
+  const now = performance.now();
+  if (now < lockUntil) {
+    lockUntil = Math.max(lockUntil, now + 180);
+    return;
+  }
+  if (now - wheelAt > 200) wheelSum = 0;
+  wheelAt = now;
+  wheelSum += d * (e.deltaMode === 1 ? 40 : 1);
+  if (Math.abs(wheelSum) < 24) return;
+  wheelSum = 0;
+  lockUntil = now + 650;
+  stepBy(dir);
 }
 
-function onVisibility() {
-  if (document.hidden || reduceQuery.matches) snap();
-  else if (selected.value != null) placeBoat(YEARS.indexOf(selected.value), false);
+// Reduced motion or a hidden tab: no animated swap and no lean. Visible again: re-measure.
+function onMotionChange() {
+  if (motionOff()) {
+    if (YEARS[wanted] !== shownYear.value) swapNow();
+    boatRef.value?.style.setProperty('--lean', '0deg');
+  } else if (measure()) {
+    paint();
+  }
 }
 
 watch(
   () => route.query.year,
   () => {
     const year = parsedYear();
-    if (year !== selected.value) go(year);
-    else syncUrl(year);
+    // Our own replace lands here too. Only an outside change while at rest moves the board.
+    if (year === settledYear || settleTimer) return;
+    go(YEARS.indexOf(year), { instant: true });
   }
 );
 
-onMounted(async () => {
-  adoptLoadedArt();
-  await nextTick();
-  const year = shownYear.value;
-  selected.value = year;
-  docked.value = true;
-  placeBoat(YEARS.indexOf(year), false);
+function landOn(i) {
+  go(i, { instant: true });
+  paint();
+}
+
+// Retries until the river has a width, then jumps (no animation) to the year in the URL.
+let landTimer = 0;
+function mountAt(attempt = 0) {
+  if (!measure()) {
+    if (attempt < 8) requestAnimationFrame(() => mountAt(attempt + 1));
+    return;
+  }
+  const target = wanted;
+  boatReady.value = true;
+  landOn(target);
   if (phase.value === 'pre' && councilRef.value) void councilRef.value.offsetWidth;
   phase.value = '';
-  syncUrl(year);
-  document.addEventListener('keydown', onKey);
-  document.addEventListener('visibilitychange', onVisibility);
-  reduceQuery.addEventListener('change', onVisibility);
+  settledYear = YEARS[target];
+  syncUrl(settledYear);
+  // vue-router scrolls to the top once a page has mounted (its scrollBehavior runs in microtasks
+  // after the render), which would undo the jump above. Land on the same year again once that has
+  // run; the target is fixed here because a frame may already have read the top as year 2021.
+  landTimer = setTimeout(() => {
+    landTimer = 0;
+    landOn(target);
+  }, 0);
+}
+
+let resizeObs = null;
+onMounted(async () => {
+  // Touch swipes land on one year. Only this page snaps, so the setting leaves with it.
+  document.documentElement.style.scrollSnapType = 'y mandatory';
+  window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onResize);
+  window.addEventListener('wheel', onWheel, { passive: false });
+  document.addEventListener('keydown', onKey);
+  document.addEventListener('visibilitychange', onMotionChange);
+  reduceQuery.addEventListener('change', onMotionChange);
+  adoptLoadedArt();
+  await nextTick();
+  resizeObs = new ResizeObserver(onResize);
+  resizeObs.observe(riverRef.value);
+  mountAt();
 });
 
 onBeforeUnmount(() => {
+  document.documentElement.style.scrollSnapType = '';
   token += 1;
-  placeGen += 1;
-  clearTimeout(timer);
+  cancelHold();
+  clearTimeout(settleTimer);
+  clearTimeout(landTimer);
+  cancelAnimationFrame(frame);
   cancelAnimationFrame(resizeFrame);
-  document.removeEventListener('keydown', onKey);
-  document.removeEventListener('visibilitychange', onVisibility);
-  reduceQuery.removeEventListener('change', onVisibility);
+  cancelAnimationFrame(holdFrame);
+  window.removeEventListener('scroll', onScroll);
   window.removeEventListener('resize', onResize);
+  window.removeEventListener('wheel', onWheel);
+  document.removeEventListener('keydown', onKey);
+  document.removeEventListener('visibilitychange', onMotionChange);
+  reduceQuery.removeEventListener('change', onMotionChange);
+  resizeObs?.disconnect();
 });
 </script>
 
@@ -446,6 +626,9 @@ onBeforeUnmount(() => {
 /* Tuned slot from the approved board. The webp's clear aperture measures
    13.9% 16.5% 12% 16.5%; 14% 20% 15% 20% is the inset that keeps the
    placeholder inside the arch the way the prototype does. */
+
+/* The scroll track: one viewport plus a stride for each year after the first. Only the sticky
+   view inside it is painted; the track is what the scrollbar measures. */
 .board {
   --edge: 15%;
   --step: 20%;
@@ -456,13 +639,33 @@ onBeforeUnmount(() => {
   --post-h: clamp(48px, 11vh, 100px);
   --boat-w: clamp(104px, 12.2vw, 176px);
   --tab-h: 0px;
+  --stride: 80vh;
+  position: relative;
+  height: calc(100dvh - var(--nav-h) + var(--last) * var(--stride));
+  background: var(--paper);
+  color: var(--ink);
+}
+.board:focus {
+  outline: none;
+}
+.snap {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  scroll-snap-align: start;
+  scroll-margin-top: var(--nav-h);
+  pointer-events: none;
+}
+.view {
+  position: sticky;
+  top: var(--nav-h);
   height: calc(100dvh - var(--nav-h) - var(--tab-h));
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) minmax(96px, 20vh);
   grid-template-areas: 'top' 'stage' 'river';
   overflow: hidden;
   background: var(--paper);
-  color: var(--ink);
 }
 
 .top {
@@ -621,8 +824,11 @@ h1 {
   font-weight: 750;
 }
 
+/* The boat's x is set on the scroll frame (no transition: it follows the scroll). Its hull leans
+   with --lean, a transform on the image only. */
 .boat {
   --face: scaleX(-1);
+  --lean: 0deg;
   position: absolute;
   left: 0;
   bottom: var(--water);
@@ -630,7 +836,7 @@ h1 {
   width: var(--boat-w);
   aspect-ratio: 1200 / 494;
   opacity: 0;
-  transition: transform 0.6s var(--ease-out);
+  will-change: transform;
 }
 .boat.ready {
   opacity: 1;
@@ -638,22 +844,13 @@ h1 {
 .boat.dock-right {
   --face: scaleX(1);
 }
-.boat.still {
-  transition: none;
-}
 .boat-img {
   display: block;
   width: 100%;
   height: auto;
   transform-origin: 50% 100%;
-  transform: var(--face) rotate(0deg);
+  transform: var(--face) rotate(var(--lean));
   transition: transform 0.32s var(--ease-out);
-}
-.boat.docked .boat-img {
-  transform: var(--face) rotate(2deg);
-}
-.boat.still .boat-img {
-  transition: none;
 }
 
 .stage {
@@ -901,6 +1098,8 @@ h1 {
     --m-w: min(64px, calc((100vw - 88px) / 5), 7.6vh);
     --post-h: clamp(36px, 6vh, 52px);
     --boat-w: min(52px, 13vw);
+  }
+  .view {
     grid-template-rows: auto minmax(64px, 12vh) minmax(0, 1fr);
     grid-template-areas: 'top' 'river' 'stage';
   }
