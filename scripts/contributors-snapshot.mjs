@@ -4,7 +4,7 @@
 // It writes src/data/contributors.json and prints nothing else. Never print the token.
 import { writeFileSync } from 'node:fs';
 
-const REPO = 'SundarbansWebOps/Frontend';
+const REPO = 'SundarbansWebOps/SundarbansWeb';
 const BRANCH = 'main';
 const SINCE = '2026-07-01T00:00:00+05:30'; // current web-admin tenure
 const FOLD = { 'sundarbans-webad': 'Anuraj-dev' }; // web-admin account belongs to Raja
