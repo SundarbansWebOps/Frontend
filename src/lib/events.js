@@ -143,6 +143,9 @@ export function fromPublicRow(row) {
     region_id: row.region_id ?? null,
     community_id: row.community_id ?? null,
     archive: row.archive ?? null,
+    // 'past' | 'live' | 'upcoming' (list_public_events); snapshot rows are all past.
+    stage: row.stage ?? 'past',
+    link: row.registration_link ?? null,
     ...when,
     online: /online/i.test(`${dateText} ${row.location ?? ''}`),
     at:
@@ -160,6 +163,8 @@ const snapshot = EVENTS.filter(notMeetup).map(fromPublicRow);
 snapshot.sort((a, b) => (b.at ?? 0) - (a.at ?? 0));
 
 export const events = reactive([]);
+// Upcoming / live events marked Public by their organisers (soonest first).
+export const upcoming = reactive([]);
 export const byId = reactive({});
 export const publicCatalog = reactive({
   ready: false,
@@ -167,10 +172,11 @@ export const publicCatalog = reactive({
   regions: [],
 });
 
-function replaceEvents(list) {
+function replaceEvents(list, next = []) {
   events.splice(0, events.length, ...list);
+  upcoming.splice(0, upcoming.length, ...next);
   for (const key of Object.keys(byId)) delete byId[key];
-  for (const e of list) byId[e.id] = e;
+  for (const e of [...list, ...next]) byId[e.id] = e;
 }
 
 replaceEvents(snapshot);
@@ -178,17 +184,20 @@ replaceEvents(snapshot);
 export async function loadPublicEvents() {
   publicCatalog.error = '';
   try {
-    const [{ listPublicPastEvents }, { supabase }] = await Promise.all([
+    const [{ listPublicEvents }, { supabase }] = await Promise.all([
       import('./lounge.js'),
       import('./supabase.js'),
     ]);
     const [rows, regions] = await Promise.all([
-      listPublicPastEvents(),
+      listPublicEvents(),
       supabase.from('regions').select('id, code, name').order('name'),
     ]);
-    const list = (Array.isArray(rows) ? rows : []).map(fromPublicRow).filter(notMeetup);
+    const all = (Array.isArray(rows) ? rows : []).map(fromPublicRow).filter(notMeetup);
+    const list = all.filter((e) => e.stage === 'past');
+    const next = all.filter((e) => e.stage !== 'past');
     list.sort((a, b) => (b.at ?? 0) - (a.at ?? 0));
-    if (list.length) replaceEvents(list);
+    next.sort((a, b) => (a.at ?? 0) - (b.at ?? 0));
+    if (all.length) replaceEvents(list, next);
     if (!regions.error) publicCatalog.regions = regions.data ?? [];
   } catch (err) {
     publicCatalog.error = err?.message || 'The event archive did not load.';

@@ -103,7 +103,27 @@
 
                 <p v-if="e.desc" class="desc">{{ e.desc }}</p>
 
-                <button type="button" class="verify" @click="toLounge">
+                <a
+                  v-if="e.stage && e.stage !== 'past' && e.link"
+                  class="verify"
+                  :href="e.link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>
+                    <strong>{{ e.stage === 'live' ? 'Happening now' : 'Coming up' }}</strong>
+                    Register for this event
+                  </span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </a>
+                <button
+                  v-else-if="!e.stage || e.stage === 'past'"
+                  type="button"
+                  class="verify"
+                  @click="toLounge"
+                >
                   <span>
                     <strong>Took part?</strong>
                     Get your participation certificate in the members’ lounge
@@ -394,6 +414,10 @@ h2 {
   color: var(--ink-2);
   max-width: 62ch;
   animation: rise 0.6s var(--ease-out) both 0.22s;
+}
+a.verify {
+  color: inherit;
+  text-decoration: none;
 }
 .verify {
   display: flex;

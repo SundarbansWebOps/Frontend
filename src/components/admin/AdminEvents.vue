@@ -1,6 +1,7 @@
-<!-- Events in the organizer's scope. RCs own their region; Heads/Co-Heads own their community;
-     Super Admins manage house, any region, and any community. Save keeps a draft; Publish sets
-     published_at. Attendance and certificates are reviewed on a saved event. -->
+<!-- Events in the organizer's scope. RCs own their region and may draft house-wide events, which a
+     Super Admin publishes (event_publish request); Heads/Co-Heads own their community; Super Admins
+     manage house, any region, and any community. Save keeps a draft; Publish sets published_at.
+     "Public" lists an upcoming event on the public Events page. Posters upload to Cloudinary. -->
 <template>
   <div>
     <div class="adm-toolbar between">
@@ -43,15 +44,26 @@
           <div class="adm-meta">
             <span class="mono">{{ when(e) }}</span>
             <span>{{ scopeOf(e) }}</span>
-            <span v-if="!e.published_at" class="adm-badge">draft</span>
+            <span v-if="e.pending_request_id" class="adm-badge mari">waiting for approval</span>
+            <span v-else-if="!e.published_at" class="adm-badge">draft</span>
             <span v-else-if="e.archive" class="adm-badge">archive</span>
             <span v-else-if="e.cancelled_at" class="adm-badge verm">cancelled</span>
             <span v-else-if="isLive(e)" class="adm-badge mari">live now</span>
             <span v-if="e.certificates_released_at" class="adm-badge mari">certificates</span>
+            <span v-if="e.is_public && !e.archive" class="adm-badge">public</span>
           </div>
         </div>
         <div class="adm-chips">
-          <template v-if="canManageEvent(e)">
+          <button
+            v-if="e.pending_request_id && !isSuperAdmin"
+            type="button"
+            class="adm-btn ghost small"
+            :disabled="busy"
+            @click="cancelPublish(e)"
+          >
+            Cancel request
+          </button>
+          <template v-else-if="canManageEvent(e)">
             <button type="button" class="adm-btn ghost small" @click="edit(e)">Edit</button>
             <button type="button" class="adm-btn ghost small" @click="openOps(e)">
               Attendance
@@ -113,6 +125,14 @@
             <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
           </select>
         </label>
+        <label v-else-if="isRc && !form.published_at" class="adm-field">
+          <span>Scope</span>
+          <select v-model="form.scope" class="adm-input">
+            <option value="region">My region ({{ myRegionName }})</option>
+            <option value="house">Whole house</option>
+          </select>
+          <small v-if="form.scope === 'house'">A Super Admin approves house-wide events.</small>
+        </label>
         <p v-else-if="!isSuperAdmin" class="adm-note wide">{{ lockedScope }}</p>
         <label class="adm-field">
           <span>Starts</span>
@@ -142,10 +162,53 @@
           <p class="adm-kicker">Audience</p>
           <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
         </div>
+        <label v-if="!form.archive" class="adm-field wide check">
+          <span>
+            <input v-model="form.is_public" type="checkbox" />
+            Public: also list it on the public Events page
+          </span>
+          <small>Otherwise only its audience sees it in the Lounge until it ends.</small>
+        </label>
+        <div class="adm-field wide">
+          <span>Poster</span>
+          <div class="poster">
+            <img
+              v-if="form.image_url"
+              :src="posterPreview(form.image_url)"
+              alt="Event poster"
+              width="96"
+              height="96"
+            />
+            <div class="poster-acts">
+              <input
+                class="adm-input"
+                type="file"
+                :accept="POSTER_TYPES.join(',')"
+                aria-label="Upload poster"
+                :disabled="busy || !form.name"
+                @change="onPoster"
+              />
+              <small>
+                The picture shown on the Events page and in the Lounge. JPG, PNG or WebP, up to 10
+                MB.<template v-if="!form.id"> Adding one saves this event as a draft.</template>
+              </small>
+              <p v-if="posterBusy" class="adm-note" role="status">Uploading the poster…</p>
+              <button
+                v-if="form.image_url"
+                type="button"
+                class="adm-btn ghost small"
+                @click="clearPoster"
+              >
+                Remove poster
+              </button>
+            </div>
+          </div>
+        </div>
         <label class="adm-field wide">
           <span>Description</span>
           <textarea v-model.trim="form.description" class="adm-input" maxlength="4000" />
         </label>
+        <p class="adm-kicker wide certs-h">Certificates (optional)</p>
         <label class="adm-field">
           <span>Attendance</span>
           <select
@@ -158,7 +221,7 @@
           </select>
         </label>
         <label class="adm-field wide">
-          <span>Signed template URL</span>
+          <span>Certificate template URL</span>
           <input
             v-model.trim="form.certificate_template_url"
             class="adm-input"
@@ -166,10 +229,13 @@
             placeholder="https://…"
             :disabled="!!form.certificates_released_at"
           />
-          <small>HTTPS only. A blank signed template, not a filled certificate.</small>
+          <small>
+            The blank, signed certificate design used for participation certificates. Not the event
+            poster.
+          </small>
         </label>
         <label v-if="form.id && !form.certificates_released_at" class="adm-field wide">
-          <span>Or upload a template (PNG, JPEG or WebP, 10 MB)</span>
+          <span>Or upload a certificate template (not the poster)</span>
           <input
             class="adm-input"
             type="file"
@@ -209,7 +275,7 @@
             Unpublish
           </button>
           <button type="button" class="adm-btn mari" :disabled="busy" @click="save('publish')">
-            Publish
+            {{ needsApproval ? 'Ask a Super Admin to publish' : 'Publish' }}
           </button>
         </div>
       </form>
@@ -332,7 +398,9 @@ import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
   applyReviewedEligibility,
+  POSTER_TYPES,
   canManageEvent,
+  cancelRequest,
   deleteEvent,
   downloadCsv,
   exportEventRecords,
@@ -348,10 +416,13 @@ import {
   previewAttendance,
   releaseCertificates,
   saveEvent,
+  requestEventPublish,
   setEventCancelled,
   suggestMeetMapping,
   uploadCertificateTemplate,
+  uploadEventPoster,
 } from '../../lib/admin.js';
+import { img } from '../../lib/events.js';
 
 const props = defineProps({ lookups: { type: Object, required: true } });
 const emit = defineEmits(['changed']);
@@ -402,6 +473,16 @@ const lockedScope = computed(() => {
   const name = props.lookups.communities.find((c) => c.id === auth.dashboard?.community_id)?.name;
   return `This event belongs to the ${name || 'your'} community.`;
 });
+
+const myRegionName = computed(
+  () => props.lookups.regions.find((r) => r.id === auth.dashboard?.region_id)?.name ?? 'your region'
+);
+// An RC publishing a house-wide event files a request instead.
+const needsApproval = computed(
+  () =>
+    isRc.value && !isSuperAdmin.value && form.value?.scope === 'house' && !form.value?.published_at
+);
+const posterPreview = (url) => img.thumb(url) ?? url;
 
 const scopeOf = (e) => {
   if (e.community_id)
@@ -489,6 +570,7 @@ function edit(e) {
       certificate_template_url: e.certificate_template_url ?? '',
       scope: e.community_id ? 'community' : e.region_id ? 'region' : 'house',
       archive: !!e.archive,
+      is_public: !!e.is_public,
     };
   } else {
     form.value = {
@@ -500,6 +582,7 @@ function edit(e) {
       attendance_mode: 'meet',
       certificate_template_url: '',
       archive: false,
+      is_public: false,
       gmail_link: '',
       registration_link: '',
       ...defaultScope(),
@@ -521,7 +604,8 @@ function onScope() {
 }
 
 function payload() {
-  const scope = isSuperAdmin.value ? form.value : { ...form.value, ...defaultScope() };
+  const rcHouse = isRc.value && !isSuperAdmin.value && form.value.scope === 'house';
+  const scope = isSuperAdmin.value || rcHouse ? form.value : { ...form.value, ...defaultScope() };
   return {
     ...scope,
     starts_at: fromLocal(form.value.starts),
@@ -538,6 +622,9 @@ function friendly(e) {
   if (/events_name_length/.test(m)) return 'Give the event a name (up to 200 characters).';
   if (/cohort/.test(m))
     return 'Choose only available cohorts, including at most the next future one.';
+  if (/events_image_cloudinary/.test(m)) return 'Posters must be uploaded here.';
+  if (/waiting for/.test(m))
+    return 'This event is waiting for a Super Admin; cancel the request to edit it.';
   if (e?.code === '42501') return 'You can’t change this event.';
   return errorText(e);
 }
@@ -546,10 +633,16 @@ async function save(mode) {
   busy.value = true;
   formError.value = '';
   try {
-    await saveEvent(payload(), {
-      publish: mode === 'publish',
-      unpublish: mode === 'unpublish',
-    });
+    if (mode === 'publish' && needsApproval.value) {
+      const id = await saveEvent(payload());
+      await requestEventPublish(id);
+      notice.value = 'Sent to a Super Admin. The event goes live once they approve it.';
+    } else {
+      await saveEvent(payload(), {
+        publish: mode === 'publish',
+        unpublish: mode === 'unpublish',
+      });
+    }
     dlg.value?.close();
     await load();
     emit('changed');
@@ -559,6 +652,31 @@ async function save(mode) {
     busy.value = false;
   }
 }
+
+const posterBusy = ref(false);
+async function onPoster(ev) {
+  const file = ev.target.files?.[0];
+  if (!file || !form.value) return;
+  formError.value = '';
+  busy.value = posterBusy.value = true;
+  try {
+    // A poster belongs to a saved event: save the draft first if this is a new one.
+    if (!form.value.id) form.value.id = await saveEvent(payload());
+    Object.assign(form.value, await uploadEventPoster(form.value.id, file));
+    await saveEvent(payload());
+  } catch (e) {
+    formError.value = friendly(e);
+  } finally {
+    busy.value = posterBusy.value = false;
+    ev.target.value = '';
+  }
+}
+
+function clearPoster() {
+  Object.assign(form.value, { image_url: null, image_width: null, image_height: null });
+}
+
+const cancelPublish = (e) => act(() => cancelRequest(e.pending_request_id));
 
 async function onTemplate(ev) {
   const file = ev.target.files?.[0];
@@ -701,6 +819,40 @@ async function release() {
 </script>
 
 <style scoped>
+.certs-h {
+  margin: 10px 0 -4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.poster {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.poster img {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--sunk);
+  border: 1px solid var(--line);
+}
+.poster-acts {
+  display: grid;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-items: start;
+}
+.check > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
 .between {
   justify-content: space-between;
   align-items: center;

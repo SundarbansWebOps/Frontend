@@ -243,6 +243,10 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 
 **Why:** Switching to clean URLs risks live OAuth redirects, shared links and about 78 `#/` references, and Vercel has no SPA rewrite; a separate change. Rejected `#2021` hashes because the hash is the route.
 
+## 2026-10-13 — Event posters on Cloudinary (signed), Public/Members-only audience, RC house-wide events need approval
+
+**Why:** The owner asked for admins to upload event images, choose an audience, and see new events on the public and Lounge pages. Posters stay on the house Cloudinary account (the 35 archive posters already are) via a signed upload from an Edge Function, so the API secret never reaches the browser. A Public toggle lists upcoming events publicly; members-only events stay in the Lounge until they end. RCs publish their own region's events directly; house-wide events from an RC go live only when a Super Admin approves, after which only Super Admins edit them (owner's choice). Rejected: unsigned Cloudinary presets (anyone could upload), Supabase Storage for posters (different host, no resizing), and publishing every upcoming event publicly.
+
 ## 2026-10-14 — 2023–24 tenure is a plain reading page fed by the council's own markdown
 
 **Why:** The council rejected the illustrated story view; they want their words read in full. `src/data/tenure-2023.md` is a verbatim copy of their document (Parts I–V) parsed at runtime, rendered as text (no `v-html`), so edits are one file and no words are cut. Part VI (instructions to the web team) and two "note for the website" lines are left out as directions, not content. Rejected: hand-converting the text into JS data (drift, dropped words).

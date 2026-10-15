@@ -128,7 +128,7 @@
           <div>
             <p class="adm-kicker">{{ REQUEST_LABEL[r.type] ?? r.type }}</p>
             <b class="name">{{ targetName(r) }}</b>
-            <span class="mono code">{{
+            <span v-if="r.type !== 'event_publish'" class="mono code">{{
               r.target?.member_code ?? r.target_snapshot?.member?.member_code
             }}</span>
           </div>
@@ -225,7 +225,9 @@ const day = (iso) =>
     minute: '2-digit',
   });
 const targetName = (r) =>
-  r.target?.full_name ?? r.target_snapshot?.member?.full_name ?? 'Former member';
+  r.type === 'event_publish'
+    ? (r.requested_change?.event_name ?? 'Event')
+    : (r.target?.full_name ?? r.target_snapshot?.member?.full_name ?? 'Former member');
 
 const FIELD = {
   full_name: 'Full name',
@@ -240,6 +242,7 @@ function change(r) {
     return Object.entries(c)
       .map(([k, v]) => `${FIELD[k] ?? k} → ${k === 'region_id' ? regionOf(v) : (v ?? 'cleared')}`)
       .join(' · ');
+  if (r.type === 'event_publish') return `Publish “${c.event_name ?? 'event'}” for the whole house`;
   if (r.type === 'member_contact_change') return `Login email → ${c.email}`;
   if (r.type === 'member_status_change') return STATUS_ACTION_LABEL[c.action] ?? c.action;
   if (r.type === 'position_change')
