@@ -943,6 +943,19 @@
   color: var(--accent);
 }
 
+/* An organiser's poster under the title: at most 280px tall, never wider than the sheet. */
+:where(html.lounge-active) .evd-poster {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 280px;
+  margin: 12px 0 4px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  object-fit: contain;
+}
+
 :where(html.lounge-active) .evd-h {
   margin: 6px 0 0;
   padding-right: 44px;
