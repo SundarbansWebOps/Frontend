@@ -5,7 +5,6 @@ import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
 import { lower } from '../../lib/house.js';
 import {
   confirmCertificateName as persistCertName,
-  formOpenNow,
   getFormInvite,
   groupFormsForMember,
   listGroups,
@@ -288,11 +287,11 @@ export const pendingRegionRequest = computed(() =>
   lounge.regionRequests.find((r) => r.status === 'pending' && r.member_id === member.id)
 );
 
-// Members see open forms for their region. Super admins see every open group form in the house;
-// submitted ones stay in the list so they can be marked as applied.
+// Members see open forms for their region. Super Admins can see every group form;
+// audience-restricted and closed forms are available as read-only previews.
 export const openGroupForms = computed(() => {
   if (isSuperAdmin.value) {
-    return lounge.forms.filter((f) => f.form_kind === 'group' && !f.event_id && formOpenNow(f));
+    return lounge.forms.filter((f) => f.form_kind === 'group' && !f.event_id);
   }
   return groupFormsForMember(lounge.forms, member.region_id).filter(
     (f) => (f.accepting_responses ?? f.is_open) && !f.submitted

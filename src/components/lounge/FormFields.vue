@@ -15,6 +15,7 @@
           rows="3"
           :required="field.required"
           :maxlength="10000"
+          :disabled="disabled"
         />
         <input
           v-else
@@ -25,6 +26,7 @@
           :autocomplete="autoOf(field)"
           :inputmode="field.type === 'phone' || field.type === 'tel' ? 'tel' : undefined"
           :maxlength="field.type === 'phone' || field.type === 'tel' ? 20 : 10000"
+          :disabled="disabled"
         />
       </label>
 
@@ -33,7 +35,12 @@
           >{{ field.label }} <small v-if="!field.required">optional</small
           ><small v-else>required</small></span
         >
-        <select :id="idFor(field)" v-model="draft[field.key]" :required="field.required">
+        <select
+          :id="idFor(field)"
+          v-model="draft[field.key]"
+          :required="field.required"
+          :disabled="disabled"
+        >
           <option value="">Choose</option>
           <option v-for="opt in field.options || []" :key="opt" :value="opt">{{ opt }}</option>
           <option v-if="field.allow_other" :value="OTHER">Other</option>
@@ -46,6 +53,7 @@
           placeholder="Please specify"
           :required="field.required"
           :aria-label="`Other answer for ${field.label}`"
+          :disabled="disabled"
         />
       </label>
 
@@ -62,6 +70,7 @@
             :name="field.key"
             :aria-invalid="errors[field.key] ? 'true' : undefined"
             :aria-describedby="errors[field.key] ? errorId(field) : undefined"
+            :disabled="disabled"
             @change="toggle(field.key, opt, $event.target.checked)"
           />
           {{ opt }}
@@ -72,6 +81,7 @@
             type="checkbox"
             :aria-invalid="errors[field.key] ? 'true' : undefined"
             :aria-describedby="errors[field.key] ? errorId(field) : undefined"
+            :disabled="disabled"
             @change="toggleOther(field.key, $event.target.checked)"
           />
           Other
@@ -82,6 +92,7 @@
             maxlength="300"
             placeholder="Please specify"
             :aria-label="`Other answer for ${field.label}`"
+            :disabled="disabled"
           />
         </label>
         <p v-if="errors[field.key]" :id="errorId(field)" class="ff-error" role="alert">
@@ -90,13 +101,18 @@
       </fieldset>
 
       <label v-else-if="field.type === 'checkbox'" class="ff-check">
-        <input v-model="draft[field.key]" type="checkbox" :required="field.required" />
+        <input
+          v-model="draft[field.key]"
+          type="checkbox"
+          :required="field.required"
+          :disabled="disabled"
+        />
         {{ field.label }}
       </label>
     </template>
 
     <label v-if="phoneField" class="ff-check">
-      <input v-model="savePhone" type="checkbox" />
+      <input v-model="savePhone" type="checkbox" :disabled="disabled" />
       Save your phone number for later
     </label>
   </div>
@@ -110,6 +126,7 @@ import { preferredName } from './state.js';
 const props = defineProps({
   fields: { type: Array, default: () => [] },
   profile: { type: Object, default: null },
+  disabled: { type: Boolean, default: false },
 });
 
 const draft = reactive({});

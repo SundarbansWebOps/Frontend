@@ -28,20 +28,24 @@
       <p v-if="loadError" class="msg err" role="alert">{{ loadError }}</p>
       <p v-else-if="!ready" class="msg" role="status">Opening the form…</p>
       <p v-else-if="!form" class="msg err" role="alert">
-        This form is closed or outside your audience.
+        {{ unavailableMessage }}
       </p>
 
       <form v-else class="slip" @submit.prevent="send">
-        <p v-if="form.submitted" class="msg" role="status">
+        <p v-if="form.submitted && !isSuperAdmin" class="msg" role="status">
           Your application is saved. Sending this form is not WhatsApp admission.
         </p>
         <FormFields
-          v-else-if="canSubmit"
+          v-else-if="canViewFields"
           ref="fieldsEl"
           v-model:save-phone="savePhone"
           :fields="form.fields || []"
+          :disabled="previewOnly || form.submitted"
         />
-        <p v-else class="msg" role="status">This form is not accepting responses.</p>
+        <p v-if="previewOnly" class="msg" role="status">Preview only. {{ unavailableMessage }}</p>
+        <p v-else-if="!canSubmit && !form.submitted" class="msg" role="status">
+          {{ unavailableMessage }}
+        </p>
         <p v-if="error" class="msg err" role="alert">{{ error }}</p>
         <p v-if="invite" class="msg" role="status">
           WhatsApp invite:
@@ -93,7 +97,9 @@ import {
   lounge,
   submitLoungeForm,
 } from '../components/lounge/session.js';
-import { auth, errorText } from '../lib/auth.js';
+import { auth, errorText, isSuperAdmin } from '../lib/auth.js';
+import { formUnavailableMessage } from '../lib/lounge.js';
+import { member } from '../components/lounge/fixtures.js';
 
 const route = useRoute();
 const root = document.documentElement;
@@ -112,6 +118,11 @@ const inviteError = ref('');
 const form = computed(() => formById(route.params.id));
 const canSubmit = computed(
   () => !!form.value && (form.value.accepting_responses ?? form.value.is_open ?? false)
+);
+const previewOnly = computed(() => isSuperAdmin.value && !canSubmit.value);
+const canViewFields = computed(() => canSubmit.value || isSuperAdmin.value);
+const unavailableMessage = computed(() =>
+  formUnavailableMessage(form.value, member.region_id, member.cohort)
 );
 
 function toggleTheme() {

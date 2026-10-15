@@ -95,7 +95,9 @@
                 <b>{{ g.label }}</b>
                 <small>{{ g.why }}</small>
               </span>
-              <span class="mb-go">{{ g.applied ? 'Applied' : 'Apply' }}</span>
+              <span class="mb-go">{{
+                g.previewOnly ? 'Preview' : g.applied ? 'Applied' : 'Apply'
+              }}</span>
             </span>
           </RouterLink>
         </li>
@@ -107,6 +109,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { isSuperAdmin } from '../../../lib/auth.js';
+import { formUnavailableMessage } from '../../../lib/lounge.js';
 import { member } from '../fixtures.js';
 import { lounge, openGroupForms } from '../session.js';
 import { mode } from '../state.js';
@@ -139,14 +142,22 @@ const boats = computed(() => {
   // A joined boat already carries its invite; list each form once.
   const joinedIds = new Set(joined.map((g) => g.id));
   const apply = openGroupForms.value
-    .filter((f) => !joinedIds.has(f.id))
+    .filter((f) => isSuperAdmin.value || !joinedIds.has(f.id))
     .map((f) => ({
       id: f.id,
       label: f.group_label || f.title,
-      why: f.group_purpose || '',
+      why: [
+        f.group_purpose || '',
+        isSuperAdmin.value && !(f.accepting_responses ?? f.is_open)
+          ? `Super Admin preview. ${formUnavailableMessage(f, member.region_id, member.cohort)}`
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
       href: '',
       to: `/lounge/forms/${f.id}`,
       applied: !!f.submitted,
+      previewOnly: isSuperAdmin.value && !(f.accepting_responses ?? f.is_open),
       kind: f.community_id
         ? 'community'
         : f.region_id
@@ -155,19 +166,21 @@ const boats = computed(() => {
             : 'other-region'
           : 'house',
     }));
-  return [...apply, ...joined];
+  return isSuperAdmin.value ? apply : [...apply, ...joined];
 });
 
 const kick = (g) =>
-  g.kind === 'house'
-    ? 'Start here'
-    : g.kind === 'region'
-      ? 'Your region'
-      : g.kind === 'other-region'
-        ? 'Regional group'
-        : g.applied
-          ? 'You applied'
-          : 'Apply';
+  g.previewOnly
+    ? 'Preview only'
+    : g.kind === 'house'
+      ? 'Start here'
+      : g.kind === 'region'
+        ? 'Your region'
+        : g.kind === 'other-region'
+          ? 'Regional group'
+          : g.applied
+            ? 'You applied'
+            : 'Apply';
 
 let io = null;
 onMounted(() => {

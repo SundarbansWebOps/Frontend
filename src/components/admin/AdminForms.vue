@@ -20,7 +20,9 @@
             <span v-if="f.archived_at" class="adm-badge">archived</span>
             <span v-else-if="formStatus(f) === 'draft'" class="adm-badge">draft</span>
             <span v-else-if="formStatus(f) === 'scheduled'" class="adm-badge">scheduled</span>
-            <span v-else-if="formStatus(f) === 'open'" class="adm-badge mari">open</span>
+            <span v-else-if="formStatus(f) === 'open'" class="adm-badge mari">
+              open to audience
+            </span>
             <span v-else class="adm-badge">closed</span>
             <span v-if="f.event_id" class="adm-badge">event registration</span>
           </div>
@@ -350,12 +352,14 @@ const scopeOf = (f) => {
   return 'House-wide';
 };
 const formStatus = (f) => {
-  if (!f.published_at) return 'draft';
   const now = Date.now();
+  if (!f.published_at) return 'draft';
+  if (f.is_open === false || (f.closes_at && new Date(f.closes_at).getTime() <= now)) {
+    return 'closed';
+  }
+  if (new Date(f.published_at).getTime() > now) return 'scheduled';
   if (f.opens_at && new Date(f.opens_at).getTime() > now) return 'scheduled';
-  if (f.closes_at && new Date(f.closes_at).getTime() <= now) return 'closed';
-  if (f.is_open === false) return 'closed';
-  return f.accepting_responses === false ? 'closed' : 'open';
+  return 'open';
 };
 const day = (iso) =>
   iso
