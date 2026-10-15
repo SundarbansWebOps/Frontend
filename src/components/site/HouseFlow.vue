@@ -1,566 +1,296 @@
-<!--
-  "How the house works", drawn as a river delta. The Upper House Council is the
-  river; it splits into three channels (regions, communities, crew); each team branches off its
-  channel; every channel runs out into the sea — the members. The water draws itself down the
-  page as you read, then keeps flowing. Channels are measured off the real boxes, so the same
-  code draws the wide layout and the single-trunk phone layout. Every node jumps to its section.
--->
 <template>
-  <div ref="root" class="flow" :class="{ narrow }">
-    <svg class="rivers" :width="W" :height="H" aria-hidden="true">
-      <path
-        v-for="e in edges"
-        :key="e.k"
-        class="ch"
-        :class="e.kind"
-        :d="e.d"
-        pathLength="1"
-        :style="{ '--l': lit(e) }"
-      />
-      <path
-        v-for="e in edges"
-        :key="`m-${e.k}`"
-        class="motes"
-        :class="{ on: lit(e) >= 1 }"
-        :d="e.d"
-      />
-    </svg>
+  <section class="mangrove-network" aria-labelledby="network-title">
+    <header class="network-heading">
+      <span class="eyebrow">THE SUNDARBANS NETWORK</span>
+      <h2 id="network-title">One house, <em>many branches.</em></h2>
+      <p>One council, three channels, one house.</p>
+    </header>
 
-    <button
-      type="button"
-      class="node uhc"
-      :class="{ in: seen('uhc') }"
-      data-k="uhc"
-      @click="$emit('go', 'uhc')"
-    >
-      <span class="faces">
-        <img
-          v-for="p in upper"
-          :key="p.id"
-          :src="portrait.face(p.img)"
-          alt=""
-          width="34"
-          height="34"
-        />
-      </span>
-      <span class="tx">
-        <strong>Upper House Council</strong>
-        <small>Secretary · Deputy Secretary · Web Admin — runs the house</small>
-      </span>
-    </button>
+    <div class="tree-canvas">
+      <svg class="tree-wiring" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="sundarbansBranchGold" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#bd873c" stop-opacity=".72" />
+            <stop offset=".52" stop-color="#e1b66d" />
+            <stop offset="1" stop-color="#bd873c" stop-opacity=".72" />
+          </linearGradient>
+        </defs>
+        <!-- One uninterrupted council connection. The line ends at the node rims. -->
+        <path class="main-wire" :class="{ 'is-active': activeBranch === 'council' }"
+          d="M143 500 H281" />
+        <!-- LHC fans out cleanly: upper branch, straight centre branch, lower branch. -->
+        <path class="branch-wire branch-wire-regions" :class="{ 'is-active': activeBranch === 'regions' }"
+          d="M303 500 C353 500 353 167 388 167" />
+        <path class="branch-wire branch-wire-communities" :class="{ 'is-active': activeBranch === 'communities' }"
+          d="M303 500 H388" />
+        <path class="branch-wire branch-wire-crew" :class="{ 'is-active': activeBranch === 'crew' }"
+          d="M303 500 C353 500 353 833 388 833" />
+      </svg>
 
-    <div class="cols">
-      <div v-for="c in COLS" :key="c.id" class="col" :class="c.id">
-        <button
-          type="button"
-          class="node head"
-          :class="{ in: seen(c.id) }"
-          :data-k="c.id"
-          @click="$emit('go', c.to)"
-        >
-          <strong>{{ c.title }}</strong>
-          <small>{{ c.sub }}</small>
-          <b class="mono">{{ c.items.length }}</b>
-        </button>
-        <ul class="items">
-          <li v-for="it in c.items" :key="it.id">
-            <button
-              type="button"
-              class="node item"
-              :class="{ in: seen(`${c.id}:${it.id}`), open: it.open }"
-              :data-k="`${c.id}:${it.id}`"
-              @click="$emit('go', c.to, it.id)"
-            >
-              <span class="mark" :style="it.color ? { '--c': it.color } : null">
-                <img
-                  v-for="f in it.faces ?? []"
-                  :key="f"
-                  :src="f"
-                  alt=""
-                  width="24"
-                  height="24"
-                  loading="lazy"
-                />
-              </span>
-              <span class="tx">
-                <strong>{{ it.name }}</strong>
-                <small v-if="it.note">{{ it.note }}</small>
-              </span>
-            </button>
-          </li>
-        </ul>
+      <div class="tree-grid">
+        <!-- Responsive council edge: this lives in the same grid as both nodes. -->
+        <div class="council-wire" aria-hidden="true"></div>
+
+        <div class="council-node uhc-node">
+          <button class="council-dot" type="button" @mouseenter="activeBranch = 'council'" @mouseleave="activeBranch = null" @focus="activeBranch = 'council'" @blur="activeBranch = null" @click="emit('go', 'uhc')" aria-label="Open Upper House Council">
+            <span class="node-core"></span>
+          </button>
+          <div class="council-popover uhc-popover">
+            <span class="seat-dots" aria-hidden="true"><i v-for="n in upper.length" :key="n"></i></span>
+            <span class="level-label">LEVEL 01 · LEADERSHIP</span>
+            <strong>Upper House Council</strong>
+            <small>House leadership · {{ upper.length }} seats</small>
+            <span class="avatars"><img v-for="person in upper" :key="person.id" :src="portrait.face(person.img)" :alt="person.name" /></span>
+          </div>
+        </div>
+
+        <div class="council-node lhc-node">
+          <button class="council-dot" type="button" @mouseenter="activeBranch = 'council'" @mouseleave="activeBranch = null" @focus="activeBranch = 'council'" @blur="activeBranch = null" @click="emit('go', 'lhc')" aria-label="Open Lower House Council">
+            <span class="node-core"></span>
+          </button>
+          <div class="council-popover lhc-popover">
+            <span class="level-label">LEVEL 02 · COORDINATION</span>
+            <strong>Lower House Council</strong>
+
+
+          </div>
+        </div>
+
+        <section class="branch-hub regions-hub" :class="{ active: activeBranch === 'regions' }"
+          @mouseenter="activeBranch = 'regions'" @mouseleave="activeBranch = null"
+          @focusin="activeBranch = 'regions'" @focusout="onBranchFocusOut">
+          <button type="button" class="hub-hit" @click="emit('go', 'lhc')">
+            <span class="hub-ring">✳</span><span class="hub-copy"><small>GEOGRAPHICAL NETWORK</small><strong>Regions <i>{{ regionNodes.length }}</i></strong><em>Students across cities</em></span>
+          </button>
+        </section>
+
+        <section class="branch-hub communities-hub" :class="{ active: activeBranch === 'communities' }"
+          @mouseenter="activeBranch = 'communities'" @mouseleave="activeBranch = null"
+          @focusin="activeBranch = 'communities'" @focusout="onBranchFocusOut">
+          <button type="button" class="hub-hit" @click="emit('go', 'communities')">
+            <span class="hub-ring">✿</span><span class="hub-copy"><small>CULTURE & ACTIVITIES</small><strong>Communities <i>{{ COMMUNITIES.length }}</i></strong><em>Experiences that bring us together</em></span>
+          </button>
+        </section>
+
+        <section class="branch-hub crew-hub" :class="{ active: activeBranch === 'crew' }"
+          @mouseenter="activeBranch = 'crew'" @mouseleave="activeBranch = null"
+          @focusin="activeBranch = 'crew'" @focusout="onBranchFocusOut">
+          <button type="button" class="hub-hit" @click="emit('go', 'crew')">
+            <span class="hub-ring">✧</span><span class="hub-copy"><small>HOUSE OPERATIONS</small><strong>Crew <i>{{ CREW.length }}</i></strong><em>The people behind the scenes</em></span>
+          </button>
+        </section>
+
+        <section class="leaf-group regions-group" aria-label="Regions"
+          @mouseenter="activeBranch = 'regions'" @mouseleave="activeBranch = null">
+          <button v-for="region in regionNodes" :key="region.id" class="leaf region-leaf" type="button" @click="emit('go', 'lhc', region.id)">
+            <span class="leaf-dot"></span><span class="leaf-copy"><strong>{{ region.name }}</strong>
+              <small v-if="(region.coordinators || []).length">{{ coordinatorNames(region.coordinators || []) }}</small>
+              <small v-else-if="region.recruiting" class="recruiting">Coordinator seat open</small>
+              <small v-else>No coordinator listed</small></span>
+            <span class="leaf-avatars" v-if="(region.coordinators || []).length"><img v-for="person in (region.coordinators || [])" :key="person.id" :src="portrait.face(person.img)" :alt="person.name" /></span>
+            <span class="leaf-arrow" aria-hidden="true">↗</span>
+          </button>
+        </section>
+
+        <section class="leaf-group communities-group" aria-label="Communities"
+          @mouseenter="activeBranch = 'communities'" @mouseleave="activeBranch = null">
+          <button v-for="community in COMMUNITIES" :key="community.id" class="leaf" type="button" @click="emit('go', 'communities', community.id)">
+            <span class="leaf-dot" :class="`wing-${community.wing}`"></span><span class="leaf-copy"><strong>{{ community.name }}</strong><small>{{ community.events }} events</small></span><span class="leaf-arrow" aria-hidden="true">↗</span>
+          </button>
+        </section>
+
+        <section class="leaf-group crew-group" aria-label="Crew"
+          @mouseenter="activeBranch = 'crew'" @mouseleave="activeBranch = null">
+          <button v-for="team in CREW" :key="team.id" class="leaf" type="button" @click="emit('go', 'crew', team.id)">
+            <span class="leaf-dot crew-dot"></span><span class="leaf-copy"><strong>{{ team.name }}</strong><small>{{ team.tag.join(' ') }}</small></span><span class="leaf-arrow" aria-hidden="true">↗</span>
+          </button>
+        </section>
       </div>
     </div>
 
-    <div class="node sea" :class="{ in: seen('sea') }" data-k="sea">
-      <svg class="waves" viewBox="0 0 800 40" preserveAspectRatio="none" aria-hidden="true">
-        <path
-          d="M0 18 Q50 8 100 18 T200 18 T300 18 T400 18 T500 18 T600 18 T700 18 T800 18 V40 H0Z"
-        />
-        <path
-          d="M0 24 Q50 14 100 24 T200 24 T300 24 T400 24 T500 24 T600 24 T700 24 T800 24 V40 H0Z"
-        />
-      </svg>
-      <span class="tx">
-        <strong>Members</strong>
-        <small>Every Sundarbans student. Come to an event, a meetup, or join a team.</small>
-      </span>
-    </div>
-  </div>
+    <footer class="members-root">
+      <span class="root-mark" aria-hidden="true">⌁</span>
+      <small>THE FOUNDATION OF SUNDARBANS</small>
+      <strong>Our Members</strong>
+      <p>Every student is part of the roots that keep this house growing.</p>
+    </footer>
+  </section>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { lower, portrait, regions, upper } from '../../lib/house.js';
 import { COMMUNITIES, CREW } from '../../data/teams.js';
 
-defineEmits(['go']);
+const emit = defineEmits(['go']);
+const activeBranch = ref(null);
+const regionNodes = computed(() => [...regions].sort((a, b) => a.name.localeCompare(b.name)));
 
-const first = (n) => n.split(' ')[0];
-const COLS = [
-  {
-    id: 'lhc',
-    to: 'lhc',
-    title: 'Lower House Council',
-    sub: 'A coordinator for each region',
-    items: [...regions]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((r) => ({
-        id: r.id,
-        name: r.name,
-        note: r.coordinators.length
-          ? r.coordinators.map((c) => first(c.name)).join(' & ')
-          : r.recruiting
-            ? 'Recruiting a coordinator'
-            : 'No coordinator listed',
-        faces: r.coordinators.map((c) => portrait.face(c.img)),
-        open: !r.coordinators.length,
-      })),
-  },
-  {
-    id: 'com',
-    to: 'communities',
-    title: 'Communities',
-    sub: 'Run the house’s events',
-    items: COMMUNITIES.map((c) => ({
-      id: c.id,
-      name: c.name,
-      note: `${c.events} events`,
-      color: `var(--w-${c.wing})`,
-    })),
-  },
-  {
-    id: 'crew',
-    to: 'crew',
-    title: 'Crew',
-    sub: 'Keep the house seen and online',
-    items: CREW.map((c) => ({ id: c.id, name: c.name, color: 'var(--mari-ink)' })),
-  },
-];
-// Make sure the LHC count matches the council (Mumbai has two coordinators).
-COLS[0].sub = `${lower.length} coordinators across ${regions.length} regions`;
-
-// ---- Geometry: read the real boxes, draw channels between them ---------------------------
-const root = ref(null);
-const W = ref(0);
-const H = ref(0);
-const narrow = ref(false);
-const edges = ref([]);
-const tops = ref({});
-
-function measure() {
-  const el = root.value;
-  if (!el) return;
-  narrow.value = el.clientWidth < 760;
-  const o = el.getBoundingClientRect();
-  const box = {};
-  for (const n of el.querySelectorAll('.node')) {
-    const r = n.getBoundingClientRect();
-    box[n.dataset.k] = {
-      l: r.left - o.left,
-      r: r.right - o.left,
-      t: r.top - o.top,
-      b: r.bottom - o.top,
-      cx: r.left - o.left + r.width / 2,
-      cy: r.top - o.top + r.height / 2,
-    };
-  }
-  W.value = Math.round(o.width);
-  H.value = Math.round(o.height);
-  tops.value = Object.fromEntries(Object.entries(box).map(([k, b]) => [k, b.t]));
-
-  const out = [];
-  const branch = (k, tx, n) =>
-    out.push({
-      k,
-      kind: 'br',
-      d: `M${tx} ${n.cy - 18} C${tx} ${n.cy - 2} ${tx + 4} ${n.cy} ${tx + 16} ${n.cy} L${n.l} ${n.cy}`,
-      y0: n.cy - 18,
-      y1: n.cy,
-    });
-  const u = box.uhc;
-  const sea = box.sea;
-
-  if (narrow.value) {
-    // One trunk down the left edge; every head and team branches off it.
-    const tx = 14;
-    out.push({ k: 'trunk', kind: 'main', d: `M${tx} ${u.b} L${tx} ${sea.t}`, y0: u.b, y1: sea.t });
-    for (const c of COLS) {
-      branch(c.id, tx, box[c.id]);
-      for (const it of c.items) branch(`${c.id}:${it.id}`, tx, box[`${c.id}:${it.id}`]);
-    }
-  } else {
-    COLS.forEach((c, ci) => {
-      const h = box[c.id];
-      const tx = h.l + 16;
-      const last = box[`${c.id}:${c.items.at(-1).id}`];
-      const sx = sea.l + (sea.r - sea.l) * ((ci + 0.5) / COLS.length);
-      const my = (u.b + h.t) / 2;
-      // The river splits: council → each channel's head.
-      out.push({
-        k: `split-${c.id}`,
-        kind: 'main',
-        d: `M${u.cx} ${u.b} C${u.cx} ${my} ${tx} ${my} ${tx} ${h.t}`,
-        y0: u.b,
-        y1: h.t,
-      });
-      // The channel runs down past its teams and out to the sea.
-      const cb = last.b + 18;
-      const sy = (cb + sea.t) / 2;
-      out.push({
-        k: `run-${c.id}`,
-        kind: 'main',
-        d: `M${tx} ${h.b} L${tx} ${cb} C${tx} ${sy} ${sx} ${sy} ${sx} ${sea.t}`,
-        y0: h.b,
-        y1: sea.t,
-      });
-      for (const it of c.items) branch(`${c.id}:${it.id}`, tx, box[`${c.id}:${it.id}`]);
-    });
-  }
-  edges.value = out;
+function coordinatorNames(people) {
+  return people.map((person) => person.name.split(' ')[0]).join(' · ');
 }
-
-// ---- The water follows the reader ------------------------------------------------------
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const front = ref(reduced ? Infinity : -1);
-const clamp = (v) => Math.min(1, Math.max(0, v));
-const lit = (e) => clamp((front.value - e.y0) / Math.max(50, e.y1 - e.y0));
-const seen = (k) => front.value > (tops.value[k] ?? Infinity) + 6;
-
-function onScroll() {
-  if (reduced || !root.value) return;
-  const f = innerHeight * 0.74 - root.value.getBoundingClientRect().top;
-  // The water never recedes past what's been read; it only moves forward.
-  if (f > front.value) front.value = f;
+function onBranchFocusOut(event) {
+  if (!event.currentTarget.contains(event.relatedTarget)) activeBranch.value = null;
 }
-
-let ro;
-let raf = 0;
-const soon = () => {
-  cancelAnimationFrame(raf);
-  raf = requestAnimationFrame(() => {
-    measure();
-    onScroll();
-  });
-};
-onMounted(() => {
-  ro = new ResizeObserver(soon);
-  ro.observe(root.value);
-  document.fonts?.ready.then(soon);
-  addEventListener('scroll', onScroll, { passive: true });
-  soon();
-});
-onBeforeUnmount(() => {
-  ro?.disconnect();
-  cancelAnimationFrame(raf);
-  removeEventListener('scroll', onScroll);
-});
 </script>
 
 <style scoped>
-.flow {
-  position: relative;
-  display: grid;
-  gap: 34px;
-  padding: 6px 0 0;
-}
-.rivers {
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-  pointer-events: none;
-}
-.ch {
-  fill: none;
-  stroke: var(--flow);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--l));
-  opacity: 0.55;
-}
-.ch.br {
-  stroke-width: 2;
-  opacity: 0.4;
-}
-/* Once a channel is full, light moves down it: tiny round dashes sliding along the path. */
-.motes {
-  fill: none;
-  stroke: #ffd488;
-  stroke-width: 3.2;
-  stroke-linecap: round;
-  stroke-dasharray: 0.1 26;
-  opacity: 0;
-  transition: opacity 0.8s;
-  animation: flow 2.2s linear infinite;
-}
-.motes.on {
-  opacity: 0.95;
-}
-:root[data-theme='dark'] .motes {
-  stroke: #ffe2a8;
-}
-@keyframes flow {
-  to {
-    stroke-dashoffset: -26.1;
-  }
-}
-
-.node {
-  position: relative;
-  z-index: 1;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: inherit;
-  text-align: left;
-  /* Reveal without moving: the channels are measured off these boxes. */
-  opacity: 0;
-  filter: blur(6px);
-  transition:
-    opacity 0.5s var(--ease-out),
-    filter 0.6s var(--ease-out),
-    border-color 0.2s,
-    box-shadow 0.2s;
-}
-.node.in {
-  opacity: 1;
-  filter: none;
-}
-button.node:hover {
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow);
-}
-.tx {
-  display: grid;
-  gap: 1px;
-  min-width: 0;
-}
-.tx strong {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-.tx small {
-  font-size: 12.5px;
-  color: var(--ink-2);
-}
-
-.uhc {
-  justify-self: center;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 18px 10px 10px;
-  border-radius: 99px;
-  box-shadow: var(--shadow);
-}
-.uhc .tx strong {
-  font-size: 17px;
-}
-.faces {
-  display: flex;
-}
-.faces img {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 2px solid var(--card);
-  object-fit: cover;
-  background: var(--sunk);
-}
-.faces img + img {
-  margin-left: -10px;
-}
-
-.cols {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr);
-  gap: 22px;
-  align-items: start;
-}
-.col {
-  display: grid;
-  gap: 10px;
-}
-.head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1px 10px;
-  padding: 11px 14px;
-  border-radius: 14px;
-}
-.head strong {
-  font-size: 16px;
-  font-weight: 700;
-}
-.head small {
-  grid-column: 1;
-  font-size: 12.5px;
-  color: var(--ink-2);
-}
-.head b {
-  grid-row: 1 / 3;
-  grid-column: 2;
-  align-self: center;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--mari-ink);
-}
-.items {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0 0 0 34px;
-  list-style: none;
-}
-.lhc .items {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.item {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  width: 100%;
-  padding: 6px 10px 6px 6px;
-  border-radius: 12px;
-}
-.item.open {
-  border-style: dashed;
-  background: var(--paper);
-}
-.mark {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  border-radius: 50%;
-}
-.mark:empty {
-  width: 12px;
-  min-width: 12px;
-  height: 12px;
-  margin: 0 6px;
-  background: var(--c, var(--w-meetups));
-}
-.open .mark:empty {
-  background: none;
-  border: 1.5px dashed var(--line-strong);
-  width: 20px;
-  height: 20px;
-  margin: 0 2px;
-}
-.mark img {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1.5px solid var(--card);
-  object-fit: cover;
-  background: var(--sunk);
-}
-.mark img + img {
-  margin-left: -9px;
-}
-.item .tx strong {
-  font-size: 14px;
-  font-weight: 650;
-}
-.item .tx small {
+.mangrove-network {
+  --gold: var(--mari-ink, #d6a04e);
+  --gold-soft: rgba(214,160,78,.24);
+  --gold-line: rgba(214,160,78,.64);
+  --muted: var(--ink-2, #a49a8a);
+  color: var(--ink, #f1e9dc);
+  padding: 42px clamp(12px, 2.5vw, 32px) 28px;
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 12px;
+}
+.network-heading { text-align: center; margin: 0 auto 34px; }
+.eyebrow, .level-label, .hub-copy > small, .members-root > small {
+  color: var(--gold); font: 700 9px/1.4 monospace; letter-spacing: .17em;
+}
+.network-heading h2 { margin: 9px 0 6px; font-size: clamp(27px, 3vw, 39px); letter-spacing: -.05em; }
+.network-heading h2 em { color: var(--gold); font: italic 400 1em Georgia, serif; }
+.network-heading p { margin: 0; color: var(--muted); font-size: 11px; }
+.tree-canvas { position: relative; width: 100%; max-width: 1420px; margin: 0 auto; }
+.tree-grid {
+  position: relative; display: grid; isolation: isolate;
+  grid-template-columns: minmax(145px, 17%) minmax(165px, 19%) minmax(205px, 23%) minmax(0, 41%);
+  grid-template-rows: repeat(3, minmax(190px, auto));
+  align-items: center; column-gap: 0; row-gap: 0;
+}
+.tree-wiring { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.tree-wiring path { fill: none; stroke: url(#sundarbansBranchGold); stroke-linecap: round; vector-effect: non-scaling-stroke; transition: stroke-width .22s ease, opacity .22s ease, filter .22s ease; }
+.main-wire { display: none; }
+.branch-wire { stroke-width: 2.6; stroke-dasharray: 2 9; opacity: .8; }
+
+.tree-wiring .is-active { opacity: 1; stroke-width: 4; filter: drop-shadow(0 0 5px rgba(231,180,93,.82)); }
+.wire-joint { fill: var(--gold); stroke: var(--card, #171410); stroke-width: 2; }
+.tree-grid { z-index: 1; }
+/* The UHC–LHC connector is grid-aligned, so it stays attached at every desktop width. */
+.council-wire {
+  grid-column: 1 / 3; grid-row: 2; align-self: center; justify-self: stretch;
+  position: relative; z-index: 1; height: 2px; margin: 0; pointer-events: none;
+}
+.council-wire::before {
+  content: ""; position: absolute; left: 24%; right: 26%; top: 50%; height: 2px;
+  transform: translateY(-50%); border-radius: 2px;
+  background: repeating-linear-gradient(90deg, rgba(225,182,109,.95) 0 3px, transparent 3px 11px);
+  filter: drop-shadow(0 0 3px rgba(214,160,78,.3));
+}
+.council-node, .branch-hub, .leaf-group { min-width: 0; }
+.uhc-node { grid-column: 1; grid-row: 2; }
+.lhc-node { grid-column: 2; grid-row: 2; }
+.council-node { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; min-height: 1px; }
+.council-dot { position: relative; z-index: 3; display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 2px solid #d8a34f; border-radius: 50%; background: #17130e; box-shadow: 0 0 0 4px rgba(214,160,78,.08), 0 0 12px rgba(214,160,78,.24); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.node-core { width: 8px; height: 8px; border-radius: 50%; background: #efbd68; box-shadow: 0 0 8px rgba(239,189,104,.7); }
+.council-dot:hover, .council-dot:focus-visible { transform: scale(1.28); border-color: #ffe0a0; box-shadow: 0 0 0 7px rgba(214,160,78,.15), 0 0 29px rgba(255,194,91,.82); outline: none; }
+.council-popover { position: absolute; z-index: 5; left: 50%; bottom: calc(50% + 20px); width: max-content; min-width: 238px; max-width: 290px; display: grid; gap: 6px; padding: 16px 18px; border: 1px solid rgba(226,174,91,.68); border-radius: 11px; color: var(--ink, #f1e9dc); background: linear-gradient(135deg, rgba(45,34,20,.98), rgba(24,20,15,.98)); box-shadow: 0 12px 34px rgba(0,0,0,.38), 0 0 28px rgba(214,160,78,.25); opacity: 0; visibility: hidden; transform: translate(-50%, 9px) scale(.96); pointer-events: none; transition: opacity .18s ease, transform .18s ease, visibility .18s; }
+.council-dot:hover ~ .council-popover, .council-dot:focus-visible ~ .council-popover { opacity: 1; visibility: visible; transform: translate(-50%, -3px) scale(1.05); }
+.council-popover::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 10px; height: 10px; border-right: 1px solid rgba(226,174,91,.58); border-bottom: 1px solid rgba(226,174,91,.58); background: #211a12; transform: translateX(-50%) rotate(45deg); }
+.council-popover strong { font-size: 16px; line-height: 1.35; white-space: nowrap; }
+.council-popover > small { color: var(--muted); font-size: 12px; }
+.level-label { font-size: 8px; }
+.lhc-popover { min-width: 205px; }
+.avatars { display: flex; margin-top: 5px; }
+.avatars img, .leaf-avatars img { width: 24px; height: 24px; object-fit: cover; border-radius: 50%; border: 2px solid var(--card, #171410); }
+.avatars img + img, .leaf-avatars img + img { margin-left: -7px; }
+.seat-dots { display: flex; gap: 4px; }
+.seat-dots i, .seat-pips i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 1px rgba(214,160,78,.24); }
+.seat-count { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 22px; font-weight: 700; }
+.seat-count small { display: block; color: var(--muted); text-align: center; font: 9px monospace; }
+.seat-pips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; max-width: 105px; }
+.branch-hub { display: flex; align-items: center; height: 100%; }
+.regions-hub { grid-column: 3; grid-row: 1; }
+.communities-hub { grid-column: 3; grid-row: 2; }
+.crew-hub { grid-column: 3; grid-row: 3; }
+.hub-hit { display: flex; align-items: center; gap: 11px; width: 100%; padding: 12px 8px; border: 1px solid transparent; border-radius: 12px; color: inherit; background: transparent; text-align: left; font: inherit; cursor: pointer; transition: background .2s, border-color .2s; }
+.hub-hit:hover, .hub-hit:focus-visible, .branch-hub.active .hub-hit { border-color: rgba(232,181,95,.62); background: linear-gradient(110deg, rgba(214,160,78,.14), rgba(214,160,78,.035)); box-shadow: 0 0 0 1px rgba(214,160,78,.08), 0 0 25px rgba(214,160,78,.16); outline: none; }
+.branch-hub.active .hub-ring, .hub-hit:hover .hub-ring, .hub-hit:focus-visible .hub-ring { border-color: #f0c77e; color: #ffe2a9; background: rgba(214,160,78,.13); box-shadow: 0 0 0 4px rgba(214,160,78,.09), 0 0 22px rgba(214,160,78,.38); }
+.branch-hub.active .hub-copy strong, .hub-hit:hover .hub-copy strong { color: #fff0d2; text-shadow: 0 0 12px rgba(236,190,111,.3); }
+.hub-ring { display: grid; place-items: center; flex: none; width: 37px; height: 37px; border: 1.5px solid var(--gold); border-radius: 50%; color: var(--gold); background: var(--card, #171410); font-size: 18px; box-shadow: 0 0 0 5px rgba(214,160,78,.035); }
+.hub-copy { display: grid; gap: 5px; min-width: 0; }
+.hub-copy > small { font-size: 8px; }
+.hub-copy strong { font-size: clamp(12px, 1.1vw, 15px); white-space: nowrap; }
+.hub-copy strong i { margin-left: 4px; color: var(--gold); font: 700 10px monospace; }
+.hub-copy em { color: var(--muted); font-size: 9px; font-style: normal; }
+.leaf-group { position: relative; display: grid; gap: 6px; padding: 13px 5px 13px 17px; align-content: center; }
+.regions-group { grid-column: 4; grid-row: 1; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(47px, auto)); }
+.communities-group { grid-column: 4; grid-row: 2; grid-template-columns: 1fr; grid-template-rows: repeat(3, minmax(48px, auto)); }
+.crew-group { grid-column: 4; grid-row: 3; grid-template-columns: 1fr; grid-template-rows: repeat(3, minmax(48px, auto)); }
+.leaf-group::before { content: ""; position: absolute; left: 5px; top: 18%; bottom: 18%; width: 1px; background: linear-gradient(transparent, var(--gold-line), transparent); transition: box-shadow .2s, background .2s; }
+.leaf-group:hover::before { background: var(--gold); box-shadow: 0 0 8px rgba(214,160,78,.42); }
+.leaf { position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 43px; padding: 6px 7px; border: 1px solid transparent; border-radius: 8px; color: inherit; background: transparent; text-align: left; font: inherit; cursor: pointer; transition: background .2s, border-color .2s, transform .2s; }
+.leaf::before { content: ""; position: absolute; left: -13px; top: 50%; width: 13px; height: 1px; background: var(--gold-line); }
+.leaf:hover, .leaf:focus-visible { z-index: 1; border-color: rgba(232,181,95,.6); background: linear-gradient(100deg, rgba(214,160,78,.15), rgba(214,160,78,.045)); transform: translateX(3px); box-shadow: 0 0 0 1px rgba(214,160,78,.08), 0 0 20px rgba(214,160,78,.13); outline: none; }
+.leaf:hover .leaf-copy strong, .leaf:focus-visible .leaf-copy strong { color: #fff0d2; text-shadow: 0 0 10px rgba(236,190,111,.28); }
+.leaf:hover .leaf-copy small, .leaf:focus-visible .leaf-copy small { color: #d8c6a7; }
+.leaf:hover .leaf-dot, .leaf:focus-visible .leaf-dot { box-shadow: 0 0 0 4px rgba(214,160,78,.1), 0 0 13px rgba(236,190,111,.72); }
+.leaf:hover .leaf-arrow, .leaf:focus-visible .leaf-arrow { opacity: 1; text-shadow: 0 0 10px rgba(236,190,111,.7); }
+.leaf-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #c58b3c; box-shadow: 0 0 8px rgba(214,160,78,.22); }
+.wing-cultural { background: #a96c25; }.wing-tech { background: #4569ad; }.wing-games { background: #b94e3b; }.crew-dot { background: #898477; }
+.leaf-copy { display: grid; flex: 1; min-width: 0; gap: 3px; }
+.leaf-copy strong { font-size: 10px; line-height: 1.25; }
+.leaf-copy small { color: var(--muted); font-size: 8px; line-height: 1.3; overflow-wrap: anywhere; }
+.leaf-avatars { display: flex; flex: none; }
+.leaf-avatars img { width: 20px; height: 20px; }
+.leaf-arrow { flex: none; color: var(--gold); font-size: 13px; opacity: .75; }
+.recruiting { color: var(--gold) !important; }
+.members-root { display: grid; justify-items: center; gap: 5px; max-width: 520px; margin: 24px auto 0; padding: 20px 12px 4px; border-top: 1px solid rgba(214,160,78,.16); text-align: center; }
+.root-mark { color: var(--gold); font: 26px Georgia, serif; line-height: 1; }
+.members-root > small { font-size: 8px; }
+.members-root strong { font-size: 18px; }
+.members-root p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+@media (max-width: 1050px) and (min-width: 701px) {
+  .tree-grid { grid-template-columns: minmax(125px, 16%) minmax(145px, 18%) minmax(180px, 24%) minmax(0, 42%); grid-template-rows: repeat(3, minmax(190px, auto)); }
+  .hub-hit { gap: 7px; padding-inline: 3px; }
+  .hub-ring { width: 31px; height: 31px; }
+  .hub-copy em { display: none; }
+  .regions-group { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .leaf-avatars { display: none; }
 }
 
-/* The sea: every channel ends here. */
-.sea {
-  position: relative;
-  display: grid;
-  padding: 26px 20px 16px;
-  overflow: hidden;
-  border: 0;
-  border-radius: 20px;
-  background: var(--mari-soft);
-  text-align: center;
+/* Mobile: keep the same hierarchy, but let it flow top-to-bottom. */
+@media (max-width: 700px) {
+  .mangrove-network { padding: 28px 13px 22px; overflow-x: clip; }
+  .tree-canvas, .tree-grid { min-width: 0; max-width: 100%; }
+  .network-heading { margin-bottom: 24px; }
+  .network-heading h2 { font-size: clamp(26px, 7vw, 34px); }
+  .network-heading p { font-size: 10px; }
+  .tree-wiring { display: none; }
+  .council-wire { display: none; }
+  .tree-grid { display: flex; flex-direction: column; gap: 0; width: 100%; }
+  .council-node, .branch-hub, .leaf-group { width: 100%; }
+  .council-node { position: relative; justify-content: flex-start; min-height: 54px; padding-left: 18px; }
+  .council-dot { width: 20px; height: 20px; }
+  .council-popover { left: 42px; bottom: auto; top: 50%; min-width: 0; width: calc(100% - 55px); max-width: none; padding: 10px 12px; opacity: 1; visibility: visible; transform: translateY(-50%); pointer-events: auto; }
+  .council-popover::after { display: none; }
+  .council-popover strong { font-size: 12px; }
+  .council-popover > small { font-size: 8px; }
+  .lhc-node { margin-bottom: 17px; }
+  .branch-hub { position: relative; min-height: 54px; margin: 0; padding: 0 0 0 17px; }
+  .branch-hub::before { content: ""; position: absolute; left: 50%; top: -13px; height: 13px; width: 2px; background: var(--gold-line); }
+  .hub-hit { min-height: 52px; padding: 7px 10px; border: 1px solid rgba(214,160,78,.17); border-radius: 10px; background: rgba(214,160,78,.035); }
+  .hub-ring { width: 31px; height: 31px; }
+  .hub-copy > small { font-size: 7px; }
+  .hub-copy strong { font-size: 12px; }
+  .hub-copy em { display: none; }
+  .leaf-group { margin: 0 0 16px 17px; width: calc(100% - 17px); padding: 8px 8px 8px 17px; border-left: 1px solid var(--gold-line); }
+  .leaf-group::before { display: none; }
+  .leaf { min-height: 47px; padding: 7px 7px; border-color: rgba(214,160,78,.1); background: rgba(255,255,255,.012); }
+  .leaf::before { left: -18px; width: 17px; }
+  .leaf-copy strong { font-size: 10px; }
+  .leaf-copy small { font-size: 8px; }
+  .regions-group { grid-template-columns: repeat(2, minmax(0,1fr)); grid-template-rows: auto; grid-auto-rows: minmax(48px, auto); gap: 5px; }
+  .communities-group, .crew-group { grid-template-columns: 1fr; grid-template-rows: auto; grid-auto-rows: minmax(47px, auto); gap: 5px; }
+  .leaf-avatars { display: none; }
+  .members-root { margin-top: 6px; padding-top: 17px; }
 }
-.sea .tx strong {
-  font-size: 20px;
-  font-weight: 750;
+@media (max-width: 390px) {
+  .mangrove-network { padding-inline: 10px; }
+  .regions-group { grid-template-columns: 1fr; }
+  .seat-count { right: 9px; }
 }
-.sea .tx small {
-  font-size: 14px;
-}
-.waves {
-  position: absolute;
-  inset: 0 0 auto;
-  width: 200%;
-  height: 22px;
-  animation: tide 9s linear infinite;
-}
-.waves path {
-  fill: var(--paper);
-  opacity: 0.55;
-}
-.waves path + path {
-  opacity: 1;
-}
-@keyframes tide {
-  to {
-    transform: translateX(-50%);
-  }
-}
-.waves {
-  transform-origin: center;
-  scale: 1 -1;
-}
-
-/* Phones: a single trunk on the left; heads and teams hang off it. */
-.narrow .uhc {
-  justify-self: stretch;
-  border-radius: 18px;
-}
-.narrow .cols {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
-}
-.narrow .head {
-  margin-left: 34px;
-}
-.narrow .items {
-  padding-left: 52px;
-}
-.narrow .lhc .items {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .node {
-    transition: none;
-  }
-  .motes,
-  .waves {
-    animation: none;
-  }
-}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 </style>
