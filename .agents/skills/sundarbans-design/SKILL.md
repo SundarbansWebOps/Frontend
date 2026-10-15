@@ -86,6 +86,8 @@ its painted colours in both themes; leave them as they are.
 - Body 14–15px (`--ink-2` for supporting text, `max-width: 62ch`); labels 12–13px; tiny caps labels
   10.5–11px, uppercase, `letter-spacing: 0.08em`–`0.14em`.
 - Weights 500–750. Numbers that change use `font-variant-numeric: tabular-nums`.
+- `var(--display)` (Tiro Bangla 400 and italic) is for section headings on the Contributors page
+  only.
 
 ### Shape and layout
 
