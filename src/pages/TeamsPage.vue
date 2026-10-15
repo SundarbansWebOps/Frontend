@@ -29,10 +29,7 @@
 
     <section id="how" class="sec" aria-labelledby="how-h">
       <h2 id="how-h" class="sec-h"><span class="mono">01</span> How the house works</h2>
-      <p class="sec-sub">
-        One council, three channels, one house. Tap any part to meet the people in it.
-        <em class="draft mono">structure to confirm</em>
-      </p>
+      <p class="sec-sub">Tap any part to meet the people in it.</p>
       <HouseFlow @go="goToNode" />
     </section>
 
