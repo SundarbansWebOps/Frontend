@@ -97,7 +97,7 @@
   <nav class="tabbar" aria-label="Main">
     <RouterLink v-for="l in LINKS" :key="l.to" :to="l.to" active-class="on">
       <LineIcon :name="l.icon" />
-      <span>{{ l.label }}</span>
+      <span>{{ l.short ?? l.label }}</span>
     </RouterLink>
     <a
       class="lounge"
@@ -134,6 +134,8 @@ const LINKS = [
   { to: '/events', label: 'Events', icon: 'cal' },
   { to: '/house', label: 'House', icon: 'house' },
   { to: '/teams', label: 'Teams', icon: 'people' },
+  // `short` is the phone tab-bar label only: the full name does not fit a sixth tab.
+  { to: '/contributors', label: 'Contributors', short: 'Stats', icon: 'chart' },
 ];
 
 const route = useRoute();
@@ -602,7 +604,7 @@ onBeforeUnmount(() => {
     inset: auto 0 0;
     z-index: 60;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: color-mix(in srgb, var(--paper) 92%, transparent);
     backdrop-filter: blur(10px);

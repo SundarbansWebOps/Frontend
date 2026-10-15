@@ -34,6 +34,14 @@
   --w-tech: #2f4f9e;
   --w-talks: #7e3474;
   --w-meetups: #6b4a2b;
+  /* Contributors chart series: top six people, then Others (neutral). */
+  --s1: #d98500;
+  --s2: #3b5bdb;
+  --s3: #d9452b;
+  --s4: #22a2c0;
+  --s5: #c7457c;
+  --s6: #7a4fd0;
+  --s0: #a39582;
 }
 
 :root[data-theme='dark'] {
@@ -61,6 +69,13 @@
   --w-tech: #93a9ff;
   --w-talks: #e394d4;
   --w-meetups: #d4ab80;
+  --s1: #c98500;
+  --s2: #5a74f0;
+  --s3: #e0502e;
+  --s4: #1997b5;
+  --s5: #de5f93;
+  --s6: #8f62e6;
+  --s0: #6d6255;
 }
 
 /* Resources page (class set/removed in ResourcesPage.vue): a full-black page. The rest of the
@@ -98,6 +113,8 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --r: 14px;
   --nav-h: 60px;
+  /* Tiro Bangla: section headings on the Contributors page only. */
+  --display: 'Tiro Bangla', Georgia, serif;
 }
 
 *,

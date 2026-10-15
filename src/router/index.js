@@ -11,6 +11,7 @@ const routes = [
   { path: '/events', component: () => import('../pages/EventsPage.vue') },
   { path: '/house', component: () => import('../pages/HousePage.vue') },
   { path: '/teams', component: () => import('../pages/TeamsPage.vue') },
+  { path: '/contributors', component: () => import('../pages/ContributorsPage.vue') },
   {
     path: '/teams/legacy',
     name: 'Legacy',

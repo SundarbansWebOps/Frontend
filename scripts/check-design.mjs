@@ -10,7 +10,8 @@ const TOKENS = 'src/assets/tokens.css';
 const BASELINE = 'scripts/design-baseline.json';
 // Every max/min-width used on the site. A new layout reuses one of these.
 const BREAKPOINTS = new Set([560, 640, 760, 761, 860, 900, 1020]);
-const FONT_OK = /^(var\(--font\)|var\(--mono\)|inherit)$/;
+// --display (Tiro Bangla) is for section headings on the Contributors page only.
+const FONT_OK = /^(var\(--font\)|var\(--mono\)|var\(--display\)|inherit)$/;
 
 const RAW_COLOR =
   /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/g;
