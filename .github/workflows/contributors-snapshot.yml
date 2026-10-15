@@ -1,0 +1,59 @@
+name: Contributors snapshot
+
+# Refreshes src/data/contributors.json weekly and opens a PR when the numbers change.
+# main is protected, so the bot cannot push there: the PR needs a review and merge.
+
+on:
+  schedule:
+    - cron: '30 2 * * 1' # Mondays 08:00 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: contributors-snapshot
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Build snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run contributors:snapshot
+
+      - name: Open or update the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: chore/contributors-snapshot
+        run: |
+          # generatedAt changes on every run. Only a change to the numbers is worth a PR.
+          if git diff --quiet -I'"generatedAt"' -- src/data/contributors.json; then
+            echo "No change to contributor numbers; no PR."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add src/data/contributors.json
+          git commit -m "chore(contributors): refresh snapshot"
+          # The branch belongs to this job only; each week's snapshot replaces the last one.
+          git push --force origin "$BRANCH"
+
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --base main --head "$BRANCH" \
+              --title "chore(contributors): refresh snapshot" \
+              --body "Weekly refresh of the Contributors page numbers from \`npm run contributors:snapshot\`. Review the counts, then merge; the page updates on the next deploy."
+          fi
