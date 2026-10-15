@@ -6,6 +6,7 @@
 > Tests: `supabase/tests/040_event_audience_posters_test.sql` (25), `e2e/event-posters.spec.js` (3).
 
 ## Audience
+
 - **Who:** House (everyone), a region, or a community, plus optional cohorts (unchanged).
 - **Public / Members only** (`events.is_public`): a Public upcoming event is listed in "Coming up" on
   `/#/events`; a members-only one stays in the Lounge for its audience. Every published event joins the
@@ -13,16 +14,18 @@
   Public events with a `stage`.
 
 ## Who manages which event
-| | Own region | House-wide | Other region / community |
-|---|---|---|---|
-| RC | create, edit, publish | draft; **Ask a Super Admin to publish** (`event_publish` request); after approval only Super Admins edit | no |
-| Head / Co-Head | – | – | own community only |
-| Super Admin | all | all | all |
+
+|                | Own region            | House-wide                                                                                               | Other region / community |
+| -------------- | --------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------ |
+| RC             | create, edit, publish | draft; **Ask a Super Admin to publish** (`event_publish` request); after approval only Super Admins edit | no                       |
+| Head / Co-Head | –                     | –                                                                                                        | own community only       |
+| Super Admin    | all                   | all                                                                                                      | all                      |
 
 While a publish request is pending the draft is frozen (`events_freeze_under_review`), so the Super
 Admin approves exactly what they reviewed. Approve/reject in Admin → Requests.
 
 ## Posters (Cloudinary)
+
 1. Save the event (draft is fine), then **Upload poster** in the event form.
 2. The site calls `sign-event-image`; it checks the caller may manage that event
    (`svc_event_image_target` → `manages_event`) and signs an upload fixed to
