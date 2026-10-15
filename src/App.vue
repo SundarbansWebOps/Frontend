@@ -70,6 +70,11 @@ function skipToMain() {
 </script>
 
 <style scoped>
+/* The skip link focuses <main id="main-content">, which is page-height. Its focus ring would draw
+   two lines down both edges of the page, so the container shows none; the skip link keeps its own. */
+:global(#main-content:focus) {
+  outline: none;
+}
 .defs {
   position: absolute;
   width: 0;
