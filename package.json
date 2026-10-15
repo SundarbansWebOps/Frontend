@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format:check": "node scripts/check-format.mjs",
     "test:smoke": "playwright test",
     "check:study": "node scripts/check-study-data.mjs",
     "check:design": "node scripts/check-design.mjs",

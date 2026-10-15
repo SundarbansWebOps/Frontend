@@ -17,6 +17,11 @@ const routes = [
     component: () => import('../pages/LegacyPage.vue'),
   },
   {
+    path: '/teams/legacy/2023-24',
+    name: 'Tenure2023',
+    component: () => import('../pages/TenureReadPage.vue'),
+  },
+  {
     path: '/lounge',
     name: 'Lounge',
     component: () => import('../pages/LoungePage.vue'),
@@ -64,6 +69,11 @@ const routes = [
   { path: '/community/esports', redirect: { path: '/events', query: { wing: 'games' } } },
   { path: '/contact', redirect: { path: '/house', hash: '#council' } },
   { path: '/dashboard', redirect: '/lounge' },
+  {
+    path: '/grade',
+    name: 'GradeCalculator',
+    component: () => import('../pages/GradeCalculatorView.vue'),
+  },
 
   // 404 catch-all
   {

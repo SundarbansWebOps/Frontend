@@ -9,7 +9,9 @@ const media = matchMedia('(prefers-color-scheme: dark)');
 
 function stored() {
   try {
-    const v = localStorage.getItem(KEY);
+    const saved = localStorage.getItem(KEY);
+    const v =
+      saved === 'light' || saved === 'dark' ? saved : localStorage.getItem('lounge-e-theme');
     return v === 'light' || v === 'dark' ? v : null;
   } catch {
     return null;
@@ -25,7 +27,6 @@ media.addEventListener('change', (e) => {
 watch(
   theme,
   (t) => {
-    if (document.documentElement.classList.contains('lounge-active')) return;
     document.documentElement.dataset.theme = t;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BAR[t]);
   },
@@ -38,7 +39,7 @@ watch(
 // API, or with reduced motion, the theme simply switches.
 const RIPPLE_MS = 700; // time for the edge to reach the farthest corner
 
-function setTheme(t) {
+export function setTheme(t) {
   theme.value = t;
   try {
     localStorage.setItem(KEY, t);

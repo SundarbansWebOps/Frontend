@@ -11,7 +11,8 @@ export const loungeArrived = ref(false);
 // True while the sign-in door still covers the Lounge. The Lounge (or its tour) is mounted and
 // rests in its first pose underneath; it starts moving when this turns false.
 export const doorHold = ref(false);
-export const theme = ref(boot.theme);
+export { theme } from '../../lib/theme.js';
+import { theme } from '../../lib/theme.js';
 export const rosterName = computed(() => member.full_name ?? '');
 export const preferredName = ref(null);
 export const certName = ref('');

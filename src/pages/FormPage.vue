@@ -80,8 +80,8 @@
 <script setup>
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import { onBeforeRouteLeave, useRoute } from 'vue-router';
-import { store, theme } from '../components/lounge/state.js';
-import { theme as siteTheme } from '../lib/theme.js';
+import { theme } from '../components/lounge/state.js';
+import { setTheme, theme as siteTheme } from '../lib/theme.js';
 import '../components/lounge/lounge.css';
 import '../components/lounge/panels.css';
 import '../components/lounge/tokens.css';
@@ -115,9 +115,7 @@ const canSubmit = computed(
 );
 
 function toggleTheme() {
-  theme.value = theme.value === 'dark' ? 'light' : 'dark';
-  root.dataset.theme = theme.value;
-  store('lounge-e-theme', theme.value);
+  setTheme(theme.value === 'dark' ? 'light' : 'dark');
 }
 
 onBeforeRouteLeave((to) => {

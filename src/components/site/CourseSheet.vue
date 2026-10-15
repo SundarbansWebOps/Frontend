@@ -750,7 +750,17 @@ h2 {
   column-gap: 16px;
   padding: 13px 0 14px;
   text-decoration: none;
+  transform-origin: left center;
+  transition:
+    translate 0.35s var(--ease-out),
+    scale 0.35s var(--ease-out);
   animation: fade-up 0.5s var(--ease-out) calc(var(--base) + 0.1s + var(--i, 0) * 30ms) both;
+}
+/* A quiet slide and grow on the hovered row; no underline or fill. Individual translate/scale
+   keep clear of the entrance animation, which animates transform. */
+.row:hover {
+  translate: 6px 0;
+  scale: 1.01;
 }
 .row::after {
   content: '';
@@ -767,12 +777,6 @@ h2 {
   grid-area: t;
   font-size: 15px;
   font-weight: 560;
-  text-decoration: underline 1.5px transparent;
-  text-underline-offset: 4px;
-  transition: text-decoration-color 0.25s;
-}
-.row:hover .t {
-  text-decoration-color: var(--mari);
 }
 .m {
   grid-area: m;
