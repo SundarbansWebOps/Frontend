@@ -234,7 +234,7 @@
           <div class="copy head">
             <h2 id="pat-h-teams" class="brushed">Teams</h2>
             <p class="lede">
-              How the house works: the councils, the communities and the crew behind it.
+              How the house works: the councils, the communities and the teams behind it.
             </p>
             <dl class="stats">
               <div v-for="s in STATS.teams" :key="s.label">
@@ -252,7 +252,7 @@
               :live="live.teams"
             />
             <span
-              v-for="c in CREWMAP"
+              v-for="c in PLACES"
               :key="c.n"
               class="marker"
               :style="{ left: `${c.at[0]}%`, top: `${c.at[1]}%` }"
@@ -260,8 +260,8 @@
               >{{ c.n }}</span
             >
           </div>
-          <ol class="crew">
-            <li v-for="c in CREWMAP" :key="c.n" :style="{ '--i': c.n }">
+          <ol class="places">
+            <li v-for="c in PLACES" :key="c.n" :style="{ '--i': c.n }">
               <span class="num" aria-hidden="true">{{ c.n }}</span>
               <small>{{ c.where }}</small>
               <b
@@ -316,7 +316,7 @@ import { nav } from '../lib/store.js';
 import { courses, TOOLS, WHATSAPP } from '../lib/courses.js';
 import { events, WINGS } from '../lib/events.js';
 import { meetupCount, photoCount, portrait, regions, upper, lower } from '../lib/house.js';
-import { COMMUNITIES, CREW } from '../data/teams.js';
+import { COMMUNITIES, TEAMS } from '../data/teams.js';
 
 const PORTAL = TOOLS[0];
 const forestSet = `${ASSET.forest800} 800w, ${ASSET.forest} 1400w`;
@@ -335,7 +335,7 @@ const TOTALS = {
   photos: photoCount,
   seats: upper.length + lower.length,
   communities: COMMUNITIES.length,
-  crew: CREW.length,
+  teams: TEAMS.length,
 };
 const STATS = {
   res: [
@@ -356,13 +356,13 @@ const STATS = {
   teams: [
     { key: 'seats', label: 'council seats' },
     { key: 'communities', label: 'communities' },
-    { key: 'crew', label: 'crew teams' },
+    { key: 'teams', label: 'teams' },
   ],
 };
 
 // The snake-boat as the house: who sits where. `at` is the marker's spot on the plate (%).
 const names = (list) => list.map((x) => x.name).join(', ');
-const CREWMAP = [
+const PLACES = [
   {
     n: 1,
     at: [86, 9],
@@ -391,9 +391,9 @@ const CREWMAP = [
     n: 4,
     at: [63, 74],
     where: 'In the hull',
-    who: 'Crew',
-    count: CREW.length,
-    what: `${names(CREW)} keep the boat seen and afloat.`,
+    who: 'Teams',
+    count: TEAMS.length,
+    what: `${names(TEAMS)} keep the boat seen and afloat.`,
   },
 ];
 
@@ -1559,7 +1559,7 @@ h3 {
   color: var(--pi2);
 }
 
-/* Teams: the whole crew in one boat. */
+/* Teams: the whole house in one boat. */
 .teams {
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
@@ -1603,7 +1603,7 @@ h3 {
   transform: none;
   transition-delay: 1.4s;
 }
-.crew {
+.places {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px 26px;
@@ -1613,7 +1613,7 @@ h3 {
   list-style: none;
   text-align: left;
 }
-.crew li {
+.places li {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
@@ -1623,11 +1623,11 @@ h3 {
     transform 0.6s var(--ease-out);
   transition-delay: calc(0.6s + var(--i) * 90ms);
 }
-.teams:not(.seen) .crew li {
+.teams:not(.seen) .places li {
   opacity: 0;
   transform: translateY(12px);
 }
-.crew .num {
+.places .num {
   grid-row: span 3;
   display: grid;
   place-items: center;
@@ -1640,23 +1640,23 @@ h3 {
   font-size: 14px;
   font-weight: 800;
 }
-.crew small {
+.places small {
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--pv);
 }
-.crew b {
+.places b {
   font-size: 17px;
   font-weight: 750;
   line-height: 1.25;
 }
-.crew b .mono {
+.places b .mono {
   font-size: 14px;
   color: var(--pv);
 }
-.crew p {
+.places p {
   margin: 4px 0 0;
   font-size: 14.5px;
   line-height: 1.45;
@@ -1733,7 +1733,7 @@ h3 {
     padding-inline: calc(var(--edge-w) + 28px);
     column-gap: 36px;
   }
-  .crew {
+  .places {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .posters {
@@ -1825,7 +1825,7 @@ h3 {
   .posters {
     margin-inline: -16px;
   }
-  .crew {
+  .places {
     grid-template-columns: minmax(0, 1fr);
   }
   .marker {
@@ -1850,7 +1850,7 @@ h3 {
     transition: none;
   }
   .copy > *,
-  .crew li,
+  .places li,
   .marker {
     transition: none;
   }

@@ -1,4 +1,4 @@
-// Painted pat plates beyond Home: the Teams communities and crew, the event posters' figures,
+// Painted pat plates beyond Home: the Teams communities and teams, the event posters' figures,
 // the Night Owl rooms, the 404 and the sign-in door. Same shape as pat.js FIGS (PatFigure):
 // one generated patachitra plate split into a base and moving parts; part boxes and pivots are
 // % of the trimmed plate. Generated with Codex imagegen, keyed and cut by scratchpad tooling.

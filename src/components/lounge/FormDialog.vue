@@ -7,17 +7,21 @@
       <p v-if="form.group_purpose || form.description" class="evd-desc">
         {{ form.group_purpose || form.description }}
       </p>
-      <p v-if="form.submitted" class="evd-done">
+      <p v-if="form.submitted && !isSuperAdmin" class="evd-done">
         Your application is saved. Sending this form is not WhatsApp admission.
       </p>
       <FormFields
-        v-else-if="canSubmit"
+        v-else-if="canViewFields"
         ref="fieldsEl"
         v-model:save-phone="savePhone"
         :fields="form.fields || []"
+        :disabled="previewOnly || form.submitted"
       />
-      <p v-else-if="!form.submitted" class="evd-plain" role="status">
-        This form is not accepting responses.
+      <p v-if="previewOnly" class="evd-plain" role="status">
+        Preview only. {{ unavailableMessage }}
+      </p>
+      <p v-else-if="!canSubmit && !form.submitted" class="evd-plain" role="status">
+        {{ unavailableMessage }}
       </p>
       <p v-if="error" class="ff-err" role="alert">{{ error }}</p>
       <p v-if="invite" class="ff-invite" role="status">
@@ -49,7 +53,9 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { errorText } from '../../lib/auth.js';
+import { errorText, isSuperAdmin } from '../../lib/auth.js';
+import { formUnavailableMessage } from '../../lib/lounge.js';
+import { member } from './fixtures.js';
 import FormFields from './FormFields.vue';
 import LoungeDialog from './LoungeDialog.vue';
 import { fetchInvite, submitLoungeForm } from './session.js';
@@ -63,6 +69,11 @@ const emit = defineEmits(['close', 'done']);
 
 const dlg = ref(null);
 const canSubmit = computed(() => props.form.accepting_responses ?? props.form.is_open ?? false);
+const previewOnly = computed(() => isSuperAdmin.value && !canSubmit.value);
+const canViewFields = computed(() => canSubmit.value || isSuperAdmin.value);
+const unavailableMessage = computed(() =>
+  formUnavailableMessage(props.form, member.region_id, member.cohort)
+);
 const fieldsEl = ref(null);
 const savePhone = ref(false);
 const busy = ref(false);

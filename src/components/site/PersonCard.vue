@@ -1,11 +1,10 @@
 <!--
-  One council member as a two-sided card (portrait front, house back). Hover tilts
-  it toward the pointer. The tilt is read off the untilted wrapper and holds still while the
-  pointer is on a button or link, so the region chip never slides out from under the cursor.
+  One council member as a two-sided card (portrait front, house back). The parent turns it
+  over (CouncilTrio flips it on scroll); the card itself does not react to the cursor.
 -->
 <template>
-  <div class="pc" :class="size" @pointermove="tilt" @pointerleave="untilt">
-    <div ref="card" class="tilt">
+  <div class="pc" :class="size">
+    <div class="card3d">
       <div class="face front">
         <span class="photo">
           <img class="lq" :src="portrait.blur(p.img)" alt="" aria-hidden="true" />
@@ -18,7 +17,6 @@
             decoding="async"
             @load="loaded = true"
           />
-          <i class="glare" aria-hidden="true" />
         </span>
         <span class="info">
           <small class="role">{{ p.role }}</small>
@@ -78,28 +76,6 @@ const meetups = computed(() =>
   props.showMeetups && regionId.value ? regionById[regionId.value].items.length : 0
 );
 const loaded = ref(false);
-const card = ref(null);
-const still =
-  matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(pointer: fine)').matches;
-
-function tilt(e) {
-  if (still || e.target.closest('button, a')) return;
-  const r = e.currentTarget.getBoundingClientRect(); // the wrapper: never tilted
-  const x = (e.clientX - r.left) / r.width;
-  const y = (e.clientY - r.top) / r.height;
-  const s = card.value.style;
-  s.setProperty('--ry', `${(x - 0.5) * 12}deg`);
-  s.setProperty('--rx', `${(0.5 - y) * 10}deg`);
-  s.setProperty('--gx', `${x * 100}%`);
-  s.setProperty('--gy', `${y * 100}%`);
-  card.value.classList.add('lift');
-}
-function untilt() {
-  const s = card.value.style;
-  s.removeProperty('--ry');
-  s.removeProperty('--rx');
-  card.value.classList.remove('lift');
-}
 </script>
 
 <style scoped>
@@ -107,15 +83,10 @@ function untilt() {
   height: 100%;
   transform-style: preserve-3d;
 }
-.tilt {
+.card3d {
   position: relative;
   height: 100%;
   transform-style: preserve-3d;
-  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform 0.5s var(--ease-out);
-}
-.tilt.lift {
-  transition: transform 0.12s linear;
 }
 .face {
   border-radius: 16px;
@@ -191,25 +162,19 @@ function untilt() {
   filter: sepia(0.7) blur(6px);
   transition:
     opacity 0.7s var(--ease-out),
-    filter 1.1s var(--ease-out);
+    filter 1.1s var(--ease-out),
+    transform 1s var(--ease-out);
 }
 .hi.on {
   opacity: 1;
   filter: none;
 }
-.glare {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at var(--gx, 50%) var(--gy, 0%),
-    rgb(255 255 255 / 0.28),
-    transparent 55%
-  );
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.lift .glare {
-  opacity: 1;
+/* Hover eases only the portrait in; the card itself stays still. Mouse-type pointers only, and
+   never under reduced motion. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .pc:hover .hi.on {
+    transform: scale(1.035);
+  }
 }
 .info {
   display: grid;
@@ -292,6 +257,7 @@ button.reg:hover {
 .soc {
   display: grid;
   place-items: center;
+  position: relative;
   flex: none;
   width: 30px;
   height: 30px;
@@ -305,12 +271,17 @@ button.reg:hover {
   background: var(--sunk);
   color: var(--ink);
 }
+/* A 42px tap area around the 30px icon; the row is tight on a phone. */
+.soc::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}
 .soc :deep(svg) {
   width: 16px;
   height: 16px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .tilt,
   .hi {
     transition: none;
   }

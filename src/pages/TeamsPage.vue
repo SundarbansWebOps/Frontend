@@ -1,7 +1,7 @@
 <!--
   Teams: everyone who runs the house, 2026–27. How the house works (drawn as a
   river) → the Upper House Council → the Lower House Council (a coordinator per region) → the
-  communities → the crew. A coordinator's region chip opens that region on House.
+  communities → the teams. A coordinator's region chip opens that region on House.
 -->
 <template>
   <main id="main-content" class="wrap" tabindex="-1">
@@ -29,10 +29,7 @@
 
     <section id="how" class="sec" aria-labelledby="how-h">
       <h2 id="how-h" class="sec-h"><span class="mono">01</span> How the house works</h2>
-      <p class="sec-sub">
-        One council, three channels, one house. Tap any part to meet the people in it.
-        <em class="draft mono">structure to confirm</em>
-      </p>
+      <p class="sec-sub">Tap any part to meet the people in it.</p>
       <HouseFlow @go="goToNode" />
     </section>
 
@@ -57,10 +54,10 @@
       <TeamCards :teams="COMMUNITIES" />
     </section>
 
-    <section id="crew" class="sec" aria-labelledby="crew-h">
-      <h2 id="crew-h" class="sec-h"><span class="mono">05</span> Crew</h2>
+    <section id="teams" class="sec" aria-labelledby="teams-h">
+      <h2 id="teams-h" class="sec-h"><span class="mono">05</span> Teams</h2>
       <p class="sec-sub">They keep the house seen and online.</p>
-      <TeamCards :teams="CREW" />
+      <TeamCards :teams="TEAMS" />
     </section>
   </main>
 </template>
@@ -74,7 +71,7 @@ import CouncilDeck from '../components/site/CouncilDeck.vue';
 import TeamCards from '../components/site/TeamCards.vue';
 import { council, house, lower, regions, upper } from '../lib/house.js';
 import { regionById } from '../lib/house.js';
-import { COMMUNITIES, CREW } from '../data/teams.js';
+import { COMMUNITIES, TEAMS } from '../data/teams.js';
 import { nav } from '../lib/store.js';
 
 const SECTIONS = [
@@ -82,13 +79,13 @@ const SECTIONS = [
   { id: 'uhc', label: 'Council' },
   { id: 'lhc', label: 'Regions' },
   { id: 'communities', label: 'Communities' },
-  { id: 'crew', label: 'Crew' },
+  { id: 'teams', label: 'Teams' },
 ];
 
 const STATS = [
   { key: 'council', label: 'council', to: council.length },
   { key: 'regions', label: 'regions', to: regions.length },
-  { key: 'teams', label: 'teams', to: COMMUNITIES.length + CREW.length },
+  { key: 'teams', label: 'teams', to: COMMUNITIES.length + TEAMS.length },
 ];
 const shown = reactive(Object.fromEntries(STATS.map((s) => [s.key, 0])));
 onMounted(() => {

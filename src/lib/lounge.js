@@ -67,15 +67,29 @@ export const groupFormsForMember = (forms, regionId) =>
       !form.event_id &&
       (form.region_id == null || form.region_id === regionId)
   );
-// Open now by the form's own switch and window. The server still decides who may submit;
-// this only decides which forms a super admin sees on the launch page.
-export const formOpenNow = (form, now = Date.now()) =>
-  !!form.is_open &&
-  !form.archived_at &&
-  !!form.published_at &&
-  Date.parse(form.published_at) <= now &&
-  (!form.opens_at || Date.parse(form.opens_at) <= now) &&
-  (!form.closes_at || Date.parse(form.closes_at) > now);
+export function formUnavailableMessage(form, regionId, cohort) {
+  if (!form) {
+    return 'This form is unavailable to your account. It may be unpublished or restricted to another region or cohort.';
+  }
+  if (form.archived_at) return 'This form is archived.';
+  if (!form.published_at) return 'This form is not published.';
+  if (!form.is_open) return 'The organizer has closed this form.';
+  const now = Date.now();
+  if (Date.parse(form.published_at) > now) return 'This form is not published yet.';
+  if (form.opens_at && Date.parse(form.opens_at) > now) return 'This form is not open yet.';
+  if (form.closes_at && Date.parse(form.closes_at) <= now) {
+    return 'This form’s response window has ended.';
+  }
+  if (form.region_id != null && form.region_id !== regionId) {
+    return 'This form is for another region and is available only to members assigned to that region.';
+  }
+  const cohorts = Array.isArray(form.audience_cohorts) ? form.audience_cohorts : [];
+  if (cohorts.length && !cohorts.includes(cohort)) {
+    return 'This form is only available to members in its listed cohort.';
+  }
+  if (form.event_id) return 'This event form is not currently available to your account.';
+  return 'This form is not accepting responses right now.';
+}
 
 export async function listGroups(forms = null, regionId = null) {
   const submitted = groupFormsForMember(forms ?? (await listForms()), regionId).filter(

@@ -33,8 +33,8 @@
       <span class="t">
         <strong>Meet the teams</strong>
         <small
-          >{{ lower.length }} regional coordinators, the communities and the crew, and how the house
-          works</small
+          >{{ lower.length }} regional coordinators, the communities and the teams, and how the
+          house works</small
         >
       </span>
       <LineIcon name="arrow" />
