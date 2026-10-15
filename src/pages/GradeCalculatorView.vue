@@ -23,8 +23,19 @@
             </div>
           </div>
           <div class="field">
+            <label for="degreeProgram">Degree</label
+            ><select id="degreeProgram">
+              <option value="" selected disabled>Select your degree</option>
+              <option value="DS">DS — Data Science &amp; Applications</option>
+              <option value="ES">ES — Electronic Systems</option>
+              <option value="AE">AE — Aeronautics and Space Technology</option>
+              <option value="MG">MG — Management and Data Science</option>
+            </select>
+          </div>
+          <div class="field">
             <label for="level">Level</label
-            ><select id="level">
+            ><select id="level" disabled>
+              <option value="" selected disabled>Select your level</option>
               <option value="foundation">Foundation</option>
               <option value="diploma">Diploma</option>
               <option value="degree">Degree</option>
@@ -32,7 +43,9 @@
           </div>
           <div class="field">
             <label for="course">Course</label
-            ><select id="course"></select>
+            ><select id="course" disabled>
+              <option value="" selected>Select your course</option>
+            </select>
           </div>
 
           <h2>Enter your scores</h2>
@@ -208,7 +221,7 @@
                   display: block;
                   font-size: 9px;
                   font-weight: 500;
-                  color: var(--ink-2);
+                  color: var(--muted);
                   text-align: center;
                 "
                 >points</small
@@ -243,7 +256,7 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  const levelCourses = {
+  const dsCourses = {
     foundation: [
       { id: 'ma1001', name: 'Mathematics for Data Science 1 (MA1001)', bonus: 0 },
       { id: 'hs1001', name: 'English 1 (HS1001)', bonus: 0 },
@@ -809,8 +822,401 @@ onMounted(() => {
       },
     ].map((c, i) => ({ id: 'degree_' + (i + 1), ...c })),
   };
+
+  // Program-specific course catalogues. Only courses/formulas supported by the supplied
+  // course documents are listed; unsupported levels stay empty rather than guessing.
+  const makeTheory = (id, name, bonus = 0) => ({
+    id,
+    name,
+    bonus,
+    sourceFormula: bonus
+      ? 'T = max(0.6F + 0.3max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.3Qz2) + activity bonus (only if passed; capped per course)'
+      : 'T = max(0.6F + 0.3max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.3Qz2)',
+  });
+  const makeDiploma = (id, name, type, fields, sourceFormula) => ({
+    id,
+    name,
+    type,
+    fields,
+    sourceFormula,
+  });
+  const programCourses = {
+    DS: dsCourses,
+    ES: {
+      foundation: [
+        makeTheory('es_hs1001', 'English - I (HS1001)'),
+        makeTheory('es_ma1101', 'Math for Electronics - I (MA1101)'),
+        makeTheory('es_ee1101', 'Electronic Systems Thinking and Circuits (EE1101)'),
+        makeTheory('es_hs1002', 'English - II (HS1002)'),
+        makeTheory('es_cs1102', 'Introduction to Linux Programming (CS1102)'),
+        makeTheory('es_ee1102', 'Digital Systems (EE1102)'),
+        makeTheory('es_ee1103', 'Electrical and Electronic Circuits (EE1103)'),
+        makeDiploma(
+          'es_cs1101',
+          'Introduction to C Programming (CS1101)',
+          'esC',
+          [
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dop1', 'OPPE 1', 100],
+            ['dop2', 'OPPE 2', 100],
+            ['dweekly', 'Best 5 weekly assignments average', 100],
+          ],
+          'T = 0.25Qz1 + 0.45F + max(0.15 OPPE1 + 0.15 OPPE2, 0.20 max(OPPE1,OPPE2))'
+        ),
+      ],
+      diploma: [
+        makeDiploma(
+          'es_ee2101',
+          'Signals and Systems (EE2101)',
+          'esSignals',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dgrpa', 'GrPA', 100],
+          ],
+          'T = 0.05 GAA + max(0.5F + 0.25 max(Qz1,Qz2), 0.45F + 0.2Qz1 + 0.2Qz2) + 0.1 GrPA'
+        ),
+        makeDiploma(
+          'es_cs1002',
+          'Python Programming (CS1002)',
+          'esPython',
+          [
+            ['dgaa1', 'GAA1 (objective)', 100],
+            ['dgaa2', 'GAA2 (programming)', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dpe1', 'OPPE 1 (PE1)', 100],
+            ['dpe2', 'OPPE 2 (PE2)', 100],
+          ],
+          'T = 0.05GAA1 + 0.05GAA2 + 0.15Qz1 + 0.45F + 0.25 max(PE1,PE2) + 0.15 min(PE1,PE2)'
+        ),
+        makeDiploma(
+          'es_ee2102',
+          'Analog Electronic Systems (EE2102)',
+          'esStandardDiploma',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25 max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)'
+        ),
+        makeDiploma(
+          'es_ee3101',
+          'Digital Signal Processing (EE3101)',
+          'esStandardDiploma',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25 max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)'
+        ),
+        makeDiploma(
+          'es_ee3103',
+          'Sensors and Application (EE3103)',
+          'esStandardDiploma',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25 max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2'
+        ),
+        makeDiploma(
+          'es_ee2103',
+          'Digital System Design (EE2103)',
+          'dsd',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25max(Qz1,Qz2), 0.5F + 0.2Qz1 + 0.25Qz2'
+        ),
+        makeDiploma(
+          'es_ee2106',
+          'Computer Organization (EE2106)',
+          'org',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25max(Qz1,Qz2), 0.5F + 0.2Qz1 + 0.25Qz2'
+        ),
+        makeDiploma(
+          'es_ee2105',
+          'Electronic Testing and Measurement (EE2105)',
+          'etm',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'Formula marked tentative in supplied source'
+        ),
+      ],
+      degree: [
+        makeDiploma(
+          'es_ee3102',
+          'Control Engineering (EE3102)',
+          'control',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.1GAA + max(0.6F + 0.2max(Qz1,Qz2), 0.5F + 0.2Qz1 + 0.2Qz2) (tentative)'
+        ),
+        makeDiploma(
+          'es_ee3104',
+          'Electromagnetic Fields and Transmission Lines (EE3104)',
+          'esWeighted',
+          [
+            ['dgaa', 'GAA', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['dd', 'D component', 100],
+          ],
+          'T = 0.1GAA + 0.45F + 0.2Qz1 + 0.2Qz2 + 0.05D'
+        ),
+        makeDiploma(
+          'es_ee4102',
+          'Electronic Product Design (EE4102)',
+          'productDesign',
+          [
+            ['dgaa', 'GAA', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['dp', 'Design/project component (D)', 100],
+          ],
+          'T = 0.1GAA + 0.45F + 0.2Qz1 + 0.2Qz2 + 0.05D'
+        ),
+        makeDiploma(
+          'es_gn3001',
+          'Strategies for Professional Growth (GN3001)',
+          'esSpg',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dgp', 'Group project (GP)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.15GAA + 0.25GP + 0.25Qz2 + 0.35F'
+        ),
+        makeDiploma(
+          'es_ee5102',
+          'Digital IC Design (EE5102)',
+          'icdesign',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dp', 'Course project (P)', 100],
+          ],
+          'T = 0.1GAA + 0.3P + max(0.3F + 0.2max(Qz1,Qz2), 0.3F + 0.15Qz1 + 0.15Qz2)'
+        ),
+        makeDiploma(
+          'es_ee4103',
+          'Communication Systems (EE4103)',
+          'comms',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.1GAA + max(0.6F + 0.2max(Qz1,Qz2), 0.4F + 0.2Qz1 + 0.3Qz2'
+        ),
+      ],
+    },
+    AE: {
+      foundation: [
+        makeTheory('ae_hs1001', 'English - I (HS1001)'),
+        makeTheory('ae_ma1101', 'Math for Electronics - I (MA1101)'),
+        makeTheory('ae_ee1101', 'Electronic Systems Thinking and Circuits (EE1101)'),
+        makeTheory('ae_cs1101', 'Introduction to C Programming (CS1101)'),
+        makeTheory('ae_hs1002', 'English - II (HS1002)'),
+        makeTheory('ae_ma4101', 'Math for Electronics - II (MA4101)'),
+        makeTheory('ae_aero', 'Introduction to Aerospace Systems'),
+        makeTheory('ae_mech', 'Engineering Mechanics'),
+      ],
+      diploma: [
+        makeDiploma(
+          'ae_fluid',
+          'Fluid Mechanics',
+          'aeSurprise',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dst', 'Surprise tests (ST; max 10)', 10],
+          ],
+          'T = 0.05GAA + max(0.5F + 0.3max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.25Qz2) + ST'
+        ),
+        makeDiploma(
+          'ae_strength',
+          'Basic Strength of Materials',
+          'aeSurprise',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dst', 'Surprise tests (ST; max 10)', 10],
+          ],
+          'T = 0.05GAA + max(0.5F + 0.3max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.25Qz2) + ST'
+        ),
+        makeDiploma(
+          'ae_math',
+          'Math for Aeronautical Engineering',
+          'aeSurprise',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dst', 'Surprise tests (ST; max 10)', 10],
+          ],
+          'T = 0.05GAA + max(0.5F + 0.3max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.25Qz2) + ST'
+        ),
+        makeDiploma(
+          'ae_signals',
+          'Signals and Systems',
+          'aeSignals',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dgrpa', 'GrPA', 100],
+          ],
+          'T = 0.05GAA + max(0.5F + 0.25max(Qz1,Qz2), 0.45F + 0.2Qz1 + 0.2Qz2) + 0.1 GrPA'
+        ),
+        makeDiploma(
+          'ae_mlf',
+          'Machine Learning Foundation',
+          'mlf',
+          [
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+            ['dweekly', 'Best 5 of first 7 weekly assignments average', 100],
+            ['dbonus', 'Bonus marks (max 5)', 5],
+          ],
+          'T = max(0.6F + 0.3max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.3Qz2) + bonus (max 5)'
+        ),
+      ],
+      degree: [],
+    },
+    MG: {
+      foundation: [
+        makeTheory('mg_ma1001', 'Mathematics for Data Science 1'),
+        makeTheory('mg_hs1001', 'English 1'),
+        makeTheory('mg_cs1001', 'Computational Thinking'),
+        makeTheory('mg_ma1002', 'Statistics for Data Science 1', 5),
+        makeTheory('mg_econ', 'Principles of Economics'),
+        makeTheory('mg_finacc', 'Financial Accounting'),
+        makeTheory('mg_bstats', 'Business Statistics'),
+        makeTheory('mg_mtp', 'Management Thought and Practice'),
+      ],
+      diploma: [
+        makeDiploma(
+          'mg_python',
+          'Python for Data Analytics',
+          'mgStandard',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)'
+        ),
+        makeDiploma(
+          'mg_corpfin',
+          'Corporate Finance',
+          'mgStandard',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)'
+        ),
+        makeDiploma(
+          'mg_econdata',
+          'Analysis of Economic Data',
+          'mgStandard',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)'
+        ),
+        makeDiploma(
+          'mg_ops',
+          'Operations Management',
+          'mgStandard',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)'
+        ),
+        makeDiploma(
+          'mg_org',
+          'Organisational Behavior',
+          'mgStandard',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.6F + 0.25max(Qz1,Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)'
+        ),
+        makeDiploma(
+          'mg_marketing',
+          'Marketing Management',
+          'mgMarketing',
+          [
+            ['dgaa', 'GAA', 100],
+            ['dq1', 'Quiz 1 (Qz1)', 100],
+            ['dq2', 'Quiz 2 (Qz2)', 100],
+            ['df', 'End-term exam (F)', 100],
+          ],
+          'T = 0.05GAA + max(0.65F + 0.15Qz1 + 0.15Qz2, 0.45F + 0.25Qz1 + 0.25Qz2)'
+        ),
+      ],
+      degree: [],
+    },
+  };
   let courses = {};
   const $ = (id) => document.getElementById(id);
+  function activeLevelCourses() {
+    return (programCourses[$('degreeProgram').value] || {})[$('level').value] || [];
+  }
   const standardFormula = 'T = max(0.6F + 0.3 max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.3Qz2)';
   const bonusFormula = 'T = min(100, max(0.6F + 0.3 max(Qz1,Qz2), 0.45F + 0.25Qz1 + 0.3Qz2) + B)';
   const pythonFormula = 'T = 0.15Qz1 + 0.4F + 0.25 max(PE1,PE2) + 0.2 min(PE1,PE2)';
@@ -827,10 +1233,31 @@ onMounted(() => {
   function read(id) {
     return val(id);
   }
-  function populateCourses() {
-    const level = $('level').value,
-      list = levelCourses[level];
+  function resetCourseOptions(message = 'Select your course') {
     $('course').innerHTML = '';
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = message;
+    placeholder.selected = true;
+    placeholder.disabled = true;
+    $('course').appendChild(placeholder);
+    $('course').disabled = true;
+  }
+  function populateCourses() {
+    const degree = $('degreeProgram').value;
+    const level = $('level').value;
+    courses = {};
+    resetCourseOptions();
+    if (!degree || !level) {
+      showCourse();
+      return;
+    }
+    const list = activeLevelCourses();
+    if (!list.length) {
+      resetCourseOptions('No course data supplied for this level');
+      showCourse();
+      return;
+    }
     list.forEach((item) => {
       courses[item.id] = item;
       const option = document.createElement('option');
@@ -838,6 +1265,7 @@ onMounted(() => {
       option.textContent = item.name;
       $('course').appendChild(option);
     });
+    $('course').disabled = false;
     showCourse();
   }
   function renderDiplomaFields(c) {
@@ -872,15 +1300,39 @@ onMounted(() => {
   }
   function showCourse() {
     const level = $('level').value,
-      c = courses[$('course').value] || levelCourses[level][0];
+      list = activeLevelCourses(),
+      c = courses[$('course').value] || list[0];
+    if (!c) {
+      $('regularFields').classList.add('hidden');
+      $('pythonFields').classList.add('hidden');
+      $('diplomaFields').classList.add('hidden');
+      $('bonusWrap').classList.add('hidden');
+      $('calculate').disabled = true;
+      $('calculate').style.opacity = '.55';
+      $('calculate').style.cursor = 'not-allowed';
+      $('resultCourse').textContent = 'No course data available';
+      $('formulaName').textContent = 'Unavailable';
+      $('formulaText').textContent =
+        'The supplied course documents do not include courses for this degree and level.';
+      $('score').innerHTML = '— <span>/ 100</span>';
+      $('status').textContent = 'Choose another level or degree.';
+      $('bonusResult').textContent = '0 marks';
+      $('gradeLetter').textContent = '—';
+      $('gradeName').textContent = 'Letter grade';
+      $('gradeDescription').textContent = 'No calculation available.';
+      $('gradePoints').innerHTML = '—';
+      $('eligibilityBlock').classList.add('hidden');
+      return;
+    }
     const isFoundation = level === 'foundation',
       isDiploma = level === 'diploma',
       isDegree = level === 'degree',
       isPy = !!c.python;
-    $('regularFields').classList.toggle('hidden', !isFoundation || isPy);
+    const hasCustomFields = !!c.fields;
+    $('regularFields').classList.toggle('hidden', !isFoundation || isPy || hasCustomFields);
     $('pythonFields').classList.toggle('hidden', !isFoundation || !isPy);
-    $('diplomaFields').classList.toggle('hidden', !(isDiploma || isDegree));
-    if (isDiploma || isDegree) renderDiplomaFields(c);
+    $('diplomaFields').classList.toggle('hidden', !(isDiploma || isDegree || hasCustomFields));
+    if (isDiploma || isDegree || hasCustomFields) renderDiplomaFields(c);
     $('bonusWrap').classList.toggle('hidden', !isFoundation || !c.bonus);
     $('calculate').disabled = !(isFoundation || isDiploma || isDegree);
     $('calculate').style.opacity = isFoundation || isDiploma || isDegree ? '1' : '.55';
@@ -901,15 +1353,18 @@ onMounted(() => {
           : c.bonus
             ? 'Formula + activity bonus'
             : 'Standard formula';
-    $('formulaText').textContent = isDegree
-      ? degreeFormulaText(c.type)
-      : isDiploma
-        ? diplomaFormulaText(c.type)
-        : isPy
-          ? pythonFormula
-          : c.bonus
-            ? bonusFormula
-            : standardFormula;
+    $('formulaText').textContent =
+      c.sourceFormula && c.sourceFormula !== 'foundation'
+        ? c.sourceFormula
+        : isDegree
+          ? degreeFormulaText(c.type)
+          : isDiploma
+            ? diplomaFormulaText(c.type)
+            : isPy
+              ? pythonFormula
+              : c.bonus
+                ? bonusFormula
+                : standardFormula;
     $('eligibilityBlock').classList.toggle('hidden', !isFoundation || !isPy);
     $('score').innerHTML = '— <span>/ 100</span>';
     $('status').textContent = isFoundation
@@ -922,7 +1377,7 @@ onMounted(() => {
     $('gradeName').textContent = 'Letter grade';
     $('gradeDescription').textContent = 'Your estimated grade appears here.';
     $('gradePoints').innerHTML =
-      '—<small style="display:block;font-size:9px;font-weight:500;color:var(--ink-2);text-align:center">points</small>';
+      '—<small style="display:block;font-size:9px;font-weight:500;color:var(--muted);text-align:center">points</small>';
   }
   function diplomaFormulaText(type) {
     const f = {
@@ -973,7 +1428,7 @@ onMounted(() => {
     $('gradeName').textContent = `${grade.letter} grade · ${grade.name}`;
     $('gradeDescription').textContent = grade.desc;
     $('gradePoints').innerHTML =
-      `${grade.points}<small style="display:block;font-size:9px;font-weight:500;color:var(--ink-2);text-align:center">points</small>`;
+      `${grade.points}<small style="display:block;font-size:9px;font-weight:500;color:var(--muted);text-align:center">points</small>`;
     $('status').textContent = status;
     $('bonusResult').textContent = bonusText;
   }
@@ -1385,9 +1840,106 @@ onMounted(() => {
     gradeAndDisplay(T, status, bonusText);
   }
 
+  function calculateAddedCourse(c) {
+    for (const [id, label, max] of c.fields) {
+      if (typeof id !== 'string' || !id.startsWith('d')) continue;
+      if (!valid(id, 0, Number($(id)?.max ?? max))) {
+        alert(`Please enter a valid score for ${label}.`);
+        return;
+      }
+    }
+    const v = (id) => read(id) ?? 0,
+      q1 = v('dq1'),
+      q2 = v('dq2'),
+      f = v('df'),
+      gaa = v('dgaa') ?? v('dgaa1') + v('dgaa2');
+    const qmax = Math.max(q1, q2);
+    let total = 0,
+      bonus = 'Not applicable',
+      status = 'Calculated from the supplied course formula.';
+    switch (c.type) {
+      case 'esC':
+        total =
+          0.25 * q1 +
+          0.45 * f +
+          Math.max(0.15 * v('dop1') + 0.15 * v('dop2'), 0.2 * Math.max(v('dop1'), v('dop2')));
+        status =
+          'Score calculated. Verify SCT, assignment thresholds, OPPE eligibility and end-term attendance separately against the course rules.';
+        break;
+      case 'esSpg':
+        total = 0.15 * gaa + 0.25 * v('dgp') + 0.25 * q2 + 0.35 * f;
+        break;
+      case 'esStandardDiploma':
+      case 'mgStandard':
+        total = 0.05 * gaa + Math.max(0.6 * f + 0.25 * qmax, 0.4 * f + 0.25 * q1 + 0.3 * q2);
+        break;
+      case 'mgMarketing':
+        total =
+          0.05 * gaa + Math.max(0.65 * f + 0.15 * q1 + 0.15 * q2, 0.45 * f + 0.25 * q1 + 0.25 * q2);
+        break;
+      case 'aeSurprise': {
+        const base = 0.05 * gaa + Math.max(0.5 * f + 0.3 * qmax, 0.45 * f + 0.25 * q1 + 0.25 * q2);
+        const applied = base >= 40 ? v('dst') : 0;
+        total = Math.min(100, base + applied);
+        bonus = applied
+          ? `${applied} surprise-test marks applied (max 10)`
+          : 'Surprise-test bonus not applied: base score must pass';
+        break;
+      }
+      case 'aeSignals':
+      case 'esSignals':
+        total =
+          0.05 * gaa +
+          Math.max(0.5 * f + 0.25 * qmax, 0.45 * f + 0.2 * q1 + 0.2 * q2) +
+          0.1 * v('dgrpa');
+        break;
+      case 'esPython':
+        total =
+          0.05 * v('dgaa1') +
+          0.05 * v('dgaa2') +
+          0.15 * q1 +
+          0.45 * f +
+          0.25 * Math.max(v('dpe1'), v('dpe2')) +
+          0.15 * Math.min(v('dpe1'), v('dpe2'));
+        break;
+      case 'control':
+        total = 0.1 * gaa + Math.max(0.6 * f + 0.2 * qmax, 0.5 * f + 0.2 * q1 + 0.2 * q2);
+        status = 'The supplied document marks this formula tentative.';
+        break;
+      case 'esWeighted':
+        total = 0.1 * gaa + 0.45 * f + 0.2 * q1 + 0.2 * q2 + 0.05 * v('dd');
+        break;
+      case 'productDesign':
+        total = 0.1 * gaa + 0.45 * f + 0.2 * q1 + 0.2 * q2 + 0.05 * v('dp');
+        break;
+    }
+    gradeAndDisplay(total, status, bonus);
+  }
+
   function calculate() {
     const level = $('level').value,
       c = courses[$('course').value];
+    if (!c) return;
+    if (
+      c.fields &&
+      [
+        'esSignals',
+        'esPython',
+        'esStandardDiploma',
+        'mgStandard',
+        'mgMarketing',
+        'aeSurprise',
+        'aeSignals',
+        'control',
+        'esWeighted',
+        'productDesign',
+        'esC',
+        'esSpg',
+      ].includes(c.type)
+    ) {
+      calculateAddedCourse(c);
+      return;
+    }
     if (level === 'diploma') {
       calculateDiploma(c);
       return;
@@ -1454,12 +2006,17 @@ onMounted(() => {
       base = Math.max(0.6 * f + 0.3 * Math.max(q1, q2), 0.45 * f + 0.25 * q1 + 0.3 * q2);
       if (c.bonus) {
         const b = read('bonus') || 0;
-        total = Math.min(100, base);
+        const applyBonus = base >= 40 && $('degreeProgram').value === 'MG';
+        total = Math.min(100, base + (applyBonus ? b : 0));
         status =
-          b > 0
-            ? 'Base score shown; bonus not automatically applied because the course pass condition needs verification.'
-            : 'Calculated using the course formula.';
-        $('bonusResult').textContent = b > 0 ? `${b} entered · not applied` : '0 marks';
+          $('degreeProgram').value !== 'MG'
+            ? 'Existing DS bonus behavior preserved; confirm bonus eligibility with the course policy.'
+            : applyBonus
+              ? 'Bonus applied because the base course score is passing.'
+              : 'Bonus not applied because the base course score is below 40.';
+        $('bonusResult').textContent = applyBonus
+          ? `${b} marks applied`
+          : `${b} entered · not applied`;
       } else {
         total = base;
         status = 'Calculated using the course formula.';
@@ -1472,6 +2029,13 @@ onMounted(() => {
       c.bonus ? 'Bonus handled per course conditions' : 'Not applicable'
     );
   }
+  $('degreeProgram').addEventListener('change', () => {
+    $('level').value = '';
+    $('level').disabled = !$('degreeProgram').value;
+    resetCourseOptions();
+    courses = {};
+    showCourse();
+  });
   $('level').addEventListener('change', populateCourses);
   $('course').addEventListener('change', showCourse);
   $('calculate').addEventListener('click', calculate);
@@ -1491,8 +2055,16 @@ onMounted(() => {
 <style scoped>
 .grade-calculator {
   font-family: var(--font);
-  background: var(--card);
+  background: var(--cream);
   color: var(--ink);
+}
+.grade-calculator {
+  --cream: var(--paper);
+  --muted: var(--ink-2);
+  --orange: var(--mari);
+  --orange-soft: var(--mari-soft);
+  --green: var(--ink-2);
+  --green-soft: var(--sunk);
 }
 
 .grade-calculator * {
@@ -1501,7 +2073,7 @@ onMounted(() => {
 
 .grade-calculator {
   margin: 0;
-  background: var(--card);
+  background: var(--cream);
   color: var(--ink);
   font-family: var(--font);
 }
@@ -1515,7 +2087,7 @@ onMounted(() => {
 .grade-calculator .topbar {
   height: 68px;
   border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--card) 90%, transparent);
+  background: var(--paper);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1539,11 +2111,11 @@ onMounted(() => {
   height: 39px;
   border-radius: 50%;
   background: var(--ink);
-  color: var(--mari-ink);
+  color: var(--mari);
   display: grid;
   place-items: center;
   font-size: 20px;
-  border: 2px solid var(--mari);
+  border: 2px solid var(--mari-ink);
 }
 
 .grade-calculator .brand-name {
@@ -1554,7 +2126,7 @@ onMounted(() => {
 
 .grade-calculator .brand-sub {
   font-size: 10px;
-  color: var(--ink-2);
+  color: var(--muted);
   margin-top: 3px;
 }
 
@@ -1573,13 +2145,13 @@ onMounted(() => {
 
 .grade-calculator .nav .active {
   color: var(--ink);
-  border-bottom: 2px solid var(--mari);
+  border-bottom: 2px solid var(--orange);
 }
 
 .grade-calculator .pill {
   border: 1px solid var(--ink);
   background: var(--ink);
-  color: var(--on-mari);
+  color: var(--mari-soft);
   padding: 10px 17px;
   border-radius: 30px;
   font-size: 12px;
@@ -1616,7 +2188,7 @@ onMounted(() => {
 }
 
 .grade-calculator .subtitle {
-  color: var(--ink-2);
+  color: var(--muted);
   font-size: 14px;
   max-width: 660px;
   line-height: 1.7;
@@ -1637,14 +2209,14 @@ onMounted(() => {
 
 .grade-calculator .stat small {
   font-size: 11px;
-  color: var(--ink-2);
+  color: var(--muted);
 }
 
 .grade-calculator .tabs {
   display: flex;
   gap: 5px;
   padding: 5px;
-  background: var(--sunk);
+  background: var(--line);
   border-radius: 30px;
   width: max-content;
   max-width: 100%;
@@ -1653,7 +2225,7 @@ onMounted(() => {
 
 .grade-calculator .tab {
   border: 0;
-  background: transparent;
+  background: var(--paper);
   padding: 10px 17px;
   border-radius: 24px;
   color: var(--ink-2);
@@ -1664,7 +2236,7 @@ onMounted(() => {
 
 .grade-calculator .tab.active {
   background: var(--ink);
-  color: var(--on-mari);
+  color: var(--card);
 }
 
 .grade-calculator .layout {
@@ -1675,7 +2247,7 @@ onMounted(() => {
 }
 
 .grade-calculator .panel {
-  background: var(--card);
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 25px;
@@ -1705,7 +2277,7 @@ onMounted(() => {
 
 .grade-calculator .helper {
   font-size: 12px;
-  color: var(--ink-2);
+  color: var(--muted);
   line-height: 1.6;
 }
 
@@ -1720,7 +2292,7 @@ onMounted(() => {
 .grade-calculator input[type='number'] {
   width: 100%;
   background: var(--card);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: 13px 14px;
   color: var(--ink);
@@ -1730,8 +2302,8 @@ onMounted(() => {
 
 .grade-calculator select:focus,
 .grade-calculator input:focus {
-  border-color: var(--mari);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mari) 10%, transparent);
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px var(--mari-soft);
 }
 
 .grade-calculator .field {
@@ -1740,7 +2312,7 @@ onMounted(() => {
 
 .grade-calculator .field small {
   display: block;
-  color: var(--ink-2);
+  color: var(--muted);
   font-size: 10px;
   margin-top: 6px;
 }
@@ -1785,7 +2357,7 @@ onMounted(() => {
 .grade-calculator .choice span {
   display: block;
   text-align: center;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: 12px;
   cursor: pointer;
@@ -1804,7 +2376,7 @@ onMounted(() => {
   width: 100%;
   border: 0;
   border-radius: 11px;
-  background: var(--ink);
+  background: var(--mari);
   color: var(--on-mari);
   padding: 15px 18px;
   font-size: 13px;
@@ -1815,15 +2387,15 @@ onMounted(() => {
 }
 
 .grade-calculator .primary:hover {
-  background: var(--mari-ink);
+  background: var(--mari);
   transform: translateY(-1px);
 }
 
 .grade-calculator .secondary {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: transparent;
-  color: var(--ink-2);
+  background: var(--paper);
+  color: var(--muted);
   padding: 10px 13px;
   font-size: 11px;
   cursor: pointer;
@@ -1836,7 +2408,7 @@ onMounted(() => {
 
 .grade-calculator .result-top {
   background: var(--mari-soft);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 15px;
   padding: 19px;
   margin-bottom: 17px;
@@ -1888,8 +2460,8 @@ onMounted(() => {
   border-radius: 13px;
   display: grid;
   place-items: center;
-  background: var(--mari-soft);
-  color: var(--mari-ink);
+  background: var(--green-soft);
+  color: var(--green);
   font-size: 25px;
   font-weight: 800;
 }
@@ -1905,7 +2477,7 @@ onMounted(() => {
 
 .grade-calculator .grade-meta small {
   display: block;
-  color: var(--ink-2);
+  color: var(--muted);
   font-size: 10px;
   margin-top: 3px;
 }
@@ -1929,7 +2501,7 @@ onMounted(() => {
 }
 
 .grade-calculator .result-line span {
-  color: var(--ink-2);
+  color: var(--muted);
 }
 
 .grade-calculator .result-line strong {
@@ -1938,7 +2510,7 @@ onMounted(() => {
 
 .grade-calculator .formula {
   margin-top: 17px;
-  background: var(--sunk);
+  background: var(--paper);
   border-radius: 12px;
   padding: 14px;
   font-size: 11px;
@@ -1967,7 +2539,7 @@ onMounted(() => {
   margin: 21px 0 8px;
 }
 
-.grade-calculator .hidden {
+.grade-calculator .hidden.hidden {
   display: none;
 }
 
@@ -2051,7 +2623,8 @@ onMounted(() => {
   }
 }
 
-/* Match Diploma and Degree fields with Foundation styling */
+/* Diploma/course score fields are created dynamically in JavaScript. Because
+   Vue scoped CSS attributes are not added to those nodes, style them with :deep(). */
 .grade-calculator :deep(#diplomaFields .score-grid) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2065,39 +2638,42 @@ onMounted(() => {
 
 .grade-calculator :deep(#diplomaFields label) {
   display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
   font-size: 12px;
   font-weight: 600;
-  margin-bottom: 8px;
-  line-height: 1.5;
 }
 
 .grade-calculator :deep(#diplomaFields input[type='number']) {
-  display: block;
+  box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  box-sizing: border-box;
-  background: var(--card);
-  border: 1px solid var(--line-strong);
-  border-radius: 10px;
   padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
   color: var(--ink);
-  font: inherit;
   outline: none;
-  transition: 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .grade-calculator :deep(#diplomaFields input[type='number']:focus) {
-  border-color: var(--mari);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mari) 10%, transparent);
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px var(--mari-soft);
+}
+
+.grade-calculator :deep(#diplomaFields .helper) {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
 }
 
 @media (max-width: 560px) {
   .grade-calculator :deep(#diplomaFields .score-grid) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
-}
-.grade-calculator .primary {
-  color: var(--card);
-  -webkit-text-fill-color: var(--card);
 }
 </style>

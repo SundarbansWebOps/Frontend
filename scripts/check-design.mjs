@@ -14,8 +14,9 @@ const FONT_OK = /^(var\(--font\)|var\(--mono\)|inherit)$/;
 
 const RAW_COLOR =
   /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/g;
+
 const NAMED_COLOR =
-  /\b(?:color|background(?:-color)?|border(?:-[a-z]+)*|fill|stroke|outline(?:-color)?|(?:box|text)-shadow)\s*:[^;{}]*?\b(?:white|black|red|green|blue|yellow|orange|purple|pink|gr[ae]y|silver|navy|teal|lime|olive|maroon|aqua|cyan|magenta|fuchsia|gold|brown|violet|indigo)\b/g;
+  /\b(?:color|background(?:-color)?|border(?:-[a-z]+)*|fill|stroke|outline(?:-color)?|(?:box|text)-shadow)\s*:(?![^;{}]*\bvar\s*\()[^;{}]*?\b(?:white|black|red|green|blue|yellow|orange|purple|pink|gr[ae]y|silver|navy|teal|lime|olive|maroon|aqua|cyan|magenta|fuchsia|gold|brown|violet|indigo)\b/g;
 
 function walk(dir) {
   return readdirSync(dir).flatMap((name) => {
