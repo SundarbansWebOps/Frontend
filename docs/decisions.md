@@ -246,3 +246,7 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 ## 2026-10-14 — 2023–24 tenure is a plain reading page fed by the council's own markdown
 
 **Why:** The council rejected the illustrated story view; they want their words read in full. `src/data/tenure-2023.md` is a verbatim copy of their document (Parts I–V) parsed at runtime, rendered as text (no `v-html`), so edits are one file and no words are cut. Part VI (instructions to the web team) and two "note for the website" lines are left out as directions, not content. Rejected: hand-converting the text into JS data (drift, dropped words).
+
+## 2026-10-16 — Team rosters open in a panel under the card row
+
+**Why:** Raja wants team photos on the Teams page without a new page. A card with a roster shows a face preview; clicking anywhere on the card (or its "Meet the team" button, the keyboard control) opens a panel below that row with every person as an equal-size portrait card, role in plain text. Names and roles follow the house's 2026–27 details sheet; photos are Cloudinary `sundarbans/teams/`. "Crew" is renamed "team" everywhere. Rejected: a pop-up modal and a separate roster page.

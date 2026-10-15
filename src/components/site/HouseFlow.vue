@@ -1,6 +1,6 @@
 <!--
   "How the house works": a symmetric tree. The Upper House Council, then the Lower House
-  Council, then one centre line splits into two equal columns, Communities and Crew. Every chip
+  Council, then one centre line splits into two equal columns, Communities and Teams. Every chip
   jumps to its section. Portraits and team colour only; no regions. The connectors land on the
   centre of each column because the bar's ends are inset by the same formula as an equal
   two-column grid.
@@ -41,12 +41,12 @@
 </template>
 
 <script setup>
-import { COMMUNITIES, CREW } from '../../data/teams.js';
+import { COMMUNITIES, TEAMS } from '../../data/teams.js';
 import { lower, portrait, upper } from '../../lib/house.js';
 
 defineEmits(['go']);
 
-// Same colour rule as TeamCards: a community takes its wing colour, crew takes marigold.
+// Same colour rule as TeamCards: a community takes its wing colour, a team takes marigold.
 const tint = (t) => (t.wing ? `var(--w-${t.wing})` : 'var(--mari-ink)');
 
 const COLS = [
@@ -57,10 +57,10 @@ const COLS = [
     items: COMMUNITIES.map((c) => ({ id: c.id, name: c.name, color: tint(c) })),
   },
   {
-    id: 'crew',
-    to: 'crew',
-    title: 'Crew',
-    items: CREW.map((c) => ({ id: c.id, name: c.name, color: tint(c) })),
+    id: 'teams',
+    to: 'teams',
+    title: 'Teams',
+    items: TEAMS.map((c) => ({ id: c.id, name: c.name, color: tint(c) })),
   },
 ];
 </script>

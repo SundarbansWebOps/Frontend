@@ -35,7 +35,7 @@
     <section id="council" class="sec" aria-labelledby="council-h">
       <h2 id="council-h" class="sec-h"><span class="mono">02</span> The council, 2026–27</h2>
       <p class="sec-sub">
-        The Upper House Council runs the house. The regional coordinators, communities and crew are
+        The Upper House Council runs the house. The regional coordinators, communities and teams are
         on Teams.
       </p>
       <CouncilTrio @region="openRegion" />
