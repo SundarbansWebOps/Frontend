@@ -1,8 +1,11 @@
 # Sundarbans House — State
-> IITM BS frontend/backend · Last checkpoint: 2026-10-12 20:58 IST
+
+> IITM BS frontend/backend · Last checkpoint: 2026-10-14 11:26 IST
 
 ## In progress / next
-- **Legacy Board merged as PR #155 (2026-10-11).** `/#/teams/legacy` shows councils 2021–2025 with `?year=` and `?team=`. Deployed to sundarbans-testing through a local merge into `chore/testing-fork-gate`. Still open from the 2026-10-11 log: Sol re-review of the fixes, real-browser animation checks, physical phone swipe and hidden-tab pause.
+
+- **2023–24 tenure reading page + Legacy Board scroll — PR #163 (`feat/legacy-tenure-2023-story`), open.** `/#/teams/legacy/2023-24` → `src/pages/TenureReadPage.vue`: docs-style layout (Part dropdowns in a left sidebar, scroll-spy, "On this page" rail with margin art; sticky Contents dropdown under 1020px). Text is `src/data/tenure-2023.md` parsed at runtime, every word kept (Part VI and two editorial notes left out — Raja to confirm with the council). `LegacyPage.vue` now scrolls year to year (sticky view, snap, boat follows scroll, one year per wheel notch, `?year=` deep link, default 2021) with a "Read more" link on 2023. Shareable preview: https://sundarbans-legacy-2023-24.vercel.app (Vercel project `sundarbans-legacy-2023-24`, static build of a legacy-only router copy; see 2026-10-14 log). Old story view + prototype archived in `~/Anuraj-dev/legacy-board-designs/`. **Next: council/Raja review of the PR.** Unverified: real Chrome, physical phone touch scroll.
+- **Legacy Board merged as PR #155 (2026-10-11).** `/#/teams/legacy` shows councils 2021–2025 with `?year=` and `?team=`. Still open from the 2026-10-11 log: Sol re-review of the fixes, real-browser animation checks, physical phone swipe and hidden-tab pause.
 - **Prototype survey picker is on main.** `prototype/resource-hub/PrototypeSwitcher.vue`: Launch switches among three working designs and opens five static concepts. Resources keeps only Delta (A); B and C are dropped. Preview on the prototype dev server, port 5191.
 - **Resources course board, tickets, drawer and two site fixes committed locally on `pr-156`; not pushed.** Commits `12bd110` (single-board subject picker, ticket and drawer redesign), `8726234` (calendar hover label readable), `b992411` (quick-link underline removed), `a5ef3ac` (calendar dialog uses smooth ease-out, no bounce). Lint, `scripts/check-design.mjs` and Playwright hover/motion/link checks pass. **Next: Raja reviews the calendar and quick links, then says whether to push and open the PR.** Do not open a PR before that. Carried over and unverified: dark-theme check of the new ticket and drawer, 360px width, phone word-breaking of long subject names.
 - **PR #156 CI formatting fix passed.** Formatted `src/components/site/CourseTicket.vue` and `src/data/branches.js`. GitHub Actions run [38139553891](https://github.com/SundarbansWebOps/Frontend/actions/runs/38139553891) passes all checks. Maintainer @Anuraj-dev tagged on the PR. Vercel remains a separate failed status because the team must authorize the deployment.
@@ -19,6 +22,7 @@
 - Branch `feat/lounge-backend-wiring`; group migration (`ad90985`), lantern arrival (`c2c4a85`), and inactivity motion (`97a0065`) committed at user request. Prior wiring/audit work is already in branch history. No push or frontend deployment. Preserve unrelated `supabase/tests/__pycache__/`. Starting audit checkout captured at `/tmp/sundarbans-fix-baseline`.
 
 ## Status
+
 - Deputy Secretary added live to `public.super_admin_allowlist` using Supabase CLI at user request; active member and `private.is_super_admin() = true` verified. Existing admins preserved; total now four. No migration push or frontend changes.
 - Fresh group audit (2026-10-10): live has 43 events, 17 forms / 15 published, 9 invites, 1 response; group metadata column absent before fix, now applied. Ten verified forms: Technical/Cultural/Esports + Bengaluru/Chandigarh/Chennai/Delhi/Kolkata/Mumbai/Patna. Cultural lacks invite. Targeted migration proved old RPC returns 0 groups before and 10 after, preserves titles/general forms; disposable transaction rolled back. Full 232 pgTAP + 9 concurrency checks, build, 2 relevant Playwright tests PASS. Logs `/tmp/sundarbans-group-{regression,db-tests,browser-tests,build}.log`. Post-rollout live catalog: 10 group forms / 9 invites; 43 events preserved; broader audit migration remains unapplied. Signed-in real browser unavailable in current CUA inventory; rendered live member UI still unverified.
 - Member Events removes region/term browsing controls; audience enforcement remains. Lifecycle updates with clock, cancellation/availability respected, exact 1200-second attendance threshold and source-preserving archive dates fixed.
@@ -32,13 +36,16 @@
 - Earlier session applied migrations 150000/150100/150200 live and added the exact testing OAuth redirect. Testing deployment still serves sample boats; current frontend/migration fixes are local. Live OAuth/Admin writes were not revalidated.
 
 ## Architecture map
+
 - Auth/client/router: `src/lib/auth.js`, `auth-profile.js`, `supabase.js`, `src/router/index.js`; synthetic client `src/lib/local-lounge.js`.
 - Lounge: `src/lib/lounge.js`, `src/components/lounge/{session,events}.js`, `src/pages/{LoungePage,FormPage}.vue`.
 - Admin: `src/pages/AdminPage.vue`, `src/components/admin/`, `src/lib/admin.js`.
+- Legacy Board: `src/pages/{LegacyPage,TenureReadPage}.vue`, `src/data/{legacy,tenure-2023}*`, art `src/assets/legacy/`.
 - Public archive/navigation: `src/lib/events.js`, `src/components/site/`, public pages; DB first, `src/data/events.data.js` fallback.
 - Tests: `e2e/`, `supabase/tests/{020,031,concurrency.py,run-local.sh}`. New migration: `supabase/migrations/20261010000000_audit_fixes.sql`.
 
 ## Stack & run
+
 - Vue3/router4/Vite6/supabase-js2.117.2. Node^22 declared; gates used installed Node26.8.2 directly because npm shim has had AppImage failures.
 - Owned preview: `http://127.0.0.1:5202/?local-lounge=1#/lounge`, **PID259636**, exec59071. Started this session; synthetic member only. Port5210 belongs to Frontend-maintenance; leave it.
 - Build: `node node_modules/vite/bin/vite.js build`. E2E after build: `LOCAL_LOUNGE_TEST_URL='http://127.0.0.1:5202/?local-lounge=1' node node_modules/@playwright/test/cli.js test --workers=3`.
@@ -47,6 +54,7 @@
 - Real-browser gate: actual Google Chrome AJS connection, browser ID3. Generic Chrome alias can select Helium; inspect inventory. No signed-state substitution.
 
 ## Key decisions
+
 - Roster-gated first Google login; optional editable name/phone; profile phone saved only with consent; tour seen flag persisted on Enter/Not now.
 - Four SAs after the explicitly requested Deputy Secretary addition on 2026-10-10; 0–2 RCs/region; International no RC. Initial NULL region self-service; corrections approved by current-region RC or SA.
 - Upcoming/live audience enforced; published past public. Preserve source date precision/NULL schedule and approximate turnout instead of manufacturing data.
@@ -54,6 +62,7 @@
 - Certificate design unchanged and deferred. Full decisions in `decisions.md` and `specs/003-backend-data-decisions.md`.
 
 ## Gotchas
+
 - Vite dev server can keep serving a stale scoped style module after an edit (browser URL has an old `?t=` stamp, old CSS). Verify with a fresh `page` and a `touch` of the edited file before trusting a computed-style check.
 - Preserve all unrelated changes. No raw member contacts, private invite URLs or secrets in docs/output; private imports stay outside repo.
 - Fail closed and recheck authorization after locks. STABLE export reads share statement MVCC snapshot; suspected export race was rejected.

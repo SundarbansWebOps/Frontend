@@ -17,6 +17,11 @@ const routes = [
     component: () => import('../pages/LegacyPage.vue'),
   },
   {
+    path: '/teams/legacy/2023-24',
+    name: 'Tenure2023',
+    component: () => import('../pages/TenureReadPage.vue'),
+  },
+  {
     path: '/lounge',
     name: 'Lounge',
     component: () => import('../pages/LoungePage.vue'),

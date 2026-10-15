@@ -57,6 +57,7 @@ const isStandalone = computed(
     route.name === 'LoungeForm' ||
     route.name === 'Login' ||
     route.name === 'Legacy' ||
+    route.name === 'Tenure2023' ||
     (!route.matched.length &&
       (document.documentElement.classList.contains('lounge-active') ||
         document.documentElement.classList.contains('sign-in-active')))
