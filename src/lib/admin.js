@@ -44,6 +44,7 @@ export const TEMPLATE_MAX_BYTES = 10485760;
 export const TEMPLATE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
 export const REQUEST_LABEL = {
+  event_publish: 'Publish house-wide event',
   member_deletion: 'Delete member',
   member_blacklist: 'Blacklist member',
   member_hard_delete: 'Erase permanently',
@@ -393,7 +394,7 @@ export function flattenExportRows(value) {
 // Events
 
 const EVENT_COLS =
-  'id, name, description, registration_link, gmail_link, starts_at, ends_at, community_id, region_id, published_at, audience_cohorts, attendance_mode, certificate_template_url, certificates_released_at, archive, source_key, display_date, image_url, event_type, wing, location, image_width, image_height, attendee_count, attendee_display, cancelled_at, deleted_at, created_at, updated_at';
+  'id, name, description, registration_link, gmail_link, starts_at, ends_at, community_id, region_id, published_at, audience_cohorts, attendance_mode, certificate_template_url, certificates_released_at, archive, source_key, display_date, image_url, event_type, wing, location, image_width, image_height, attendee_count, attendee_display, cancelled_at, deleted_at, created_at, updated_at, is_public, created_by';
 
 export async function listEvents({ view = 'upcoming' } = {}) {
   const now = new Date().toISOString();
@@ -418,15 +419,40 @@ export async function listEvents({ view = 'upcoming' } = {}) {
   }
   const visible =
     view === 'past' ? rows.filter((e) => e.archive || (e.ends_at && e.ends_at < now)) : rows;
-  return visible.map((event) => ({ ...event, can_manage: canManageEvent(event) }));
+  // House-wide drafts an RC asked to publish (RLS: the RC sees their own, Super Admins all).
+  const pending = unwrap(
+    await supabase
+      .from('approval_requests')
+      .select('id, target_event_id')
+      .eq('type', 'event_publish')
+      .eq('status', 'pending')
+  );
+  const pendingByEvent = new Map(pending.map((r) => [r.target_event_id, r.id]));
+  return visible.map((event) => ({
+    ...event,
+    can_manage: canManageEvent(event),
+    pending_request_id: pendingByEvent.get(event.id) ?? null,
+  }));
 }
+
+// An RC's own unpublished house-wide draft; once a Super Admin publishes it, only they manage it.
+export const isMyHouseDraft = (event) =>
+  isRc.value &&
+  event.region_id == null &&
+  event.community_id == null &&
+  !event.published_at &&
+  event.created_by === auth.profile?.id;
 
 // RLS can expose events to members who may read public history. Keep organizer actions
 // aligned with the dashboard scope while the RPC remains the authoritative write check.
 export function canManageEvent(event) {
   if (!event || !auth.dashboard) return false;
   if (isSuperAdmin.value) return true;
-  if (isRc.value) return event.region_id === auth.dashboard.region_id && event.community_id == null;
+  if (isRc.value)
+    return (
+      (event.region_id === auth.dashboard.region_id && event.community_id == null) ||
+      isMyHouseDraft(event)
+    );
   if (isHead.value)
     return event.community_id === auth.dashboard.community_id && event.region_id == null;
   return false;
@@ -456,6 +482,7 @@ export async function saveEvent(event, { publish = false, unpublish = false } = 
     image_height: event.image_height || null,
     attendee_count: event.attendee_count ?? null,
     attendee_display: event.attendee_display || null,
+    is_public: !!event.is_public,
   };
   if (publish) row.published_at = new Date().toISOString();
   else if (unpublish) row.published_at = null;
@@ -480,6 +507,45 @@ export async function setEventCancelled(id, cancelled) {
 
 export async function deleteEvent(id) {
   return unwrap(await supabase.rpc('soft_delete_event', { p_event_id: id, p_deleted: true }));
+}
+
+// RC house-wide drafts go live only when a Super Admin approves this request.
+export const requestEventPublish = (eventId, reason) =>
+  supabase
+    .rpc('request_event_publish', { p_event_id: eventId, p_reason: reason || null })
+    .then(unwrap);
+
+// Event posters: sign-event-image checks the caller may manage the event and signs an upload
+// into its own Cloudinary folder; the file then goes straight to Cloudinary. The saved URL uses
+// the site's standard delivery transform, so img.card/thumb/full in events.js size it as usual.
+export const POSTER_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+export const POSTER_MAX_BYTES = 10 * 1024 * 1024;
+const POSTER_DELIVERY = 'f_auto,q_auto:good,w_1000,c_limit';
+
+export async function uploadEventPoster(eventId, file) {
+  if (!eventId) throw new Error('Save the event as a draft before adding a poster.');
+  if (!POSTER_TYPES.includes(file?.type)) throw new Error('Use a JPG, PNG or WebP image.');
+  if (file.size > POSTER_MAX_BYTES) throw new Error('The image is larger than 10 MB.');
+  const sig = await invoke('sign-event-image', { event_id: eventId });
+  const body = new FormData();
+  body.append('file', file);
+  for (const k of [
+    'api_key',
+    'timestamp',
+    'signature',
+    'folder',
+    'allowed_formats',
+    'transformation',
+  ])
+    body.append(k, sig[k]);
+  const res = await fetch(sig.upload_url, { method: 'POST', body });
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(out?.error?.message || 'Cloudinary refused the image.');
+  return {
+    image_url: `https://res.cloudinary.com/${sig.cloud_name}/image/upload/${POSTER_DELIVERY}/v${out.version}/${out.public_id}.${out.format}`,
+    image_width: out.width,
+    image_height: out.height,
+  };
 }
 
 export async function uploadCertificateTemplate(eventId, file) {
@@ -847,10 +913,13 @@ export const cancelRequest = (id) =>
 
 async function invoke(name, body) {
   const { data, error } = await supabase.functions.invoke(name, { body });
+  if (error?.name === 'FunctionsFetchError')
+    throw new Error('Could not reach the server. Check your connection and try again.');
   if (error) {
     let message = error.message;
     try {
-      message = (await error.context?.json())?.error ?? message;
+      const body = await error.context?.json();
+      message = body?.message ?? body?.error ?? message;
     } catch {
       /* keep the generic message */
     }

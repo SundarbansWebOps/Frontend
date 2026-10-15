@@ -21,6 +21,15 @@
           <template v-if="event.type"> · {{ event.type }}</template>
         </p>
         <h2 id="ed-h" class="evd-h">{{ event.name }}</h2>
+        <img
+          v-if="event.image_url"
+          class="evd-poster"
+          :src="img.full(event.image_url)"
+          :alt="`${event.name} poster`"
+          :width="event.image_width || undefined"
+          :height="event.image_height || undefined"
+          loading="lazy"
+        />
         <p class="evd-when">
           <span>{{ spanOf(event) }}</span>
           <span class="sep" aria-hidden="true">·</span>
@@ -151,6 +160,7 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue';
 import { errorText } from '../../lib/auth.js';
+import { img } from '../../lib/events.js';
 import { KITE_MINE, LANTERN } from './home/art.js';
 import FormFields from './FormFields.vue';
 import LoungeDialog from './LoungeDialog.vue';
