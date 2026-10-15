@@ -9,7 +9,7 @@ export const COUNCIL = [
     role: 'Secretary',
     region: 'Delhi',
     house: 'UHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444120/sundarbans/teams/Divya_Prakash.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791953706/sundarbans/teams/Divya_Prakash.png',
     links: [
       {
         kind: 'LinkedIn',
@@ -22,7 +22,7 @@ export const COUNCIL = [
     role: 'Deputy Secretary',
     region: 'Lucknow',
     house: 'UHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444112/sundarbans/teams/ansh_kumar.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791994850/sundarbans/teams/ansh_kumar.png',
     links: [
       {
         kind: 'LinkedIn',
@@ -35,7 +35,7 @@ export const COUNCIL = [
     role: 'Web Admin',
     region: 'Kolkata',
     house: 'UHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788455652/sundarbans/teams/anuraj.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954015/sundarbans/teams/anuraj.png',
     links: [
       {
         kind: 'LinkedIn',
@@ -52,7 +52,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Chandigarh',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444129/sundarbans/teams/Prashansha_Uniyal.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954073/sundarbans/teams/Prashansha_Uniyal.png',
     links: [
       {
         kind: 'LinkedIn',
@@ -65,7 +65,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Mumbai',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444126/sundarbans/teams/Niva_Murabia.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954067/sundarbans/teams/Niva_Murabia.png',
     links: [
       {
         kind: 'Instagram',
@@ -78,7 +78,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Mumbai',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788455655/sundarbans/teams/Dhanashree_kulkarni.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954025/sundarbans/teams/Dhanashree_kulkarni.png',
     links: [
       {
         kind: 'LinkedIn',
@@ -99,7 +99,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Chennai',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444118/sundarbans/teams/Dhanya_R..jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954035/sundarbans/teams/Dhanya_R..png',
     links: [],
   },
   {
@@ -107,7 +107,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Kolkata',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444109/sundarbans/teams/Abhisekh_Chowdhury.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954000/sundarbans/teams/Abhisekh_Chowdhury.png',
     links: [
       {
         kind: 'Instagram',
@@ -120,7 +120,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Delhi',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444124/sundarbans/teams/Mohammad_Faizan_Khan.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954059/sundarbans/teams/Mohammad_Faizan_Khan.png',
     links: [
       {
         kind: 'LinkedIn',
@@ -133,7 +133,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Patna',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444122/sundarbans/teams/Lavanya.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791954051/sundarbans/teams/Lavanya.png',
     links: [
       {
         kind: 'LinkedIn',
@@ -156,7 +156,7 @@ export const COUNCIL = [
     role: 'Regional Coordinator',
     region: 'Lucknow',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444112/sundarbans/teams/ansh_kumar.jpg',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791994850/sundarbans/teams/ansh_kumar.png',
     links: [
       {
         kind: 'LinkedIn',
