@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-15T17:20:30.526Z",
+  "updatedAt": "2026-10-15T20:21:16.740Z",
   "assets": [
     {
       "order": 1,
@@ -25,12 +25,13 @@
     {
       "order": 3,
       "filename": "og-preview.jpg",
-      "source": "public/assets/og-preview.jpg",
+      "source": "media/public/assets/og-preview.jpg",
       "publicId": "sundarbans/public/assets/og-preview",
-      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1785911312/sundarbans/public/assets/og-preview.jpg",
-      "bytes": 119217,
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792095675/sundarbans/public/assets/og-preview.jpg",
+      "bytes": 150719,
       "format": "jpg",
-      "uploadedAt": "2026-08-05T06:28:33.380Z"
+      "uploadedAt": "2026-10-15T20:21:16.740Z",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792095675/sundarbans/public/assets/og-preview.jpg"
     },
     {
       "order": 4,
