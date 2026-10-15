@@ -1,7 +1,7 @@
 // GENERATED snapshot of the 2026–27 council (src/views/TeamsView.vue) and the
 // region blurbs (src/views/meetups/regionConfigs.js). Regenerate or replace with Supabase.
 // Regions whose coordinator seat is open while the house recruits for it.
-export const RECRUITING = ['Lucknow'];
+export const RECRUITING = [];
 
 export const COUNCIL = [
   {
@@ -87,17 +87,12 @@ export const COUNCIL = [
     ],
   },
   {
-    name: 'Sai Nikhil Vukka',
+    name: 'Dishi Gupta',
     role: 'Regional Coordinator',
     region: 'Hyderabad',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444130/sundarbans/teams/sai_nikhil_vukka.jpg',
-    links: [
-      {
-        kind: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/sai-nikhil-vukka-iitm/',
-      },
-    ],
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792079132/sundarbans/teams/Hyderabad_Regional_Coordinator.jpg',
+    links: [],
   },
   {
     name: 'Dhanya R',
@@ -145,6 +140,38 @@ export const COUNCIL = [
         href: 'https://www.linkedin.com/in/lavanya-90258b41b/',
       },
     ],
+  },
+  // Vacant seat with a character avatar until a coordinator is named.
+  {
+    name: 'Vacant',
+    role: 'Regional Coordinator',
+    region: 'Bengaluru',
+    house: 'LHC',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792084825/sundarbans/teams/Bengaluru_Regional_Coordinator_avatar.png',
+    links: [],
+  },
+  // Ansh Kumar also holds the Lucknow coordinator seat, so he appears in both councils.
+  {
+    name: 'Ansh Kumar',
+    role: 'Regional Coordinator',
+    region: 'Lucknow',
+    house: 'LHC',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1788444112/sundarbans/teams/ansh_kumar.jpg',
+    links: [
+      {
+        kind: 'LinkedIn',
+        href: 'https://www.linkedin.com/in/ansh-kumar-60113037b/',
+      },
+    ],
+  },
+  // International has no meetup region on the House map, so its region chip is not a link.
+  {
+    name: 'Vacant',
+    role: 'Regional Coordinator',
+    region: 'International',
+    house: 'LHC',
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792084828/sundarbans/teams/International_Regional_Coordinator_avatar.png',
+    links: [],
   },
 ];
 
