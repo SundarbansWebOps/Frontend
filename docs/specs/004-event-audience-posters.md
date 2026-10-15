@@ -1,7 +1,7 @@
 # Spec 004 — Event audience, posters and RC house-wide approval
 
 > Status: built 2026-10-13 on `feat/event-posters-audience`. Backend applied to the cloud:
-> migrations `20261013120000_event_publish_request_type.sql`, `20261013120100_event_audience_posters.sql`
+> migrations `20261013194447_event_publish_request_type.sql`, `20261013194628_event_audience_posters.sql`
 > (rename to the cloud versions before merge), Edge Function `sign-event-image`.
 > Tests: `supabase/tests/040_event_audience_posters_test.sql` (25), `e2e/event-posters.spec.js` (3).
 
