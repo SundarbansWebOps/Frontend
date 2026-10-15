@@ -136,7 +136,7 @@ writeFileSync(
       contributors,
     },
     null,
-    1
+    2
   ) + '\n'
 );
 console.log(`Wrote ${contributors.length} contributor(s) to src/data/contributors.json`);
