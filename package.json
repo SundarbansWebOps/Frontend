@@ -13,6 +13,7 @@
     "test:smoke": "playwright test",
     "check:study": "node scripts/check-study-data.mjs",
     "check:design": "node scripts/check-design.mjs",
+    "contributors:snapshot": "node scripts/contributors-snapshot.mjs",
     "shots": "node scripts/shots.mjs",
     "media:sync": "node scripts/media-sync.mjs",
     "media:migrate-repo": "node scripts/media-migrate-repo.mjs"

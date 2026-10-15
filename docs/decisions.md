@@ -251,6 +251,10 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 
 **Why:** The council rejected the illustrated story view; they want their words read in full. `src/data/tenure-2023.md` is a verbatim copy of their document (Parts I–V) parsed at runtime, rendered as text (no `v-html`), so edits are one file and no words are cut. Part VI (instructions to the web team) and two "note for the website" lines are left out as directions, not content. Rejected: hand-converting the text into JS data (drift, dropped words).
 
+## 2026-10-15 — Contributors page counts from 1 July 2026
+
+**Why:** Raja's web-admin tenure began in July 2026, and the page credits the current tenure's builders. `sundarbans-webad` (Raja's web-admin account) is folded into Raja. Code-Samar (previous tenure, handover commits dated 1–12 July) is excluded. Non-code helpers get their own space. The consults agreed on equal-size credit for everyone and on showing commits and merged PRs separately, never as one score. They also recommended a scheduled JSON snapshot rather than browser calls to the GitHub API, because unauthenticated calls are limited to 60 an hour per IP. The page does not explain how it counts (Raja's call).
+
 ## 2026-10-16 — Team rosters open in a panel under the card row
 
 **Why:** Raja wants team photos on the Teams page without a new page. A card with a roster shows a face preview; clicking anywhere on the card (or its "Meet the team" button, the keyboard control) opens a panel below that row with every person as an equal-size portrait card, role in plain text. Names and roles follow the house's 2026–27 details sheet; photos are Cloudinary `sundarbans/teams/`. "Crew" is renamed "team" everywhere. Rejected: a pop-up modal and a separate roster page.
