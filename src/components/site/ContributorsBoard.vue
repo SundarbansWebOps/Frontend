@@ -1,13 +1,13 @@
 <!--
-  Contributors: lines changed since 1 July, from GitHub (see scripts/contributors-snapshot.mjs).
-  The first screen is the dashboard: total, KPIs, the leaderboard and the weekly chart. Helpers sit
-  below. Motion is one-shot: numbers count up, bars grow, columns rise from the zero line.
+  The contributors board, shown at the bottom of Teams: lines changed since 1 July, from GitHub
+  (see scripts/contributors-snapshot.mjs). Total, KPIs, the leaderboard and the weekly chart, then
+  everyone. Motion is one-shot and starts when the section scrolls into view: numbers count up,
+  bars grow, columns rise from the zero line.
 -->
 <template>
-  <main id="main-content" ref="page" class="page" :class="{ ready, settled }" tabindex="-1">
+  <div ref="page" class="contrib" :class="{ ready, settled }">
     <div class="first">
       <header class="head pop" style="--d: 0s">
-        <h1>Contributors</h1>
         <p class="meta mono"><span class="live" aria-hidden="true"></span>{{ updated }}</p>
       </header>
 
@@ -41,7 +41,7 @@
           <div class="board-head">
             <span id="board-h" class="label pop" style="--d: 0.1s">Top contributors</span>
           </div>
-          <ol ref="rowsEl" class="rows">
+          <ol class="rows">
             <ContributorRow
               v-for="(p, i) in dashPeople"
               :key="p.login"
@@ -58,7 +58,11 @@
               @focus="(k) => (focusKey = k)"
             />
             <li v-if="people.length > fit">
-              <a class="more pop" :style="{ '--d': 0.3 + fit * 0.09 + 's' }" href="#everyone"
+              <a
+                class="more pop"
+                :style="{ '--d': 0.3 + fit * 0.09 + 's' }"
+                href="#everyone"
+                @click.prevent="scrollTo('everyone')"
                 >+{{ people.length - fit }} more →</a
               >
             </li>
@@ -208,21 +212,6 @@
             </div>
           </div>
         </section>
-
-        <a class="cue pop" style="--d: 1.4s" href="#helpers"
-          >Helpers
-          <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </a>
       </section>
     </div>
 
@@ -260,52 +249,17 @@
       </ol>
     </section>
 
-    <section id="helpers" class="block" aria-labelledby="helpers-h">
-      <div
-        class="label reveal"
-        data-reveal="helpers:label"
-        :class="{ seen: seen['helpers:label'] }"
-      >
-        Helpers
-      </div>
-      <h2
-        id="helpers-h"
-        class="reveal"
-        data-reveal="helpers:h2"
-        :class="{ seen: seen['helpers:h2'] }"
-      >
-        No commits.<br /><em>Still built it.</em>
-      </h2>
-      <ul class="helpers">
-        <li
-          v-for="h in helperCards"
-          :key="h.key"
-          class="helper reveal"
-          :class="{ seen: seen[h.key] }"
-          :data-reveal="h.key"
-          :style="{ '--c': h.color, '--d': h.delay }"
-        >
-          <span v-if="h.placeholder" class="placeholder-tag">placeholder</span>
-          <div class="mg">{{ h.initials }}</div>
-          <h3>{{ h.name }}</h3>
-          <span class="role">{{ h.role }}</span>
-          <p v-if="h.note">{{ h.note }}</p>
-        </li>
-      </ul>
-    </section>
-
-    <footer class="site-note">
+    <p class="site-note">
       Counted from GitHub ·
       <a :href="`https://github.com/${D.repo}`">{{ D.repo }}</a>
-    </footer>
-  </main>
+    </p>
+  </div>
 </template>
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import ContributorRow from '../components/site/ContributorRow.vue';
-import D from '../data/contributors.json';
-import { HELPERS } from '../data/helpers.js';
+import ContributorRow from './ContributorRow.vue';
+import D from '../../data/contributors.json';
 
 const SLOTS = 6;
 const NICE_STEPS = [1000, 2000, 5000, 10000, 20000, 25000, 50000, 100000];
@@ -318,13 +272,6 @@ const day = (iso, opt = { day: 'numeric', month: 'short' }) =>
     timeZone: 'Asia/Kolkata',
     ...opt,
   });
-const initials = (name) =>
-  name
-    .split(/[\s_-]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0].toUpperCase())
-    .join('');
 const niceStep = (max) => NICE_STEPS.find((n) => max / n <= 2.5) || 100000;
 
 // ---------- data ----------
@@ -394,13 +341,6 @@ const KPIS = [
   { label: 'People', value: people.length },
   { label: 'Weeks', value: nWeeks },
 ];
-const helperCards = HELPERS.map((h, i) => ({
-  ...h,
-  key: 'helper:' + i,
-  initials: initials(h.name),
-  color: `var(--s${(i % SLOTS) + 1})`,
-  delay: `${i * 0.08}s`,
-}));
 
 const since = 'since ' + day(D.since, { day: 'numeric', month: 'short', year: 'numeric' });
 const updated =
@@ -415,7 +355,6 @@ const updated =
 
 // ---------- state ----------
 const page = ref(null);
-const rowsEl = ref(null);
 const boxEl = ref(null);
 const tipEl = ref(null);
 const focusKey = ref(null);
@@ -585,17 +524,10 @@ function onBoxMove(e) {
   });
 }
 
-// ---------- rows: the first screen fits the board on desktop; the rest sit under "All N" ----------
+// ---------- rows: the board shows the top eight (five on phones); the rest sit under "All N" ----------
 const initialFit = () => Math.min(people.length, window.innerWidth > 900 ? 8 : 5);
-async function fitRows() {
+function fitRows() {
   fit.value = initialFit();
-  await nextTick();
-  const list = rowsEl.value;
-  if (!list || window.innerWidth <= 900) return;
-  while (fit.value > 1 && list.scrollHeight > list.clientHeight + 2) {
-    fit.value--;
-    await nextTick();
-  }
 }
 let resizeTimer = 0;
 function onResize() {
@@ -608,6 +540,7 @@ const frames = new Map();
 const timers = new Set();
 let startFrame = 0;
 let io = null;
+let enter = null;
 let ro = null;
 
 function later(fn, ms) {
@@ -645,6 +578,12 @@ function start() {
   }, 250);
 }
 
+function scrollTo(id) {
+  document
+    .getElementById(id)
+    ?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+}
+
 function onReveal(entries) {
   for (const e of entries) {
     if (!e.isIntersecting) continue;
@@ -669,10 +608,19 @@ onMounted(() => {
     revealNodes.forEach((n) => (seen[n.dataset.reveal] = true));
     return;
   }
-  // Two frames so the first paint shows the hidden state before the entrance starts.
-  startFrame = requestAnimationFrame(() => {
-    startFrame = requestAnimationFrame(start);
-  });
+  // The entrance waits until the board scrolls into view, so the count-ups play when seen.
+  enter = new IntersectionObserver(
+    ([e]) => {
+      if (!e.isIntersecting) return;
+      enter.disconnect();
+      // Two frames so the first paint shows the hidden state before the entrance starts.
+      startFrame = requestAnimationFrame(() => {
+        startFrame = requestAnimationFrame(start);
+      });
+    },
+    { threshold: 0.1 }
+  );
+  enter.observe(page.value);
   io = new IntersectionObserver(onReveal, { threshold: 0.15 });
   revealNodes.forEach((n) => io.observe(n));
 });
@@ -685,16 +633,14 @@ onBeforeUnmount(() => {
   timers.clear();
   clearTimeout(resizeTimer);
   window.removeEventListener('resize', onResize);
+  enter?.disconnect();
   io?.disconnect();
   ro?.disconnect();
 });
 </script>
 
 <style scoped>
-.page {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 18px 24px 80px;
+.contrib {
   font-variant-numeric: tabular-nums;
 }
 .label {
@@ -756,8 +702,6 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  height: calc(100svh - var(--nav-h) - 18px);
-  min-height: 600px;
 }
 .head {
   display: flex;
@@ -765,13 +709,6 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   gap: 8px 16px;
   flex-wrap: wrap;
-}
-h1 {
-  margin: 0;
-  font-size: clamp(34px, 4.4vw, 48px);
-  font-weight: 750;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
 }
 .meta {
   display: flex;
@@ -816,8 +753,8 @@ h1 {
   display: grid;
   grid-template-columns: minmax(360px, 5fr) minmax(0, 7fr);
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 22px clamp(24px, 3vw, 48px);
-  padding-bottom: 56px;
+  gap: 10px clamp(24px, 3vw, 48px);
+  padding-bottom: 0;
 }
 .hero {
   align-self: end;
@@ -828,7 +765,7 @@ h1 {
   line-height: 0.95;
   font-weight: 750;
   letter-spacing: -0.04em;
-  margin: 10px 0 14px;
+  margin: 6px 0 10px;
 }
 .split {
   display: flex;
@@ -889,7 +826,7 @@ h1 {
 }
 .kpis li {
   background: var(--card);
-  padding: 16px 18px 14px;
+  padding: 12px 18px 10px;
 }
 .kpis strong {
   display: block;
@@ -1148,7 +1085,7 @@ h1 {
   }
 }
 
-/* ---------- everyone (only when the board overflows) + helpers ---------- */
+/* ---------- everyone (only when the board overflows) ---------- */
 .block {
   padding-top: 72px;
 }
@@ -1171,79 +1108,8 @@ h1 {
   grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: 8px;
 }
-.helpers {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
-  gap: 14px;
-}
-.helper {
-  position: relative;
-  overflow: hidden;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 22px 20px 20px;
-  box-shadow: var(--shadow);
-}
-.helper .mg {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
-  font-weight: 750;
-  color: var(--ink);
-  background: radial-gradient(circle at 30% 30%, var(--card), var(--paper));
-  box-shadow:
-    0 0 0 2px var(--card),
-    0 0 0 4px var(--c);
-}
-.helper h3 {
-  margin: 18px 0 4px;
-  font-size: 20px;
-  font-weight: 700;
-}
-.helper .role {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink);
-  padding: 4px 10px;
-  border-radius: 99px;
-  border: 1px solid var(--c);
-}
-.helper p {
-  margin: 12px 0 0;
-  color: var(--ink-2);
-  font-size: 14.5px;
-}
-.helper::after {
-  content: '';
-  position: absolute;
-  right: -40px;
-  top: -40px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: var(--c);
-  opacity: 0.1;
-}
-.placeholder-tag {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  font-size: 11px;
-  color: var(--ink-3);
-  z-index: 1;
-}
 .site-note {
-  padding: 40px 24px 48px;
+  padding: 0 24px;
   color: var(--ink-3);
   font-size: 13px;
   text-align: center;
@@ -1251,10 +1117,6 @@ h1 {
 
 /* ---------- phone / narrow ---------- */
 @media (max-width: 900px) {
-  .first {
-    height: auto;
-    min-height: 0;
-  }
   .dash {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
@@ -1282,9 +1144,6 @@ h1 {
   }
 }
 @media (max-width: 560px) {
-  .page {
-    padding: 14px 16px 90px;
-  }
   .kpis li {
     padding: 12px 14px;
   }
@@ -1294,30 +1153,6 @@ h1 {
   }
   .meta {
     font-size: 12.5px;
-  }
-  .helper {
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 2px 14px;
-    padding: 16px;
-    align-items: center;
-  }
-  .helper .mg {
-    width: 52px;
-    height: 52px;
-    font-size: 18px;
-    grid-row: span 2;
-  }
-  .helper h3 {
-    margin: 0;
-    font-size: 18px;
-  }
-  .helper .role {
-    justify-self: start;
-  }
-  .helper p {
-    grid-column: 1 / -1;
-    margin-top: 10px;
   }
 }
 </style>

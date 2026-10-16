@@ -11,7 +11,6 @@ const ROUTES = [
   '/events',
   '/house',
   '/teams',
-  '/contributors',
   '/lounge',
   '/login',
   '/verify-certificate',

@@ -258,3 +258,7 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 ## 2026-10-16 — Team rosters open in a panel under the card row
 
 **Why:** Raja wants team photos on the Teams page without a new page. A card with a roster shows a face preview; clicking anywhere on the card (or its "Meet the team" button, the keyboard control) opens a panel below that row with every person as an equal-size portrait card, role in plain text. Names and roles follow the house's 2026–27 details sheet; photos are Cloudinary `sundarbans/teams/`. "Crew" is renamed "team" everywhere. Rejected: a pop-up modal and a separate roster page.
+
+## 2026-10-16 — Contributors board ends the Teams page; /contributors redirects
+
+**Why:** Raja asked for the contributions view at the bottom of Teams with motion and Codex-made pat art, and dropped the idea of a button on the webops team card, which stays as it was. `/contributors` now redirects to `/teams#contributors` so old links still work. Helper (non-code) cards are removed, since they had no data. Rejected: a team-card button that opens a separate page.
