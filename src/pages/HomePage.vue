@@ -1753,7 +1753,7 @@ h3 {
   .stage {
     left: auto;
     right: 8%;
-    width: 32%;
+    width: 24%;
     bottom: 14%;
   }
   .panel {
