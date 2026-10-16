@@ -116,7 +116,7 @@ export const TEAMS = [
     name: 'PR & Outreach',
     tag: ['Tell', 'the', 'story.'],
     desc: 'Instagram, announcements and partner houses — how the rest of the degree hears about us.',
-    people: [{ name: 'Piyush Kumar', role: 'Member', img: pic('v1792082594', 'Piyush_kumar.png') }],
+    people: [],
   },
   {
     id: 'design',
