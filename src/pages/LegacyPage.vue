@@ -1,6 +1,6 @@
 <!--
   Legacy Board (concept A, Five Landings). A tall scroll track holds one viewport that sticks
-  under the nav, with two arched leaders, a ten-seat deck and a river of five years. Scrolling
+  under the nav, with two arched leaders, a two-row member deck and a river of five years. Scrolling
   moves through the years, 2021 at the top. Scroll drives one number, the year position, and
   the boat slides between the docks either side of it, turning to face the way it sails, leaning
   into the travel and settling at a post. The council and the year on the water ride with the boat: as it leaves a post they
@@ -127,9 +127,16 @@
                 :style="{ '--i': seatDelay(ri, mi) }"
               >
                 <div class="frame">
-                  <img v-if="member.photo" :src="member.photo" alt="Team member" />
+                  <img
+                    v-if="member.photo"
+                    :src="member.photo"
+                    :alt="`Portrait of ${member.name}`"
+                  />
                 </div>
-                <p class="member-cap">Team member</p>
+                <div class="member-cap">
+                  <p class="member-name">{{ member.name }}</p>
+                  <p class="member-role">{{ member.role }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -204,10 +211,12 @@ function queryRepresents(year) {
   return year === DEFAULT_YEAR ? raw === undefined : raw === String(year);
 }
 
+const council = computed(() => LEGACY.find((d) => d.year === shownYear.value) ?? null);
 const teamMax = computed(() => {
+  const max = council.value?.team.length ?? 10;
   const n = Number.parseInt(queryValue(route.query.team) ?? '', 10);
-  if (Number.isNaN(n)) return 10;
-  return Math.min(10, Math.max(0, n));
+  if (Number.isNaN(n)) return max;
+  return Math.min(max, Math.max(0, n));
 });
 
 const shownYear = ref(parsedYear());
@@ -228,7 +237,6 @@ const hold = ref(false);
 const postArt = reactive(YEARS.map(() => false));
 const archReady = reactive({ secretary: false, deputy: false });
 
-const council = computed(() => LEGACY.find((d) => d.year === shownYear.value) ?? null);
 // The gap the docked boat sits in (left of its post, or right of the first one): that gap's
 // year digit steps aside into the open water so the boat never hides it.
 const boatGap = computed(() => YEARS.indexOf(shownYear.value) - (dockRight.value ? 0 : 1));
@@ -249,7 +257,10 @@ const teamRows = computed(() => {
 const liveText = computed(() => {
   const c = council.value;
   if (!c) return '';
-  return `Council ${c.year}. ${c.secretary.name}, Secretary. ${c.deputy.name}, Deputy Secretary.`;
+  const leaders = [c.secretary, c.deputy]
+    .filter((person) => person.name)
+    .map((person) => `${person.name}, ${person.role}`);
+  return `Council ${c.year}. ${leaders.join('. ')}.`;
 });
 
 function seatDelay(rowIndex, index) {
@@ -1019,33 +1030,15 @@ h1 {
   z-index: 1;
   align-self: center;
   display: grid;
-  gap: clamp(10px, 1.6vh, 16px);
+  gap: clamp(14px, 2.2vh, 22px);
   min-width: 0;
   max-width: 100%;
-  padding: 18px 22px 20px;
-  border: 1.5px solid var(--line-strong);
-  border-radius: 12px;
-  background-color: var(--mari-soft);
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent 0 26px,
-    color-mix(in srgb, var(--line-strong) 55%, transparent) 26px 28px
-  );
-  box-shadow: var(--shadow);
-}
-.deck::before {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 2px dotted color-mix(in srgb, var(--line-strong) 70%, transparent);
-  border-radius: 8px;
-  pointer-events: none;
 }
 .deck-row {
   position: relative;
   display: flex;
   justify-content: center;
-  gap: clamp(10px, 1.1vw, 14px);
+  gap: clamp(12px, 1.4vw, 18px);
 }
 .member {
   display: grid;
@@ -1064,9 +1057,16 @@ h1 {
   border: 1.5px solid var(--line-strong);
   border-radius: 8px;
 }
+/* Each member sits under a small arch, echoing the leaders' painted doors. */
 .member .frame {
   width: 100%;
   aspect-ratio: 4 / 5;
+  border: 2px solid var(--mari);
+  border-radius: 999px 999px 10px 10px;
+  box-shadow:
+    0 0 0 3px var(--paper),
+    0 0 0 4px var(--line-strong),
+    var(--shadow);
 }
 .frame::before {
   content: '';
@@ -1086,12 +1086,25 @@ h1 {
   display: none;
 }
 .member-cap {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
   margin: 0;
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.1em;
   line-height: 1.2;
   text-align: center;
+}
+.member-name {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+.member-role {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-2);
 }
@@ -1191,23 +1204,20 @@ h1 {
     height: auto;
   }
   .deck {
-    gap: 8px;
-    padding: 10px 12px 12px;
-  }
-  .deck::before {
-    inset: 4px;
+    gap: 10px;
   }
   .deck-row {
     gap: 8px;
   }
-  .member-cap {
-    font-size: 10.5px;
+  .member-name {
+    font-size: 10px;
+  }
+  .member-role {
+    font-size: 8px;
     letter-spacing: 0.04em;
   }
 }
 
-/* Short landscape phones leave the stage ~120px high, below the stacked council. The council
-   keeps its natural height and the stage scrolls, so every card stays reachable. */
 @media (max-width: 760px) and (orientation: landscape) {
   .stage {
     overflow-y: auto;
