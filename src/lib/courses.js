@@ -184,12 +184,12 @@ export const TOOLS = [
     id: 'handbook',
     label: 'Student handbook',
     hint: 'Rules, grading, policies',
-    href: 'https://study.iitm.ac.in/ds/academics.html',
+    href: 'https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZeNNl/pub',
     icon: 'book',
     options: [
       {
         label: 'Data Science & Applications handbook',
-        href: 'https://study.iitm.ac.in/ds/academics.html',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZeNNl/pub',
       },
       {
         label: 'Aeronautics and Space Technology handbook',
