@@ -87,7 +87,7 @@
               </svg>
               <span>IIT Madras BS <i aria-hidden="true" /> since 2021</span>
             </p>
-            <p class="line">Notes, past papers, events and people, all in one place.</p>
+            <p class="line">एकत्र उदयामः, सहैव प्रज्वलामः।</p>
           </div>
           <div class="band" aria-hidden="true" />
         </section>
