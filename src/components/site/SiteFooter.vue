@@ -1,5 +1,5 @@
 <!--
-  The foot of every page except Home (Home ends on its own scroll cloth). A tide line, then
+  The foot of every page, Home included. A tide line, then
   the few things people come looking for at the bottom: certificate check, portals, socials.
   id="contact" is where the old /contact link lands.
 -->

@@ -20,7 +20,7 @@
   </a>
   <TopNav v-if="!isLounge" />
   <RouterView />
-  <SiteFooter v-if="route.path !== '/' && !isStandalone" />
+  <SiteFooter v-if="!isStandalone" />
   <CourseSheet />
   <LoungeDoor v-if="door.rect" overlay entry :rect="door.rect" @done="endDoor" />
   <Transition name="toast">

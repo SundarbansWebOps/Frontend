@@ -70,6 +70,23 @@ set local request.jwt.claims='{"sub":"b9000000-0000-4000-8000-000000000001","rol
 select lives_ok($$select public.soft_delete_event('e9000000-0000-4000-8000-000000000020',false)$$,'Super Admin restores soft-deleted event');
 select ok((select deleted_at is null from public.events where id='e9000000-0000-4000-8000-000000000020'),'restore persists');
 reset role;
+-- Organizer removal covers a past event in scope and an RC's own house-wide draft; archive stays Super Admin-only.
+insert into public.events(id,name,region_id,starts_at,ends_at,published_at,created_by,updated_by) values('e9000000-0000-4000-8000-000000000021','Past event removed by RC',(select id from public.regions where code='region_01'),now()-interval '2 day',now()-interval '1 day',now()-interval '3 day',(select id from fx where k='sa'),(select id from fx where k='sa'));
+insert into public.events(id,name,region_id,starts_at,ends_at,published_at,archive,created_by,updated_by) values('e9000000-0000-4000-8000-000000000023','Archived event RC cannot remove',(select id from public.regions where code='region_01'),now()-interval '2 day',now()-interval '1 day',now()-interval '3 day',true,(select id from fx where k='sa'),(select id from fx where k='sa'));
+-- events_stamp sets created_by from the JWT on insert, so the RC's draft must be inserted as the RC.
+set local request.jwt.claims='{"sub":"b9000000-0000-4000-8000-000000000002","role":"authenticated"}';
+insert into public.events(id,name,starts_at,ends_at) values('e9000000-0000-4000-8000-000000000022','RC house draft removed by RC',now()+interval '1 day',now()+interval '2 day');
+set local role authenticated;
+set local request.jwt.claims='{"sub":"b9000000-0000-4000-8000-000000000002","role":"authenticated"}';
+select lives_ok($$select public.soft_delete_event('e9000000-0000-4000-8000-000000000021')$$,'RC removes a past event in own region');
+select lives_ok($$select public.soft_delete_event('e9000000-0000-4000-8000-000000000022')$$,'RC removes own unpublished house-wide draft');
+select throws_ok($$select public.soft_delete_event('e9000000-0000-4000-8000-000000000023')$$,'42501','Only a Super Admin manages archived events','RC cannot remove an archived event');
+reset role;
+select is((select count(*)::integer from public.events where id in('e9000000-0000-4000-8000-000000000021','e9000000-0000-4000-8000-000000000022') and deleted_at is not null),2,'removed past event and house draft are soft-deleted');
+select ok((select deleted_at is null from public.events where id='e9000000-0000-4000-8000-000000000023'),'refused archive removal leaves the event untouched');
+set local request.jwt.claims='{"sub":"b9000000-0000-4000-8000-000000000001","role":"authenticated"}';
+update public.events set deleted_at=now() where id='e9000000-0000-4000-8000-000000000023';
+reset role;
 select ok((select requested_change ?& array['full_name','region_id'] from public.approval_requests where target_member_id=(select id from fx where k='unknown') and type='member_profile_update'),'profile update detects name and region for a member who had neither');
 set local role authenticated;
 set local request.jwt.claims='{"sub":"b9000000-0000-4000-8000-000000000005","role":"authenticated"}';

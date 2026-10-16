@@ -29,7 +29,7 @@
               :title="`See ${p.region} meetups`"
               @click="$emit('region', regionId)"
             >
-              <i />{{ p.region }}<small v-if="meetups" class="mono">{{ meetups }}</small>
+              <i />{{ p.region }}
             </button>
             <span v-else class="reg flat"><i />{{ p.region }}</span>
             <a
@@ -61,20 +61,16 @@
 <script setup>
 import { computed, ref } from 'vue';
 import LineIcon from './LineIcon.vue';
-import { portrait, regionById, regionOfCouncil } from '../../lib/house.js';
+import { portrait, regionOfCouncil } from '../../lib/house.js';
 
 const props = defineProps({
   p: { type: Object, required: true },
   size: { type: String, default: 'card' }, // 'big' | 'card'
-  showMeetups: Boolean,
 });
 defineEmits(['region']);
 
 const ICON = { LinkedIn: 'linkedin', X: 'x', Instagram: 'instagram' };
 const regionId = computed(() => regionOfCouncil(props.p));
-const meetups = computed(() =>
-  props.showMeetups && regionId.value ? regionById[regionId.value].items.length : 0
-);
 const loaded = ref(false);
 </script>
 
@@ -238,13 +234,6 @@ const loaded = ref(false);
   height: 7px;
   border-radius: 50%;
   background: var(--w-meetups);
-}
-.reg small {
-  margin-left: 2px;
-  padding-left: 7px;
-  border-left: 1px solid var(--line-strong);
-  font-size: 11.5px;
-  color: var(--ink-3);
 }
 button.reg:hover {
   background: var(--mari-soft);
