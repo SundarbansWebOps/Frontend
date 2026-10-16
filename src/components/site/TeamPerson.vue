@@ -1,6 +1,6 @@
 <!--
   One person in a team's roster: a portrait card (as the council's PersonCard, without the region
-  chip). Everyone gets the same size; a lead's role is set in the team accent. Each has a card
+  chip). The panel sizes leads up; a lead's role is set in the team accent. Each has a card
   back, so the deal can turn it over on the way in.
 -->
 <template>

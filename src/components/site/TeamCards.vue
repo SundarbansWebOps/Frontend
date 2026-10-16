@@ -2,7 +2,7 @@
   The communities and the teams. Each card opens on its own painted pat plate, which paints
   itself in and then keeps moving while on screen; the three-word motto stamps in as it
   arrives. Filled rosters show a preview and open a dealt panel under their card row; empty
-  rosters keep the 2026–27 seats. Communities link to their events on the Events page.
+  rosters keep the 2026–27 seats.
 -->
 <template>
   <ul ref="root" class="teams" @keydown.esc="close">
@@ -32,9 +32,10 @@
           :aria-controls="openIdx === i ? panelId : undefined"
           @click="toggle(i)"
         >
-          <span class="faces" aria-hidden="true">
+          <!-- Only heads and co-heads show here; a team without them shows just the count. -->
+          <span v-if="t.people.some((p) => p.lead)" class="faces" aria-hidden="true">
             <img
-              v-for="p in t.people.slice(0, 5)"
+              v-for="p in t.people.filter((p) => p.lead).slice(0, 5)"
               :key="p.name"
               :src="portrait.face(p.img)"
               alt=""
@@ -52,10 +53,6 @@
           </span>
           <small>Roster for 2026–27 coming</small>
         </div>
-
-        <a v-if="t.wing" class="go" href="#/events" @click.prevent="toEvents(t.wing)"
-          >{{ t.events }} events · see them <LineIcon name="arrow"
-        /></a>
       </li>
 
       <li v-if="openIdx !== null && i === rowEnd" class="slot">
@@ -79,7 +76,6 @@ import PatArt from './PatArt.vue';
 import TeamPanel from './TeamPanel.vue';
 import { ART } from '../../lib/art.js';
 import { portrait } from '../../lib/house.js';
-import { nav } from '../../lib/store.js';
 
 const props = defineProps({ teams: { type: Array, required: true } });
 
@@ -122,7 +118,7 @@ async function openTeam(i) {
 }
 
 // A click anywhere on a card with a roster opens it too; the button stays the keyboard and
-// screen-reader control. Clicks on the button or the events link do their own thing.
+// screen-reader control. Clicks on the button do their own thing.
 function onCard(e, i) {
   if (!props.teams[i].people.length || e.target.closest('a, button')) return;
   if (getSelection()?.toString()) return;
@@ -143,10 +139,6 @@ function close() {
 
 function onClosed() {
   if (!isOpen.value) openIdx.value = null;
-}
-
-function toEvents(wing) {
-  nav.go('events', null, { wing });
 }
 
 let io;
@@ -377,25 +369,6 @@ h3 {
   font-size: 12.5px;
   color: var(--ink-2);
 }
-.go {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  justify-self: start;
-  margin-top: 8px;
-  font-size: 14px;
-  font-weight: 650;
-  color: var(--c);
-  text-decoration: none;
-}
-.go :deep(svg) {
-  width: 17px;
-  height: 17px;
-  transition: transform 0.3s var(--ease-spring);
-}
-.go:hover :deep(svg) {
-  transform: translateX(3px);
-}
 /* Narrow columns: three faces and the total, so the preview fits on one line. */
 @media (max-width: 1020px) {
   .faces img:nth-child(n + 4) {
@@ -411,8 +384,7 @@ h3 {
   .team,
   .tag span,
   .meet,
-  .chev,
-  .go :deep(svg) {
+  .chev {
     transition: none;
   }
   .seats i {

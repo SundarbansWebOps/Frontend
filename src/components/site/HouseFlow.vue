@@ -35,6 +35,9 @@
       >
         <span class="dot" :style="{ '--c': it.color }" aria-hidden="true" />
         {{ it.name }}
+        <span v-if="it.heads.length" class="heads" aria-hidden="true">
+          <img v-for="p in it.heads" :key="p.name" :src="portrait.face(p.img)" alt="" />
+        </span>
       </button>
     </div>
   </div>
@@ -46,6 +49,14 @@ import { lower, portrait, upper } from '../../lib/house.js';
 
 defineEmits(['go']);
 
+// Each chip carries only its heads and co-heads, as the council rows carry the council.
+const item = (t) => ({
+  id: t.id,
+  name: t.name,
+  color: tint(t),
+  heads: t.people.filter((p) => p.lead),
+});
+
 // Same colour rule as TeamCards: a community takes its wing colour, a team takes marigold.
 const tint = (t) => (t.wing ? `var(--w-${t.wing})` : 'var(--mari-ink)');
 
@@ -54,13 +65,13 @@ const COLS = [
     id: 'com',
     to: 'communities',
     title: 'Communities',
-    items: COMMUNITIES.map((c) => ({ id: c.id, name: c.name, color: tint(c) })),
+    items: COMMUNITIES.map(item),
   },
   {
     id: 'teams',
     to: 'teams',
     title: 'Teams',
-    items: TEAMS.map((c) => ({ id: c.id, name: c.name, color: tint(c) })),
+    items: TEAMS.map(item),
   },
 ];
 </script>
@@ -250,6 +261,35 @@ const COLS = [
   height: 8px;
   border-radius: 50%;
   background: var(--c);
+}
+
+.heads {
+  display: flex;
+  margin-left: 2px;
+}
+.heads img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--card);
+  object-fit: cover;
+  background: var(--sunk);
+}
+.heads img + img {
+  margin-left: -8px;
+}
+
+/* Phone: two chip columns share the width, so tighten the chip around its heads. */
+@media (max-width: 560px) {
+  .chip {
+    gap: 6px;
+    padding: 0 8px;
+    font-size: 13.5px;
+  }
+  .heads img {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 /* Hover uses `translate`, not `transform`: the rise keyframes own `transform` (fill: both). */

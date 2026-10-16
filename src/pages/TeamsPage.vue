@@ -63,9 +63,6 @@
       <div class="contrib-intro">
         <div>
           <h2 id="contributors-h" class="sec-h"><span class="mono">06</span> Contributors</h2>
-          <p class="sec-sub">
-            Lines changed since 1 July, counted from GitHub. Hover a name to see their weeks.
-          </p>
         </div>
         <div class="crew-band">
           <PatArt :fig="ART['contrib-crew']" name="contrib-crew" />
