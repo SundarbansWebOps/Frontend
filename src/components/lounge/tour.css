@@ -388,8 +388,9 @@
 }
 
 :where(html.lounge-active) .tour .niches.stack .niche {
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, auto);
   align-items: center;
+  justify-content: center;
   justify-items: start;
   gap: 10px;
 }
@@ -400,12 +401,14 @@
 
 :where(html.lounge-active) .tour .niches.stack .plate {
   justify-items: start;
-  max-width: none;
+  max-width: 100%;
   text-align: left;
 }
 
 :where(html.lounge-active) .tour .niches.stack .plate b {
   font-size: 15px;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 :where(html.lounge-active) .tour .niches.stack .plate small {
