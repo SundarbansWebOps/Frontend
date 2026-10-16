@@ -4,6 +4,7 @@
 
 ## In progress / next
 
+- **Legacy Board portrait repair** — branch `feat/legacy-council-portraits`, local and uncommitted. Corrected portrait assets, existing real photos, team labels and all 2025 members are in place. Chrome preview remains at `http://127.0.0.1:5180/#/teams/legacy` (Vite PID 110532). **Next:** Raja reviews the page and provides the correct 2022 Secretary name when available. No commit, push, PR or deployment.
 - **Contributors board at the bottom of Teams — branch `feat/teams-contributors-section` (worktree `~/Anuraj-dev/Frontend-teams-contributors`), PR open against upstream `main` (2026-10-16).** `/#/teams#contributors` ends with a "06 Contributors" section: Codex-generated pat art (`src/assets/art/contrib-ledger.webp`, `contrib-crew.webp`), `FireflyField.vue` motion, and `ContributorsBoard.vue` (counts from 1 July; hovering a name highlights its weeks). `ContributorsPage.vue`, the Helpers section and `src/data/helpers.js` are removed; `/contributors` redirects to `/teams#contributors`. Webops team cards untouched. Gates pass: lint, `check-design`, prettier, build, `npm run shots` (36 shots, no errors). Not verified: real signed-in Chrome, a physical phone, the hover highlight visually. **Next: Raja reviews the section in a browser and merges the PR.**
 - **Lounge form audit and audience-status UI (2026-10-15).** All 13 URL-matched Admin records use the workbook URLs; all 10 group/community confirmation links were checked and five Lounge invite fields corrected/added. All four recruitment-titled forms are closed; all seven regional group forms remain globally open and published. Independent reviewer passed 4/4 recruitments and 7/7 regional groups. The Web Admin account is Patna; non-Patna form submission gates are false by design. Local UI changes now explain region/cohort restrictions, show the global form state in Admin, and let Super Admins open every group form from Lounge, with read-only previews when the server denies submission. Local build/lint/design checks pass; no deploy. See `sessions/2026-10-15.md`.
 - **2023–24 tenure reading page + Legacy Board scroll — PR #163 (`feat/legacy-tenure-2023-story`), open.** `/#/teams/legacy/2023-24` → `src/pages/TenureReadPage.vue`: docs-style layout (Part dropdowns in a left sidebar, scroll-spy, "On this page" rail with margin art; sticky Contents dropdown under 1020px). Text is `src/data/tenure-2023.md` parsed at runtime, every word kept (Part VI and two editorial notes left out — Raja to confirm with the council). `LegacyPage.vue` now scrolls year to year (sticky view, snap, boat follows scroll, one year per wheel notch, `?year=` deep link, default 2021) with a "Read more" link on 2023. Shareable preview: https://sundarbans-legacy-2023-24.vercel.app (Vercel project `sundarbans-legacy-2023-24`, static build of a legacy-only router copy; see 2026-10-14 log). Old story view + prototype archived in `~/Anuraj-dev/legacy-board-designs/`. **Next: council/Raja review of the PR.** Unverified: real Chrome, physical phone touch scroll.
@@ -25,50 +26,37 @@
 
 ## Status
 
-- Deputy Secretary added live to `public.super_admin_allowlist` using Supabase CLI at user request; active member and `private.is_super_admin() = true` verified. Existing admins preserved; total now four. No migration push or frontend changes.
-- Fresh group audit (2026-10-10): live has 43 events, 17 forms / 15 published, 9 invites, 1 response; group metadata column absent before fix, now applied. Ten verified forms: Technical/Cultural/Esports + Bengaluru/Chandigarh/Chennai/Delhi/Kolkata/Mumbai/Patna. Cultural lacks invite. Targeted migration proved old RPC returns 0 groups before and 10 after, preserves titles/general forms; disposable transaction rolled back. Full 232 pgTAP + 9 concurrency checks, build, 2 relevant Playwright tests PASS. Logs `/tmp/sundarbans-group-{regression,db-tests,browser-tests,build}.log`. Post-rollout live catalog: 10 group forms / 9 invites; 43 events preserved; broader audit migration remains unapplied. Signed-in real browser unavailable in current CUA inventory; rendered live member UI still unverified.
-- Member Events removes region/term browsing controls; audience enforcement remains. Lifecycle updates with clock, cancellation/availability respected, exact 1200-second attendance threshold and source-preserving archive dates fixed.
-- Group discovery uses form metadata instead of frontend UUID allowlist; ten previously verified membership sources classified. Applied/invite/error states persist; routed forms use Lounge shell/theme. Missing approved house-wide source remains missing.
-- Auth account-switch races guarded; optional preferred name stays independent of roster/certificate name. Region picker refreshes related data. Form validation, notices and public navigation/accessibility corrected.
-- Backend migration adds source-owned attendance merge/replace, shared-source conflict rejection, canonical roster locking/opaque RC replies, form source/archive/invite protections, guarded event removal and operational erasure redaction. Admin scope, paging, import preview and CSV fixed.
-- Final gates: **86 Playwright tests; 232 pgTAP assertions + 9 concurrency cases; build; full ESLint; Prettier for 54 changed source/test files; design; study data; diff whitespace — all PASS.** Full-repo formatting not run. Independent Standards and Spec review found no remaining verified actionable non-certificate finding.
-- Screenshot sweep: 36 public/anonymous light/dark desktop/phone shots, no page errors/sideways overflow. Real Google Chrome separately checked synthetic member Events, routed group submission/reload/theme, public contrast and Resources keyboard/modal behavior. Evidence `/tmp/sundarbans-fixes/`, `test-results/shots/`; logs `/tmp/sundarbans-fix-*.log`.
-- Local bypass requires Vite DEV + loopback + `?local-lounge=1`; synthetic member, no Admin role or Supabase writes. Production code excludes the fixture and flag still lands at Login. `local-region=0` tests initial selection.
-- Prior live read-only audit (2026-10-09): 5 members, 3803 roster; 2 member cohorts and 2 roster regions unknown. 43 archive events with NULL schedules, 8 missing images, 22 approximate turnout labels; public adapter exposes 40 after intended meetup exclusion. 17 forms/15 published; no registrations/attendance/certificates/templates. Details in original report; no fresh live audit this correction task.
-- Earlier session applied migrations 150000/150100/150200 live and added the exact testing OAuth redirect. Testing deployment still serves sample boats; current frontend/migration fixes are local. Live OAuth/Admin writes were not revalidated.
+- Legacy Board portraits show the beige/gold tiger artwork inside each portrait or avatar; it is not a page background. Existing Cloudinary portraits were retained where available. 2021/22 RC folders did not expose photos in the connected Drive session; illustrated avatars are used where a photo was unavailable.
+- 2021 Secretary is Kunal Chaturvedi and Deputy Secretary is Utkarsh Gaurav. Kunal is removed from 2022; its Secretary slot is blank pending Raja's confirmed name. 2025 renders all 11 team members.
+- Lounge Tour uses the corrected 2021 leader portraits and updated 2025 Secretary/Deputy portraits. Assets and URLs are in `media/manifest.json`.
+- Fresh local gates passed: production build, design check, targeted ESLint, Prettier check and `git diff --check`. Real Chrome showed the corrected Legacy years and portraits. GPT-6.1 Sol reviewed the current diff with no findings.
+- Legacy Council update log: `sessions/2026-10-17.md`.
+- Other Lounge/Admin, study, and audit work is documented in `sessions/` and `reports/`; certificates remain deferred, and live deployment requires explicit authorization.
 
 ## Architecture map
 
-- Auth/client/router: `src/lib/auth.js`, `auth-profile.js`, `supabase.js`, `src/router/index.js`; synthetic client `src/lib/local-lounge.js`.
-- Lounge: `src/lib/lounge.js`, `src/components/lounge/{session,events}.js`, `src/pages/{LoungePage,FormPage}.vue`.
+- Auth, client, router: `src/lib/{auth,auth-profile,supabase}.js`, `src/router/index.js`.
+- Lounge: `src/lib/lounge.js`, `src/components/lounge/`, `src/pages/{LoungePage,FormPage}.vue`.
 - Admin: `src/pages/AdminPage.vue`, `src/components/admin/`, `src/lib/admin.js`.
-- Legacy Board: `src/pages/{LegacyPage,TenureReadPage}.vue`, `src/data/{legacy,tenure-2023}*`, art `src/assets/legacy/`.
-- Public archive/navigation: `src/lib/events.js`, `src/components/site/`, public pages; DB first, `src/data/events.data.js` fallback.
-- Tests: `e2e/`, `supabase/tests/{020,031,concurrency.py,run-local.sh}`. New migration: `supabase/migrations/20261010000000_audit_fixes.sql`.
+- Teams/Legacy: `src/pages/{TeamsPage,LegacyPage,TenureReadPage}.vue`, `src/data/{legacy,tenure-2023}*`, `src/assets/legacy/`.
+- Public archive: `src/lib/events.js`, `src/data/events.data.js`.
 
 ## Stack & run
 
-- Vue3/router4/Vite6/supabase-js2.117.2. Node^22 declared; gates used installed Node26.8.2 directly because npm shim has had AppImage failures.
-- Owned preview: `http://127.0.0.1:5202/?local-lounge=1#/lounge`, **PID259636**, exec59071. Started this session; synthetic member only. Port5210 belongs to Frontend-maintenance; leave it.
-- Build: `node node_modules/vite/bin/vite.js build`. E2E after build: `LOCAL_LOUNGE_TEST_URL='http://127.0.0.1:5202/?local-lounge=1' node node_modules/@playwright/test/cli.js test --workers=3`.
-- Gates: `node node_modules/eslint/bin/eslint.js .`, `node scripts/check-study-data.mjs`, `node scripts/check-design.mjs`. Backend: `bash supabase/tests/run-local.sh`, disposable5452x/self-cleaning.
-- Linked Supabase `bqoejoznqudcyeaebmsm`. Query CLI returns last row-returning result; use aggregate-only read-only transactions for source audits.
-- Real-browser gate: actual Google Chrome AJS connection, browser ID3. Generic Chrome alias can select Helium; inspect inventory. No signed-state substitution.
+- Vue 3, vue-router 4, Vite 6, Supabase JS. Node 22 is declared; this host has Node 26.8.2.
+- Run: `npm run dev` · Build: `node node_modules/vite/bin/vite.js build` · Design: `node scripts/check-design.mjs`.
+- Current user preview: `http://127.0.0.1:5180/#/teams/legacy`, PID 110532. Leave it running for Raja.
 
 ## Key decisions
 
-- Roster-gated first Google login; optional editable name/phone; profile phone saved only with consent; tour seen flag persisted on Enter/Not now.
-- Four SAs after the explicitly requested Deputy Secretary addition on 2026-10-10; 0–2 RCs/region; International no RC. Initial NULL region self-service; corrections approved by current-region RC or SA.
-- Upcoming/live audience enforced; published past public. Preserve source date precision/NULL schedule and approximate turnout instead of manufacturing data.
-- Forms members-only; response gates invitation, application is not admission. Group catalog uses verified metadata. Default attendance merge; explicit replacement removes only that source's ownership and rejects shared conflicts.
-- Certificate design unchanged and deferred. Full decisions in `decisions.md` and `specs/003-backend-data-decisions.md`.
+- Use real available portraits; use illustrated avatars only when no usable photo is available. Place the supplied tiger artwork inside every portrait image.
+- Keep Kunal in 2021 only. Do not infer the 2022 Secretary; wait for Raja's name.
+- Fix the team-data cap from each year's actual roster length so the complete roster renders without changing the two-row deck.
+- No commit, push, PR or deployment without an explicit request.
 
 ## Gotchas
 
-- Vite dev server can keep serving a stale scoped style module after an edit (browser URL has an old `?t=` stamp, old CSS). Verify with a fresh `page` and a `touch` of the edited file before trusting a computed-style check.
-- Preserve all unrelated changes. No raw member contacts, private invite URLs or secrets in docs/output; private imports stay outside repo.
-- Fail closed and recheck authorization after locks. STABLE export reads share statement MVCC snapshot; suspected export race was rejected.
-- Never touch5432x/metaverse or stale5442x stacks. Owned5452x test stack cleaned up; preserve other agents/servers.
-- No source-form submissions/access requests/messages without scope. Blank optional roster names are intentional, not corruption.
-- Lounge dialogs close through async history.back; tests wait for dialog disappearance and settled URL before reload. Fixed-clock tests pause in the future.
-- Synthetic/mocked browser and disposable database tests do not prove live OAuth, external WhatsApp admission or deployment. Concurrent HMR can retain stale router state; real Chrome checks used clean loads.
+- Preserve unrelated work and never reset or clean the checkout. The current four modified source/manifest files are the Legacy portrait change.
+- Drive folders for some 2021/22 RC photos returned Access Denied in the connected browser; do not claim those portraits are real photos.
+- Vite can retain stale scoped style modules after HMR; verify visual changes in a fresh real Chrome page.
+- Lounge database/auth behavior and mocked browser checks do not prove production deployment or external services.

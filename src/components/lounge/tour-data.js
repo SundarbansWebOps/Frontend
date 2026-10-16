@@ -5,14 +5,29 @@ import { EVENTS } from '../../data/events.data.js';
 // One-line change once confirmed elsewhere.
 export const DEPUTY_SECRETARY = 'Ansh Kumar';
 
-// PLACEHOLDER: the house note. Kept short so the river scene leads.
+// The house note, from the welcome copy. Body is the two intro paragraphs; pride is the closing line.
 export const HOUSE_NOTE = {
   title: 'Welcome to Sundarbans House.',
-  body: 'Named after the mangroves that hold the coast together. IIT Madras BS students from every corner of India, holding each other up the same way.',
-  pride: 'From today the house is yours too. Wear the name with pride.',
+  body: "From exciting events and creative collaborations to shared achievements and lifelong memories, Sundarbans House is where every student gets the opportunity to connect, contribute, and shine. We believe that the best experiences are created when people come together, ideas turn into action, and every voice finds a place. So, whether you're here to learn, lead, collaborate, or simply make incredible memories, you're not just joining a house, you're becoming part of a legacy.",
+  pride: "Welcome to the Sundarbans House, let's make this journey unforgettable!",
 };
 
 export const FOUNDED = 2021;
+
+/* Cloudinary face-aware crop for the thought-bubble photo (same idea as src/lib/house.js
+   portrait.big). */
+const face = (u) =>
+  u.replace('f_auto,q_auto:good,w_1000,c_limit', 'f_auto,q_auto,w_240,h_300,c_fill,g_face');
+const CLD = 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit';
+const KUNAL_PHOTO = face(`${CLD}/v1792177588/sundarbans/legacy-council/kunal-2021-tiger.webp`);
+const ANSHUMAN_PHOTO = face(
+  `${CLD}/v1792183158/sundarbans/legacy-council/avatar-anshuman-bhasin.png`
+);
+const UTKARSH_PHOTO = face(`${CLD}/v1792177589/sundarbans/legacy-council/utkarsh-2021-tiger.webp`);
+const MANNU_PHOTO = face(`${CLD}/v1792177357/sundarbans/legacy-council/mannu-yadav.webp`);
+const ADITYA_2025_PHOTO = face(
+  `${CLD}/v1792177324/sundarbans/legacy-council/aditya-vaidhya-2025.webp`
+);
 
 /* A past council member. Until a real photo exists the frame shows the house crest. To add
    a photo, pass its URL as the third argument; it replaces the crest:
@@ -23,11 +38,35 @@ const DEP = 'Deputy Secretary';
 
 /* Those who rowed before you: one landing per year, Secretary first, Deputy Secretary second. */
 export const LANDINGS = [
-  { year: 2021, people: [p('Anshuman Singh', SEC), p('Kunal Chaturvedi', DEP)] },
-  { year: 2022, people: [p('Kunal Chaturvedi', SEC), p('Abhishek Ojha', DEP)] },
-  { year: 2023, people: [p('Abhishek Ojha', SEC), p('Ravi Kant', DEP)] },
-  { year: 2024, people: [p('Shreyansh Mall', SEC), p('Divya Chinmay', DEP)] },
-  { year: 2025, people: [p('Mannu Yadav', SEC), p('Aditya Vaidhya', DEP)] },
+  {
+    year: 2021,
+    people: [p('Anshuman Bhasin', SEC, ANSHUMAN_PHOTO), p('Utkarsh Gaurav', DEP, UTKARSH_PHOTO)],
+  },
+  {
+    year: 2022,
+    people: [
+      p('Kunal Chaturvedi', SEC, KUNAL_PHOTO),
+      p('Abhishek Ojha', DEP, face(`${CLD}/v1792094947/sundarbans/teams/Abhishek_ojha.png`)),
+    ],
+  },
+  {
+    year: 2023,
+    people: [
+      p('Abhishek Ojha', SEC, face(`${CLD}/v1792094947/sundarbans/teams/Abhishek_ojha.png`)),
+      p('Ravi Kant', DEP, face(`${CLD}/v1792095019/sundarbans/teams/ravikant.png`)),
+    ],
+  },
+  {
+    year: 2024,
+    people: [
+      p('Shreyansh Mall', SEC, face(`${CLD}/v1792095027/sundarbans/teams/shreyansh.png`)),
+      p('Divya Chinmay', DEP, face(`${CLD}/v1792094976/sundarbans/teams/divya.png`)),
+    ],
+  },
+  {
+    year: 2025,
+    people: [p('Mannu Yadav', SEC, MANNU_PHOTO), p('Aditya Vaidhya', DEP, ADITYA_2025_PHOTO)],
+  },
 ];
 
 /* Its own moment after the 2023 landing: the lighthouse lights up. Copy from Raja. */
@@ -39,12 +78,6 @@ export const MILESTONE = {
 };
 
 export const COUNCIL_YEAR = 2026;
-
-/* Cloudinary face-aware crop for the thought-bubble photo (same idea as src/lib/house.js
-   portrait.big). */
-const face = (u) =>
-  u.replace('f_auto,q_auto:good,w_1000,c_limit', 'f_auto,q_auto,w_240,h_300,c_fill,g_face');
-const CLD = 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit';
 
 // Photos are the council's real ones from src/data/house.data.js. Notes are PLACEHOLDER drafts.
 // `pose` picks the painted character on the bank (art/r5/council-{pose}-{day|night}.webp):
