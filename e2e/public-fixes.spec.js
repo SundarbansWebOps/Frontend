@@ -27,10 +27,9 @@ test('community event links and filters produce a shareable URL', async ({ page 
   await expect(page.getByRole('radio', { name: /Tech/ })).toHaveAttribute('aria-checked', 'true');
 });
 
-test('contact compatibility link lands on the Upper House Council on Teams', async ({ page }) => {
+test('contact compatibility link lands on the Help page', async ({ page }) => {
   await page.goto(hashUrl('/contact'));
-  await expect(page).toHaveURL(/#\/teams#uhc/);
-  await expect(page.locator('#uhc')).toBeVisible();
+  await expect(page).toHaveURL(/#\/help$/);
 });
 
 test('Lounge room selection survives the sign-in doorway', async ({ page }) => {

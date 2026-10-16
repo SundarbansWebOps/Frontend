@@ -48,6 +48,7 @@ const routes = [
     meta: { member: true, admin: true },
   },
   { path: '/login', name: 'Login', component: () => import('../pages/LoginPage.vue') },
+  { path: '/help', component: () => import('../pages/HelpPage.vue') },
   { path: '/verify-certificate', component: () => import('../pages/VerifyPage.vue') },
   // Hands the reader to the contribution form; the raw Google Form link lives only there.
   {
@@ -68,7 +69,7 @@ const routes = [
   { path: '/community/technical', redirect: { path: '/events', query: { wing: 'tech' } } },
   { path: '/community/cultural', redirect: { path: '/events', query: { wing: 'cultural' } } },
   { path: '/community/esports', redirect: { path: '/events', query: { wing: 'games' } } },
-  { path: '/contact', redirect: { path: '/teams', hash: '#uhc' } },
+  { path: '/contact', redirect: '/help' },
   { path: '/dashboard', redirect: '/lounge' },
   {
     path: '/grade',

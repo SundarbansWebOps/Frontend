@@ -1,6 +1,6 @@
 <!--
   The foot of every page, Home included. A tide line, then
-  the few things people come looking for at the bottom: certificate check, portals, socials.
+  the few things people come looking for at the bottom: help, certificate check, portals, socials.
   id="contact" is where the old /contact link lands.
 -->
 <template>
@@ -12,6 +12,7 @@
       />
     </svg>
     <div class="row">
+      <RouterLink to="/help"><LineIcon name="chat" /> Get help</RouterLink>
       <RouterLink to="/verify-certificate"
         ><LineIcon name="seal" /> Verify a certificate</RouterLink
       >
