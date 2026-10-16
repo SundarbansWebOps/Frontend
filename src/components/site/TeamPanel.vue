@@ -24,11 +24,22 @@
           <button type="button" class="close" @click="$emit('close')">Close</button>
         </header>
 
-        <ul class="people" aria-label="Members">
-          <li v-for="p in people" :key="p.name" data-deal>
-            <TeamPerson :p="p" :lead="p.lead === true" />
-          </li>
-        </ul>
+        <template v-if="leads.length">
+          <h4 class="grp mono">Leading the team</h4>
+          <ul class="people leads" aria-label="Heads and co-heads">
+            <li v-for="p in leads" :key="p.name" data-deal>
+              <TeamPerson :p="p" lead />
+            </li>
+          </ul>
+        </template>
+        <template v-if="members.length">
+          <h4 v-if="leads.length" class="grp mono">Members · {{ members.length }}</h4>
+          <ul class="people" aria-label="Members">
+            <li v-for="p in members" :key="p.name" data-deal>
+              <TeamPerson :p="p" />
+            </li>
+          </ul>
+        </template>
       </div>
     </div>
   </section>
@@ -57,10 +68,8 @@ const px = ref(0);
 
 const color = computed(() => (props.team.wing ? `var(--w-${props.team.wing})` : 'var(--mari-ink)'));
 const count = computed(() => props.team.people.length);
-const people = computed(() => [
-  ...props.team.people.filter((p) => p.lead === true),
-  ...props.team.people.filter((p) => p.lead !== true),
-]);
+const leads = computed(() => props.team.people.filter((p) => p.lead === true));
+const members = computed(() => props.team.people.filter((p) => p.lead !== true));
 
 // The pointer sits over the pressed card's centre, in the panel's own coordinates.
 function place() {
@@ -201,18 +210,18 @@ onBeforeUnmount(() => {
 .panel.shown {
   grid-template-rows: 1fr;
 }
-/* The pointer: a small triangle in the team's colour, in the gap between card and panel. */
+/* The pointer: a small triangle in the team's colour, hanging from the card down to the panel. */
 .panel::before {
   content: '';
   position: absolute;
-  top: -15px;
+  top: -14px;
   left: var(--px);
   z-index: 1;
   width: 22px;
   height: 14px;
   margin-left: -11px;
   background: var(--c);
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
   opacity: 0;
   transition: opacity 0.3s var(--ease-out);
 }
@@ -279,7 +288,30 @@ onBeforeUnmount(() => {
 .people li {
   min-width: 0;
 }
+.grp {
+  margin: 18px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.grp + .people {
+  margin-top: 10px;
+}
+/* Heads and co-heads sit a size up, ringed in the team's colour. */
+.leads {
+  grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+  gap: 16px;
+  max-width: 640px;
+}
+.leads :deep(.face) {
+  box-shadow:
+    0 0 0 2px var(--c),
+    var(--shadow);
+}
 @media (max-width: 560px) {
+  .leads {
+    max-width: none;
+  }
   .people {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
