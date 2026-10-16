@@ -150,19 +150,14 @@ export const COUNCIL = [
     img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792084825/sundarbans/teams/Bengaluru_Regional_Coordinator_avatar.png',
     links: [],
   },
-  // Ansh Kumar also holds the Lucknow coordinator seat, so he appears in both councils.
+  // Vacant Lucknow seat with a character avatar until a coordinator is named.
   {
-    name: 'Ansh Kumar',
+    name: 'Vacant',
     role: 'Regional Coordinator',
     region: 'Lucknow',
     house: 'LHC',
-    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1791994850/sundarbans/teams/ansh_kumar.png',
-    links: [
-      {
-        kind: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/ansh-kumar-60113037b/',
-      },
-    ],
+    img: 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792141768/sundarbans/teams/Lucknow_Regional_Coordinator_vacant_avatar.png',
+    links: [],
   },
   // International has no meetup region on the House map, so its region chip is not a link.
   {

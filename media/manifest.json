@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-15T20:21:16.740Z",
+  "updatedAt": "2026-10-16T09:09:29.423Z",
   "assets": [
     {
       "order": 1,
@@ -1050,6 +1050,17 @@
       "bytes": 767421,
       "format": "png",
       "uploadedAt": "2026-10-15T17:20:30.525Z"
+    },
+    {
+      "order": 104,
+      "filename": "Lucknow_Regional_Coordinator_vacant_avatar.png",
+      "source": "media/teams/Lucknow_Regional_Coordinator_vacant_avatar.png",
+      "publicId": "sundarbans/teams/Lucknow_Regional_Coordinator_vacant_avatar",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792141768/sundarbans/teams/Lucknow_Regional_Coordinator_vacant_avatar.png",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792141768/sundarbans/teams/Lucknow_Regional_Coordinator_vacant_avatar.png",
+      "bytes": 879957,
+      "format": "png",
+      "uploadedAt": "2026-10-16T09:09:29.422Z"
     }
   ]
 }

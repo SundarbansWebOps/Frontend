@@ -38,7 +38,10 @@ export function photo(u, w, h) {
 
 export const council = COUNCIL.map((p) => ({ ...p, id: slug(p.name) }));
 export const upper = council.filter((p) => p.house === 'UHC');
-export const lower = council.filter((p) => p.house === 'LHC');
+// Coordinators sort by region name, A to Z.
+export const lower = council
+  .filter((p) => p.house === 'LHC')
+  .sort((a, b) => a.region.localeCompare(b.region));
 
 // id, display name, sheet, hub city lat/lon. Only cities are placed — no borders are drawn.
 const REGION_DEFS = [

@@ -5,7 +5,7 @@
 <template>
   <ul ref="root" class="deck" :class="[size, { waiting: !dealt }]">
     <li v-for="p in people" :key="p.id" class="cc">
-      <PersonCard :p="p" :size="size" show-meetups @region="$emit('region', $event)" />
+      <PersonCard :p="p" :size="size" @region="$emit('region', $event)" />
     </li>
   </ul>
 </template>
