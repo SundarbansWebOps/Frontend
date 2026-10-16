@@ -259,6 +259,9 @@ const PLATES = {
       },
     ],
   },
+  // Contributors (Teams, bottom): a crew rowing together and the ledger under the mangrove arch.
+  'contrib-crew': { file: 'contrib-crew.webp', w: 893, h: 278 },
+  'contrib-ledger': { file: 'contrib-ledger.webp', w: 837, h: 522 },
 };
 
 export const ART = Object.fromEntries(Object.entries(PLATES).map(([k, v]) => [k, fig(v)]));

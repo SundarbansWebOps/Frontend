@@ -137,7 +137,7 @@ const initials = computed(() =>
   grid-template-columns: 22px 40px minmax(0, 1fr) auto;
   gap: 6px 12px;
   align-items: center;
-  padding: 10px 14px;
+  padding: 8px 14px;
   border-radius: 16px;
   background: var(--card);
   border: 1px solid var(--line);

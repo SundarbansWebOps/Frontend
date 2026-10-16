@@ -134,8 +134,6 @@ const LINKS = [
   { to: '/events', label: 'Events', icon: 'cal' },
   { to: '/house', label: 'House', icon: 'house' },
   { to: '/teams', label: 'Teams', icon: 'people' },
-  // `short` is the phone tab-bar label only: the full name does not fit a sixth tab.
-  { to: '/contributors', label: 'Contributors', short: 'Stats', icon: 'chart' },
 ];
 
 const route = useRoute();

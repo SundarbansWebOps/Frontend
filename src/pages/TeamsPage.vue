@@ -59,6 +59,25 @@
       <p class="sec-sub">They keep the house seen and online.</p>
       <TeamCards :teams="TEAMS" />
     </section>
+
+    <section id="contributors" class="sec contrib-sec" aria-labelledby="contributors-h">
+      <div class="contrib-intro">
+        <div>
+          <h2 id="contributors-h" class="sec-h"><span class="mono">06</span> Contributors</h2>
+          <p class="sec-sub">
+            Lines changed since 1 July, counted from GitHub. Hover a name to see their weeks.
+          </p>
+        </div>
+        <div class="crew-band">
+          <PatArt :fig="ART['contrib-crew']" name="contrib-crew" />
+        </div>
+        <div class="intro-art">
+          <PatArt :fig="ART['contrib-ledger']" name="contrib-ledger" />
+          <FireflyField :count="8" />
+        </div>
+      </div>
+      <ContributorsBoard />
+    </section>
   </main>
 </template>
 
@@ -69,6 +88,10 @@ import SectionRail from '../components/site/SectionRail.vue';
 import HouseFlow from '../components/site/HouseFlow.vue';
 import CouncilDeck from '../components/site/CouncilDeck.vue';
 import TeamCards from '../components/site/TeamCards.vue';
+import PatArt from '../components/site/PatArt.vue';
+import ContributorsBoard from '../components/site/ContributorsBoard.vue';
+import FireflyField from '../components/site/FireflyField.vue';
+import { ART } from '../lib/art.js';
 import { council, house, lower, regions, upper } from '../lib/house.js';
 import { regionById } from '../lib/house.js';
 import { COMMUNITIES, TEAMS } from '../data/teams.js';
@@ -80,6 +103,7 @@ const SECTIONS = [
   { id: 'lhc', label: 'Regions' },
   { id: 'communities', label: 'Communities' },
   { id: 'teams', label: 'Teams' },
+  { id: 'contributors', label: 'Contributors' },
 ];
 
 const STATS = [
@@ -128,7 +152,7 @@ function toRegion(id) {
 .wrap {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 18px 24px 80px;
+  padding: 18px 24px 24px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 18px;
@@ -220,7 +244,72 @@ h1 {
   font-style: normal;
   vertical-align: 1px;
 }
+/* Contributors: the section fits one 100vh screen below the sticky nav and section rail (scroll-margin
+   clears both), so keep it short. */
+/* Air above the divider (outside the box, so the anchor and one-screen fit are unchanged), then
+   room between the divider and the heading. */
+.sec + .contrib-sec {
+  margin-top: 64px;
+}
+.contrib-sec {
+  padding-top: 26px;
+}
+/* The section heading takes the display face, like the board it introduces. */
+.contrib-sec .sec-h {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(40px, 3.8vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.contrib-sec .sec-h span {
+  font-family: var(--mono);
+}
+/* One row on desktop (heading, boat, ledger) so the section fits a screen; stacks on phones. */
+.contrib-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 380px) minmax(0, 200px);
+  align-items: center;
+  gap: 12px 32px;
+  margin-bottom: 6px;
+}
+.contrib-intro .sec-h {
+  margin-bottom: 6px;
+}
+.contrib-intro .sec-sub {
+  margin: 0;
+}
+.intro-art {
+  position: relative;
+}
+.crew-band {
+  min-width: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .crew-band {
+    animation: crew-bob 6s ease-in-out infinite;
+  }
+}
+@keyframes crew-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
 @media (max-width: 900px) {
+  .contrib-intro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .crew-band {
+    width: min(100%, 440px);
+    margin: 0 auto;
+  }
+  .intro-art {
+    width: min(100%, 260px);
+  }
   .head {
     grid-template-columns: minmax(0, 1fr);
   }
