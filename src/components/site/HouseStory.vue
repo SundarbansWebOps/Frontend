@@ -1,7 +1,7 @@
 <!--
   The About story, folded into House. The mangrove grows in when it comes into
-  view, and each paragraph inks in word by word as it crosses the reading line. Copy is a stand-in taken
-  from the live About page; members are writing the final text.
+  view, and each paragraph inks in word by word as it crosses the reading line. Copy is the
+  house's About text as supplied by the members.
 -->
 <template>
   <div class="story">
@@ -10,7 +10,6 @@
     </div>
 
     <div class="text">
-      <p class="draft mono">Draft copy · members are writing the final text</p>
       <p
         v-for="(para, pi) in PARAS"
         :key="pi"
@@ -38,9 +37,10 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import MangroveArt from './MangroveArt.vue';
 
 const PARAS = [
-  'Sundarbans is one of the student houses of the IIT Madras BS — a community of learners spread across India and beyond.',
-  'We’re named after the world’s largest mangrove forest. Just as the Sundarbans thrives through many species working together, the house thrives on members from all walks of life.',
-  'From Foundation level to the BS degree, we grow together, learn together and celebrate together — so no one feels disconnected in an online programme.',
+  'Sundarbans House has been one of the most recognized houses throughout the IIT Madras BS. This recognition reflects the dedication, teamwork, and continuous efforts of our members. Our former secretaries have played a significant role in strengthening the house, improving its activities, and building a strong foundation for future generations.',
+  'Since its founding, Sundarbans House has undergone a remarkable transformation. The journey from its early days to where it stands today has been filled with challenges, learning experiences, and countless efforts. The journey was never easy; it took determination, resilience, and the collective contribution of students and former secretaries to shape the house into what it is today. Every milestone achieved, every challenge overcome, and every effort made has become a part of our legacy. The foundation laid by those who came before us continues to inspire us to aim higher and carry the house forward with pride.',
+  'Our vision is to create a collaborative and inclusive environment where every student feels welcomed, valued, and encouraged to participate. We believe that the true spirit of a house lies in the connections we build, the experiences we share, and the memories we create together.',
+  'Our mission is to build a united, collaborative, and vibrant community where every student belongs, every contribution matters, and every experience becomes a lasting memory. We aspire to honour the legacy of our founders and predecessors while continuing to evolve, overcome challenges, and create an even brighter future for Sundarbans House.',
 ].map((p) => p.split(' ').map((w) => `${w} `)); // trailing space kept so lines wrap
 
 const VALUES = [
@@ -133,15 +133,6 @@ onBeforeUnmount(() => {
 .art {
   position: sticky;
   top: calc(var(--nav-h) + 72px);
-}
-.draft {
-  display: inline-block;
-  margin: 0 0 18px;
-  padding: 4px 10px;
-  border: 1px dashed var(--line-strong);
-  border-radius: 99px;
-  font-size: 11.5px;
-  color: var(--ink-2);
 }
 .para {
   margin: 0 0 22px;

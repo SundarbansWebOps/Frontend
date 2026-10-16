@@ -22,6 +22,35 @@
             <button type="button" class="chip" @click="house.region = g.id">{{ g.name }}</button>
           </li>
         </ul>
+
+        <!-- The newest meetups that left photos behind: a window into the house, not a score. -->
+        <section v-if="lately.length" class="lately" aria-labelledby="lately-h">
+          <h4 id="lately-h" class="mono">Lately, across the house</h4>
+          <div class="prints">
+            <button
+              v-for="(m, i) in lately"
+              :key="m.id"
+              type="button"
+              class="print"
+              :class="{ lead: i === 0 }"
+              :style="{ '--i': i }"
+              @click="openMeetup(m)"
+            >
+              <img
+                referrerpolicy="no-referrer"
+                :src="photo(livePhotos(m)[0], i === 0 ? 720 : 360, i === 0 ? 440 : 260)"
+                alt=""
+                decoding="async"
+                @load="$event.target.classList.add('ok')"
+                @error="markDead(livePhotos(m)[0], $event)"
+              />
+              <span class="cap">
+                <strong>{{ m.title }}</strong>
+                <small class="mono">{{ regionById[m.region].name }} · {{ meetupDate(m) }}</small>
+              </span>
+            </button>
+          </div>
+        </section>
       </div>
 
       <div v-else :key="r.id" class="one">
@@ -149,6 +178,7 @@ import {
   monthLabel,
   livePhotos,
   markDead,
+  meetups,
   photo,
   portrait,
   regionById,
@@ -158,6 +188,18 @@ import {
 
 const r = computed(() => (house.region ? regionById[house.region] : null));
 const byName = [...regions].sort((a, b) => a.name.localeCompare(b.name));
+// Newest photographed meetups, one per region first so the board shows the spread,
+// then topped up with the next newest.
+const lately = computed(() => {
+  const seen = new Set();
+  const shot = meetups.filter((m) => m.at && livePhotos(m).length).sort((a, b) => b.at - a.at);
+  const spread = shot.filter((m) => !seen.has(m.region) && seen.add(m.region));
+  return [...spread, ...shot.filter((m) => !spread.includes(m))].slice(0, 3);
+});
+const openMeetup = (m) => {
+  house.region = m.region;
+  house.meetup = m.id;
+};
 const rows = {};
 const opened = ref(null);
 const root = ref(null);
@@ -261,6 +303,80 @@ watch(
 .chip:hover {
   color: var(--ink);
   border-color: var(--ink-3);
+}
+
+.lately {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.lately h4 {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+.prints {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 16px;
+}
+/* Prints pinned to the board: white border, a slight tilt that straightens on reach. */
+.print {
+  display: grid;
+  gap: 8px;
+  padding: 8px 8px 12px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  text-align: left;
+  color: var(--ink);
+  transform: rotate(calc((var(--i) - 1) * 1.2deg));
+  animation: rowin 0.6s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 90ms);
+  transition: transform 0.35s var(--ease-spring);
+}
+.print.lead {
+  grid-column: 1 / -1;
+  transform: rotate(-0.6deg);
+}
+.print:hover,
+.print:focus-visible {
+  transform: rotate(0) translateY(-3px);
+}
+.print img {
+  width: 100%;
+  aspect-ratio: 18 / 11;
+  border-radius: 2px;
+  object-fit: cover;
+  background: var(--sunk);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.print:not(.lead) img {
+  aspect-ratio: 4 / 3;
+}
+.print img.ok {
+  opacity: 1;
+}
+.cap {
+  display: grid;
+  gap: 2px;
+  padding: 0 2px;
+}
+.cap strong {
+  font-size: 14.5px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.lead .cap strong {
+  font-size: 17px;
+}
+.cap small {
+  font-size: 11.5px;
+  color: var(--ink-3);
 }
 
 .back {
@@ -558,7 +674,8 @@ h3 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .log li {
+  .log li,
+  .print {
     animation: none;
   }
 }
