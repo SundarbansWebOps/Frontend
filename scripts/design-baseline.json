@@ -7,10 +7,6 @@
     "colors": 27,
     "important": 0
   },
-  "src/components/site/CouncilTrio.vue": {
-    "colors": 1,
-    "important": 0
-  },
   "src/components/site/CourseSheet.vue": {
     "colors": 1,
     "important": 0

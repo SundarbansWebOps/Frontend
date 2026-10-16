@@ -1,6 +1,6 @@
 <!--
   One council member as a two-sided card (portrait front, house back). The parent turns it
-  over (CouncilTrio flips it on scroll); the card itself does not react to the cursor.
+  over (CouncilDeck deals and turns it on the Teams page); the card itself does not react to the cursor.
 -->
 <template>
   <div class="pc" :class="size">

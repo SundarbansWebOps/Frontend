@@ -27,10 +27,10 @@ test('community event links and filters produce a shareable URL', async ({ page 
   await expect(page.getByRole('radio', { name: /Tech/ })).toHaveAttribute('aria-checked', 'true');
 });
 
-test('contact compatibility link lands on the existing council section', async ({ page }) => {
+test('contact compatibility link lands on the Upper House Council on Teams', async ({ page }) => {
   await page.goto(hashUrl('/contact'));
-  await expect(page).toHaveURL(/#\/house#council/);
-  await expect(page.getByRole('heading', { name: /The council, 2026–27/ })).toBeVisible();
+  await expect(page).toHaveURL(/#\/teams#uhc/);
+  await expect(page.locator('#uhc')).toBeVisible();
 });
 
 test('Lounge room selection survives the sign-in doorway', async ({ page }) => {

@@ -1,7 +1,8 @@
 <!--
   House: the public face of the house. Story (the About page, folded in) →
-  the Upper House Council (everyone else is on Teams) → where we meet (regions + meetups) →
-  the lounge door, which leads to the Lounge tab. A sticky section rail tracks where you are.
+  the Legacy Board (every council since 2021; today's council is on Teams) → where we meet
+  (regions + meetups) → the lounge door, which leads to the Lounge tab. A sticky section rail
+  tracks where you are.
 -->
 <template>
   <main id="main-content" class="wrap" tabindex="-1">
@@ -19,26 +20,20 @@
       </p>
     </header>
 
-    <SectionRail
-      ref="rail"
-      class="rise"
-      style="--i: 1"
-      :sections="SECTIONS"
-      label="House sections"
-    />
+    <SectionRail class="rise" style="--i: 1" :sections="SECTIONS" label="House sections" />
 
     <section id="story" class="sec" aria-labelledby="story-h">
       <h2 id="story-h" class="sec-h"><span class="mono">01</span> Who we are</h2>
       <HouseStory />
     </section>
 
-    <section id="council" class="sec" aria-labelledby="council-h">
-      <h2 id="council-h" class="sec-h"><span class="mono">02</span> The council, 2026–27</h2>
+    <section id="legacy" class="sec" aria-labelledby="legacy-h">
+      <h2 id="legacy-h" class="sec-h"><span class="mono">02</span> The legacy board</h2>
       <p class="sec-sub">
-        The Upper House Council runs the house. The regional coordinators, communities and teams are
-        on Teams.
+        Five councils, 2021–2025. Meet today’s council on
+        <RouterLink to="/teams#uhc">Teams</RouterLink>.
       </p>
-      <CouncilTrio @region="openRegion" />
+      <LegacyBoard />
     </section>
 
     <section id="regions" class="sec" aria-labelledby="regions-h">
@@ -57,16 +52,17 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import SectionRail from '../components/site/SectionRail.vue';
 import HouseStory from '../components/site/HouseStory.vue';
-import CouncilTrio from '../components/site/CouncilTrio.vue';
+import LegacyBoard from '../components/site/LegacyBoard.vue';
 import RegionSky from '../components/site/RegionSky.vue';
 import RegionPanel from '../components/site/RegionPanel.vue';
 import LoungeDoor from '../components/site/LoungeDoor.vue';
 import PhotoViewer from '../components/site/PhotoViewer.vue';
-import { council, house, meetupCount, regionById, regions } from '../lib/house.js';
+import { LEGACY } from '../data/legacy.data.js';
+import { house, meetupCount, regionById, regions } from '../lib/house.js';
 
 const route = useRoute();
 watch(
@@ -81,13 +77,13 @@ watch(
 
 const SECTIONS = [
   { id: 'story', label: 'Story' },
-  { id: 'council', label: 'Council' },
+  { id: 'legacy', label: 'Legacy' },
   { id: 'regions', label: 'Regions' },
   { id: 'lounge', label: 'Lounge' },
 ];
 
 const STATS = [
-  { key: 'council', label: 'council', to: council.length },
+  { key: 'councils', label: 'councils', to: LEGACY.length },
   { key: 'regions', label: 'regions', to: regions.length },
   { key: 'meetups', label: 'meetups', to: meetupCount },
 ];
@@ -105,13 +101,6 @@ function countUp() {
     if (k < 1) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
-}
-
-const rail = ref(null);
-function openRegion(id) {
-  house.region = id;
-  house.meetup = null;
-  rail.value.goTo('regions');
 }
 
 onMounted(countUp);
