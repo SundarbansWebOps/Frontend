@@ -291,16 +291,6 @@
         <span class="cue">Scroll to unroll</span>
       </div>
     </div>
-
-    <footer class="foot">
-      <RouterLink to="/verify-certificate">
-        <LineIcon name="seal" /> Verify a certificate
-      </RouterLink>
-      <a :href="PORTAL.href" target="_blank" rel="noopener">
-        <LineIcon :name="PORTAL.icon" /> IITM student portal
-      </a>
-      <small>Sundarbans House · IIT Madras BS</small>
-    </footer>
   </main>
 </template>
 
@@ -313,12 +303,11 @@ import PatPosters from '../components/site/PatPosters.vue';
 import PatSearch from '../components/site/PatSearch.vue';
 import { ASSET, FIGS, FOREST } from '../lib/pat.js';
 import { nav } from '../lib/store.js';
-import { courses, TOOLS, WHATSAPP } from '../lib/courses.js';
+import { courses, WHATSAPP } from '../lib/courses.js';
 import { events, WINGS } from '../lib/events.js';
 import { meetupCount, photoCount, portrait, regions, upper, lower } from '../lib/house.js';
 import { COMMUNITIES, TEAMS } from '../data/teams.js';
 
-const PORTAL = TOOLS[0];
 const forestSet = `${ASSET.forest800} 800w, ${ASSET.forest} 1400w`;
 
 // ---- Numbers, all from the data ------------------------------------------------------------
@@ -1682,49 +1671,6 @@ h3 {
 .cta.wa .ic {
   width: 20px;
   height: 20px;
-}
-
-/* ---- Footer, on the cloth under the scroll ---- */
-.foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px 28px;
-  width: var(--col);
-  padding-inline: 24px;
-  margin: 34px auto 0;
-  color: var(--ink-2);
-  font-size: 14px;
-}
-.foot button,
-.foot a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 4px;
-  border: 0;
-  background: none;
-  color: var(--ink);
-  font-size: 14.5px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.foot button:hover,
-.foot a:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.foot .ic {
-  width: 18px;
-  height: 18px;
-  color: var(--mari-ink);
-}
-.foot small {
-  flex-basis: 100%;
-  text-align: center;
-  color: var(--ink-3);
-  font-size: 12.5px;
 }
 
 /* ============ Phones ============ */
