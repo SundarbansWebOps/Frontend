@@ -951,6 +951,12 @@ function makePlan(W, H) {
     const o = art.open;
     const ext = narrow ? 0.34 : 0.14;
     const niche = { x: o.x + o.w * 0.02, y: o.y + o.h * 0.04, w: o.w * 0.96, h: o.h * (1 + ext) };
+    /* Phone: openings differ in width, so centre each niche on its landing (the landing is
+       centred on screen at rest) and keep 32px clear on both sides for portrait and plate. */
+    if (narrow) {
+      niche.w = Math.min(niche.w, ((W - 64) / LW) * 100);
+      niche.x = 50 - niche.w / 2;
+    }
     items.push({
       id: `l${l.year}`,
       kind: 'landing',
