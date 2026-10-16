@@ -163,7 +163,6 @@ export const TEAMS = [
       { name: 'Arpit Verma', role: 'Member', img: pic('v1792082505', 'Arpit.png') },
       { name: 'Subhadeep Das', role: 'Member', img: pic('v1792084870', 'Subhadeep_das.png') },
       { name: 'Garibul Singh', role: 'Member', img: pic('v1792084858', 'Garibul_singh.png') },
-      { name: 'Prateek Raj', role: 'Member', img: pic('v1792084865', 'Prateek_raj.png') },
       { name: 'Utkarsh', role: 'Member', img: pic('v1792084876', 'Utkarsh.png') },
     ],
   },
