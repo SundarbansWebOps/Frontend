@@ -2,9 +2,11 @@
   Legacy Board (concept A, Five Landings). A tall scroll track holds one viewport that sticks
   under the nav, with two arched leaders, a ten-seat deck and a river of five years. Scrolling
   moves through the years, 2021 at the top. Scroll drives one number, the year position, and
-  the boat slides between the docks either side of it, leaning into the travel and settling at
-  a post. When the scroll settles on a year the council fades, swaps and rises (at once under
-  reduced motion or in a hidden tab), and the URL follows with `?year=N` (2021 has no query).
+  the boat slides between the docks either side of it, turning to face the way it sails, leaning
+  into the travel and settling at a post. The council and the year on the water ride with the boat: as it leaves a post they
+  slide back against its course and fade, and the next year's slide in from ahead of it as it
+  docks (a plain swap under reduced motion or in a hidden tab). When the scroll settles the URL
+  follows with `?year=N` (2021 has no query).
   Wheel notches, arrow and page keys, a stage swipe and a post click each step one year; touch
   keeps native scrolling and lands on the snap markers. Water never animates.
   The public TopNav and theme stay; this page adds no second theme system.
@@ -36,11 +38,22 @@
               <span aria-hidden="true">→</span>
             </RouterLink>
           </Transition>
-          <RouterLink class="back" to="/teams">Back to Teams</RouterLink>
+          <RouterLink class="back" :to="{ path: '/house', hash: '#legacy' }"
+            >Back to House</RouterLink
+          >
         </div>
       </header>
 
       <nav ref="riverRef" class="river" :style="riverStyle" aria-label="Years">
+        <p ref="yearRef" class="year-mark" :class="[phase, { hold }]" aria-hidden="true">
+          <span
+            v-for="(d, k) in String(shownYear)"
+            :key="k"
+            :class="k === boatGap && (dockRight ? 'dodge-r' : 'dodge-l')"
+            :style="{ '--k': k }"
+            >{{ d }}</span
+          >
+        </p>
         <button
           v-for="(year, i) in YEARS"
           :key="year"
@@ -60,7 +73,7 @@
         <div
           ref="boatRef"
           class="boat"
-          :class="{ 'dock-right': dockRight, ready: boatReady }"
+          :class="{ 'sailing-back': sailingBack, ready: boatReady }"
           aria-hidden="true"
         >
           <img class="boat-img" :src="boatArt" alt="" width="1200" height="494" decoding="async" />
@@ -77,7 +90,6 @@
         <div ref="councilRef" class="council" :class="[phase, { hold }]">
           <h2 id="council-h" class="visually-hidden">Council {{ shownYear }}</h2>
           <p class="visually-hidden" aria-live="polite">{{ liveText }}</p>
-          <p class="year-mark arrive" style="--i: 0" aria-hidden="true">{{ shownYear }}</p>
           <div v-if="council" class="leaders">
             <div
               v-for="(person, k) in leaders"
@@ -142,16 +154,17 @@ import { theme } from '../lib/theme.js';
 
 const YEARS = LEGACY.map((d) => d.year);
 const LAST = YEARS.length - 1;
+// Share of a year's travel the boat must go the other way before it turns. Smaller moves are jitter.
+const TURN_AT = 0.02;
 // The first year is the top of the track, so it is the canonical URL with no query.
 const DEFAULT_YEAR = YEARS[0];
 // Scroll distance per year, as a share of the viewport height.
 const STEP_VH = 0.8;
-// Scroll quiet this long means the boat has docked: the council rises and the URL follows.
+// Scroll quiet this long means the boat has docked and the URL follows.
 const IDLE_MS = 140;
-// Longest the council stays faded while the boat is still moving between years.
-const HOLD_MS = 600;
-// Share of a year's travel the boat may drift before the council starts to fade.
-const UNDOCK = 0.12;
+// Share of a year's travel after which the council has faded out entirely. Below one half, so
+// the swap at the halfway point is never seen.
+const FADE_AT = 0.42;
 const KEY_STEP = new Map([
   ['ArrowLeft', -1],
   ['ArrowUp', -1],
@@ -208,11 +221,17 @@ let settledYear = shownYear.value;
 const phase = ref(motionOff() ? '' : 'pre');
 const boatReady = ref(false);
 const dockRight = ref(false);
+// The boat's facing: bow right while sailing forward (toward later years), bow left while sailing
+// back. Set by faceTravel() from the scroll, and once on load for a boat docked right of a post.
+const sailingBack = ref(false);
 const hold = ref(false);
 const postArt = reactive(YEARS.map(() => false));
 const archReady = reactive({ secretary: false, deputy: false });
 
 const council = computed(() => LEGACY.find((d) => d.year === shownYear.value) ?? null);
+// The gap the docked boat sits in (left of its post, or right of the first one): that gap's
+// year digit steps aside into the open water so the boat never hides it.
+const boatGap = computed(() => YEARS.indexOf(shownYear.value) - (dockRight.value ? 0 : 1));
 const leaders = computed(() => {
   const c = council.value;
   if (!c) return [];
@@ -244,6 +263,7 @@ const viewRef = ref(null);
 const riverRef = ref(null);
 const boatRef = ref(null);
 const councilRef = ref(null);
+const yearRef = ref(null);
 const postRefs = [];
 
 function bindPost(el, i) {
@@ -275,9 +295,8 @@ function adoptLoadedArt() {
 }
 
 // Geometry in px. `step` is the scroll distance per year; `viewTop` is where the sticky view
-// rests (under the nav); `dock[i]` is where the boat sits beside post i, on its left with the
-// bow toward it. The first post on a narrow screen has no room on the left, so the boat sits
-// on its right instead.
+// rests (under the nav); `dock[i]` is where the boat sits beside post i, on its left. The first
+// post on a narrow screen has no room on the left, so the boat sits on its right instead.
 let step = 0;
 let viewTop = 0;
 let dock = null;
@@ -328,47 +347,54 @@ function holdStill() {
   });
 }
 
-// `token` guards the frame that removes the rise class: any newer swap cancels it.
-let token = 0;
-let holdTimer = 0;
-function cancelHold() {
-  clearTimeout(holdTimer);
-  holdTimer = 0;
-}
-
 function swapNow() {
-  token += 1;
-  cancelHold();
   holdStill();
   shownYear.value = YEARS[wanted];
   phase.value = '';
 }
 
-// Animated change: the fade-out has already started, so swap the year and let it rise.
-function commit() {
-  token += 1;
-  cancelHold();
-  const my = token;
-  shownYear.value = YEARS[wanted];
-  phase.value = 'pre';
-  nextTick(() => {
-    if (my !== token || !councilRef.value) return;
-    void councilRef.value.offsetWidth;
-    phase.value = '';
-  });
+// `d` is the boat's distance from the shown year's post, in years (−0.5…0.5). The council and the
+// year on the water slide against the boat's course by it and fade with smoothstep, so they are
+// gone well before the swap at the halfway point.
+function drift(d) {
+  const t = Math.min(1, Math.abs(d) / FADE_AT);
+  const seen = (1 - t * t * (3 - 2 * t)).toFixed(3);
+  for (const el of [councilRef.value, yearRef.value]) {
+    el?.style.setProperty('--drift', d.toFixed(4));
+    el?.style.setProperty('--seen', seen);
+  }
 }
 
 let frame = 0;
 let p = 0;
 let lastP = 0;
+let runP = 0;
 let settleTimer = 0;
+
+// The CSS --lean sits inside the boat's facing, and a flipped facing (scaleX(-1)) mirrors a
+// rotation. `visual` is the tilt the reader sees, in degrees clockwise: positive tips the top
+// toward the right. Sailing forward is the flipped facing, so its CSS value is the negative.
+function leanFor(visual) {
+  return sailingBack.value ? visual : -visual;
+}
+
+// The facing follows the travel. `runP` is the furthest the boat has gone the way it faces; it
+// turns only after coming back TURN_AT from that point, so jitter at rest never flips it.
+function faceTravel() {
+  const back = sailingBack.value;
+  if (back ? p < runP : p > runP) runP = p;
+  else if (Math.abs(p - runP) >= TURN_AT) {
+    sailingBack.value = !back;
+    runP = p;
+  }
+}
 
 function onScroll() {
   if (!frame) frame = requestAnimationFrame(paint);
 }
 
-// One frame of scroll: place the boat between the docks, lean it, and start or hold the council
-// change for the year the boat is nearest.
+// One frame of scroll: place the boat between the docks, turn it to face its travel, lean it, and
+// show the year the boat is nearest, drifted by how far the boat is from its post.
 function paint() {
   frame = 0;
   const main = mainRef.value;
@@ -383,50 +409,36 @@ function paint() {
 
   const v = p - lastP;
   lastP = p;
-  const lean = motionOff() ? 0 : Math.max(-4, Math.min(4, v * -90));
+  faceTravel();
+  // Leaning into the travel: the top tips the way the boat is moving, whichever way that is.
+  const lean = motionOff() ? 0 : leanFor(Math.max(-4, Math.min(4, v * 90)));
   boat.style.setProperty('--lean', `${lean.toFixed(2)}deg`);
 
   const near = Math.round(p);
   dockRight.value = dock[near].right;
   current.value = YEARS[near];
   wanted = near;
-  if (YEARS[near] === shownYear.value) {
-    cancelHold();
-    // The council lets go as soon as the boat leaves its post, and returns if the boat does.
-    const away = Math.abs(p - near) > UNDOCK && !motionOff();
-    if (away) phase.value = 'out';
-    else if (phase.value === 'out') phase.value = '';
-  } else if (motionOff()) {
-    swapNow();
+  if (motionOff()) {
+    if (YEARS[near] !== shownYear.value) swapNow();
+    drift(0);
   } else {
-    phase.value = 'out';
-    if (!holdTimer) {
-      holdTimer = setTimeout(() => {
-        holdTimer = 0;
-        commit();
-      }, HOLD_MS);
-    }
+    // Swapped at the halfway point, where both years have faded right out.
+    shownYear.value = YEARS[near];
+    drift(p - near);
   }
 
   clearTimeout(settleTimer);
   settleTimer = setTimeout(settle, IDLE_MS);
 }
 
-// The scroll has stopped: the boat is docked at a post (or resting between two if a drag was
-// released mid-way), so the council rises for that year and the URL records it.
+// The scroll has stopped: the boat is docked at a post (the snap markers see to that), so the URL
+// records its year.
 function settle() {
   settleTimer = 0;
   const near = Math.round(p);
   const docked = Math.abs(p - near) < 0.02 && !motionOff();
-  boatRef.value?.style.setProperty('--lean', docked ? '2deg' : '0deg');
+  boatRef.value?.style.setProperty('--lean', docked ? `${leanFor(-2)}deg` : '0deg');
   goal = near;
-  if (YEARS[near] !== shownYear.value) {
-    if (motionOff()) swapNow();
-    else commit();
-  } else if (phase.value === 'out') {
-    // Released short of the next post: the same council comes back.
-    phase.value = '';
-  }
   settledYear = YEARS[near];
   syncUrl(settledYear);
 }
@@ -573,6 +585,8 @@ function mountAt(attempt = 0) {
   const target = wanted;
   boatReady.value = true;
   landOn(target);
+  // Docked right of the first post, the boat starts with its bow toward the post.
+  if (dockRight.value) sailingBack.value = true;
   if (phase.value === 'pre' && councilRef.value) void councilRef.value.offsetWidth;
   phase.value = '';
   settledYear = YEARS[target];
@@ -605,8 +619,6 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   document.documentElement.style.scrollSnapType = '';
-  token += 1;
-  cancelHold();
   clearTimeout(settleTimer);
   clearTimeout(landTimer);
   cancelAnimationFrame(frame);
@@ -640,6 +652,8 @@ onBeforeUnmount(() => {
   --boat-w: clamp(104px, 12.2vw, 176px);
   --tab-h: 0px;
   --stride: 80vh;
+  /* How far a whole year's travel pans the council, against the boat's course. */
+  --pan: calc(-1 * clamp(80px, 14vw, 200px));
   position: relative;
   height: calc(100dvh - var(--nav-h) + var(--last) * var(--stride));
   background: var(--paper);
@@ -764,6 +778,56 @@ h1 {
   background-repeat: no-repeat;
   border-top: 1.5px solid var(--line-strong);
 }
+/* The year on show, written across the water, one digit between each pair of posts. It fades
+   out and back with the council (the same phase classes). */
+.year-mark {
+  --ym: 0.55;
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  container-type: size;
+  pointer-events: none;
+  user-select: none;
+  color: var(--paper);
+  opacity: var(--ym);
+  transition: opacity 0.5s var(--ease-out);
+}
+:root[data-theme='dark'] .year-mark {
+  --ym: 0.3;
+  color: var(--ink);
+}
+.year-mark.pre {
+  opacity: 0;
+  transition: none;
+}
+.year-mark.hold {
+  transition: none;
+}
+.year-mark span {
+  position: absolute;
+  bottom: 4%;
+  left: calc(var(--edge) + (var(--k) + 0.5) * var(--step));
+  transform: translateX(-50%);
+  font-size: 92cqh;
+  font-weight: 750;
+  line-height: 0.8;
+  font-variant-numeric: tabular-nums;
+  /* Rides with the boat (drift() in the script); half the council's pan. */
+  translate: calc(var(--drift, 0) * var(--pan) * 0.5) 0;
+  opacity: var(--seen, 1);
+}
+/* Centred in the water the boat leaves open, but never closer to the post than half a digit
+   (about 24cqh) plus half a stake, and never past the gap's middle. */
+.year-mark .dodge-l,
+.year-mark .dodge-r {
+  --open: clamp(24.5cqh + 12px, (var(--step) - var(--boat-w)) / 2, var(--step) / 2);
+}
+.year-mark .dodge-l {
+  left: calc(var(--edge) + var(--k) * var(--step) + var(--open));
+}
+.year-mark .dodge-r {
+  left: calc(var(--edge) + (var(--k) + 1) * var(--step) - var(--open));
+}
 .post {
   position: absolute;
   bottom: var(--water);
@@ -824,7 +888,8 @@ h1 {
   font-weight: 750;
 }
 
-/* The boat's x is set on the scroll frame (no transition: it follows the scroll). Its hull leans
+/* The boat's x is set on the scroll frame (no transition: it follows the scroll). Its facing is
+   the way it sails: bow right by default, bow left while .sailing-back is set. Its hull leans
    with --lean, a transform on the image only. */
 .boat {
   --face: scaleX(-1);
@@ -841,7 +906,7 @@ h1 {
 .boat.ready {
   opacity: 1;
 }
-.boat.dock-right {
+.boat.sailing-back {
   --face: scaleX(1);
 }
 .boat-img {
@@ -867,23 +932,7 @@ h1 {
   justify-content: center;
   gap: clamp(32px, 4vw, 64px);
   padding: clamp(6px, 1.6vh, 18px) clamp(16px, 3vw, 48px) clamp(10px, 2vh, 24px);
-}
-.year-mark {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: grid;
-  place-content: center;
-  margin: 0;
-  pointer-events: none;
-  user-select: none;
-  font-size: clamp(160px, 40vh, 420px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  opacity: 0.08;
+  opacity: var(--seen, 1);
 }
 .leaders {
   position: relative;
@@ -1047,23 +1096,21 @@ h1 {
   color: var(--ink-2);
 }
 
-/* Year change. `rise` is the site entrance; this stagger is its own class. */
+/* First arrival. `rise` is the site entrance; this stagger is its own class. Year changes ride
+   with the boat instead: drift() sets --drift and --seen every scroll frame, so `translate` is
+   never transitioned; the deck sits a little deeper and pans a little further. */
 .arrive {
+  translate: calc(var(--drift, 0) * var(--pan) * var(--z, 1)) 0;
   transition:
     opacity 0.5s var(--ease-out),
     transform 0.6s var(--ease-out);
   transition-delay: calc(var(--i, 0) * 60ms);
 }
-.council.out .arrive {
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity 0.22s var(--ease-out);
-  transition-delay: 0s;
+.leader.is-deputy {
+  --z: 1.08;
 }
-.council.out .member {
-  opacity: 0;
-  transition: opacity 0.2s var(--ease-out);
-  transition-delay: 0s;
+.deck {
+  --z: 1.2;
 }
 .council.pre .arrive {
   opacity: 0;
@@ -1077,6 +1124,13 @@ h1 {
 .council.hold .arrive,
 .council.hold .member {
   transition: none;
+}
+
+/* No lean and no motion: the boat still turns to face its travel, but at once. */
+@media (prefers-reduced-motion: reduce) {
+  .boat-img {
+    transition: none;
+  }
 }
 
 @media (min-width: 761px) and (max-width: 1020px) {
@@ -1117,9 +1171,6 @@ h1 {
     flex-direction: column;
     gap: 10px;
     padding: 8px 14px 12px;
-  }
-  .year-mark {
-    font-size: clamp(90px, 20vh, 150px);
   }
   .post-tag {
     padding: 1px 6px;
