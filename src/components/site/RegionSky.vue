@@ -40,7 +40,7 @@
           tabindex="0"
           :aria-label="`${n.name}: ${n.dots.length} meetups`"
           :aria-pressed="house.region === n.id"
-          @click="pick(n.id)"
+          @click="pickNear(n, $event)"
           @keydown.enter.prevent="pick(n.id)"
           @keydown.space.prevent="pick(n.id)"
         >
@@ -411,6 +411,22 @@ function show(n, d) {
 function pick(id) {
   house.region = house.region === id ? null : id;
   house.meetup = null;
+}
+// A click inside a cluster that misses every dot (they're small) goes to the nearest one
+// instead of closing the open region.
+function pickNear(n, e) {
+  const g = e.currentTarget.getScreenCTM?.();
+  if (!g) return pick(n.id);
+  const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(g.inverse());
+  const shown = n.dots.filter((d) => d.at <= clock.value);
+  let best = null;
+  let bestD = Infinity;
+  for (const d of shown) {
+    const dist = Math.hypot(d.x - pt.x, d.y - pt.y) - d.r;
+    if (dist < bestD) [best, bestD] = [d, dist];
+  }
+  if (best && bestD <= 14) pickMeetup(n.id, best.m.id);
+  else pick(n.id);
 }
 function pickMeetup(region, id) {
   house.region = region;
