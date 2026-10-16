@@ -68,7 +68,7 @@ const routes = [
   { path: '/community/technical', redirect: { path: '/events', query: { wing: 'tech' } } },
   { path: '/community/cultural', redirect: { path: '/events', query: { wing: 'cultural' } } },
   { path: '/community/esports', redirect: { path: '/events', query: { wing: 'games' } } },
-  { path: '/contact', redirect: { path: '/house', hash: '#council' } },
+  { path: '/contact', redirect: { path: '/teams', hash: '#uhc' } },
   { path: '/dashboard', redirect: '/lounge' },
   {
     path: '/grade',
@@ -194,6 +194,9 @@ router.beforeResolve((to, from) => {
     // A transition skipped by a quick second navigation or a hidden tab is not an error;
     // the page still swaps, just without the fade.
     transition.ready.catch(() => {});
+    // A page that restyles this transition (LegacyBoard's door) clears its styling on this
+    // event. Clearing it any earlier, even on its own animationend, restarts the default fade.
+    transition.finished.finally(() => document.dispatchEvent(new Event('pagetransitionend')));
   });
 });
 

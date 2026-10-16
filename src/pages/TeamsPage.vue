@@ -8,7 +8,6 @@
     <header class="head rise" style="--i: 0">
       <h1>Teams</h1>
       <div class="side">
-        <LegacyEntry />
         <dl class="stats">
           <div v-for="s in STATS" :key="s.label">
             <dt>{{ s.label }}</dt>
@@ -64,7 +63,6 @@
 
 <script setup>
 import { nextTick, onMounted, reactive, ref } from 'vue';
-import LegacyEntry from '../components/site/LegacyEntry.vue';
 import SectionRail from '../components/site/SectionRail.vue';
 import HouseFlow from '../components/site/HouseFlow.vue';
 import CouncilDeck from '../components/site/CouncilDeck.vue';

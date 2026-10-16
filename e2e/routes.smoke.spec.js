@@ -29,7 +29,7 @@ const ROUTES = {
   '/community/technical': '/events',
   '/community/cultural': '/events',
   '/community/esports': '/events',
-  '/contact': '/house',
+  '/contact': '/teams',
   '/dashboard': '/login',
 };
 
