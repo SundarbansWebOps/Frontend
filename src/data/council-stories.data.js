@@ -13,7 +13,7 @@ export const STORIES = {
     account: LETTER_2021,
     headline: 'The first year of the house system',
     vision:
-      'My vision was to build a strong, self-sufficient team that had the autonomy and freedom to ideate, innovate and execute initiatives throughout the year.',
+      'Our vision was to build a strong, self-sufficient team that had the autonomy and freedom to ideate, innovate and execute initiatives throughout the year.',
     chapters: [
       {
         id: 'foundations',
@@ -73,6 +73,7 @@ export const STORIES = {
       text: 'Overall, the first year was about building the foundations for everything that Sundarbans House would eventually become.',
       quote: 'Most importantly, we established a foundation that future teams could build upon.',
     },
+    credit: 'Written and created by Kunal Chaturvedi',
   },
   '2022-23': {
     key: '2022-23',
@@ -80,7 +81,7 @@ export const STORIES = {
     account: LETTER_2022,
     headline: 'Building on the foundation',
     vision:
-      "My vision for the house in 2022-23 was to continue fostering a positive, inclusive and united community, building upon the strong foundation established during Anshuman's tenure from 2021-22.",
+      "Our vision for the house in 2022-23 was to continue fostering a positive, inclusive and united community, building upon the strong foundation established during Anshuman's tenure from 2021-22.",
     chapters: [
       {
         id: 'speakers',
