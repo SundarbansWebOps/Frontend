@@ -602,7 +602,9 @@ onBeforeUnmount(() => {
     inset: auto 0 0;
     z-index: 60;
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    /* One equal column per tab, so adding or removing a link never leaves an empty slot. */
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: color-mix(in srgb, var(--paper) 92%, transparent);
     backdrop-filter: blur(10px);
