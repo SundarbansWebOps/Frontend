@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-16T20:39:19.928Z",
+  "updatedAt": "2026-10-17T06:17:21.499Z",
   "assets": [
     {
       "order": 1,
@@ -1468,6 +1468,28 @@
       "bytes": 349219,
       "format": "png",
       "uploadedAt": "2026-10-16T20:39:19.928Z"
+    },
+    {
+      "order": 142,
+      "filename": "Karlapati_Nandu.jpg",
+      "source": "media/teams/Karlapati_Nandu.jpg",
+      "publicId": "sundarbans/teams/Karlapati_Nandu",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792217839/sundarbans/teams/Karlapati_Nandu.jpg",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792217839/sundarbans/teams/Karlapati_Nandu.jpg",
+      "bytes": 105922,
+      "format": "jpg",
+      "uploadedAt": "2026-10-17T06:17:21.498Z"
+    },
+    {
+      "order": 143,
+      "filename": "Vyenkatesh_Panchariya.jpg",
+      "source": "media/teams/Vyenkatesh_Panchariya.jpg",
+      "publicId": "sundarbans/teams/Vyenkatesh_Panchariya",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792217621/sundarbans/teams/Vyenkatesh_Panchariya.jpg",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792217621/sundarbans/teams/Vyenkatesh_Panchariya.jpg",
+      "bytes": 110706,
+      "format": "jpg",
+      "uploadedAt": "2026-10-17T06:13:42.981Z"
     }
   ]
 }
