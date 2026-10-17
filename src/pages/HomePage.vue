@@ -297,6 +297,7 @@
 <script setup>
 import CREST from '../assets/crest.webp';
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { takeLaunchCut } from '../lib/launch.js';
 import LineIcon from '../components/site/LineIcon.vue';
 import PatFigure from '../components/site/PatFigure.vue';
 import PatPosters from '../components/site/PatPosters.vue';
@@ -389,11 +390,13 @@ const PLACES = [
 // ---- Intro ----------------------------------------------------------------------------------
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const RM = ref(motionPreference.matches);
-const rolling = ref(!RM.value);
-const ff = ref(RM.value);
-const instant = ref(RM.value);
-const settled = ref(RM.value);
-const tigerPaint = ref(RM.value);
+// Straight from the launch film, whose last frame is this page composed: no intro.
+const composed = RM.value || takeLaunchCut();
+const rolling = ref(!composed);
+const ff = ref(composed);
+const instant = ref(composed);
+const settled = ref(composed);
+const tigerPaint = ref(composed);
 const timers = [];
 const later = (ms, f) => timers.push(setTimeout(f, ms));
 
@@ -631,7 +634,7 @@ function onMotionChange(e) {
 }
 
 onMounted(() => {
-  if (!RM.value) {
+  if (!composed) {
     for (const t of INTRO_EVENTS)
       addEventListener(t, fastForward, { capture: true, passive: true });
     later(1250, () => (tigerPaint.value = true));
