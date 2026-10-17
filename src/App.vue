@@ -19,7 +19,11 @@
     Skip to main content
   </a>
   <TopNav v-if="!isLounge" />
-  <RouterView />
+  <!-- Keyed by route record: the two council pages share one component with different props, and
+       a page reads its props once, so a move between them needs a fresh instance. -->
+  <RouterView v-slot="{ Component, route: current }">
+    <component :is="Component" :key="current.matched.at(-1)?.path" />
+  </RouterView>
   <SiteFooter v-if="!isStandalone" />
   <CourseSheet />
   <LoungeDoor v-if="door.rect" overlay entry :rect="door.rect" @done="endDoor" />
@@ -58,6 +62,8 @@ const isStandalone = computed(
     route.name === 'Login' ||
     route.name === 'Legacy' ||
     route.name === 'Tenure2023' ||
+    route.name === 'Council2021' ||
+    route.name === 'Council2022' ||
     (!route.matched.length &&
       (document.documentElement.classList.contains('lounge-active') ||
         document.documentElement.classList.contains('sign-in-active')))
