@@ -4,6 +4,8 @@
 // zero the launch film plays, and when it ends the browser goes to the site, whose home page is the
 // film's last frame. A browser that has started the film never sees it again (localStorage), even
 // after a hard refresh. Times come from the server (middleware.js) so every countdown agrees.
+// From the doors opening, the page joins a Supabase Realtime presence room, so a visitor who has
+// tapped (and everyone in the countdown) sees how many people have the page open right now.
 (() => {
   const SEEN = 'sundarbans-launch-seen';
   const CUT = 'sundarbans-launch-cut'; // tells the home page to start composed, as the film ends
@@ -19,6 +21,7 @@
   const bar = $('.bar');
   const film = $('.film');
   const sound = $('.sound');
+  const crowds = document.querySelectorAll('.crowd');
 
   const store = (k, v) => {
     try {
@@ -92,7 +95,98 @@
     navigator.wakeLock?.request('screen').catch(() => {});
     here.disabled = true;
     here.textContent = "You're in";
+    tapped = true;
+    track();
+    showCrowd();
   });
+
+  // Live head-count over Realtime's websocket (Phoenix protocol), so the page needs no library.
+  // The URL and publishable key are public; presence touches no table. One room per host keeps
+  // test deployments out of the real count. Every open page listens from the doors opening, but
+  // only a visitor who has tapped "I'm here" is tracked, so the count is people who are in.
+  const REALTIME = 'wss://bqoejoznqudcyeaebmsm.supabase.co/realtime/v1/websocket';
+  const KEY = 'sb_publishable_61O0mgCXVAInGq2DhoInOQ_Z4nj8b4r';
+  const ROOM = `realtime:launch-${location.host}`;
+  const me = Math.random().toString(36).slice(2);
+  const people = new Map(); // presence key -> its metas (one per open tab)
+  let headcount = 0;
+  let tapped = false;
+  let joined = false;
+  let live = null; // the open socket's send, once the room is joined
+
+  const track = () =>
+    tapped && live?.('presence', { type: 'presence', event: 'track', payload: {} });
+
+  let said = 0;
+  function showCrowd() {
+    // The visitor counts themself as soon as they tap, before the room echoes it back.
+    const n = Math.max(headcount, tapped ? 1 : 0);
+    for (const el of crowds) {
+      el.innerHTML =
+        n > 1
+          ? `<strong>${n}</strong> people here right now`
+          : '<strong>Just you</strong> here so far';
+      if (n > said && said) el.querySelector('strong').classList.add('bump');
+      // The line under the button waits for the tap; the countdown shows it to everyone.
+      el.hidden = !n || (el.closest('.join') && !tapped);
+    }
+    said = n;
+  }
+
+  function addPresence(map) {
+    for (const [key, { metas }] of Object.entries(map || {})) {
+      const had = people.get(key) || [];
+      const refs = new Set(had.map((m) => m.phx_ref));
+      people.set(key, [...had, ...metas.filter((m) => !refs.has(m.phx_ref))]);
+    }
+  }
+  function dropPresence(map) {
+    for (const [key, { metas }] of Object.entries(map || {})) {
+      const gone = new Set(metas.map((m) => m.phx_ref));
+      const left = (people.get(key) || []).filter((m) => !gone.has(m.phx_ref));
+      if (left.length) people.set(key, left);
+      else people.delete(key);
+    }
+  }
+
+  function joinRoom(wait = 2000) {
+    joined = true;
+    let ref = 0;
+    let beat = 0;
+    const ws = new WebSocket(`${REALTIME}?apikey=${KEY}&vsn=1.0.0`);
+    const send = (topic, event, payload) =>
+      ws.send(JSON.stringify({ topic, event, payload, ref: String(++ref), join_ref: '1' }));
+    ws.onopen = () => {
+      send(ROOM, 'phx_join', {
+        config: { presence: { key: me }, broadcast: { self: false }, postgres_changes: [] },
+      });
+      beat = setInterval(() => send('phoenix', 'heartbeat', {}), 25e3);
+    };
+    ws.onmessage = ({ data }) => {
+      const msg = JSON.parse(data);
+      const { event, payload } = msg;
+      if (event === 'phx_reply' && msg.ref === '1' && payload.status === 'ok') {
+        live = (ev, body) => send(ROOM, ev, body);
+        track();
+        return;
+      }
+      if (event === 'presence_state') {
+        people.clear();
+        addPresence(payload);
+      } else if (event === 'presence_diff') {
+        dropPresence(payload.leaves);
+        addPresence(payload.joins);
+      } else return;
+      headcount = people.size;
+      showCrowd();
+    };
+    // Dropped (phone asleep, network blip, room full): try again, slower each time.
+    ws.onclose = () => {
+      clearInterval(beat);
+      live = null;
+      if (!started) setTimeout(() => joinRoom(Math.min(wait * 2, 30e3)), wait);
+    };
+  }
 
   sound.addEventListener('click', () => {
     unlockSound();
@@ -182,6 +276,7 @@
     } else if (left <= DOORS) {
       join.hidden = false;
     }
+    if (left <= DOORS && !joined) joinRoom();
     if (left <= 60e3) loadFilm();
   }
 
