@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-17T06:17:21.499Z",
+  "updatedAt": "2026-10-17T07:48:56.573Z",
   "assets": [
     {
       "order": 1,
@@ -1490,6 +1490,17 @@
       "bytes": 110706,
       "format": "jpg",
       "uploadedAt": "2026-10-17T06:13:42.981Z"
+    },
+    {
+      "order": 144,
+      "filename": "anshuman-2021-tiger.jpg",
+      "source": "media/legacy-council/anshuman-2021-tiger.jpg",
+      "publicId": "sundarbans/legacy-council/anshuman-2021-tiger",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792223335/sundarbans/legacy-council/anshuman-2021-tiger.jpg",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792223335/sundarbans/legacy-council/anshuman-2021-tiger.jpg",
+      "bytes": 57374,
+      "format": "jpg",
+      "uploadedAt": "2026-10-17T07:48:56.572Z"
     }
   ]
 }
