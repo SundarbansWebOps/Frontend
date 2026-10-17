@@ -318,17 +318,22 @@
   --plate: #d8c9a8;
 }
 
-/* A plain picture frame: the house crest until a real photo replaces it. */
+/* A picture frame: a cream mat and a printed ink rule around the photo, so it reads as framed.
+   The house crest sits on the same mat until a real photo replaces it. */
 :where(html.lounge-active) .tour .niche .ph {
   display: grid;
   place-items: center;
   height: 64cqh;
   aspect-ratio: 4 / 5;
+  padding: 7px;
   overflow: hidden;
   border: 2px solid var(--plate-ink);
   border-radius: 4px;
   background: var(--plate);
-  box-shadow: 0 3px 0 var(--plate-ink);
+  box-shadow:
+    0 0 0 3px var(--plate),
+    0 0 0 4.5px var(--plate-ink),
+    0 6px 0 4.5px var(--plate-ink);
 }
 
 :where(html.lounge-active) .tour .niche .ph img {
@@ -336,12 +341,15 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border: 1.5px solid var(--plate-ink);
+  border-radius: 2px;
 }
 
 :where(html.lounge-active) .tour .niche .ph.crest img {
   width: 62%;
   height: auto;
   aspect-ratio: 1;
+  border: 0;
   border-radius: 50%;
   object-fit: contain;
 }

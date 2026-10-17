@@ -8,7 +8,7 @@ export const DEPUTY_SECRETARY = 'Ansh Kumar';
 // The house note, from the welcome copy. Body is the two intro paragraphs; pride is the closing line.
 export const HOUSE_NOTE = {
   title: 'Welcome to Sundarbans House.',
-  body: "From exciting events and creative collaborations to shared achievements and lifelong memories, Sundarbans House is where every student gets the opportunity to connect, contribute, and shine. We believe that the best experiences are created when people come together, ideas turn into action, and every voice finds a place. So, whether you're here to learn, lead, collaborate, or simply make incredible memories, you're not just joining a house, you're becoming part of a legacy.",
+  body: "We believe that the best experiences are created when people come together, ideas turn into action, and every voice finds a place. So, whether you're here to learn, lead, collaborate, or simply make incredible memories, you're not just joining a house, you're becoming part of a legacy.",
   pride: "Welcome to the Sundarbans House, let's make this journey unforgettable!",
 };
 
