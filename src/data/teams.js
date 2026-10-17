@@ -114,7 +114,7 @@ export const COMMUNITIES = [
         lead: true,
       },
       {
-        name: 'Maharishi Barman',
+        name: 'Maharshi Barman',
         role: 'Co-Head',
         img: pic('v1792082557', 'Maharshi.png'),
         lead: true,
