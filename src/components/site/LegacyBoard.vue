@@ -3,7 +3,7 @@
   as the door, the board's river with a mooring post per council year, and its boat. The whole
   stage is one link. It arrives at the first council (2021, boat at the first post) and pins
   below the navbar and the section rail; scrolling on sails the boat post to post, and each post
-  lights as the boat reaches it and that year's Secretary appears inside the arch. After the last
+  lights as the boat reaches it and that year's Secretary and Deputy appear in painted arches either side of the year. After the last
   council the pin releases and the page carries on; scrolling back sails the boat back. The year
   is written large: split around the door on wide screens, across the water between the posts on
   narrow ones (the same placement the Legacy page uses). Clicking walks through the door to the
@@ -22,12 +22,37 @@
       :style="riverVars"
       @click="enter"
     >
-      <span class="year-mark" aria-hidden="true">
-        <span class="ym">
-          <span class="ym-pair">{{ century }}</span>
-          <span class="ym-pair">
+      <span class="since mono" aria-hidden="true">Since {{ FOUNDED }}</span>
+
+      <span class="side" aria-hidden="true">
+        <span class="trio">
+          <span
+            v-for="(who, k) in [council.secretary, council.deputy]"
+            :key="k"
+            class="sec"
+            :class="k ? 'is-dep' : 'is-sec'"
+          >
             <Transition name="roll" mode="out-in">
-              <span :key="council.year">{{ decade }}</span>
+              <span :key="council.year" class="who">
+                <span class="who-photo">
+                  <span class="who-ap"><img :src="who.photo" alt="" decoding="async" /></span>
+                  <img
+                    class="arch"
+                    :src="archFrame"
+                    alt=""
+                    width="825"
+                    height="1200"
+                    decoding="async"
+                  />
+                </span>
+                <span class="who-text">
+                  <span class="who-name">{{ who.name }}</span>
+                  <span class="who-role"
+                    >{{ k ? 'Deputy' : 'Secretary'
+                    }}<span v-if="k" class="role-long"> Secretary</span></span
+                  >
+                </span>
+              </span>
             </Transition>
           </span>
         </span>
@@ -35,18 +60,12 @@
 
       <span class="door" aria-hidden="true">
         <span ref="slotRef" class="slot">
-          <span class="kicker mono">Since {{ FOUNDED }}</span>
-          <span class="title">Legacy<br />Board</span>
-          <span class="rule" />
+          <span class="plaque-kicker mono">Council</span>
           <Transition name="roll" mode="out-in">
-            <span :key="council.year" class="who">
-              <span class="who-year mono">{{ council.year }}</span>
-              <span class="who-name">{{ council.secretary.name }}</span>
-              <span class="who-role">Secretary</span>
-            </span>
+            <span :key="council.year" class="plaque">{{ council.year }}</span>
           </Transition>
+          <span class="rule" />
         </span>
-        <img class="arch" :src="archFrame" alt="" width="825" height="1200" decoding="async" />
       </span>
 
       <span class="cta" aria-hidden="true">Step inside <LineIcon name="arrow" /></span>
@@ -113,8 +132,6 @@ const seen = ref(false);
 const active = ref(LAST);
 const sailingBack = ref(false);
 const council = computed(() => LEGACY[active.value]);
-const century = computed(() => String(council.value.year).slice(0, 2));
-const decade = computed(() => String(council.value.year).slice(2));
 // Through the door is the council it shows (the first year is the page's bare URL).
 const legacyTo = computed(() =>
   council.value.year === FOUNDED
@@ -278,36 +295,34 @@ function enter(e) {
   outline-offset: 4px;
 }
 
-/* The year on show, split by the door: century to its left, decade (which rolls with the boat)
-   to its right, each pair centred in the paper beside the arch. Same box as the door, so cq
-   units here are the door's height (68.75cqh is its width). Narrow stages use .river-year. */
-.year-mark {
+/* "Since 2021" over the door, outside the painted frame. */
+.since {
+  grid-area: 1 / 1;
+  align-self: start;
+  margin-top: clamp(14px, 3vh, 28px);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mari-ink);
+}
+
+/* The council's two leaders flank the door in matching frames: Secretary left, Deputy right.
+   Same box as the door and a three-column grid around it, so cq units are the door's height
+   (68.75cqh is its width). */
+.side {
   grid-area: 1 / 1;
   justify-self: stretch;
-  z-index: -1;
-  height: min(var(--arch-h), 100%);
+  height: min(var(--arch-h), calc(100% - 44px));
   container-type: size;
   pointer-events: none;
   user-select: none;
 }
-.ym {
+.trio {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 68.75cqh minmax(0, 1fr);
   align-items: center;
   height: 100%;
-  font-size: min(70cqh, calc((100cqw - 68.75cqh) * 0.39));
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  opacity: 0.08;
-}
-.ym-pair {
-  justify-self: center;
-}
-.ym-pair + .ym-pair {
-  grid-column: 3;
 }
 
 /* The year written across the water, one digit between each pair of posts. */
@@ -342,7 +357,7 @@ function enter(e) {
   grid-area: 1 / 1;
   position: relative;
   display: block;
-  height: min(var(--arch-h), 100%);
+  height: min(var(--arch-h), calc(100% - 44px));
   aspect-ratio: 825 / 1200;
   transform-origin: 50% 100%;
   container-type: size;
@@ -370,22 +385,21 @@ function enter(e) {
   gap: 2.6cqw;
   padding: 6.5cqw 4cqw 4cqw;
   overflow: hidden;
-  border-radius: 999px 999px 6px 6px;
-  background: var(--sunk);
   text-align: center;
 }
-.kicker {
+.plaque-kicker {
   font-size: max(9.5px, 3.5cqw);
   font-weight: 650;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--mari-ink);
 }
-.title {
-  font-size: 13.6cqw;
+.plaque {
+  font-size: 30cqw;
   font-weight: 750;
-  letter-spacing: -0.04em;
-  line-height: 0.92;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .rule {
   width: 14cqw;
@@ -394,29 +408,63 @@ function enter(e) {
   border-radius: 2px;
   background: var(--mari);
 }
+/* That year's Secretary. Narrow stages have no paper beside the door, so the card sits on the
+   aperture's sill (cq units there are the stage's). */
+.sec {
+  width: min(52cqh, 80%);
+}
+.is-sec {
+  grid-column: 1;
+  justify-self: end;
+  margin-right: 2cqh;
+}
+.is-dep {
+  grid-column: 3;
+  justify-self: start;
+  margin-left: 2cqh;
+}
 .who {
   display: grid;
   justify-items: center;
-  gap: 1cqw;
-  min-height: 24cqh;
-  align-content: start;
+  gap: 3cqh;
+  text-align: center;
 }
-.who-year {
-  font-size: max(11px, 4.2cqw);
-  font-weight: 650;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
+/* Each leader stands in the painted pat arch; the photo fills its clear aperture. */
+.who-photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 825 / 1200;
+}
+.who-ap {
+  position: absolute;
+  inset: 14% 17.5% 12.5% 17.5%;
+  overflow: hidden;
+  border-radius: 999px 999px 4px 4px;
+  background: var(--sunk);
+}
+.who-ap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+.who-text {
+  display: grid;
+  justify-items: center;
+  gap: 0.8cqh;
 }
 .who-name {
   max-width: 100%;
-  font-size: max(13px, 6.2cqw);
-  font-weight: 650;
+  font-size: max(14px, 4.4cqh);
+  font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.1;
   text-wrap: balance;
 }
 .who-role {
-  font-size: max(9.5px, 3.3cqw);
+  font-size: max(9.5px, 2.3cqh);
   font-weight: 650;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -581,8 +629,43 @@ function enter(e) {
 
 /* Too little paper beside the door for the split year: it moves onto the river. */
 @media (max-width: 860px) {
-  .year-mark {
+  .side {
+    z-index: 2;
+  }
+  .trio {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    justify-self: center;
+    width: 100%;
+    padding: 0 7cqw;
+    gap: 4cqw;
+  }
+  .is-sec,
+  .is-dep {
+    grid-column: auto;
+    justify-self: center;
+    width: 100%;
+    margin: 0;
+  }
+  .slot {
+    justify-content: flex-start;
+    padding-top: 2cqh;
+  }
+  .plaque {
+    font-size: 22cqw;
+  }
+  .who {
+    gap: 1.5cqh;
+  }
+  .who-name {
+    font-size: max(12px, 3.6cqh);
+  }
+  .role-long {
     display: none;
+  }
+  .who-role {
+    font-size: max(8px, 2cqh);
+    letter-spacing: 0.08em;
   }
   .river-year {
     display: block;
