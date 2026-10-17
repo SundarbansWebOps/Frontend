@@ -1,7 +1,7 @@
 {
   "repo": "SundarbansWebOps/SundarbansWeb",
   "since": "2026-07-01",
-  "generatedAt": "2026-10-17T06:20:11.934Z",
+  "generatedAt": "2026-10-17T12:37:56.659Z",
   "weekStarts": [
     "2026-07-01",
     "2026-07-08",
@@ -23,10 +23,10 @@
   "contributors": [
     {
       "login": "Anuraj-dev",
-      "commits": 165,
-      "mergedPRs": 46,
-      "additions": 123177,
-      "deletions": 56283,
+      "commits": 177,
+      "mergedPRs": 55,
+      "additions": 125429,
+      "deletions": 56441,
       "weeks": [
         {
           "c": 5,
@@ -104,13 +104,13 @@
           "d": 3130
         },
         {
-          "c": 54,
-          "a": 10533,
-          "d": 4492
+          "c": 66,
+          "a": 12785,
+          "d": 4650
         }
       ],
       "first": "2026-07-03",
-      "last": "2026-10-16",
+      "last": "2026-10-17",
       "name": "Anuraj Jit Saikia",
       "avatar": "https://avatars.githubusercontent.com/u/190996683?s=160",
       "profile": "https://github.com/Anuraj-dev"
