@@ -20,9 +20,7 @@ const face = (u) =>
   u.replace('f_auto,q_auto:good,w_1000,c_limit', 'f_auto,q_auto,w_240,h_300,c_fill,g_face');
 const CLD = 'https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit';
 const KUNAL_PHOTO = face(`${CLD}/v1792177588/sundarbans/legacy-council/kunal-2021-tiger.webp`);
-const ANSHUMAN_PHOTO = face(
-  `${CLD}/v1792183158/sundarbans/legacy-council/avatar-anshuman-bhasin.png`
-);
+const ANSHUMAN_PHOTO = face(`${CLD}/v1792223335/sundarbans/legacy-council/anshuman-2021-tiger.jpg`);
 const UTKARSH_PHOTO = face(`${CLD}/v1792177589/sundarbans/legacy-council/utkarsh-2021-tiger.webp`);
 const MANNU_PHOTO = face(`${CLD}/v1792177357/sundarbans/legacy-council/mannu-yadav.webp`);
 const ADITYA_2025_PHOTO = face(

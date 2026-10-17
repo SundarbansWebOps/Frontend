@@ -57,13 +57,13 @@ const team = (members) =>
 
 export const FOUNDED = 2021;
 const kunal2021 = councilPhoto('1792177588', 'kunal-2021-tiger.webp');
-const ANSHUMAN_AVATAR = councilPhoto('1792183158', 'avatar-anshuman-bhasin.png');
+const anshuman2021 = councilPhoto('1792223335', 'anshuman-2021-tiger.jpg');
 const utkarsh2021 = councilPhoto('1792177589', 'utkarsh-2021-tiger.webp');
 
 export const LEGACY = [
   {
     year: 2021,
-    secretary: person('Anshuman Bhasin', 'Secretary', ANSHUMAN_AVATAR, true),
+    secretary: person('Anshuman Bhasin', 'Secretary', anshuman2021),
     deputy: person('Utkarsh Gaurav', 'Deputy Secretary', utkarsh2021),
     team: team([
       ['Abhigyan Das', 'WebOps Head', AVATARS.abhigyan, true],
