@@ -118,7 +118,11 @@
               </div>
             </div>
           </div>
-          <div v-if="teamRows.length" class="deck arrive" style="--i: 2">
+          <div
+            v-if="teamRows.length"
+            class="deck arrive"
+            :style="{ '--i': 2, '--per-row': teamRows[0].length }"
+          >
             <div v-for="(row, ri) in teamRows" :key="ri" class="deck-row">
               <div
                 v-for="(member, mi) in row"
@@ -1042,6 +1046,8 @@ h1 {
 }
 .member {
   display: grid;
+  /* minmax(0) keeps a long one-word name from widening the card past --m-w. */
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 6px;
   width: var(--m-w);
@@ -1099,6 +1105,7 @@ h1 {
   font-weight: 700;
   letter-spacing: 0;
   text-wrap: balance;
+  hyphens: auto;
 }
 .member-role {
   margin: 0;
@@ -1162,7 +1169,6 @@ h1 {
     --edge: 8%;
     --step: 21%;
     --water: 10%;
-    --m-w: min(64px, calc((100vw - 88px) / 5), 7.6vh);
     --post-h: clamp(36px, 6vh, 52px);
     --boat-w: min(52px, 13vw);
   }
@@ -1203,8 +1209,14 @@ h1 {
     width: 100%;
     height: auto;
   }
+  /* Fit the longest row: council padding 2x14px plus 8px gaps. */
   .deck {
     gap: 10px;
+    --m-w: min(
+      64px,
+      calc((100vw - 28px - (var(--per-row, 5) - 1) * 8px) / var(--per-row, 5)),
+      7.6vh
+    );
   }
   .deck-row {
     gap: 8px;
@@ -1230,8 +1242,8 @@ h1 {
   }
   /* The stage scrolls here, so cards can be wide enough for their captions (7.6vh is only
      right for the fitted portrait stack). */
-  .board {
-    --m-w: min(64px, calc((100vw - 88px) / 5));
+  .deck {
+    --m-w: min(64px, calc((100vw - 28px - (var(--per-row, 5) - 1) * 8px) / var(--per-row, 5)));
   }
 }
 </style>
