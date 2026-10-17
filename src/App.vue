@@ -23,6 +23,8 @@
   <SiteFooter v-if="!isStandalone" />
   <CourseSheet />
   <LoungeDoor v-if="door.rect" overlay entry :rect="door.rect" @done="endDoor" />
+  <!-- matched: before the first route resolves, route.path reads '/' on every page. -->
+  <LaunchFilm v-if="launch.offer && route.matched.length && route.path === '/'" />
   <Transition name="toast">
     <div v-if="store.toast" class="toast" role="status">{{ store.toast }}</div>
   </Transition>
@@ -35,10 +37,13 @@ import TopNav from './components/site/TopNav.vue';
 import SiteFooter from './components/site/SiteFooter.vue';
 import CourseSheet from './components/site/CourseSheet.vue';
 import LoungeDoor from './components/site/LoungeDoor.vue';
+import LaunchFilm from './components/site/LaunchFilm.vue';
 import { store } from './lib/store.js';
 import { door, endDoor } from './lib/door.js';
+import { checkLaunch, launch } from './lib/launch.js';
 
 const route = useRoute();
+checkLaunch();
 const router = useRouter();
 // The sign-in door covers the page until it has opened onto the Lounge. Going anywhere else during
 // it ends the door, so nothing is left covering a page.
