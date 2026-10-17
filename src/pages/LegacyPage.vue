@@ -29,12 +29,8 @@
         </div>
         <div class="actions">
           <Transition name="story">
-            <RouterLink
-              v-if="shownYear === TENURE.year"
-              class="story-link"
-              to="/teams/legacy/2023-24"
-            >
-              Read more about {{ TENURE.label }}
+            <RouterLink v-if="readMore" :key="readMore.to" class="story-link" :to="readMore.to">
+              Read more about {{ readMore.label }}
               <span aria-hidden="true">→</span>
             </RouterLink>
           </Transition>
@@ -160,6 +156,7 @@ import crest from '../assets/crest.webp';
 import plateDay from '../components/lounge/home/art/plate-day-1536.webp';
 import plateNight from '../components/lounge/home/art/plate-night-1536.webp';
 import { FOUNDED, LEGACY } from '../data/legacy.data.js';
+import { STORIES } from '../data/council-stories.data.js';
 import { TENURE } from '../data/tenure-2023.data.js';
 import { theme } from '../lib/theme.js';
 
@@ -224,6 +221,16 @@ const teamMax = computed(() => {
 });
 
 const shownYear = ref(parsedYear());
+
+// Years with a story page get a Read more link on the board.
+const STORY_PAGES = new Map([
+  [TENURE.year, { to: '/teams/legacy/2023-24', label: TENURE.label }],
+  ...Object.values(STORIES).map((s) => [
+    Number(s.key.slice(0, 4)),
+    { to: `/teams/legacy/${s.key}`, label: s.label },
+  ]),
+]);
+const readMore = computed(() => STORY_PAGES.get(shownYear.value) ?? null);
 // Index of the year the scroll position asks for, and the year nearest the boat (which drives
 // the post highlight). `goal` is the last year asked for by a click, key or wheel notch, so
 // repeated steps stack on it even while a smooth scroll is still arriving.

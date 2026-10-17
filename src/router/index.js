@@ -18,6 +18,18 @@ const routes = [
     component: () => import('../pages/LegacyPage.vue'),
   },
   {
+    path: '/teams/legacy/2021-22',
+    name: 'Council2021',
+    component: () => import('../pages/CouncilStoryPage.vue'),
+    props: { story: '2021-22' },
+  },
+  {
+    path: '/teams/legacy/2022-23',
+    name: 'Council2022',
+    component: () => import('../pages/CouncilStoryPage.vue'),
+    props: { story: '2022-23' },
+  },
+  {
     path: '/teams/legacy/2023-24',
     name: 'Tenure2023',
     component: () => import('../pages/TenureReadPage.vue'),
