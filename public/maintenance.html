@@ -261,10 +261,42 @@
         cursor: default;
         transform: none;
       }
-      .note {
-        margin: 0;
-        font-size: 13px;
+      /* How many people have tapped "I'm here", live: a pulsing dot and a number that bumps up. */
+      .crowd {
+        margin: 6px 0 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
         color: var(--ink-2);
+        font-variant-numeric: tabular-nums;
+      }
+      .crowd[hidden] {
+        display: none;
+      }
+      .crowd::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--mari);
+        box-shadow: 0 0 0 0 var(--mari);
+        animation: live 1.8s var(--ease-out) infinite;
+      }
+      .crowd strong {
+        display: inline-block;
+        color: var(--ink);
+        font-weight: 700;
+      }
+      .crowd strong.bump {
+        animation: pop 0.45s var(--ease-out) both;
+      }
+      .count .crowd {
+        margin-top: 14px;
+        color: #b9ac9a;
+      }
+      .count .crowd strong {
+        color: #f4b04a;
       }
 
       /* The countdown and the film cover the whole page, dark in both themes. */
@@ -355,6 +387,11 @@
         display: none;
       }
 
+      @keyframes live {
+        to {
+          box-shadow: 0 0 0 9px transparent;
+        }
+      }
       @keyframes fade {
         from {
           opacity: 0;
@@ -534,9 +571,7 @@
         </p>
         <div class="join" hidden>
           <button class="here" type="button">I'm here</button>
-          <p class="note">
-            Keep this page open. The countdown starts 30 seconds before, with sound.
-          </p>
+          <p class="crowd" hidden></p>
         </div>
       </section>
     </main>
@@ -544,8 +579,9 @@
     <div class="show" hidden>
       <div class="count" role="timer" aria-live="off">
         <img class="crest" src="/maintenance/crest.webp" width="256" height="256" alt="" />
-        <p class="brand">Sundarbans House opens in</p>
+        <p class="brand">Sundarbans website opens in</p>
         <strong class="num">30</strong>
+        <p class="crowd" hidden></p>
       </div>
       <span class="bar" aria-hidden="true"></span>
       <video
