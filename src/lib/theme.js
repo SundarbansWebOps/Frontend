@@ -1,11 +1,10 @@
-// Light / dark theme. A reader's explicit choice is remembered; until they make one, the site
-// follows the system setting. index.html applies the same rule before first paint so there is
-// no flash of the wrong theme.
+// Light / dark theme. A reader's explicit choice is remembered; until they make one, the site is
+// light (the launch film ends on the light home page). index.html applies the same rule before
+// first paint so there is no flash of the wrong theme.
 import { nextTick, ref, watch } from 'vue';
 
 const KEY = 'sundarbans-theme';
 const BAR = { light: '#f7f2e8', dark: '#15120e' }; // --paper in each theme
-const media = matchMedia('(prefers-color-scheme: dark)');
 
 function stored() {
   try {
@@ -18,11 +17,7 @@ function stored() {
   }
 }
 
-export const theme = ref(stored() ?? (media.matches ? 'dark' : 'light'));
-
-media.addEventListener('change', (e) => {
-  if (!stored()) theme.value = e.matches ? 'dark' : 'light';
-});
+export const theme = ref(stored() ?? 'light');
 
 watch(
   theme,

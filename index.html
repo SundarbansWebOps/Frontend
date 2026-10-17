@@ -35,7 +35,7 @@
       href="https://fonts.googleapis.com/css2?family=Anek+Latin:wdth,wght@75..125,300..800&family=Tiro+Bangla:ital@0;1&display=swap"
       rel="stylesheet"
     />
-    <!-- Theme before first paint (same rule as src/lib/theme.js): saved choice, else system. -->
+    <!-- Theme before first paint (same rule as src/lib/theme.js): saved choice, else light. -->
     <script>
       (() => {
         const lounge = /^#\/lounge\/?(?:[?#]|$)/i.test(location.hash);
@@ -48,8 +48,7 @@
         } catch {
           /* storage blocked */
         }
-        if (t !== 'light' && t !== 'dark')
-          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (t !== 'light' && t !== 'dark') t = 'light';
         document.documentElement.dataset.theme = t;
         if (lounge) {
           // Match the approved Lounge's canvas before its lazy route arrives.
