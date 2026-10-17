@@ -1,7 +1,7 @@
 {
   "repo": "SundarbansWebOps/SundarbansWeb",
   "since": "2026-07-01",
-  "generatedAt": "2026-10-15T14:33:24.214Z",
+  "generatedAt": "2026-10-17T06:20:11.934Z",
   "weekStarts": [
     "2026-07-01",
     "2026-07-08",
@@ -23,10 +23,10 @@
   "contributors": [
     {
       "login": "Anuraj-dev",
-      "commits": 123,
-      "mergedPRs": 29,
-      "additions": 116671,
-      "deletions": 53986,
+      "commits": 165,
+      "mergedPRs": 46,
+      "additions": 123177,
+      "deletions": 56283,
       "weeks": [
         {
           "c": 5,
@@ -104,23 +104,23 @@
           "d": 3130
         },
         {
-          "c": 12,
-          "a": 4027,
-          "d": 2195
+          "c": 54,
+          "a": 10533,
+          "d": 4492
         }
       ],
       "first": "2026-07-03",
-      "last": "2026-10-14",
+      "last": "2026-10-16",
       "name": "Anuraj Jit Saikia",
       "avatar": "https://avatars.githubusercontent.com/u/190996683?s=160",
       "profile": "https://github.com/Anuraj-dev"
     },
     {
       "login": "Dec-Canopus",
-      "commits": 5,
-      "mergedPRs": 2,
-      "additions": 5537,
-      "deletions": 130,
+      "commits": 7,
+      "mergedPRs": 3,
+      "additions": 6602,
+      "deletions": 175,
       "weeks": [
         {
           "c": 0,
@@ -198,13 +198,13 @@
           "d": 128
         },
         {
-          "c": 0,
-          "a": 0,
-          "d": 0
+          "c": 2,
+          "a": 1065,
+          "d": 45
         }
       ],
       "first": "2026-10-01",
-      "last": "2026-10-08",
+      "last": "2026-10-13",
       "name": "Dec-Canopus",
       "avatar": "https://avatars.githubusercontent.com/u/132191731?s=160",
       "profile": "https://github.com/Dec-Canopus"
@@ -305,10 +305,10 @@
     },
     {
       "login": "thearpit05",
-      "commits": 5,
-      "mergedPRs": 1,
-      "additions": 3127,
-      "deletions": 937,
+      "commits": 7,
+      "mergedPRs": 3,
+      "additions": 3858,
+      "deletions": 1091,
       "weeks": [
         {
           "c": 0,
@@ -386,13 +386,13 @@
           "d": 937
         },
         {
-          "c": 0,
-          "a": 0,
-          "d": 0
+          "c": 2,
+          "a": 731,
+          "d": 154
         }
       ],
       "first": "2026-10-11",
-      "last": "2026-10-12",
+      "last": "2026-10-15",
       "name": "Arpit Verma",
       "avatar": "https://avatars.githubusercontent.com/u/218048304?s=160",
       "profile": "https://github.com/thearpit05"
