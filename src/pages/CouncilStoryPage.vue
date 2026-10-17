@@ -164,6 +164,7 @@
             <p class="creed par-slow">
               <span class="rise" style="--r: 2">{{ S.closing.quote }}</span>
             </p>
+            <p v-if="S.credit" class="kicker rise" style="--r: 3">{{ S.credit }}</p>
           </section>
         </div>
       </div>
