@@ -47,20 +47,16 @@ test('loopback fixture reveals the group destination only after submission', asy
     return route.abort();
   });
   await page.goto(`${local}#/lounge/forms/2fe75761-88af-5422-a3c7-d8e86830d3e2`);
-  await expect(page.getByRole('link', { name: 'Open the group' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Open WhatsApp invite' })).toHaveCount(0);
   await page.getByLabel(/^Name/).fill('Local Test Student');
   await page.getByRole('button', { name: 'Send', exact: true }).click();
-  await expect(page.getByRole('link', { name: 'Open the group' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Open WhatsApp invite' })).toHaveAttribute(
     'href',
     'https://example.invalid/local-whatsapp'
   );
   await page.reload();
-  await expect(
-    page.getByText('Your application is saved. Sending this form is not WhatsApp admission.', {
-      exact: true,
-    })
-  ).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Open the group' })).toHaveAttribute(
+  await expect(page.getByText('Saved. One step left.')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Open WhatsApp invite' })).toHaveAttribute(
     'href',
     'https://example.invalid/local-whatsapp'
   );

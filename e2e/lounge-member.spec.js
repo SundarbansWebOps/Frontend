@@ -56,15 +56,15 @@ test('signed-in member opens a routed form and sees the invite only after submit
   await mockSupabase(page, { data: loungeData });
   await page.goto(`/#/lounge/forms/${FORM_ID}`);
   await expect(page.getByRole('heading', { name: 'Technical community' })).toBeVisible();
-  await expect(page.getByText('Open the group')).toHaveCount(0);
+  await expect(page.getByText('Open WhatsApp invite')).toHaveCount(0);
   await page.getByLabel(/Name/).fill('Riya');
   await page.getByRole('button', { name: 'Send' }).click();
-  await expect(page.getByRole('status')).toContainText('WhatsApp invite');
-  await expect(page.getByRole('link', { name: 'Open the group' })).toHaveAttribute(
+  await expect(page.getByRole('status')).toContainText('One step left');
+  await expect(page.getByRole('link', { name: 'Open WhatsApp invite' })).toHaveAttribute(
     'href',
     'https://chat.whatsapp.com/TESTINVITE'
   );
-  await expect(page.getByText(/Sending this form is not admission/)).toBeVisible();
+  await expect(page.getByText(/request to join/)).toBeVisible();
 });
 
 test('public verify shows only the issued record, not a recipient name', async ({ page }) => {
