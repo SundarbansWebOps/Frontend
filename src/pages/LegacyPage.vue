@@ -743,13 +743,18 @@ h1 {
   color: var(--ink);
 }
 .actions {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: clamp(12px, 2vw, 24px);
   min-width: 0;
 }
-/* Shown only while the 2023 council is on the board. */
+/* Shown only while the council has a story. It is out of flow so that a year change never reflows
+   the header: the old and new links fade in place, and Back stays where it is. */
 .story-link {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + clamp(12px, 2vw, 24px));
+  translate: 0 -50%;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1187,6 +1192,7 @@ h1 {
     padding-top: 10px;
   }
   .story-link {
+    right: 0;
     padding: 6px 12px;
     font-size: 12px;
   }
