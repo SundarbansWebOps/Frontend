@@ -51,7 +51,7 @@ export const LANDINGS = [
     year: 2023,
     people: [
       p('Abhishek Ojha', SEC, face(`${CLD}/v1792094947/sundarbans/teams/Abhishek_ojha.png`)),
-      p('Ravi Kumawat', DEP, face(`${CLD}/v1792095015/sundarbans/teams/Ravi_Kumawat.png`)),
+      p('Ravi Kumawat', 'Web Admin', face(`${CLD}/v1792095015/sundarbans/teams/Ravi_Kumawat.png`)),
     ],
   },
   {

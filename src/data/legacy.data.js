@@ -69,7 +69,7 @@ export const LEGACY = [
     secretary: person('Anshuman Bhasin', 'Secretary', anshuman2021),
     deputy: person('Utkarsh Gaurav', 'Deputy Secretary', utkarsh2021),
     team: team([
-      ['Abhigyan Das', 'WebOps Head', AVATARS.abhigyan, true],
+      ['Abhigyan Das', 'Web Admin', AVATARS.abhigyan, true],
       ['Bhairavee Naik', 'GL', AVATARS.bhairavee, true],
       ['Rituparno Dhar', 'GL', AVATARS.rituparno, true],
       ['Manaswita Mandal', 'GL', AVATARS.manaswita, true],
@@ -108,7 +108,7 @@ export const LEGACY = [
     secretary: person('Abhishek Ojha', 'Secretary', legacyPhoto('1792094947', 'Abhishek_ojha.png')),
     deputy: person(
       'Ravi Kumawat',
-      'Deputy Secretary',
+      'Web Admin',
       legacyPhoto('1792095015', 'Ravi_Kumawat.png')
     ),
     team: team([
