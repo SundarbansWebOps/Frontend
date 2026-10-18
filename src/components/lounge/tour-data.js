@@ -29,7 +29,7 @@ const ADITYA_2025_PHOTO = face(
 
 /* A past council member. Until a real photo exists the frame shows the house crest. To add
    a photo, pass its URL as the third argument; it replaces the crest:
-   p('Ravi Kant', 'Deputy Secretary', 'https://…/ravi.jpg') */
+   p('Full Name', 'Deputy Secretary', 'https://…/photo.jpg') */
 const p = (name, role, photo = null) => ({ name, role, photo });
 const SEC = 'Secretary';
 const DEP = 'Deputy Secretary';
@@ -51,7 +51,7 @@ export const LANDINGS = [
     year: 2023,
     people: [
       p('Abhishek Ojha', SEC, face(`${CLD}/v1792094947/sundarbans/teams/Abhishek_ojha.png`)),
-      p('Ravi Kant', DEP, face(`${CLD}/v1792095019/sundarbans/teams/ravikant.png`)),
+      p('Ravi Kumawat', DEP, face(`${CLD}/v1792095015/sundarbans/teams/Ravi_Kumawat.png`)),
     ],
   },
   {
