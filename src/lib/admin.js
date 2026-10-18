@@ -893,7 +893,7 @@ export const reviewCertificateNameRequest = (id, approve, note = '') =>
 
 const REQUEST_COLS = `id, type, status, reason, requested_change, target_snapshot, review_note, requested_at,
   reviewed_at, requested_by, reviewed_by, target_member_id,
-  target:members!approval_requests_target_member_id_fkey(full_name, member_code, region_id),
+  target:members!approval_requests_target_member_id_fkey(full_name, preferred_name, email, member_code, region_id),
   requester:members!approval_requests_requested_by_fkey(full_name)`;
 
 export async function listRequests({ status = 'pending' } = {}) {
