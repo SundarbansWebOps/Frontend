@@ -103,7 +103,13 @@
       <form class="adm-form" @submit.prevent="save(false)">
         <label class="adm-field wide">
           <span>Name</span>
-          <input v-model.trim="form.name" class="adm-input" required maxlength="200" />
+          <input
+            ref="nameInput"
+            v-model.trim="form.name"
+            class="adm-input"
+            required
+            maxlength="200"
+          />
         </label>
         <label v-if="isSuperAdmin" class="adm-field">
           <span>Scope</span>
@@ -180,21 +186,35 @@
               height="96"
             />
             <div class="poster-acts">
-              <label class="pick" :class="{ off: busy || !form.name }">
+              <label
+                class="drop"
+                :class="{ over: dragging, busy: posterBusy }"
+                @dragenter.prevent="dragging = true"
+                @dragover.prevent
+                @dragleave="dragging = false"
+                @drop.prevent="onPosterDrop"
+              >
                 <input
                   class="pick-input"
                   type="file"
                   :accept="POSTER_TYPES.join(',')"
                   aria-label="Upload poster"
-                  :disabled="busy || !form.name"
+                  :disabled="busy"
+                  @click="needName"
                   @change="onPoster"
                 />
-                <span class="pick-btn">{{ form.image_url ? 'Replace' : 'Choose image' }}</span>
-                <span class="pick-name">{{ posterStatus }}</span>
+                <svg class="drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+                </svg>
+                <span class="drop-title">{{
+                  form.image_url ? 'Replace poster' : 'Choose a poster image'
+                }}</span>
+                <span class="drop-sub">{{ posterStatus }}</span>
               </label>
               <small>
-                <template v-if="!form.name">Name the event first. </template>
-                JPG, PNG or WebP, up to 10 MB.<template v-if="!form.id">
+                JPG, PNG or WebP, up to 10 MB. You can also drop the file onto the box.<template
+                  v-if="!form.id"
+                >
                   Adding one saves this event as a draft.</template
                 >
               </small>
@@ -404,6 +424,7 @@ import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
   applyReviewedEligibility,
+  POSTER_MAX_BYTES,
   POSTER_TYPES,
   canManageEvent,
   cancelRequest,
@@ -661,14 +682,44 @@ async function save(mode) {
 
 const posterBusy = ref(false);
 const posterName = ref('');
+const dragging = ref(false);
+const nameInput = ref(null);
 const posterStatus = computed(() => {
   if (posterBusy.value) return `Uploading ${posterName.value}…`;
+  if (!form.value?.name) return 'Add the event name first, then choose a file.';
   if (form.value?.image_url) return posterName.value || 'Poster saved';
-  return 'No image chosen';
+  return 'No file chosen';
 });
+// Without a name the poster cannot be saved yet: send the cursor to the name instead of
+// opening a file dialog that would then do nothing.
+function needName(ev) {
+  if (form.value?.name) return;
+  ev.preventDefault();
+  nameInput.value?.focus();
+}
 async function onPoster(ev) {
   const file = ev.target.files?.[0];
+  ev.target.value = '';
+  await sendPoster(file);
+}
+function onPosterDrop(ev) {
+  dragging.value = false;
+  if (!form.value?.name) {
+    nameInput.value?.focus();
+    return;
+  }
+  sendPoster(ev.dataTransfer?.files?.[0]);
+}
+async function sendPoster(file) {
   if (!file || !form.value) return;
+  if (!POSTER_TYPES.includes(file.type)) {
+    formError.value = 'Use a JPG, PNG or WebP image.';
+    return;
+  }
+  if (file.size > POSTER_MAX_BYTES) {
+    formError.value = 'The image is larger than 10 MB.';
+    return;
+  }
   posterName.value = file.name;
   formError.value = '';
   busy.value = posterBusy.value = true;
@@ -681,7 +732,6 @@ async function onPoster(ev) {
     formError.value = friendly(e);
   } finally {
     busy.value = posterBusy.value = false;
-    ev.target.value = '';
   }
 }
 
@@ -857,29 +907,57 @@ async function release() {
   min-width: 0;
   justify-items: start;
 }
-/* The native file control is hidden; this label is what people click, and it keeps focus visible. */
-.pick {
+/* The native file input is hidden; the drop area is what people click or drop a file onto. */
+.drop {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  max-width: 100%;
-  padding: 6px 14px 6px 6px;
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  width: 100%;
+  max-width: 400px;
+  padding: 18px;
   border: 1.5px dashed var(--line-strong);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--paper);
+  color: var(--ink);
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
-.pick:hover:not(.off) {
-  border-color: var(--ink-2);
+.drop:hover,
+.drop.over {
+  border-color: var(--mari);
 }
-.pick:focus-within {
+.drop.over {
+  background: var(--mari-soft);
+}
+.drop:focus-within {
   box-shadow: 0 0 0 4px var(--mari-soft);
 }
-.pick.off {
-  opacity: 0.5;
-  cursor: not-allowed;
+.drop.busy {
+  cursor: progress;
+  opacity: 0.7;
+}
+.drop-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--ink-2);
+}
+.drop-title {
+  font-size: 15px;
+  font-weight: 650;
+}
+.drop-sub {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
 }
 .pick-input {
   position: absolute;
@@ -887,26 +965,6 @@ async function release() {
   height: 1px;
   opacity: 0;
   pointer-events: none;
-}
-.pick-btn {
-  display: inline-flex;
-  align-items: center;
-  flex: none;
-  height: 32px;
-  padding: 0 14px;
-  border-radius: 99px;
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 13px;
-  font-weight: 650;
-}
-.pick-name {
-  min-width: 0;
-  overflow: hidden;
-  font-size: 14px;
-  color: var(--ink-2);
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .check > span {
   display: flex;
