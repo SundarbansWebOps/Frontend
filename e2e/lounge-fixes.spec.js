@@ -318,6 +318,9 @@ test('group metadata drives short copy and an applied response survives without 
   expect(selectedTheme).not.toBe(originalTheme);
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', selectedTheme);
+  // The theme is restored before Vue boots; wait for the form route itself, or its pending
+  // initial navigation can overwrite the hash change below.
+  await expect(page.getByText(/No invite link is available for this group yet/)).toBeVisible();
   await page.goto('/#/lounge?room=groups');
   await expect(page.locator('#groups')).toBeVisible();
   await expect(page.locator('.moor')).toContainText('Technical Circle');
