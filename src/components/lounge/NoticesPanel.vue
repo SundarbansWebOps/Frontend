@@ -1,8 +1,7 @@
 <!--
   Notices from the bell: a sheet that hangs from the header (a panel from the top on phones),
   every notice newest first as a hung paper tag tied under the one above. Unread tags carry a
-  vermilion mark; opening one marks it read, and an open
-  tag can be removed from this member's own list. The notice strip under the header opens this
+  vermilion mark; opening one marks it read. The notice strip under the header opens this
   panel at its notice. The tags swing once, the first time the panel opens in a visit.
 -->
 <template>
@@ -61,9 +60,6 @@
                   Open notice link <span aria-hidden="true">↗</span>
                 </a>
                 <p class="nt-by">{{ n.by }}</p>
-                <button type="button" class="gp-link nt-remove" @click="ev.hideNotice?.(n)">
-                  Remove from my notices
-                </button>
               </div>
               <p v-show="openId !== n.id" class="nt-peek" aria-hidden="true">{{ n.body }}</p>
             </div>

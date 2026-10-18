@@ -865,11 +865,6 @@
   color: var(--accent);
 }
 
-:where(html.lounge-active) .nt-body .nt-remove {
-  margin-top: 10px;
-  font-size: 13px;
-}
-
 :where(html.lounge-active) .np-empty {
   margin: 16px 0 0;
   color: var(--t-3);
