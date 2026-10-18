@@ -1169,6 +1169,11 @@
   line-height: 1.45;
   color: var(--t-2);
 }
+:where(html.lounge-active) .ff-invite strong {
+  display: block;
+  color: var(--t-1);
+  font-size: 17px;
+}
 :where(html.lounge-active) .pe-field select {
   min-height: 48px;
   padding: 10px 12px;

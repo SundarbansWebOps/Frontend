@@ -32,7 +32,7 @@
       </p>
 
       <form v-else class="slip" @submit.prevent="send">
-        <p v-if="form.submitted && !isSuperAdmin" class="msg" role="status">
+        <p v-if="form.submitted && !isSuperAdmin && !invite" class="msg" role="status">
           Your application is saved. Sending this form is not WhatsApp admission.
         </p>
         <FormFields
@@ -47,11 +47,9 @@
           {{ unavailableMessage }}
         </p>
         <p v-if="error" class="msg err" role="alert">{{ error }}</p>
-        <p v-if="invite" class="msg" role="status">
-          WhatsApp invite:
-          <a :href="invite" target="_blank" rel="noopener noreferrer">Open the group</a>. Request
-          entry there. An admin checks house membership (and region, for regional groups) before
-          they add you. Sending this form is not admission.
+        <p v-if="invite" class="next" role="status">
+          <strong>Saved. One step left.</strong>
+          Open the invite and request to join. An admin adds you after checking.
         </p>
         <p v-else-if="form.submitted && inviteError" class="msg err" role="alert">
           {{ inviteError }}
@@ -74,6 +72,9 @@
           >
             {{ busy ? 'Sending…' : 'Send' }}
           </button>
+          <a v-if="invite" class="go join" :href="invite" target="_blank" rel="noopener noreferrer"
+            >Open WhatsApp invite <span aria-hidden="true">→</span></a
+          >
           <RouterLink class="ghost" to="/lounge">Back to the Lounge</RouterLink>
         </div>
       </form>
@@ -322,6 +323,29 @@ h1 {
   border: 0;
   background: var(--mari);
   color: var(--on-mari);
+}
+.join {
+  gap: 10px;
+  border: 1.5px solid var(--pat-ink);
+  box-shadow: 0 3px 0 var(--pat-ink);
+  transition:
+    transform 120ms var(--ease-out),
+    box-shadow 120ms var(--ease-out);
+}
+.join:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--pat-ink);
+}
+.next {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.45;
+}
+.next strong {
+  display: block;
+  color: var(--ink);
+  font-size: 19px;
 }
 .go:disabled {
   opacity: 0.55;

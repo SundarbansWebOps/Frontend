@@ -7,7 +7,7 @@
       <p v-if="form.group_purpose || form.description" class="evd-desc">
         {{ form.group_purpose || form.description }}
       </p>
-      <p v-if="form.submitted && !isSuperAdmin" class="evd-done">
+      <p v-if="form.submitted && !isSuperAdmin && !invite" class="evd-done">
         Your application is saved. Sending this form is not WhatsApp admission.
       </p>
       <FormFields
@@ -25,10 +25,8 @@
       </p>
       <p v-if="error" class="ff-err" role="alert">{{ error }}</p>
       <p v-if="invite" class="ff-invite" role="status">
-        WhatsApp invite:
-        <a :href="invite" target="_blank" rel="noopener noreferrer">Open the group</a>. Request
-        entry there. An admin checks house membership (and region, for regional groups) before they
-        add you. Sending this form is not admission.
+        <strong>Saved. One step left.</strong>
+        Open the invite and request to join. An admin adds you after checking.
       </p>
       <p v-else-if="done" class="ff-invite" role="status">
         Saved. If this form has a WhatsApp group, the invite appears after the database confirms
@@ -43,6 +41,14 @@
         >
           {{ busy ? 'Sending…' : submitLabel }}
         </button>
+        <a
+          v-if="invite"
+          class="gp-btn is-big"
+          :href="invite"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Open WhatsApp invite <span aria-hidden="true">→</span></a
+        >
         <button type="button" class="gp-btn is-ghost" @click="dlg?.close()">
           {{ done || form.submitted ? 'Back to the river' : 'Back' }}
         </button>
