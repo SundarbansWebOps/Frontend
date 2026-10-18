@@ -180,17 +180,23 @@
               height="96"
             />
             <div class="poster-acts">
-              <input
-                class="adm-input"
-                type="file"
-                :accept="POSTER_TYPES.join(',')"
-                aria-label="Upload poster"
-                :disabled="busy || !form.name"
-                @change="onPoster"
-              />
+              <label class="pick" :class="{ off: busy || !form.name }">
+                <input
+                  class="pick-input"
+                  type="file"
+                  :accept="POSTER_TYPES.join(',')"
+                  aria-label="Upload poster"
+                  :disabled="busy || !form.name"
+                  @change="onPoster"
+                />
+                <span class="pick-btn">{{ form.image_url ? 'Replace' : 'Choose image' }}</span>
+                <span class="pick-name">{{ posterStatus }}</span>
+              </label>
               <small>
-                The picture shown on the Events page and in the Lounge. JPG, PNG or WebP, up to 10
-                MB.<template v-if="!form.id"> Adding one saves this event as a draft.</template>
+                <template v-if="!form.name">Name the event first. </template>
+                JPG, PNG or WebP, up to 10 MB.<template v-if="!form.id">
+                  Adding one saves this event as a draft.</template
+                >
               </small>
               <p v-if="posterBusy" class="adm-note" role="status">Uploading the poster…</p>
               <button
@@ -654,9 +660,16 @@ async function save(mode) {
 }
 
 const posterBusy = ref(false);
+const posterName = ref('');
+const posterStatus = computed(() => {
+  if (posterBusy.value) return `Uploading ${posterName.value}…`;
+  if (form.value?.image_url) return posterName.value || 'Poster saved';
+  return 'No image chosen';
+});
 async function onPoster(ev) {
   const file = ev.target.files?.[0];
   if (!file || !form.value) return;
+  posterName.value = file.name;
   formError.value = '';
   busy.value = posterBusy.value = true;
   try {
@@ -843,6 +856,57 @@ async function release() {
   flex: 1 1 auto;
   min-width: 0;
   justify-items: start;
+}
+/* The native file control is hidden; this label is what people click, and it keeps focus visible. */
+.pick {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+  padding: 6px 14px 6px 6px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: 12px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.pick:hover:not(.off) {
+  border-color: var(--ink-2);
+}
+.pick:focus-within {
+  box-shadow: 0 0 0 4px var(--mari-soft);
+}
+.pick.off {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pick-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.pick-btn {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 99px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  font-weight: 650;
+}
+.pick-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  color: var(--ink-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .check > span {
   display: flex;
