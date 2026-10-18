@@ -158,23 +158,21 @@
             :required="!form.archive"
           />
         </label>
-        <label v-if="isSuperAdmin" class="adm-field wide">
-          <span>
-            <input v-model="form.archive" type="checkbox" />
-            Archive (dateless historical record)
-          </span>
+        <label v-if="isSuperAdmin" class="adm-check wide">
+          <input v-model="form.archive" type="checkbox" />
+          <span>Archive (dateless historical record)</span>
         </label>
         <div class="wide">
           <p class="adm-kicker">Audience</p>
           <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
         </div>
-        <label v-if="!form.archive" class="adm-field wide check">
-          <span>
+        <div v-if="!form.archive" class="adm-field wide">
+          <label class="adm-check">
             <input v-model="form.is_public" type="checkbox" />
-            Public: also list it on the public Events page
-          </span>
+            <span>Public: also list it on the public Events page</span>
+          </label>
           <small>Otherwise only its audience sees it in the Lounge until it ends.</small>
-        </label>
+        </div>
         <div class="adm-field wide">
           <span>Poster</span>
           <div class="poster">
@@ -987,15 +985,6 @@ async function release() {
   flex: 1 1 auto;
   min-width: 0;
   justify-items: start;
-}
-.check > span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 14px;
-  color: var(--ink);
 }
 .between {
   justify-content: space-between;
