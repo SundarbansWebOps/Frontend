@@ -23,7 +23,12 @@
             <span v-if="new Date(n.starts_at) > new Date()" class="adm-badge">scheduled</span>
           </div>
         </div>
-        <button type="button" class="adm-btn ghost small" @click="edit(n)">Edit</button>
+        <div class="row-end">
+          <button type="button" class="adm-btn ghost small" @click="edit(n)">Edit</button>
+          <button type="button" class="adm-btn danger small" :disabled="busy" @click="remove(n)">
+            Delete
+          </button>
+        </div>
       </li>
     </ul>
     <p v-else-if="!loading" class="adm-empty">No notices yet.</p>
@@ -102,7 +107,12 @@ import { computed, onMounted, ref } from 'vue';
 import AdminDialog from './AdminDialog.vue';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
-import { getAvailableCohorts, listNoticesAdmin, saveNotice } from '../../lib/admin.js';
+import {
+  deleteNotice,
+  getAvailableCohorts,
+  listNoticesAdmin,
+  saveNotice,
+} from '../../lib/admin.js';
 
 const props = defineProps({ lookups: { type: Object, required: true } });
 const emit = defineEmits(['changed']);
@@ -238,6 +248,22 @@ async function write(startsAt) {
     emit('changed');
   } catch (e) {
     formError.value = errorText(e);
+  } finally {
+    busy.value = false;
+  }
+}
+async function remove(n) {
+  if (!confirm(`Delete “${n.title}” for everyone? Members will no longer see it.`)) return;
+  busy.value = true;
+  error.value = '';
+  notice.value = '';
+  try {
+    await deleteNotice(n.id);
+    notice.value = 'Deleted.';
+    await load();
+    emit('changed');
+  } catch (e) {
+    error.value = errorText(e);
   } finally {
     busy.value = false;
   }

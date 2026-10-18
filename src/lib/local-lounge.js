@@ -271,6 +271,12 @@ export const localSupabase = {
         value = null;
         break;
       }
+      case 'hide_my_notice':
+        if (!state.notices.some((n) => n.id === args.p_announcement_id))
+          return fail('notice unavailable');
+        state.notices = state.notices.filter((n) => n.id !== args.p_announcement_id);
+        value = null;
+        break;
       case 'confirm_my_certificate_name':
         if (state.profile.certificate_name_confirmed_at) return fail('certificate name locked');
         state.profile.certificate_name = args.p_name;
