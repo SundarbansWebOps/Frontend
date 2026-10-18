@@ -106,11 +106,7 @@ export const LEGACY = [
   {
     year: 2023,
     secretary: person('Abhishek Ojha', 'Secretary', legacyPhoto('1792094947', 'Abhishek_ojha.png')),
-    deputy: person(
-      'Ravi Kumawat',
-      'Web Admin',
-      legacyPhoto('1792095015', 'Ravi_Kumawat.png')
-    ),
+    deputy: person('Ravi Kumawat', 'Web Admin', legacyPhoto('1792095015', 'Ravi_Kumawat.png')),
     team: team([
       ['Afrin Gowhar', 'GL', legacyPhoto('1792094953', 'Afrin_Gowhar.png')],
       ['Shreyansh Mall', 'GL', legacyPhoto('1792095027', 'shreyansh.png')],
