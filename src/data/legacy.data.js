@@ -1,5 +1,8 @@
 // The last five councils, 2021–2025. Names come from the green workbook rows and
 // Raja's year lists; portraits use the linked Cloudinary photos where available.
+import harshitaJainPhoto from '../assets/legacy/harshita-jain-gl.webp';
+import yuvikaVarunPhoto from '../assets/legacy/yuvika-varun-gl.webp';
+
 const CLOUDINARY = 'https://res.cloudinary.com/l59gy0g2/image/upload';
 const DELIVERY = `${CLOUDINARY}/f_auto,q_auto:good,w_1000,c_limit`;
 const legacyPhoto = (version, file) => `${DELIVERY}/v${version}/sundarbans/teams/${file}`;
@@ -103,9 +106,12 @@ export const LEGACY = [
   {
     year: 2023,
     secretary: person('Abhishek Ojha', 'Secretary', legacyPhoto('1792094947', 'Abhishek_ojha.png')),
-    deputy: person('Ravi Kant', 'Deputy Secretary', legacyPhoto('1792095019', 'ravikant.png')),
+    deputy: person(
+      'Ravi Kumawat',
+      'Deputy Secretary',
+      legacyPhoto('1792095015', 'Ravi_Kumawat.png')
+    ),
     team: team([
-      ['Ravi Kumawat', 'WebOps Head', legacyPhoto('1792095015', 'Ravi_Kumawat.png')],
       ['Afrin Gowhar', 'GL', legacyPhoto('1792094953', 'Afrin_Gowhar.png')],
       ['Shreyansh Mall', 'GL', legacyPhoto('1792095027', 'shreyansh.png')],
       ['Aditya Vaidhya', 'GL', legacyPhoto('1792094950', 'Aditya_Vadiya.png')],
@@ -113,6 +119,8 @@ export const LEGACY = [
       ['Kanak Prajapati', 'GL', legacyPhoto('1792094992', 'Kanak_Prajapati.png')],
       ['Divya Chinmay', 'GL', legacyPhoto('1792094976', 'divya.png')],
       ['Anshi Jain', 'GL', legacyPhoto('1792094964', 'Anshi_jain.png')],
+      ['Yuvika Varun', 'GL', yuvikaVarunPhoto],
+      ['Harshita Jain', 'GL', harshitaJainPhoto],
       ['Namai Chandra', 'GL', legacyPhoto('1792095482', 'Namai_Chandra.png')],
     ]),
   },
