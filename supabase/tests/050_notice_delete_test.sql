@@ -1,5 +1,4 @@
--- pgTAP: notice removal (migration notice_delete). Member hide is per member; organizer delete is
--- for everyone, scope-checked and audited. Self-contained, inside begin … rollback. Ids start with b5.
+-- pgTAP: notice removal. Only organizers delete notices, for everyone, scope-checked and audited. Self-contained, inside begin … rollback. Ids start with b5.
 begin;
 select no_plan();
 
@@ -37,14 +36,10 @@ select lives_ok($$ select public.save_announcement(jsonb_build_object(
   'id','b5100000-0000-4000-8000-000000000001','title','Test notice','body','Oops')) $$,
   'Super Admin posts a house-wide notice');
 
--- ── Member hides it from their own bell ─────────────────────────────────────
+-- ── Members cannot remove notices ───────────────────────────────────────────
 set local request.jwt.claims = '{"sub":"b5000000-0000-4000-8000-000000000003","role":"authenticated"}';
 select is(jsonb_array_length(public.list_my_notices()), 1, 'member sees the notice');
-select lives_ok($$ select public.hide_my_notice('b5100000-0000-4000-8000-000000000001') $$,
-  'member hides the notice');
-select is(jsonb_array_length(public.list_my_notices()), 0, 'hidden notice leaves the member bell');
-set local request.jwt.claims = '{"sub":"b5000000-0000-4000-8000-000000000004","role":"authenticated"}';
-select is(jsonb_array_length(public.list_my_notices()), 1, 'other members still see it');
+select hasnt_function('public', 'hide_my_notice', array['uuid'], 'member hide function is gone');
 select lives_ok($$ select public.set_my_notice_state('b5100000-0000-4000-8000-000000000001', true, true) $$,
   'closing the banner still works');
 select is(jsonb_array_length(public.list_my_notices()), 1, 'banner dismissal keeps the notice in the bell');
