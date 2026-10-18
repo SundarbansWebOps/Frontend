@@ -232,7 +232,9 @@ test('registering an upcoming event persists that exact event into Mine after re
   });
   await page.getByRole('button', { name: 'Back to the river' }).click();
   await expect(page.locator('dialog[open]')).toHaveCount(0);
-  // Dialog teardown precedes the asynchronous history.back navigation.
+  // Dialog teardown precedes the asynchronous history.back navigation, and the URL is the same
+  // on both sides of it, so wait for the dialog's history entry to be consumed.
+  await expect.poll(() => page.evaluate(() => Boolean(history.state?.loungeLayer))).toBe(false);
   await expect(page).toHaveURL(/#\/lounge\?view=events$/);
   await page.reload();
   await page.getByRole('tab', { name: /Mine/ }).click();
