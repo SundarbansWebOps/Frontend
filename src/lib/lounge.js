@@ -127,6 +127,8 @@ export async function listGroups(forms = null, regionId = null) {
 export const listNotices = () => rpc('list_my_notices');
 export const setNoticeState = (id, { read = true, dismiss = false } = {}) =>
   rpc('set_my_notice_state', { p_announcement_id: id, p_read: read, p_dismiss: dismiss });
+export const hideNotice = (id) => rpc('hide_my_notice', { p_announcement_id: id });
+export const deleteNotice = (id) => rpc('delete_announcement', { p_announcement_id: id });
 export const saveNotice = (notice) => rpc('save_announcement', { p_announcement: notice });
 export const listCertificates = () => rpc('list_my_certificates');
 export const confirmCertificateName = (name) =>

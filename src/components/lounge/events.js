@@ -3,7 +3,7 @@
 import { computed, ref } from 'vue';
 import CREST from '../../assets/crest.webp';
 import { MONTH, parseDate } from '../../lib/events.js';
-import { lounge, dismissNotice, readAllNotices, readNotice } from './session.js';
+import { lounge, dismissNotice, readAllNotices, readNotice, removeNotice } from './session.js';
 import { liveOn } from './state.js';
 
 /* ---------- The minute clock ----------
@@ -168,6 +168,10 @@ export const unreadCount = computed(() => notices.value.filter((n) => !isRead(n)
 export function markRead(n) {
   if (!n?.id || isRead(n)) return;
   readNotice(n.id).catch(() => {});
+}
+export function hideNotice(n) {
+  if (!n?.id) return;
+  removeNotice(n.id).catch(() => {});
 }
 export function markAllRead() {
   readAllNotices().catch(() => {});

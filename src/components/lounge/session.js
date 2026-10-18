@@ -15,6 +15,7 @@ import {
   requestRegionChange,
   selectInitialRegion,
   setNoticeState,
+  hideNotice,
   submitForm,
   updateProfile,
 } from '../../lib/lounge.js';
@@ -223,6 +224,18 @@ export async function readNotice(id) {
 
 export async function dismissNotice(id) {
   await updateNotice(id, { read: true, dismiss: true });
+}
+
+export async function removeNotice(id) {
+  lounge.noticeError = '';
+  try {
+    await hideNotice(id);
+    lounge.notices = lounge.notices.filter((n) => n.id !== id);
+  } catch (error) {
+    lounge.noticeError = errorText(error) || 'This notice could not be removed.';
+    await reconcileNotices();
+    throw error;
+  }
 }
 
 export async function readAllNotices() {

@@ -18,6 +18,7 @@ import {
   reviewRegionRequest as loungeReviewRegionRequest,
   saveForm as loungeSaveForm,
   saveNotice as loungeSaveNotice,
+  deleteNotice as loungeDeleteNotice,
   uploadCertificateTemplate as loungeUploadCertificateTemplate,
 } from './lounge.js';
 
@@ -870,6 +871,7 @@ export async function listNoticesAdmin({ page = 0 } = {}) {
 }
 
 export const saveNotice = (notice) => loungeSaveNotice(notice);
+export const deleteNotice = (id) => loungeDeleteNotice(id);
 
 // Student region requests (Q15) and certificate-name requests (SA)
 
