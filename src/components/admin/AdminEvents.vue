@@ -187,7 +187,7 @@
             />
             <div class="poster-acts">
               <label
-                class="drop"
+                class="adm-drop"
                 :class="{ over: dragging, busy: posterBusy }"
                 @dragenter.prevent="dragging = true"
                 @dragover.prevent
@@ -195,7 +195,7 @@
                 @drop.prevent="onPosterDrop"
               >
                 <input
-                  class="pick-input"
+                  class="adm-pick-input"
                   type="file"
                   :accept="POSTER_TYPES.join(',')"
                   aria-label="Upload poster"
@@ -203,13 +203,13 @@
                   @click="needName"
                   @change="onPoster"
                 />
-                <svg class="drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
                 </svg>
-                <span class="drop-title">{{
+                <span class="adm-drop-title">{{
                   form.image_url ? 'Replace poster' : 'Choose a poster image'
                 }}</span>
-                <span class="drop-sub">{{ posterStatus }}</span>
+                <span class="adm-drop-sub">{{ posterStatus }}</span>
               </label>
               <small>
                 JPG, PNG or WebP, up to 10 MB. You can also drop the file onto the box.<template
@@ -260,15 +260,34 @@
             poster.
           </small>
         </label>
-        <label v-if="form.id && !form.certificates_released_at" class="adm-field wide">
+        <div v-if="form.id && !form.certificates_released_at" class="adm-field wide">
           <span>Or upload a certificate template (not the poster)</span>
-          <input
-            class="adm-input"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            @change="onTemplate"
-          />
-        </label>
+          <label
+            class="adm-drop"
+            :class="{ over: templateDragging, busy: templateBusy }"
+            @dragenter.prevent="templateDragging = true"
+            @dragover.prevent
+            @dragleave="templateDragging = false"
+            @drop.prevent="onTemplateDrop"
+          >
+            <input
+              class="adm-pick-input"
+              type="file"
+              :accept="TEMPLATE_TYPES.join(',')"
+              aria-label="Upload certificate template"
+              :disabled="busy"
+              @change="onTemplate"
+            />
+            <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+            </svg>
+            <span class="adm-drop-title">{{
+              form.certificate_template_url ? 'Replace template' : 'Choose a template image'
+            }}</span>
+            <span class="adm-drop-sub">{{ templateStatus }}</span>
+          </label>
+          <small>PNG, JPG or WebP, up to 10 MB. You can also drop the file onto the box.</small>
+        </div>
         <label class="adm-field wide">
           <span>Members’ meeting link (optional)</span>
           <input
@@ -318,14 +337,36 @@
         <p class="adm-note">
           {{ ops.name }} · {{ ops.attendance_mode === 'meet' ? 'Google Meet' : 'Reviewed' }}
         </p>
-        <label class="adm-field">
+        <div class="adm-field">
           <span>Attendance CSV</span>
-          <input class="adm-input" type="file" accept=".csv,text/csv" @change="onAttendFile" />
+          <label
+            class="adm-drop"
+            :class="{ over: attendDragging }"
+            @dragenter.prevent="attendDragging = true"
+            @dragover.prevent
+            @dragleave="attendDragging = false"
+            @drop.prevent="onAttendDrop"
+          >
+            <input
+              class="adm-pick-input"
+              type="file"
+              accept=".csv,text/csv"
+              aria-label="Upload attendance CSV"
+              @change="onAttendFile"
+            />
+            <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+            </svg>
+            <span class="adm-drop-title">{{
+              attendFile ? 'Replace CSV' : 'Choose a CSV file'
+            }}</span>
+            <span class="adm-drop-sub">{{ attendFile || 'No file chosen' }}</span>
+          </label>
           <small>
             Google Meet headers: First name, Last name, Email, Duration. Masked emails stay
             unresolved. Save only after you have reviewed the lists.
           </small>
-        </label>
+        </div>
         <label class="adm-field">
           <span>Import behavior</span>
           <select v-model="attendanceMode" class="adm-input">
@@ -426,6 +467,8 @@ import {
   applyReviewedEligibility,
   POSTER_MAX_BYTES,
   POSTER_TYPES,
+  TEMPLATE_MAX_BYTES,
+  TEMPLATE_TYPES,
   canManageEvent,
   cancelRequest,
   deleteEvent,
@@ -486,6 +529,8 @@ const replaceDelta = computed(() => {
       (row.import_sources ?? [row.import_source]).includes(sourceId) && !keys.has(row.row_key)
   ).length;
 });
+const attendFile = ref('');
+const attendDragging = ref(false);
 const attend = reactive({
   headers: [],
   rows: [],
@@ -741,17 +786,39 @@ function clearPoster() {
 
 const cancelPublish = (e) => act(() => cancelRequest(e.pending_request_id));
 
-async function onTemplate(ev) {
+const templateBusy = ref(false);
+const templateDragging = ref(false);
+const templateStatus = computed(() => {
+  if (templateBusy.value) return 'Uploading…';
+  return form.value?.certificate_template_url ? 'Template saved' : 'No file chosen';
+});
+function onTemplate(ev) {
   const file = ev.target.files?.[0];
+  ev.target.value = '';
+  sendTemplate(file);
+}
+function onTemplateDrop(ev) {
+  templateDragging.value = false;
+  sendTemplate(ev.dataTransfer?.files?.[0]);
+}
+async function sendTemplate(file) {
   if (!file || !form.value?.id) return;
+  if (!TEMPLATE_TYPES.includes(file.type)) {
+    formError.value = 'Use a PNG, JPG or WebP image.';
+    return;
+  }
+  if (file.size > TEMPLATE_MAX_BYTES) {
+    formError.value = 'The image is larger than 10 MB.';
+    return;
+  }
   formError.value = '';
-  busy.value = true;
+  busy.value = templateBusy.value = true;
   try {
     form.value.certificate_template_url = await uploadCertificateTemplate(form.value.id, file);
   } catch (e) {
     formError.value = errorText(e);
   } finally {
-    busy.value = false;
+    busy.value = templateBusy.value = false;
   }
 }
 
@@ -780,6 +847,7 @@ async function openOps(e) {
   preview.value = null;
   attend.headers = [];
   attend.rows = [];
+  attendFile.value = '';
   try {
     existingAttendance.value = await listAttendance(e.id);
   } catch (error) {
@@ -788,11 +856,24 @@ async function openOps(e) {
   }
 }
 
-async function onAttendFile(ev) {
+function onAttendFile(ev) {
   const file = ev.target.files?.[0];
+  ev.target.value = '';
+  readAttendance(file);
+}
+function onAttendDrop(ev) {
+  attendDragging.value = false;
+  readAttendance(ev.dataTransfer?.files?.[0]);
+}
+function readAttendance(file) {
   preview.value = null;
   if (!file || !ops.value) return;
+  if (!/\.csv$/i.test(file.name) && file.type !== 'text/csv') {
+    opsError.value = 'Use a CSV file.';
+    return;
+  }
   opsError.value = '';
+  attendFile.value = file.name;
   const reader = new FileReader();
   reader.onload = async () => {
     try {
@@ -906,65 +987,6 @@ async function release() {
   flex: 1 1 auto;
   min-width: 0;
   justify-items: start;
-}
-/* The native file input is hidden; the drop area is what people click or drop a file onto. */
-.drop {
-  position: relative;
-  display: grid;
-  justify-items: start;
-  gap: 4px;
-  width: 100%;
-  max-width: 400px;
-  padding: 18px;
-  border: 1.5px dashed var(--line-strong);
-  border-radius: 14px;
-  background: var(--paper);
-  color: var(--ink);
-  cursor: pointer;
-  transition:
-    border-color 0.2s,
-    background 0.2s;
-}
-.drop:hover,
-.drop.over {
-  border-color: var(--mari);
-}
-.drop.over {
-  background: var(--mari-soft);
-}
-.drop:focus-within {
-  box-shadow: 0 0 0 4px var(--mari-soft);
-}
-.drop.busy {
-  cursor: progress;
-  opacity: 0.7;
-}
-.drop-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  color: var(--ink-2);
-}
-.drop-title {
-  font-size: 15px;
-  font-weight: 650;
-}
-.drop-sub {
-  font-size: 13.5px;
-  color: var(--ink-2);
-  overflow-wrap: anywhere;
-}
-.pick-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
 }
 .check > span {
   display: flex;

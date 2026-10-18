@@ -92,14 +92,34 @@
 
     <form class="adm-card adm-form wide-col" @submit.prevent="importCsv">
       <p class="adm-kicker wide">Upload a CSV</p>
-      <label class="adm-field wide">
+      <div class="adm-field wide">
         <span>File</span>
-        <input class="adm-input" type="file" accept=".csv,text/csv" @change="onFile" />
+        <label
+          class="adm-drop"
+          :class="{ over: csvDragging }"
+          @dragenter.prevent="csvDragging = true"
+          @dragover.prevent
+          @dragleave="csvDragging = false"
+          @drop.prevent="onFileDrop"
+        >
+          <input
+            class="adm-pick-input"
+            type="file"
+            accept=".csv,text/csv"
+            aria-label="Upload roster CSV"
+            @change="onFile"
+          />
+          <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+          </svg>
+          <span class="adm-drop-title">{{ csvFile ? 'Replace CSV' : 'Choose a CSV file' }}</span>
+          <span class="adm-drop-sub">{{ csvFile || 'No file chosen' }}</span>
+        </label>
         <small>
           Map the header row to email (required) and optional name, region, phone and gender.
           Duplicate emails in the file are kept once. Existing members are not overwritten.
         </small>
-      </label>
+      </div>
       <template v-if="csv.headers.length">
         <label v-for="field in CSV_FIELDS" :key="field.key" class="adm-field">
           <span>{{ field.label }}</span>
@@ -301,6 +321,8 @@ const csvPreview = computed(() => uniqueCsv.value.slice(0, 8));
 const csvResult = ref(null);
 const csvMsg = ref('');
 const csvOk = ref(false);
+const csvFile = ref('');
+const csvDragging = ref(false);
 
 let loadId = 0;
 async function load(more = false) {
@@ -393,11 +415,26 @@ async function addMany() {
 
 function onFile(ev) {
   const file = ev.target.files?.[0];
+  ev.target.value = '';
+  readRoster(file);
+}
+function onFileDrop(ev) {
+  csvDragging.value = false;
+  readRoster(ev.dataTransfer?.files?.[0]);
+}
+function readRoster(file) {
   csvResult.value = null;
   csvMsg.value = '';
   csv.headers = [];
   csv.rows = [];
+  csvFile.value = '';
   if (!file) return;
+  if (!/\.csv$/i.test(file.name) && file.type !== 'text/csv') {
+    csvOk.value = false;
+    csvMsg.value = 'Use a CSV file.';
+    return;
+  }
+  csvFile.value = file.name;
   const reader = new FileReader();
   reader.onload = () => {
     const rows = parseCsv(String(reader.result || ''));

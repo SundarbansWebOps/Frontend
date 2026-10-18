@@ -374,6 +374,67 @@ textarea.adm-input {
   gap: 12px;
 }
 
+/* File pickers: a dashed drop area. The native input stays in the DOM, visually hidden and
+   still focusable; clicking or dropping a file on the box chooses it. */
+.adm-drop {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  width: 100%;
+  max-width: 400px;
+  padding: 18px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.adm-drop:hover,
+.adm-drop.over {
+  border-color: var(--mari);
+}
+.adm-drop.over {
+  background: var(--mari-soft);
+}
+.adm-drop:focus-within {
+  box-shadow: 0 0 0 4px var(--mari-soft);
+}
+.adm-drop.busy {
+  cursor: progress;
+  opacity: 0.7;
+}
+.adm-drop-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--ink-2);
+}
+.adm-drop-title {
+  font-size: 15px;
+  font-weight: 650;
+}
+.adm-drop-sub {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.adm-pick-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @media (max-width: 640px) {
   .adm-form {
     grid-template-columns: minmax(0, 1fr);
