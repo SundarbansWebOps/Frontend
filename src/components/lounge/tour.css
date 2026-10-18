@@ -1497,8 +1497,9 @@
   top: 76px;
   width: min(420px, 38vw);
   max-height: calc(100% - 88px);
-  overflow: auto;
-  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding-inline: 20px;
   opacity: 0;
   visibility: hidden;
@@ -1507,6 +1508,15 @@
     opacity 0.3s ease-out,
     transform 0.5s var(--ease-out),
     visibility 0s linear 0.3s;
+}
+
+:where(html.lounge-active) .tour .t-card-body {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  /* Room for focus rings, which the scroller would otherwise clip. */
+  margin: -4px;
+  padding: 4px;
 }
 
 :where(html.lounge-active) .tour .t-card.in {

@@ -432,92 +432,95 @@
         aria-labelledby="t-card-h"
         tabindex="-1"
       >
-        <div class="f-top">
-          <div>
-            <p class="gp-kicker">The ghat</p>
-            <h2 id="t-card-h">{{ cardTitle }}</h2>
-          </div>
-          <!-- Live preview: exactly what your lantern (night) or kite (day) will say. -->
-          <div v-if="!saved" class="f-preview" aria-hidden="true" inert>
-            <NameBeacon :name="nameDraft" :cta="false" :halo="false" :tappable="false" />
-          </div>
-        </div>
-        <form v-if="!saved" class="who" @submit.prevent="save">
-          <label class="f-name">
-            <span>Your name</span>
-            <input
-              ref="nameEl"
-              v-model="nameDraft"
-              type="text"
-              autocomplete="name"
-              maxlength="60"
-              placeholder="The name you go by"
-              aria-describedby="t-name-help"
-            />
-            <small id="t-name-help"
-              >It goes on your {{ objectWord }}, and it's what the house calls you.</small
-            >
-          </label>
-          <label class="f-name">
-            <span>Phone <small>optional</small></span>
-            <input
-              v-model="phoneDraft"
-              type="tel"
-              inputmode="tel"
-              autocomplete="tel"
-              maxlength="20"
-              placeholder="For later forms"
-            />
-          </label>
-          <div class="f-fixed gp-inset">
+        <!-- The body scrolls, not the card, so the lotus bands stay on the card's edges. -->
+        <div ref="cardBodyEl" class="t-card-body">
+          <div class="f-top">
             <div>
-              <span class="f-k">Roll</span>
-              <span class="f-v">{{ member.roll }}</span>
+              <p class="gp-kicker">The ghat</p>
+              <h2 id="t-card-h">{{ cardTitle }}</h2>
             </div>
-            <div>
-              <span class="f-k">Region</span>
-              <span class="f-v">{{ member.region.name }}</span>
+            <!-- Live preview: exactly what your lantern (night) or kite (day) will say. -->
+            <div v-if="!saved" class="f-preview" aria-hidden="true" inert>
+              <NameBeacon :name="nameDraft" :cta="false" :halo="false" :tappable="false" />
             </div>
-            <p class="f-wrong">
-              <template v-if="!member.region_id">
-                Choose your region from Edit profile after entering. It saves immediately.
-              </template>
-              <template v-else>
-                Wrong? Ask {{ member.coordinator.name }} to correct your region. Region changes need
-                coordinator approval.
-              </template>
+          </div>
+          <form v-if="!saved" class="who" @submit.prevent="save">
+            <label class="f-name">
+              <span>Your name</span>
+              <input
+                ref="nameEl"
+                v-model="nameDraft"
+                type="text"
+                autocomplete="name"
+                maxlength="60"
+                placeholder="The name you go by"
+                aria-describedby="t-name-help"
+              />
+              <small id="t-name-help"
+                >It goes on your {{ objectWord }}, and it's what the house calls you.</small
+              >
+            </label>
+            <label class="f-name">
+              <span>Phone <small>optional</small></span>
+              <input
+                v-model="phoneDraft"
+                type="tel"
+                inputmode="tel"
+                autocomplete="tel"
+                maxlength="20"
+                placeholder="For later forms"
+              />
+            </label>
+            <div class="f-fixed gp-inset">
+              <div>
+                <span class="f-k">Roll</span>
+                <span class="f-v">{{ member.roll }}</span>
+              </div>
+              <div>
+                <span class="f-k">Region</span>
+                <span class="f-v">{{ member.region.name }}</span>
+              </div>
+              <p class="f-wrong">
+                <template v-if="!member.region_id">
+                  Choose your region from Edit profile after entering. It saves immediately.
+                </template>
+                <template v-else>
+                  Wrong? Ask {{ member.coordinator.name }} to correct your region. Region changes
+                  need coordinator approval.
+                </template>
+              </p>
+            </div>
+            <p class="f-cert">
+              {{
+                certName
+                  ? `Certificates print ${certName}. Lounge name edits do not change that.`
+                  : 'A certificate name is asked only when an event releases one for you.'
+              }}
             </p>
-          </div>
-          <p class="f-cert">
-            {{
-              certName
-                ? `Certificates print ${certName}. Lounge name edits do not change that.`
-                : 'A certificate name is asked only when an event releases one for you.'
-            }}
-          </p>
-          <p v-if="saveError" class="ff-err" role="alert">{{ saveError }}</p>
-          <div class="f-acts">
-            <button type="submit" class="gp-btn is-big" :disabled="!canSave || saving">
-              {{ saving ? 'Saving…' : 'Save' }}
+            <p v-if="saveError" class="ff-err" role="alert">{{ saveError }}</p>
+            <div class="f-acts">
+              <button type="submit" class="gp-btn is-big" :disabled="!canSave || saving">
+                {{ saving ? 'Saving…' : 'Save' }}
+              </button>
+              <button type="button" class="gp-btn is-ghost is-big" @click="notNow">Not now</button>
+            </div>
+          </form>
+          <div v-else class="who done">
+            <p class="f-sum">
+              <span>{{ savedName }} · {{ member.roll }} · {{ member.region.name }}</span>
+              <button type="button" class="edit" @click="saved = false">Edit</button>
+            </p>
+            <p class="f-help">Your groups, live sessions and house news are inside.</p>
+            <button
+              ref="enterEl"
+              type="button"
+              class="gp-btn is-big is-block"
+              :aria-busy="entering"
+              @click="enter"
+            >
+              Enter the Lounge
             </button>
-            <button type="button" class="gp-btn is-ghost is-big" @click="notNow">Not now</button>
           </div>
-        </form>
-        <div v-else class="who done">
-          <p class="f-sum">
-            <span>{{ savedName }} · {{ member.roll }} · {{ member.region.name }}</span>
-            <button type="button" class="edit" @click="saved = false">Edit</button>
-          </p>
-          <p class="f-help">Your groups, live sessions and house news are inside.</p>
-          <button
-            ref="enterEl"
-            type="button"
-            class="gp-btn is-big is-block"
-            :aria-busy="entering"
-            @click="enter"
-          >
-            Enter the Lounge
-          </button>
         </div>
       </section>
     </div>
@@ -715,6 +718,7 @@ const waterEl = ref(null);
 const noteEl = ref(null);
 const cueEl = ref(null);
 const cardEl = ref(null);
+const cardBodyEl = ref(null);
 const nameEl = ref(null);
 const enterEl = ref(null);
 const sheetEl = ref(null);
@@ -1431,8 +1435,8 @@ function stopScroll(e) {
   }
   /* A short screen (a phone held sideways) can make the ghat card taller than the stage:
      it scrolls inside itself (overscroll contained), the page still does not. */
-  const card = cardEl.value;
-  if (e.type !== 'keydown' && card?.contains(e.target) && card.scrollHeight > card.clientHeight + 1)
+  const body = cardBodyEl.value;
+  if (e.type !== 'keydown' && body?.contains(e.target) && body.scrollHeight > body.clientHeight + 1)
     return;
   if (e.type === 'keydown') {
     const t = e.target;
