@@ -38,10 +38,8 @@
           <div class="top">
             <div>
               <p class="adm-kicker">Region change</p>
-              <b class="name">{{
-                r.member?.preferred_name || r.member?.full_name || r.member?.email || r.member_id
-              }}</b>
-              <span class="mono code">{{ r.member?.member_code }}</span>
+              <b class="name">{{ nameOf(r.member) }}</b>
+              <p class="ident mono">{{ identOf(r.member) || r.member_id }}</p>
             </div>
             <span class="adm-badge">{{ r.status }}</span>
           </div>
@@ -83,9 +81,8 @@
           <div class="top">
             <div>
               <p class="adm-kicker">Certificate name</p>
-              <b class="name">{{
-                r.member?.preferred_name || r.member?.full_name || r.member?.email || r.member_id
-              }}</b>
+              <b class="name">{{ nameOf(r.member) }}</b>
+              <p class="ident mono">{{ identOf(r.member) || r.member_id }}</p>
             </div>
             <span class="adm-badge">{{ r.status }}</span>
           </div>
@@ -128,9 +125,7 @@
           <div>
             <p class="adm-kicker">{{ REQUEST_LABEL[r.type] ?? r.type }}</p>
             <b class="name">{{ targetName(r) }}</b>
-            <span v-if="r.type !== 'event_publish'" class="mono code">{{
-              r.target?.member_code ?? r.target_snapshot?.member?.member_code
-            }}</span>
+            <p v-if="r.type !== 'event_publish'" class="ident mono">{{ identOf(targetOf(r)) }}</p>
           </div>
           <span class="adm-badge" :class="tone(r.status)">{{ r.status }}</span>
         </div>
@@ -224,10 +219,16 @@ const day = (iso) =>
     hour: 'numeric',
     minute: '2-digit',
   });
+// Students added by email alone have no name yet, so the email and roll number always show.
+const nameOf = (m) => m?.full_name || m?.preferred_name || 'Name not set';
+const identOf = (m) => [m?.email, m?.member_code].filter(Boolean).join(' · ');
+const targetOf = (r) => r.target ?? r.target_snapshot?.member;
 const targetName = (r) =>
   r.type === 'event_publish'
     ? (r.requested_change?.event_name ?? 'Event')
-    : (r.target?.full_name ?? r.target_snapshot?.member?.full_name ?? 'Former member');
+    : targetOf(r)
+      ? nameOf(targetOf(r))
+      : 'Former member';
 
 const FIELD = {
   full_name: 'Full name',
@@ -366,10 +367,11 @@ const reviewCert = (r, approve) =>
   font-size: 17px;
   font-weight: 650;
 }
-.code {
-  margin-left: 8px;
+.ident {
+  margin: 2px 0 0;
   font-size: 12.5px;
   color: var(--ink-3);
+  overflow-wrap: anywhere;
 }
 .what {
   margin: 0;

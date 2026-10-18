@@ -41,9 +41,16 @@ export const requestRegionChange = (regionId, reason) =>
   rpc('request_my_region_change', { p_region_id: regionId, p_reason: reason });
 export async function listRegionRequests() {
   return unwrap(
-    await (await sb()).from('member_region_requests').select('*').order('requested_at', {
-      ascending: false,
-    })
+    await (
+      await sb()
+    )
+      .from('member_region_requests')
+      .select(
+        '*, member:members!member_region_requests_member_id_fkey(full_name, preferred_name, email, member_code)'
+      )
+      .order('requested_at', {
+        ascending: false,
+      })
   );
 }
 export const reviewRegionRequest = (id, approve, note = '') =>
@@ -135,9 +142,16 @@ export const requestCertificateNameChange = (name, reason) =>
   rpc('request_certificate_name_change', { p_name: name, p_reason: reason });
 export async function listCertificateNameRequests() {
   return unwrap(
-    await (await sb()).from('certificate_name_requests').select('*').order('requested_at', {
-      ascending: false,
-    })
+    await (
+      await sb()
+    )
+      .from('certificate_name_requests')
+      .select(
+        '*, member:members!certificate_name_requests_member_id_fkey(full_name, preferred_name, email, member_code)'
+      )
+      .order('requested_at', {
+        ascending: false,
+      })
   );
 }
 export const reviewCertificateNameRequest = (id, approve, note = '') =>
