@@ -48,8 +48,10 @@
                 <span class="who-text">
                   <span class="who-name">{{ who.name }}</span>
                   <span class="who-role"
-                    >{{ k ? 'Deputy' : 'Secretary'
-                    }}<span v-if="k" class="role-long"> Secretary</span></span
+                    >{{ who.role === 'Deputy Secretary' ? 'Deputy' : who.role
+                    }}<span v-if="who.role === 'Deputy Secretary'" class="role-long">
+                      Secretary</span
+                    ></span
                   >
                 </span>
               </span>

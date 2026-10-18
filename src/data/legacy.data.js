@@ -69,7 +69,7 @@ export const LEGACY = [
     secretary: person('Anshuman Bhasin', 'Secretary', anshuman2021),
     deputy: person('Utkarsh Gaurav', 'Deputy Secretary', utkarsh2021),
     team: team([
-      ['Abhigyan Das', 'WebOps Head', AVATARS.abhigyan, true],
+      ['Abhigyan Das', 'Web Admin', AVATARS.abhigyan, true],
       ['Bhairavee Naik', 'GL', AVATARS.bhairavee, true],
       ['Rituparno Dhar', 'GL', AVATARS.rituparno, true],
       ['Manaswita Mandal', 'GL', AVATARS.manaswita, true],
@@ -106,11 +106,7 @@ export const LEGACY = [
   {
     year: 2023,
     secretary: person('Abhishek Ojha', 'Secretary', legacyPhoto('1792094947', 'Abhishek_ojha.png')),
-    deputy: person(
-      'Ravi Kumawat',
-      'Deputy Secretary',
-      legacyPhoto('1792095015', 'Ravi_Kumawat.png')
-    ),
+    deputy: person('Ravi Kumawat', 'Web Admin', legacyPhoto('1792095015', 'Ravi_Kumawat.png')),
     team: team([
       ['Afrin Gowhar', 'GL', legacyPhoto('1792094953', 'Afrin_Gowhar.png')],
       ['Shreyansh Mall', 'GL', legacyPhoto('1792095027', 'shreyansh.png')],

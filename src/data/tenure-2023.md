@@ -2,7 +2,6 @@
 
 **Tagline:** Inspire. Innovate. Impact.  
 **Secretary:** Abhishek Ojha  
-**Deputy Secretary:** Ravi Kumawat  
 **Web Admin:** Ravi Kumawat  
 **Tenure:** 2023–24
 
