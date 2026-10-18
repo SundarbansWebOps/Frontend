@@ -65,7 +65,7 @@
       </button>
     </div>
 
-    <AdminDialog v-if="detail" ref="dlg" :title="detailTitle" @close="detail = null">
+    <AdminDialog v-if="detail" ref="dlg" side :title="detailTitle" @close="detail = null">
       <template v-if="mode === 'view'">
         <dl class="adm-facts">
           <div>

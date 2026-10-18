@@ -1,6 +1,12 @@
 /* Shared pieces of the admin lounge (all classes start with adm-). Values come from tokens.css;
    the shapes copy the public site: Verify's fields and buttons, the section rail's chips. */
 
+/* While an AdminDialog is open, the page behind it stays still. Dialogs own their own scrolling. */
+html.adm-sheet-open {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
 .adm-card {
   padding: 18px 20px;
   border: 1px solid var(--line);
@@ -170,6 +176,63 @@ textarea.adm-input {
   border-color: var(--ink);
   background: var(--ink);
   color: var(--paper);
+}
+
+/* Checkbox: a visible box that fills with the accent and draws a tick when ticked. */
+.adm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink);
+  cursor: pointer;
+}
+.adm-check input {
+  appearance: none;
+  display: grid;
+  place-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--card);
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.adm-check input::before {
+  content: '';
+  width: 5px;
+  height: 10px;
+  border: solid var(--on-mari);
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg) scale(0);
+  transition: transform 0.15s var(--ease-out);
+}
+.adm-check input:checked {
+  border-color: var(--mari);
+  background: var(--mari);
+}
+.adm-check input:checked::before {
+  transform: translateY(-1px) rotate(45deg) scale(1);
+}
+.adm-check:hover input:not(:disabled) {
+  border-color: var(--ink-2);
+}
+.adm-check input:focus-visible {
+  outline: 2px solid var(--mari);
+  outline-offset: 2px;
+}
+.adm-check input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.adm-check:has(input:disabled) {
+  color: var(--ink-3);
+  cursor: not-allowed;
 }
 .adm-badge {
   display: inline-block;

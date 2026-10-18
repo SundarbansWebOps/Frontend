@@ -162,8 +162,8 @@ test('form builder keeps field order, types, options and a post-submit invite', 
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('Title').fill('Community join');
   await dialog.getByLabel('WhatsApp invite (optional)').fill('https://chat.whatsapp.com/AbC123xyz');
-  await dialog.getByRole('button', { name: 'Add field' }).click();
-  await dialog.getByLabel('Label').fill('Which games');
+  await dialog.getByRole('button', { name: 'Add question' }).click();
+  await dialog.getByLabel('Question', { exact: true }).fill('Which games');
   await dialog.getByLabel('Type').selectOption('multiselect');
   await dialog.getByLabel('Options (one per line)').fill('Valorant\nBGMI');
   await dialog.getByText('Allow “Other”').click();
