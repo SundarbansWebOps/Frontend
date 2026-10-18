@@ -23,8 +23,10 @@
        a page reads its props once, so a move between them needs a fresh instance. -->
   <RouterView v-slot="{ Component, route: current }">
     <component :is="Component" :key="current.matched.at(-1)?.path" />
+    <!-- Pages are lazy chunks: until one loads there is no page above the footer, so it would
+         flash right under the nav on every refresh. -->
+    <SiteFooter v-if="Component && !isStandalone" />
   </RouterView>
-  <SiteFooter v-if="!isStandalone" />
   <CourseSheet />
   <LoungeDoor v-if="door.rect" overlay entry :rect="door.rect" @done="endDoor" />
   <!-- matched: before the first route resolves, route.path reads '/' on every page. -->
