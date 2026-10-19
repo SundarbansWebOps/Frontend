@@ -97,7 +97,7 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
   max-width: none;
   height: 100%;
   margin: 0;
-  padding: 0 clamp(16px, 2.2vw, 40px);
+  padding: 0 var(--admin-gutter);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -272,10 +272,6 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 }
 
 @media (max-width: 1020px) {
-  .anav-in {
-    padding: 0 clamp(14px, 2vw, 20px);
-  }
-
   .anav-links {
     gap: 0;
   }
@@ -307,10 +303,6 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 }
 
 @media (max-width: 760px) {
-  .anav-in {
-    padding: 0 12px;
-  }
-
   .anav-links {
     position: static;
     transform: none;
@@ -333,7 +325,6 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 @media (max-width: 560px) {
   .anav-in {
     gap: 2px;
-    padding: 0 8px;
   }
 
   .anav-brand img {

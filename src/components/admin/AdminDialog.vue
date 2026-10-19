@@ -82,6 +82,7 @@ defineExpose({ close });
   border-radius: var(--r);
   background: var(--card);
   color: var(--ink);
+  color-scheme: inherit;
   box-shadow: var(--shadow);
   font-family: var(--font);
   outline: none;
@@ -100,7 +101,7 @@ defineExpose({ close });
   width: min(920px, calc(100vw - 32px));
 }
 .adm-dlg.adm-drop {
-  inset: calc(var(--nav-h) + 8px) max(24px, calc((100vw - 1240px) / 2 + 24px)) auto auto;
+  inset: calc(var(--nav-h) + 8px) var(--admin-gutter, 16px) auto auto;
   width: min(360px, calc(100vw - 32px));
   max-height: calc(100dvh - var(--nav-h) - 24px);
   margin: 0;
@@ -227,11 +228,6 @@ defineExpose({ close });
     width: min(620px, 100vw);
   }
 }
-@media (max-width: 1020px) {
-  .adm-dlg.adm-drop {
-    right: 16px;
-  }
-}
 @media (max-width: 760px) {
   .adm-dlg,
   .adm-dlg.adm-wide {
@@ -243,7 +239,7 @@ defineExpose({ close });
     max-height: 100dvh;
   }
   .adm-dlg.adm-drop {
-    inset: calc(var(--nav-h) + 8px) 14px auto auto;
+    inset: calc(var(--nav-h) + 8px) var(--admin-gutter, 12px) auto auto;
     width: min(360px, calc(100vw - 28px));
   }
   .adm-dlg.adm-fullscreen {
