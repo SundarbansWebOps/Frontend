@@ -49,14 +49,7 @@
           aria-label="Your account"
           @click="emit('profile')"
         >
-          <img
-            v-if="avatarUrl"
-            :src="avatarUrl"
-            alt=""
-            referrerpolicy="no-referrer"
-            @error="avatarFailed"
-          />
-          <span v-else class="anav-initials" aria-hidden="true">{{ avatarInitials }}</span>
+          <span class="anav-initials" aria-hidden="true">{{ avatarInitials }}</span>
         </button>
       </div>
     </div>
@@ -70,9 +63,7 @@ import CREST from '../../assets/crest.webp';
 defineProps({
   membersVisible: Boolean,
   theme: { type: String, required: true },
-  avatarUrl: { type: String, default: '' },
   avatarInitials: { type: String, default: 'A' },
-  avatarFailed: { type: Function, required: true },
 });
 const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 </script>

@@ -3,9 +3,7 @@
     <AdminNav
       :members-visible="membersVisible"
       :theme="theme"
-      :avatar-url="avatarUrl"
       :avatar-initials="avatarInitials"
-      :avatar-failed="avatarFailed"
       @add-students="create('roster')"
       @create="createOpen = true"
       @profile="profileOpen = true"
@@ -150,15 +148,7 @@ import AdminRequests from '../components/admin/AdminRequests.vue';
 import AdminPositions from '../components/admin/AdminPositions.vue';
 import AdminAudit from '../components/admin/AdminAudit.vue';
 import '../components/admin/admin.css';
-import {
-  auth,
-  avatarFailed,
-  avatarUrl,
-  errorText,
-  isRc,
-  isSuperAdmin,
-  signOut,
-} from '../lib/auth.js';
+import { auth, errorText, isRc, isSuperAdmin, signOut } from '../lib/auth.js';
 import { loadAdminOverview, loadLookups } from '../lib/admin.js';
 import { nameOf } from '../lib/admin-display.js';
 import { theme, toggleTheme } from '../lib/theme.js';
