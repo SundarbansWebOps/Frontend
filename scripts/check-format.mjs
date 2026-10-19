@@ -1,5 +1,8 @@
 import { execFileSync } from 'node:child_process';
+import path from 'node:path';
 import { check, getFileInfo, resolveConfig } from 'prettier';
+
+const ignorePath = path.join(process.cwd(), '.prettierignore');
 
 const args = process.argv.slice(2);
 const rangeIndex = args.indexOf('--range');
@@ -34,7 +37,7 @@ let failed = false;
 
 for (const file of files) {
   try {
-    const info = await getFileInfo(file);
+    const info = await getFileInfo(file, { ignorePath });
 
     if (info.ignored || !info.inferredParser) {
       continue;
