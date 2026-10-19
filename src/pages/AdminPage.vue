@@ -4,6 +4,7 @@
       :members-visible="membersVisible"
       :theme="theme"
       :avatar-url="avatarUrl"
+      :avatar-initials="avatarInitials"
       :avatar-failed="avatarFailed"
       @add-students="create('roster')"
       @create="createOpen = true"
@@ -164,6 +165,24 @@ import { theme, toggleTheme } from '../lib/theme.js';
 const route = useRoute();
 const router = useRouter();
 const membersVisible = computed(() => isSuperAdmin.value || isRc.value);
+const profileName = computed(() => {
+  const metadata = auth.session?.user?.user_metadata ?? {};
+  return (
+    metadata.full_name?.trim() ||
+    metadata.name?.trim() ||
+    auth.profile?.full_name?.trim() ||
+    auth.profile?.preferred_name?.trim() ||
+    'Admin'
+  );
+});
+const avatarInitials = computed(() =>
+  profileName.value
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toLocaleUpperCase()
+);
 const allTabs = [
   { id: 'overview', label: 'Overview', icon: 'home' },
   {

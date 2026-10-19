@@ -120,7 +120,8 @@ begin
           and (f.opens_at is null or f.opens_at <= now()) and (f.closes_at is null or f.closes_at > now()) order by f.closes_at, f.id limit 4) f),
     'notices', (select coalesce(jsonb_agg(to_jsonb(n) order by n.starts_at desc, n.id), '[]')
       from (select n.id, n.title, n.starts_at, n.ends_at, n.region_id from public.announcements n
-        where v_members and private.manages_scope(n.region_id, n.community_id) and n.starts_at <= now() and (n.ends_at is null or n.ends_at > now()) order by n.starts_at desc, n.id limit 4) n),
+        where v_members and private.manages_scope(n.region_id, n.community_id) and n.published_at is not null
+          and n.starts_at <= now() and (n.ends_at is null or n.ends_at > now()) order by n.starts_at desc, n.id limit 4) n),
     'joins', (select coalesce(jsonb_agg(jsonb_build_object('day', d.day::date, 'count',
       (select count(*) from members m where (m.created_at at time zone 'Asia/Kolkata')::date = d.day::date)) order by d.day), '[]')
       from generate_series((now() at time zone 'Asia/Kolkata')::date - 6, (now() at time zone 'Asia/Kolkata')::date, interval '1 day') d(day) where v_members),

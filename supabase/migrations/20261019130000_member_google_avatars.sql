@@ -98,7 +98,7 @@ begin
       then private.google_avatar_url(new.raw_user_meta_data)
     else null
   end
-  where id = new.id;
+  where id = new.id and anonymised_at is null;
   return new;
 end;
 $$;
@@ -111,6 +111,20 @@ create trigger sync_member_google_avatar_after_metadata_update
   when (old.raw_user_meta_data is distinct from new.raw_user_meta_data)
   execute function private.sync_member_google_avatar();
 
+-- Anonymized members must not retain or regain a profile image.
+create or replace function private.clear_private_on_anonymise()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  delete from public.member_private where member_id = new.id;
+  update public.members set google_avatar_url = null where id = new.id and google_avatar_url is not null;
+  return null;
+end;
+$$;
+
 -- Existing member rows are backfilled from Auth; member RLS continues to govern who can read them.
 update public.members m
 set google_avatar_url = case
@@ -119,4 +133,4 @@ set google_avatar_url = case
   else null
 end
 from auth.users u
-where u.id = m.id;
+where u.id = m.id and m.anonymised_at is null;

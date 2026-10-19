@@ -56,7 +56,7 @@
             referrerpolicy="no-referrer"
             @error="avatarFailed"
           />
-          <img v-else :src="CREST" alt="" />
+          <span v-else class="anav-initials" aria-hidden="true">{{ avatarInitials }}</span>
         </button>
       </div>
     </div>
@@ -71,6 +71,7 @@ defineProps({
   membersVisible: Boolean,
   theme: { type: String, required: true },
   avatarUrl: { type: String, default: '' },
+  avatarInitials: { type: String, default: 'A' },
   avatarFailed: { type: Function, required: true },
 });
 const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
@@ -255,6 +256,8 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 
 .anav-profile {
   overflow: hidden;
+  width: 38px;
+  height: 38px;
   border: 0;
   background: transparent;
 }
@@ -264,6 +267,19 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.anav-initials {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--mari);
+  color: var(--on-mari);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 1020px) {

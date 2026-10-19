@@ -282,3 +282,7 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 ## 2026-10-19 — Student region review notes appear in the Lounge profile
 
 **Why:** The review note is the admin/coordinator's reply to the requesting student. Show the latest request status and note beside the student's region details in Edit profile, using the existing requester-scoped row access.
+
+## 2026-10-19 — Hold the stale audit migration outside the runnable migration set
+
+**Why:** `20261010000000_audit_fixes.sql` was never applied remotely and conflicts with `20261016120000_soft_delete_event_scope.sql`: it recreates an existing function and narrows the event policy. Preserve the source under `supabase/held-migrations/`; do not mark it applied or run it with `--include-all`. Reconcile any still-needed fixes in reviewed forward migrations.
