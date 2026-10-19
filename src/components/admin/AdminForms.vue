@@ -59,8 +59,8 @@
           This form is published. Saving changes updates it straight away.
         </p>
 
-        <section class="grp">
-          <h3 class="adm-kicker">Details</h3>
+        <section class="grp" aria-labelledby="form-details-heading">
+          <h3 id="form-details-heading" class="adm-kicker">Details</h3>
           <div class="adm-form">
             <label class="adm-field wide">
               <span>Title</span>
@@ -73,8 +73,8 @@
           </div>
         </section>
 
-        <section class="grp">
-          <h3 class="adm-kicker">Who sees it</h3>
+        <section class="grp" aria-labelledby="form-audience-heading">
+          <h3 id="form-audience-heading" class="adm-kicker">Who sees it</h3>
           <div class="adm-form">
             <label class="adm-field">
               <span>Form kind</span>
@@ -129,8 +129,8 @@
           </div>
         </section>
 
-        <section class="grp">
-          <h3 class="adm-kicker">Responses</h3>
+        <section class="grp" aria-labelledby="form-responses-heading">
+          <h3 id="form-responses-heading" class="adm-kicker">Responses</h3>
           <div class="adm-form">
             <label class="adm-check wide">
               <input v-model="form.is_open" type="checkbox" />
@@ -148,13 +148,13 @@
           </div>
         </section>
 
-        <section class="grp">
-          <h3 class="adm-kicker">Audience</h3>
+        <section class="grp" aria-labelledby="form-cohorts-heading">
+          <h3 id="form-cohorts-heading" class="adm-kicker">Audience</h3>
           <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
         </section>
 
-        <section class="grp">
-          <h3 class="adm-kicker">WhatsApp invite</h3>
+        <section class="grp" aria-labelledby="form-invite-heading">
+          <h3 id="form-invite-heading" class="adm-kicker">WhatsApp invite</h3>
           <div class="adm-form">
             <label class="adm-field wide">
               <span>WhatsApp invite (optional)</span>
@@ -177,8 +177,8 @@
           </div>
         </section>
 
-        <section class="grp">
-          <h3 class="adm-kicker">Questions</h3>
+        <section class="grp" aria-labelledby="form-questions-heading">
+          <h3 id="form-questions-heading" class="adm-kicker">Questions</h3>
           <p class="adm-note">Students answer in this order.</p>
           <ol class="questions">
             <li v-for="(field, i) in form.fields" :key="field._id" class="adm-card question">

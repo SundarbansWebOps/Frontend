@@ -97,7 +97,7 @@
         </div></AdminDialog
       >
       <AdminDialog v-if="profileOpen" title="Your account" drop @close="profileOpen = false">
-        <section class="adm-profile" aria-label="Admin account details">
+        <section class="adm-profile" aria-labelledby="admin-profile-heading">
           <div class="adm-profile-identity">
             <span class="adm-profile-avatar" aria-hidden="true">
               <img
@@ -111,7 +111,7 @@
             </span>
             <div class="adm-profile-person">
               <p class="adm-kicker">Admin profile</p>
-              <h3>{{ profileName }}</h3>
+              <h3 id="admin-profile-heading">{{ profileName }}</h3>
               <p class="adm-profile-email">{{ auth.profile?.email || 'Signed-in admin' }}</p>
             </div>
           </div>
@@ -129,20 +129,14 @@
               "
             >
               <span class="adm-profile-action-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
-                  <path d="M7 9h.01M11 9h.01M15 9h.01M7 13h.01M11 13h.01M15 13h2" />
-                </svg>
+                <LineIcon name="keyboard" />
               </span>
               <span>Keyboard shortcuts</span>
               <kbd>?</kbd>
             </button>
             <button type="button" class="adm-profile-action" @click="leave">
               <span class="adm-profile-action-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M10 17l5-5-5-5M15 12H3" />
-                  <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
-                </svg>
+                <LineIcon name="logout" />
               </span>
               <span>Sign out</span>
               <LineIcon name="next" />

@@ -24,7 +24,7 @@
     <header class="adm-dialog-head">
       <h2 :id="`${uid}-h`" class="head">{{ title }}</h2>
       <button type="button" class="adm-dialog-close" aria-label="Close" @click="close">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        <LineIcon name="close" />
       </button>
     </header>
     <div class="body">
@@ -38,6 +38,7 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref, useId } from 'vue';
+import LineIcon from '../site/LineIcon.vue';
 
 defineProps({
   title: { type: String, required: true },

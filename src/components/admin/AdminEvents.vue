@@ -201,9 +201,7 @@
                   @click="needName"
                   @change="onPoster"
                 />
-                <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
-                </svg>
+                <LineIcon name="upload" class="adm-drop-icon" />
                 <span class="adm-drop-title">{{
                   form.image_url ? 'Replace poster' : 'Choose a poster image'
                 }}</span>
@@ -276,9 +274,7 @@
               :disabled="busy"
               @change="onTemplate"
             />
-            <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
-            </svg>
+            <LineIcon name="upload" class="adm-drop-icon" />
             <span class="adm-drop-title">{{
               form.certificate_template_url ? 'Replace template' : 'Choose a template image'
             }}</span>
@@ -357,9 +353,7 @@
               aria-label="Upload attendance CSV"
               @change="onAttendFile"
             />
-            <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
-            </svg>
+            <LineIcon name="upload" class="adm-drop-icon" />
             <span class="adm-drop-title">{{
               attendFile ? 'Replace CSV' : 'Choose a CSV file'
             }}</span>
@@ -463,6 +457,7 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
+import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';

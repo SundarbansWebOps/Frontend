@@ -13,7 +13,7 @@
         <a href="#/lounge">Lounge</a>
         <a class="anav-site" href="#/" aria-label="Open the website">
           <span>Website</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+          <LineIcon name="external" />
         </a>
       </nav>
 

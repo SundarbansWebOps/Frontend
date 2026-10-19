@@ -126,9 +126,7 @@
               aria-label="Upload roster CSV"
               @change="onFile"
             />
-            <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
-            </svg>
+            <LineIcon name="upload" class="adm-drop-icon" />
             <span class="adm-drop-title">{{ csvFile ? 'Replace CSV' : 'Choose a CSV file' }}</span>
             <span class="adm-drop-sub">{{ csvFile || 'No file chosen' }}</span>
           </label>
@@ -286,6 +284,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
 import { dateOf } from '../../lib/admin-display.js';
 import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
