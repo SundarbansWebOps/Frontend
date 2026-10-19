@@ -91,6 +91,9 @@
           <input v-model.trim="form.link" class="adm-input" type="url" placeholder="https://…" />
         </label>
         <p v-if="formError" class="adm-msg err wide" role="alert">{{ formError }}</p>
+        <p v-if="form.published_at" class="adm-note wide">
+          Saving changes updates this published record immediately.
+        </p>
         <div class="wide row-end">
           <button type="button" class="adm-btn ghost" :disabled="busy" @click="saveFuture">
             Save scheduled
@@ -114,7 +117,10 @@ import {
   saveNotice,
 } from '../../lib/admin.js';
 
-const props = defineProps({ lookups: { type: Object, required: true } });
+const props = defineProps({
+  lookups: { type: Object, required: true },
+  initialId: { type: String, default: null },
+});
 const emit = defineEmits(['changed']);
 
 const isHead = computed(
@@ -174,7 +180,11 @@ async function load(more = false) {
   }
 }
 const loadMore = () => load(true);
-onMounted(load);
+onMounted(async () => {
+  await load();
+  const row = rows.value.find((r) => r.id === props.initialId);
+  if (row) edit(row);
+});
 
 function defaultScope() {
   if (isSuperAdmin.value) return { scope: 'house', region_id: null, community_id: null };
@@ -182,6 +192,15 @@ function defaultScope() {
     return { scope: 'region', region_id: auth.dashboard.region_id, community_id: null };
   return { scope: 'community', region_id: null, community_id: auth.dashboard.community_id };
 }
+
+defineExpose({
+  create: () => edit(),
+  openRecord: async (id) => {
+    await load();
+    const row = rows.value.find((r) => r.id === id);
+    if (row) edit(row);
+  },
+});
 
 function edit(n) {
   formError.value = '';

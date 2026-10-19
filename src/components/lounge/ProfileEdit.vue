@@ -77,6 +77,17 @@
         </p>
       </div>
 
+      <div
+        v-if="latestRegionRequest || latestReviewedRegionRequest"
+        class="pe-region-result gp-inset"
+        role="status"
+      >
+        <b v-if="latestRegionRequest">{{ regionRequestStatus }}</b>
+        <p v-if="latestReviewedRegionRequest?.review_note">
+          <span>Review note:</span> {{ latestReviewedRegionRequest.review_note }}
+        </p>
+      </div>
+
       <p v-if="certName" class="pe-cert">
         Your certificates print <b>{{ certName }}</b
         >. Changing your Lounge name does not change them.
@@ -106,6 +117,7 @@ import { errorText } from '../../lib/auth.js';
 import LoungeDialog from './LoungeDialog.vue';
 import RegionSelect from './RegionSelect.vue';
 import { member } from './fixtures.js';
+import { lounge, refreshLounge } from './session.js';
 import {
   certName,
   cleanName,
@@ -128,6 +140,20 @@ const saved = ref(false);
 const busy = ref(false);
 const error = ref('');
 const regionOpen = ref(false);
+const memberRegionRequests = computed(() =>
+  lounge.regionRequests
+    .filter((request) => request.member_id === member.id)
+    .sort((a, b) => Date.parse(b.requested_at || '') - Date.parse(a.requested_at || ''))
+);
+const latestRegionRequest = computed(() => memberRegionRequests.value[0] ?? null);
+const latestReviewedRegionRequest = computed(() =>
+  memberRegionRequests.value.find((request) => request.status !== 'pending' && request.review_note)
+);
+const regionRequestStatus = computed(() =>
+  latestRegionRequest.value?.status === 'pending'
+    ? 'Your region change request is awaiting review.'
+    : `Your region change request was ${latestRegionRequest.value?.status}.`
+);
 
 const object = computed(() => (mode.value === 'night' ? 'lantern' : 'kite'));
 const heading = computed(() =>
@@ -149,7 +175,10 @@ if (beacons['./home/NameBeacon.vue']) {
     .catch(() => {});
 }
 
-onMounted(() => nextTick(() => nameEl.value?.focus()));
+onMounted(() => {
+  if (!ghat.value) void refreshLounge();
+  nextTick(() => nameEl.value?.focus());
+});
 
 async function save() {
   if (busy.value) return;

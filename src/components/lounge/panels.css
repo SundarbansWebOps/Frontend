@@ -435,6 +435,26 @@
   color: var(--t-3);
 }
 
+:where(html.lounge-active) .pe-region-result {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--t-2);
+}
+
+:where(html.lounge-active) .pe-region-result b,
+:where(html.lounge-active) .pe-region-result p span {
+  color: var(--t-1);
+  font-weight: 700;
+}
+
+:where(html.lounge-active) .pe-region-result p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 :where(html.lounge-active) .pe-cert {
   margin: 0;
   font-size: 14px;

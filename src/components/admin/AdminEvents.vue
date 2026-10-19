@@ -287,7 +287,7 @@
           <small>PNG, JPG or WebP, up to 10 MB. You can also drop the file onto the box.</small>
         </div>
         <label class="adm-field wide">
-          <span>Members’ meeting link (optional)</span>
+          <span>Members' meeting link (optional)</span>
           <input
             v-model.trim="form.gmail_link"
             class="adm-input"
@@ -306,8 +306,13 @@
           </label>
         </template>
         <p v-if="formError" class="adm-msg err wide" role="alert">{{ formError }}</p>
+        <p v-if="form.published_at" class="adm-note wide">
+          Saving changes updates this published record immediately.
+        </p>
         <div class="wide row-end">
-          <button type="submit" class="adm-btn ghost" :disabled="busy">Save draft</button>
+          <button type="submit" class="adm-btn ghost" :disabled="busy">
+            {{ form.published_at ? 'Save changes' : 'Save draft' }}
+          </button>
           <button
             v-if="form.published_at"
             type="button"
@@ -492,7 +497,10 @@ import {
 } from '../../lib/admin.js';
 import { img } from '../../lib/events.js';
 
-const props = defineProps({ lookups: { type: Object, required: true } });
+const props = defineProps({
+  lookups: { type: Object, required: true },
+  initialId: { type: String, default: null },
+});
 const emit = defineEmits(['changed']);
 
 const view = ref('upcoming');
@@ -597,7 +605,7 @@ async function load() {
   loading.value = true;
   error.value = '';
   try {
-    events.value = await listEvents({ view: view.value });
+    events.value = (await listEvents({ view: view.value })).filter(canManageEvent);
   } catch (e) {
     error.value = errorText(e);
   } finally {
@@ -610,7 +618,9 @@ onMounted(async () => {
   } catch (e) {
     error.value = errorText(e);
   }
-  load();
+  await load();
+  const row = events.value.find((r) => r.id === props.initialId);
+  if (row) edit(row);
 });
 
 function show(v) {
@@ -624,6 +634,15 @@ function defaultScope() {
     return { scope: 'region', region_id: auth.dashboard.region_id, community_id: null };
   return { scope: 'community', region_id: null, community_id: auth.dashboard.community_id };
 }
+
+defineExpose({
+  create: () => edit(),
+  openRecord: async (id) => {
+    await load();
+    const row = events.value.find((r) => r.id === id);
+    if (row) edit(row);
+  },
+});
 
 function edit(e) {
   formError.value = '';
@@ -695,7 +714,7 @@ function friendly(e) {
   if (/events_image_cloudinary/.test(m)) return 'Posters must be uploaded here.';
   if (/waiting for/.test(m))
     return 'This event is waiting for a Super Admin; cancel the request to edit it.';
-  if (e?.code === '42501') return 'You can’t change this event.';
+  if (e?.code === '42501') return 'You cannot change this event.';
   return errorText(e);
 }
 
@@ -835,7 +854,7 @@ async function act(run) {
 }
 const toggleCancel = (e) => act(() => setEventCancelled(e.id, !e.cancelled_at));
 const remove = (e) => {
-  if (confirm(`Remove “${e.name}”? Members will no longer see it.`)) act(() => deleteEvent(e.id));
+  if (confirm(`Remove "${e.name}"? Members will no longer see it.`)) act(() => deleteEvent(e.id));
 };
 
 async function openOps(e) {
@@ -909,7 +928,7 @@ async function saveAttendance() {
   if (
     attendanceMode.value === 'replace' &&
     !confirm(
-      `Replace “${attendanceSource.value.trim()}” for this event? ${replaceDelta.value} omitted rows will lose this source's ownership. Rows owned by other sources remain.`
+      `Replace "${attendanceSource.value.trim()}" for this event? ${replaceDelta.value} omitted rows will lose this source's ownership. Rows owned by other sources remain.`
     )
   )
     return;

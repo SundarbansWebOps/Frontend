@@ -2,189 +2,210 @@
      Super Admins choose the region, or leave it empty. Name is optional. -->
 <template>
   <div class="grid">
-    <form class="adm-card adm-form" @submit.prevent="addOne">
-      <p class="adm-kicker wide">Add a student</p>
-      <label class="adm-field wide">
-        <span>IITM email</span>
-        <input
-          v-model.trim="one.email"
-          class="adm-input"
-          type="email"
-          required
-          placeholder="21f1000000@ds.study.iitm.ac.in"
-        />
-      </label>
-      <label class="adm-field wide">
-        <span>Full name</span>
-        <input v-model.trim="one.full_name" class="adm-input" maxlength="200" />
-        <small>Optional.</small>
-      </label>
-      <label class="adm-field">
-        <span>Phone (optional)</span>
-        <input
-          v-model.trim="one.phone"
-          class="adm-input"
-          inputmode="tel"
-          placeholder="+919876543210"
-        />
-      </label>
-      <label class="adm-field">
-        <span>Gender (optional)</span>
-        <input v-model.trim="one.gender" class="adm-input" maxlength="50" />
-      </label>
-      <label v-if="isSuperAdmin" class="adm-field wide">
-        <span>Region</span>
-        <select v-model="one.region_id" class="adm-input">
-          <option :value="null">Not allocated yet</option>
-          <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-        </select>
-      </label>
-      <p v-else class="adm-note wide">Added to {{ myRegion }}.</p>
-      <p v-if="oneMsg" class="adm-msg wide" :class="oneOk ? 'ok' : 'err'" role="status">
-        {{ oneMsg }}
-      </p>
-      <div class="wide">
-        <button type="submit" class="adm-btn mari" :disabled="busy">Add to roster</button>
-      </div>
-    </form>
-
-    <form class="adm-card adm-form" @submit.prevent="addMany">
-      <p class="adm-kicker wide">Paste from a sheet</p>
-      <label class="adm-field wide">
-        <span>One student per line</span>
-        <textarea
-          v-model="paste"
-          class="adm-input tall"
-          placeholder="email, full name, phone, region, gender"
-        />
-        <small>
-          Columns: email, full name (optional), phone (optional){{
-            isSuperAdmin ? ', region (name or code, optional)' : ''
-          }}, gender (optional). Copy straight from Google Sheets; a header row is skipped.
-        </small>
-      </label>
-      <p class="adm-note wide">
-        {{ parsed.length }} student{{ parsed.length === 1 ? '' : 's' }} found.
-      </p>
-      <p v-if="parsed.some((r) => r.region_error)" class="adm-msg err wide" role="alert">
-        Fix unknown region labels before adding students.
-      </p>
-      <ul v-if="bulkResult" class="results wide">
-        <li v-for="r in bulkResult.filter((x) => !x.ok)" :key="r.email">
-          <span class="mono">{{ r.email || '(no email)' }}</span> — {{ r.error }}
-        </li>
-      </ul>
-      <p v-if="bulkMsg" class="adm-msg wide" :class="bulkOk ? 'ok' : 'err'" role="status">
-        {{ bulkMsg }}
-      </p>
-      <div class="wide">
+    <div class="adm-toolbar wide-col">
+      <button class="adm-btn mari" @click="create">Add students</button>
+    </div>
+    <AdminDialog v-if="adding" title="Add students" wide @close="adding = false">
+      <div class="adm-chips add-modes">
         <button
-          type="submit"
-          class="adm-btn"
-          :disabled="
-            busy || !parsed.length || parsed.length > 500 || parsed.some((r) => r.region_error)
-          "
+          v-for="item in addModes"
+          :key="item.id"
+          class="adm-chip"
+          :class="{ on: addMode === item.id }"
+          @click="addMode = item.id"
         >
-          Add {{ parsed.length || '' }} to roster
+          {{ item.label }}
         </button>
       </div>
-    </form>
-
-    <form class="adm-card adm-form wide-col" @submit.prevent="importCsv">
-      <p class="adm-kicker wide">Upload a CSV</p>
-      <div class="adm-field wide">
-        <span>File</span>
-        <label
-          class="adm-drop"
-          :class="{ over: csvDragging }"
-          @dragenter.prevent="csvDragging = true"
-          @dragover.prevent
-          @dragleave="csvDragging = false"
-          @drop.prevent="onFileDrop"
-        >
+      <form v-if="addMode === 'one'" class="adm-form" @submit.prevent="addOne">
+        <p class="adm-kicker wide">Add a student</p>
+        <label class="adm-field wide">
+          <span>IITM email</span>
           <input
-            class="adm-pick-input"
-            type="file"
-            accept=".csv,text/csv"
-            aria-label="Upload roster CSV"
-            @change="onFile"
+            v-model.trim="one.email"
+            class="adm-input"
+            type="email"
+            required
+            placeholder="21f1000000@ds.study.iitm.ac.in"
           />
-          <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
-          </svg>
-          <span class="adm-drop-title">{{ csvFile ? 'Replace CSV' : 'Choose a CSV file' }}</span>
-          <span class="adm-drop-sub">{{ csvFile || 'No file chosen' }}</span>
+          <small>Use an IITM student email from ds, es, mg or ae.study.iitm.ac.in.</small>
         </label>
-        <small>
-          Map the header row to email (required) and optional name, region, phone and gender.
-          Duplicate emails in the file are kept once. Existing members are not overwritten.
-        </small>
-      </div>
-      <template v-if="csv.headers.length">
-        <label v-for="field in CSV_FIELDS" :key="field.key" class="adm-field">
-          <span>{{ field.label }}</span>
-          <select v-model.number="csv.mapping[field.key]" class="adm-input">
-            <option :value="-1">Not in this file</option>
-            <option v-for="(h, i) in csv.headers" :key="`${h}-${i}`" :value="i">{{ h }}</option>
+        <label class="adm-field wide">
+          <span>Full name</span>
+          <input v-model.trim="one.full_name" class="adm-input" maxlength="200" />
+          <small>Leave blank if the full name is unknown.</small>
+        </label>
+        <label class="adm-field">
+          <span>Phone (optional)</span>
+          <input
+            v-model.trim="one.phone"
+            class="adm-input"
+            inputmode="tel"
+            placeholder="+919876543210"
+          />
+        </label>
+        <label class="adm-field">
+          <span>Gender (optional)</span>
+          <input v-model.trim="one.gender" class="adm-input" maxlength="50" />
+        </label>
+        <label v-if="isSuperAdmin" class="adm-field wide">
+          <span>Region</span>
+          <select v-model="one.region_id" class="adm-input">
+            <option :value="null">Not allocated yet</option>
+            <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
           </select>
         </label>
-        <p class="adm-note wide">
-          {{ uniqueCsv.length }} row{{ uniqueCsv.length === 1 ? '' : 's' }} after de-duplicating
-          this file. {{ csvRows.filter((r) => r.duplicate).length }} duplicate line{{
-            csvRows.filter((r) => r.duplicate).length === 1 ? '' : 's'
-          }}
-          skipped.
+        <p v-if="isSuperAdmin && !one.region_id" class="adm-note wide">
+          Without a region, only Super Admins can see this roster entry.
         </p>
-        <div v-if="csvPreview.length" class="adm-table-wrap wide">
-          <table class="adm-table">
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Region</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="r in csvPreview" :key="r.email">
-                <td class="mono">{{ r.email }}</td>
-                <td>{{ r.full_name || '–' }}</td>
-                <td>{{ r.region_error || (r.region_id ? regionOf(r.region_id) : '–') }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <p v-if="!isSuperAdmin" class="adm-note wide">Added to {{ myRegion }}.</p>
+        <p v-if="oneMsg" class="adm-msg wide" :class="oneOk ? 'ok' : 'err'" role="status">
+          {{ oneMsg }}
+        </p>
+        <div class="wide">
+          <button type="submit" class="adm-btn mari" :disabled="busy">Add to roster</button>
         </div>
-      </template>
-      <p v-if="uniqueCsv.some((r) => r.region_error)" class="adm-msg err wide" role="alert">
-        Fix unknown region labels before importing.
-      </p>
-      <ul v-if="csvResult" class="results wide">
-        <li v-for="r in csvResult.filter((x) => !x.ok)" :key="r.email">
-          <span class="mono">{{ r.email || '(no email)' }}</span> — {{ r.error }}
-        </li>
-      </ul>
-      <p v-if="csvMsg" class="adm-msg wide" :class="csvOk ? 'ok' : 'err'" role="status">
-        {{ csvMsg }}
-      </p>
-      <div class="wide acts">
-        <button
-          type="submit"
-          class="adm-btn mari"
-          :disabled="
-            busy ||
-            !uniqueCsv.length ||
-            uniqueCsv.length > 500 ||
-            uniqueCsv.some((r) => r.region_error)
-          "
-        >
-          Import {{ uniqueCsv.length || '' }}
-        </button>
-        <button v-if="csvResult" type="button" class="adm-btn ghost" @click="exportCsvResult">
-          Download results
-        </button>
-      </div>
-    </form>
+      </form>
 
-    <div class="wide-col">
+      <form v-if="addMode === 'paste'" class="adm-form" @submit.prevent="addMany">
+        <p class="adm-kicker wide">Paste from a sheet</p>
+        <label class="adm-field wide">
+          <span>One student per line</span>
+          <textarea
+            v-model="paste"
+            class="adm-input tall"
+            placeholder="email, full name, phone, region, gender"
+          />
+          <small>
+            Columns: email, full name (optional), phone (optional){{
+              isSuperAdmin ? ', region (name or code, optional)' : ''
+            }}, gender (optional). Copy straight from Google Sheets; a header row is skipped.
+          </small>
+        </label>
+        <p class="adm-note wide">
+          {{ parsed.length }} student{{ parsed.length === 1 ? '' : 's' }} found.
+        </p>
+        <p v-if="parsed.some((r) => r.region_error)" class="adm-msg err wide" role="alert">
+          Fix unknown region labels before adding students.
+        </p>
+        <ul v-if="bulkResult" class="results wide">
+          <li v-for="r in bulkResult.filter((x) => !x.ok)" :key="r.email">
+            <span class="mono">{{ r.email || '(no email)' }}</span
+            >: {{ r.error }}
+          </li>
+        </ul>
+        <p v-if="bulkMsg" class="adm-msg wide" :class="bulkOk ? 'ok' : 'err'" role="status">
+          {{ bulkMsg }}
+        </p>
+        <div class="wide">
+          <button
+            type="submit"
+            class="adm-btn"
+            :disabled="
+              busy || !parsed.length || parsed.length > 500 || parsed.some((r) => r.region_error)
+            "
+          >
+            Add {{ parsed.length || '' }} to roster
+          </button>
+        </div>
+      </form>
+
+      <form v-if="addMode === 'csv'" class="adm-form" @submit.prevent="importCsv">
+        <p class="adm-kicker wide">Upload a CSV</p>
+        <div class="adm-field wide">
+          <span>File</span>
+          <label
+            class="adm-drop"
+            :class="{ over: csvDragging }"
+            @dragenter.prevent="csvDragging = true"
+            @dragover.prevent
+            @dragleave="csvDragging = false"
+            @drop.prevent="onFileDrop"
+          >
+            <input
+              class="adm-pick-input"
+              type="file"
+              accept=".csv,text/csv"
+              aria-label="Upload roster CSV"
+              @change="onFile"
+            />
+            <svg class="adm-drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+            </svg>
+            <span class="adm-drop-title">{{ csvFile ? 'Replace CSV' : 'Choose a CSV file' }}</span>
+            <span class="adm-drop-sub">{{ csvFile || 'No file chosen' }}</span>
+          </label>
+          <small>
+            Map the header row to email (required) and optional name, region, phone and gender.
+            Duplicate emails in the file are kept once. Existing members are not overwritten.
+          </small>
+        </div>
+        <template v-if="csv.headers.length">
+          <label v-for="field in CSV_FIELDS" :key="field.key" class="adm-field">
+            <span>{{ field.label }}</span>
+            <select v-model.number="csv.mapping[field.key]" class="adm-input">
+              <option :value="-1">Not in this file</option>
+              <option v-for="(h, i) in csv.headers" :key="`${h}-${i}`" :value="i">{{ h }}</option>
+            </select>
+          </label>
+          <p class="adm-note wide">
+            {{ uniqueCsv.length }} row{{ uniqueCsv.length === 1 ? '' : 's' }} after de-duplicating
+            this file. {{ csvRows.filter((r) => r.duplicate).length }} duplicate line{{
+              csvRows.filter((r) => r.duplicate).length === 1 ? '' : 's'
+            }}
+            skipped.
+          </p>
+          <div v-if="csvPreview.length" class="adm-table-wrap wide">
+            <table class="adm-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Name</th>
+                  <th>Region</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="r in csvPreview" :key="r.email">
+                  <td class="mono">{{ r.email }}</td>
+                  <td>{{ r.full_name || '–' }}</td>
+                  <td>{{ r.region_error || (r.region_id ? regionOf(r.region_id) : '–') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
+        <p v-if="uniqueCsv.some((r) => r.region_error)" class="adm-msg err wide" role="alert">
+          Fix unknown region labels before importing.
+        </p>
+        <ul v-if="csvResult" class="results wide">
+          <li v-for="r in csvResult.filter((x) => !x.ok)" :key="r.email">
+            <span class="mono">{{ r.email || '(no email)' }}</span
+            >: {{ r.error }}
+          </li>
+        </ul>
+        <p v-if="csvMsg" class="adm-msg wide" :class="csvOk ? 'ok' : 'err'" role="status">
+          {{ csvMsg }}
+        </p>
+        <div class="wide acts">
+          <button
+            type="submit"
+            class="adm-btn mari"
+            :disabled="
+              busy ||
+              !uniqueCsv.length ||
+              uniqueCsv.length > 500 ||
+              uniqueCsv.some((r) => r.region_error)
+            "
+          >
+            Import {{ uniqueCsv.length || '' }}
+          </button>
+          <button v-if="csvResult" type="button" class="adm-btn ghost" @click="exportCsvResult">
+            Download results
+          </button>
+        </div>
+      </form>
+    </AdminDialog>
+    <div class="wide-col adm-card">
       <p class="adm-kicker">Waiting for first sign-in</p>
       <p class="adm-note">
         The roster is the approved list of students who can sign in. After their first sign-in, they
@@ -195,6 +216,7 @@
           <span>Search roster</span>
           <input
             v-model="query"
+            @input="onSearch"
             class="adm-input"
             type="search"
             maxlength="100"
@@ -212,11 +234,15 @@
       <ul v-if="entries.length" class="adm-list">
         <li v-for="e in entries" :key="e.email" class="adm-row">
           <div>
-            <b>{{ e.full_name || e.email }}</b>
+            <b>{{ e.full_name || 'Name not set' }}</b>
             <div class="adm-meta">
               <span class="mono">{{ e.email }}</span>
               <span v-if="e.phone" class="mono">{{ e.phone }}</span>
-              <span>{{ regionOf(e.region_id) }}</span>
+              <span>{{ regionOf(e.region_id) }}</span
+              ><span
+                >Added {{ dateOf(e.added_at) }} by
+                {{ e.added_by === auth.profile?.id ? 'you' : 'an admin' }}</span
+              ><span class="adm-badge">Waiting for first sign-in</span>
             </div>
           </div>
           <button
@@ -251,13 +277,14 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import AdminDialog from './AdminDialog.vue';
+import { dateOf } from '../../lib/admin-display.js';
 import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
 import {
   downloadCsv,
   listRoster,
   parseCsv,
   parseRosterPaste,
-  rosterAdd,
   rosterAddMany,
   rosterRemove,
   rowsFromRosterCsv,
@@ -266,6 +293,23 @@ import {
 
 const props = defineProps({ lookups: { type: Object, required: true } });
 const emit = defineEmits(['changed']);
+
+const adding = ref(false);
+const addMode = ref('one');
+const addModes = [
+  { id: 'one', label: 'One student' },
+  { id: 'paste', label: 'Paste from Sheets' },
+  { id: 'csv', label: 'Upload CSV' },
+];
+function create() {
+  adding.value = true;
+}
+defineExpose({ create });
+let searchTimer;
+function onSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => load(), 250);
+}
 
 const CSV_FIELDS = [
   { key: 'email', label: 'Email' },
@@ -331,10 +375,6 @@ async function load(more = false) {
   const term = more ? searchTerm.value : query.value.trim();
   loading.value = true;
   error.value = '';
-  if (!more) {
-    entries.value = [];
-    total.value = 0;
-  }
   try {
     const { data, count } = await listRoster({ query: term, page: nextPage });
     if (id !== loadId) return;
@@ -350,7 +390,10 @@ async function load(more = false) {
   }
 }
 onMounted(load);
-onBeforeUnmount(() => loadId++);
+onBeforeUnmount(() => {
+  loadId++;
+  clearTimeout(searchTimer);
+});
 
 function scoped(row) {
   return { ...row, region_id: isSuperAdmin.value ? row.region_id : null };
@@ -378,9 +421,10 @@ async function addOne() {
   busy.value = true;
   oneMsg.value = '';
   try {
-    await rosterAdd(scoped(one));
-    oneOk.value = true;
-    oneMsg.value = `${one.email} can now sign in with Google.`;
+    const s = summarize(await rosterAddMany([scoped(one)]));
+    oneOk.value = s.invalid + s.conflict === 0;
+    oneMsg.value = summaryText(s);
+    if (!oneOk.value) return;
     Object.assign(one, { email: '', full_name: '', phone: '', gender: '' });
     await load();
     emit('changed');
@@ -484,6 +528,12 @@ function exportCsvResult() {
 }
 
 async function remove(email) {
+  if (
+    !confirm(
+      `Remove ${email} from the roster? They will no longer be able to sign in for the first time.`
+    )
+  )
+    return;
   busy.value = true;
   try {
     await rosterRemove(email);
@@ -498,6 +548,9 @@ async function remove(email) {
 </script>
 
 <style scoped>
+.add-modes {
+  margin-bottom: 20px;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

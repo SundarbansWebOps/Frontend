@@ -1,37 +1,31 @@
-<!-- The admin lounge's pop-up: a centred native <dialog> for forms and menus, or a right-hand
-     sheet (`side`) for a student's profile. Native <dialog> gives focus trapping, Esc and the
-     backdrop. The header and optional footer stay put; only the body scrolls, and the page behind
-     is locked while any sheet is open (admin.css: html.adm-sheet-open). -->
+<!-- Admin dialogs use the shared card tokens. Centered for forms,
+     `wide` for big forms, `side` for a student's profile. Native <dialog> gives focus trapping,
+     Esc and the backdrop. The title and optional footer stay put; only the body scrolls, and the
+     page behind is locked while any sheet is open (admin.css: html.adm-sheet-open). -->
 <template>
   <dialog
     ref="dlg"
-    class="sheet"
-    :class="{ wide, side }"
+    class="adm-dlg"
+    :class="side ? 'adm-side' : wide ? 'adm-wide' : 'adm-center'"
     :aria-labelledby="`${uid}-h`"
     @close="emit('close')"
     @click.self="close"
   >
-    <div class="in">
-      <header class="head">
-        <h2 :id="`${uid}-h`">{{ title }}</h2>
-        <button type="button" class="x" @click="close">
-          <LineIcon name="close" />
-          <span class="visually-hidden">Close</span>
-        </button>
-      </header>
-      <div class="body">
-        <slot />
-      </div>
-      <footer v-if="$slots.footer" class="foot">
-        <slot name="footer" />
-      </footer>
+    <button type="button" class="adm-dialog-close" aria-label="Close" @click="close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+    <h2 :id="`${uid}-h`" class="head">{{ title }}</h2>
+    <div class="body">
+      <slot />
     </div>
+    <footer v-if="$slots.footer" class="foot">
+      <slot name="footer" />
+    </footer>
   </dialog>
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref, useId } from 'vue';
-import LineIcon from '../site/LineIcon.vue';
 
 defineProps({
   title: { type: String, required: true },
@@ -62,66 +56,76 @@ defineExpose({ close });
 </script>
 
 <style scoped>
-.sheet {
-  display: flex;
-  flex-direction: column;
-  width: min(520px, calc(100vw - 32px));
-  max-width: none;
-  max-height: min(90svh, 860px);
+.adm-dlg {
+  position: fixed;
+  width: min(540px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
   padding: 0;
+  overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--r);
   background: var(--card);
   color: var(--ink);
   box-shadow: var(--shadow);
-  overflow: hidden;
+  font-family: var(--font);
 }
-.sheet.wide {
-  width: min(880px, calc(100vw - 32px));
-}
-.sheet.side {
-  width: min(620px, 100vw);
-  height: 100svh;
-  max-height: 100svh;
-  margin: 0 0 0 auto;
-  border: 0;
-  border-left: 1px solid var(--line);
-  border-radius: 0;
-}
-.sheet[open] {
-  animation: rise 0.3s var(--ease-out);
-}
-.sheet.side[open] {
-  animation: slide 0.35s var(--ease-out);
-}
-.sheet::backdrop {
-  background: color-mix(in srgb, var(--ink) 38%, transparent);
-}
-.in {
+.adm-dlg[open] {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
+}
+.adm-dlg::backdrop {
+  background: color-mix(in srgb, var(--ink) 48%, transparent);
+}
+.adm-dlg.adm-wide {
+  width: min(920px, calc(100vw - 32px));
+}
+.adm-dlg.adm-side {
+  width: min(620px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 0 0 auto;
+  border-radius: 0;
+}
+.adm-dialog-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink-2);
+}
+.adm-dialog-close:hover {
+  background: var(--sunk);
+  color: var(--ink);
+}
+.adm-dialog-close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 .head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
   flex: none;
-  padding: 18px 16px 16px 24px;
-  border-bottom: 1px solid var(--line);
-}
-h2 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 750;
-  letter-spacing: -0.03em;
+  padding: 14px 64px 14px 24px;
+  border-bottom: 1px solid var(--line);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 .body {
   flex: 1 1 auto;
   min-height: 0;
-  padding: 22px 24px 24px;
+  padding: 18px 24px 24px;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -136,50 +140,27 @@ h2 {
   border-top: 1px solid var(--line);
   background: var(--card);
 }
-.x {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--sunk);
-  color: var(--ink);
-  cursor: pointer;
-}
-.x :deep(svg) {
-  width: 18px;
-  height: 18px;
-}
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
+/* A student's profile needs more room than a form dialog. */
+@media (min-width: 761px) {
+  .adm-dlg.adm-side {
+    width: min(620px, 100vw);
   }
 }
-@keyframes slide {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
+@media (max-width: 760px) {
+  .adm-dlg,
+  .adm-dlg.adm-wide {
+    width: min(540px, calc(100vw - 24px));
+    max-height: calc(100dvh - 24px);
   }
-}
-@media (max-width: 560px) {
-  .sheet,
-  .sheet.wide,
-  .sheet.side {
+  .adm-dlg.adm-side {
     width: 100vw;
-    height: 100svh;
-    max-height: 100svh;
-    margin: 0;
-    border: 0;
-    border-radius: 0;
+    max-height: 100dvh;
   }
   .head {
-    padding: 14px 14px 12px 16px;
+    padding: 14px 56px 14px 16px;
   }
   .body {
-    padding: 18px 16px 20px;
+    padding: 16px 16px 20px;
   }
   .foot {
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
