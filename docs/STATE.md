@@ -1,10 +1,10 @@
 # Sundarbans House — State
 
-> IITM BS frontend/backend · Last checkpoint: 2026-10-19 13:56 IST
+> IITM BS frontend/backend · Last checkpoint: 2026-10-19 14:06 IST
 
 ## In progress / next
 
-- **Admin Command Desk — branch `feat/admin-dashboard-port`, worktree `~/Anuraj-dev/Frontend-admin-dashboard`.** Prototype A is ported across the overview and admin tabs. The full-width top bar keeps the brand left, Lounge/Website centered, and Add students, Create, theme, and profile at the right with responsive edge padding. Admin has no search, region chip, Home/Events links, duplicate sidebar identity, or footer. The overview uses the saved profile name, Kolkata-time greeting, and matching daypart art. Students see their region-request status and review note. Roster follows the Students table pattern; form responses open in a full-screen table; notices use reversible Publish/Unpublish. Avatar sizing fix: `2171b5e`. The Admin profile menu uses the Lounge identity treatment, marigold scope chips, patterned band, and lightweight actions; the redundant Lounge action is removed. Dialog close controls are centered in their title rows. Local design, lint, format, build, and HTTP gates pass. **Next:** GPT-6.1 Sol independently verifies the branch and opens the PR. See `specs/005-admin-lounge-ux.md` and `sessions/2026-10-19.md`.
+- **Admin Command Desk — branch `feat/admin-dashboard-port`, worktree `~/Anuraj-dev/Frontend-admin-dashboard`.** Prototype A is ported across the overview and admin tabs. Admin, public, and Lounge navbars now use the full viewport with responsive edge padding; brand is left, links centered, and actions right. Admin has no search, region chip, Home/Events links, duplicate sidebar identity, or footer. The overview uses the saved profile name, Kolkata-time greeting, and matching daypart art. Students see their region-request status and review note. Roster follows the Students table pattern; form responses open in a full-screen table; notices use reversible Publish/Unpublish. The Admin profile menu uses the Lounge identity treatment, marigold scope chips, patterned band, and lightweight actions; the redundant Lounge action is removed. Dialog close controls are centered in their title rows. **Next:** Raja reviews the signed-in Admin and Lounge headers in Chrome, then uses the updated GPT-6.1 Sol handoff prompt for independent review and PR opening. See `specs/005-admin-lounge-ux.md` and `sessions/2026-10-19.md`.
 - **Admin backend rollout.** Remote Website Backend now has migrations `20261019110000_notice_publishing.sql`, `20261019120000_admin_dashboard_reads.sql`, and `20261019130000_member_google_avatars.sql`; `supabase migration list --linked` confirmed all three applied. The dashboard hides unpublished notices, and anonymization clears cached avatars. `20261010000000_audit_fixes.sql` is preserved under `supabase/held-migrations/` and excluded from the active migration set because it conflicts with the live Oct 16 event policy. Add migrations using the workflow in `conventions.md`; port any still-needed held fixes through a separate forward migration.
 - **Legacy Board portraits** — branch `feat/legacy-council-portraits`, separate worktree, uncommitted. Raja to review; 2022 Secretary remains blank pending his confirmed name.
 - **Tenure story** — PR #163 is open for review. **Contributors board** — PR is open against upstream `main`. **Resources page** — local work remains uncommitted for Raja's review. See dated session logs.
@@ -12,7 +12,7 @@
 ## Status
 
 - Admin entry is `/#/admin`; shell and panels live in `src/pages/AdminPage.vue` and `src/components/admin/`. Prototype A is in `prototype/admin-dashboards/a-command-desk/`.
-- Admin port, migration, profile-menu, and dialog-close work are committed locally on `feat/admin-dashboard-port`. No push, frontend deployment, or external notification is implied by a local commit. The Supabase schema migrations were applied to the linked Website Backend after a reviewed dry run.
+- Admin port, migration, profile-menu, dialog-close, and full-width navbar work are committed locally on `feat/admin-dashboard-port`. No push, frontend deployment, or external notification is implied by a local commit. The Supabase schema migrations were applied to the linked Website Backend after a reviewed dry run.
 - Older Lounge, Resources, Teams and audit decisions remain in `sessions/` and `decisions.md`; certificates are deferred.
 
 ## Architecture map
@@ -40,7 +40,7 @@
 ## Gotchas
 
 - Preserve unrelated changes in every worktree; don't reset or clean.
-- The local IAB session has no admin credentials and redirects to `/#/login?next=/admin`; verify in Raja's signed-in browser.
+- The local IAB session has no admin credentials and redirects to sign-in for Admin and Lounge; verify those signed-in views in Raja's browser.
 - Vite can retain stale scoped CSS after HMR; use a fresh page load for visual review.
 - Keep `padding: 0` on the Admin avatar button so its image fills the circle like Lounge's profile button.
 - The local shadow database diff stops at `20260928183510_revoke_rls_auto_enable_execute.sql` because Supabase's platform `public.rls_auto_enable()` is absent there; remote migrations were verified by the linked project and schema dump.

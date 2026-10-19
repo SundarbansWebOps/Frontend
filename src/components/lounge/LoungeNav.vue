@@ -148,10 +148,10 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
 
 :where(html.lounge-active) .lnav-in {
   width: 100%;
-  max-width: 1240px;
+  max-width: none;
   height: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
+  margin: 0;
+  padding: 0 clamp(16px, 2.2vw, 40px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
