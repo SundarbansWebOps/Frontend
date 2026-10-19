@@ -22,3 +22,7 @@ src/data/meetups/csv/
 tmp/
 Teams/
 prototypes/
+
+# Throwaway admin design prototypes stay local; never commit them.
+prototype/admin-dashboards/
+prototype/admin-home/

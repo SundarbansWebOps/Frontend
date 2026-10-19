@@ -5,14 +5,14 @@
 ## In progress / next
 
 - **Mobile navbar repair — `fix/mobile-navigation`, worktree `~/Anuraj-dev/Frontend-mobile-navigation`, based on production main `519c075`.** Lounge header now uses two mobile columns; its bottom bar/header height switch together at 760px. Admin mobile destinations stay in normal flow with readable 12px text, spaced links and 32px action buttons. Public navbar audited without source changes. User requested fix, preview server, commit and PR. **Next:** Review the PR and required CI; deployment remains outside this request. See `sessions/2026-10-19.md`.
-- **Admin Command Desk — PR #204 merged into upstream main (`519c075`).** Production art is on Cloudinary under `sundarbans/admin-command-desk/`; prototype A remains the reference.
+- **Admin Command Desk — PR #204 merged into upstream main (`519c075`).** Production art is on Cloudinary under `sundarbans/admin-command-desk/`. Throwaway admin HTML stays local and is gitignored.
 - **Admin backend rollout.** Remote Website Backend now has migrations `20261019110000_notice_publishing.sql`, `20261019120000_admin_dashboard_reads.sql`, and `20261019130000_member_google_avatars.sql`; `supabase migration list --linked` confirmed all three applied. The dashboard hides unpublished notices, and anonymization clears cached avatars. `20261010000000_audit_fixes.sql` is preserved under `supabase/held-migrations/` and excluded from the active migration set because it conflicts with the live Oct 16 event policy. Add migrations using the workflow in `conventions.md`; port any still-needed held fixes through a separate forward migration.
 - **Legacy Board portraits** — branch `feat/legacy-council-portraits`, separate worktree, uncommitted. Raja to review; 2022 Secretary remains blank pending his confirmed name.
 - **Tenure story** — PR #163 is open for review. **Contributors board** — PR is open against upstream `main`. **Resources page** — local work remains uncommitted for Raja's review. See dated session logs.
 
 ## Status
 
-- Admin entry is `/#/admin`; shell and panels live in `src/pages/AdminPage.vue` and `src/components/admin/`. Prototype A is in `prototype/admin-dashboards/a-command-desk/`.
+- Admin entry is `/#/admin`; shell and panels live in `src/pages/AdminPage.vue` and `src/components/admin/`. The throwaway Command Desk HTML is not in git.
 - Mobile repair: production build, design, lint and formatting pass; 83 Playwright tests cover navigation geometry, themes and transitions with mocked Supabase accounts. Real Chrome public phone view verified; real signed-in Admin/Lounge and physical phones remain unverified. No database or production mutation.
 - Older Lounge, Resources, Teams and audit decisions remain in `sessions/` and `decisions.md`; certificates are deferred.
 
