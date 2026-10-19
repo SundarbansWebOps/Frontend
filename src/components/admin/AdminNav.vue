@@ -94,10 +94,10 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 .anav-in {
   position: relative;
   width: 100%;
-  max-width: 1240px;
+  max-width: none;
   height: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
+  margin: 0;
+  padding: 0 clamp(16px, 2.2vw, 40px);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -273,7 +273,7 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 
 @media (max-width: 1020px) {
   .anav-in {
-    padding: 0 16px;
+    padding: 0 clamp(14px, 2vw, 20px);
   }
 
   .anav-links {
@@ -308,7 +308,7 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 
 @media (max-width: 760px) {
   .anav-in {
-    padding: 0 10px;
+    padding: 0 12px;
   }
 
   .anav-word {
@@ -324,7 +324,7 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 @media (max-width: 560px) {
   .anav-in {
     gap: 2px;
-    padding: 0 7px;
+    padding: 0 8px;
   }
 
   .anav-brand img {
@@ -354,7 +354,7 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
   }
 
   .anav-actions {
-    gap: clamp(1px, 0.5vw, 2px);
+    gap: 0;
   }
 }
 </style>
