@@ -5,6 +5,7 @@
       :theme="theme"
       :avatar-url="avatarUrl"
       :avatar-failed="avatarFailed"
+      :profile-open="profileOpen"
       @add-students="create('roster')"
       @create="createOpen = true"
       @profile="profileOpen = true"
@@ -95,24 +96,60 @@
           </button>
         </div></AdminDialog
       >
-      <AdminDialog v-if="profileOpen" title="Your account" @close="profileOpen = false"
-        ><p>
-          <b>{{ nameOf(auth.profile) }}</b
-          ><br />{{ auth.profile?.email }}
-        </p>
-        <p class="adm-note">{{ roleLabel }} · {{ scope }}</p>
-        <div class="menu-list">
-          <RouterLink to="/lounge">Return to Lounge</RouterLink
-          ><button
-            @click="
-              helpOpen = true;
-              profileOpen = false;
-            "
-          >
-            Keyboard shortcuts</button
-          ><button @click="leave">Sign out</button>
-        </div></AdminDialog
-      >
+      <AdminDialog v-if="profileOpen" title="Your account" drop @close="profileOpen = false">
+        <section class="adm-profile" aria-label="Admin account details">
+          <div class="adm-profile-identity">
+            <span class="adm-profile-avatar" aria-hidden="true">
+              <img
+                v-if="avatarUrl"
+                :src="avatarUrl"
+                alt=""
+                referrerpolicy="no-referrer"
+                @error="avatarFailed"
+              />
+              <img v-else :src="CREST" alt="" />
+            </span>
+            <div class="adm-profile-person">
+              <p class="adm-kicker">Admin profile</p>
+              <h3>{{ profileName }}</h3>
+              <p class="adm-profile-email">{{ auth.profile?.email || 'Signed-in admin' }}</p>
+            </div>
+          </div>
+          <div class="adm-profile-scope" aria-label="Administrator scope">
+            <span><LineIcon name="seal" />{{ roleLabel }}</span>
+            <span><LineIcon name="pin" />{{ scope }}</span>
+          </div>
+          <nav class="adm-profile-actions" aria-label="Account actions">
+            <button
+              type="button"
+              class="adm-profile-action"
+              @click="
+                helpOpen = true;
+                profileOpen = false;
+              "
+            >
+              <span class="adm-profile-action-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="M7 9h.01M11 9h.01M15 9h.01M7 13h.01M11 13h.01M15 13h2" />
+                </svg>
+              </span>
+              <span>Keyboard shortcuts</span>
+              <kbd>?</kbd>
+            </button>
+            <button type="button" class="adm-profile-action" @click="leave">
+              <span class="adm-profile-action-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M10 17l5-5-5-5M15 12H3" />
+                  <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
+                </svg>
+              </span>
+              <span>Sign out</span>
+              <LineIcon name="next" />
+            </button>
+          </nav>
+        </section>
+      </AdminDialog>
       <AdminDialog v-if="helpOpen" title="Keyboard shortcuts" @close="helpOpen = false"
         ><dl class="shortcuts">
           <dt>Search and commands</dt>
@@ -149,6 +186,7 @@ import AdminRequests from '../components/admin/AdminRequests.vue';
 import AdminPositions from '../components/admin/AdminPositions.vue';
 import AdminAudit from '../components/admin/AdminAudit.vue';
 import '../components/admin/admin.css';
+import CREST from '../assets/crest.webp';
 import {
   auth,
   avatarFailed,
@@ -159,7 +197,6 @@ import {
   signOut,
 } from '../lib/auth.js';
 import { loadAdminOverview, loadLookups } from '../lib/admin.js';
-import { nameOf } from '../lib/admin-display.js';
 import { theme, toggleTheme } from '../lib/theme.js';
 const route = useRoute();
 const router = useRouter();

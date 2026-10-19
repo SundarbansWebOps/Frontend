@@ -47,6 +47,8 @@
           type="button"
           class="anav-profile"
           aria-label="Your account"
+          aria-haspopup="dialog"
+          :aria-expanded="profileOpen ? 'true' : 'false'"
           @click="emit('profile')"
         >
           <img
@@ -70,6 +72,7 @@ import CREST from '../../assets/crest.webp';
 defineProps({
   membersVisible: Boolean,
   theme: { type: String, required: true },
+  profileOpen: Boolean,
   avatarUrl: { type: String, default: '' },
   avatarFailed: { type: Function, required: true },
 });
