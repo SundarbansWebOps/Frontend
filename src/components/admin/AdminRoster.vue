@@ -1,10 +1,7 @@
 <!-- The roster: students added before their first Google sign-in. RC adds to their own region;
      Super Admins choose the region, or leave it empty. Name is optional. -->
 <template>
-  <div class="grid">
-    <div class="adm-toolbar wide-col">
-      <button class="adm-btn mari" @click="create">Add students</button>
-    </div>
+  <div>
     <AdminDialog v-if="adding" title="Add students" wide @close="adding = false">
       <div class="adm-chips add-modes">
         <button
@@ -205,70 +202,82 @@
         </div>
       </form>
     </AdminDialog>
-    <div class="wide-col adm-card">
-      <p class="adm-kicker">Waiting for first sign-in</p>
-      <p class="adm-note">
-        The roster is the approved list of students who can sign in. After their first sign-in, they
-        appear on the Students tab.
-      </p>
-      <form class="adm-toolbar" @submit.prevent="load()">
-        <label class="adm-field grow">
-          <span>Search roster</span>
-          <input
-            v-model="query"
-            @input="onSearch"
-            class="adm-input"
-            type="search"
-            maxlength="100"
-            placeholder="Email or name"
-          />
-        </label>
-        <button type="submit" class="adm-btn">Search</button>
-      </form>
-      <p v-if="error" class="adm-msg err" role="alert">{{ error }}</p>
-      <p v-if="!loading && !error" class="adm-note" role="status">
-        Showing {{ entries.length }} of {{ total
-        }}{{ searchTerm ? ' matching students' : ' students' }}. Search checks the full roster you
-        can access.
-      </p>
-      <ul v-if="entries.length" class="adm-list">
-        <li v-for="e in entries" :key="e.email" class="adm-row">
-          <div>
-            <b>{{ e.full_name || 'Name not set' }}</b>
-            <div class="adm-meta">
-              <span class="mono">{{ e.email }}</span>
-              <span v-if="e.phone" class="mono">{{ e.phone }}</span>
-              <span>{{ regionOf(e.region_id) }}</span
-              ><span
-                >Added {{ dateOf(e.added_at) }} by
-                {{ e.added_by === auth.profile?.id ? 'you' : 'an admin' }}</span
-              ><span class="adm-badge">Waiting for first sign-in</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            class="adm-btn danger small"
-            :disabled="busy"
-            @click="remove(e.email)"
-          >
-            Remove
-          </button>
-        </li>
-      </ul>
-      <p v-else-if="!loading && !error" class="adm-empty">
-        {{
-          searchTerm
-            ? 'No student matches that search. Already signed-in students are on the Students tab.'
-            : 'Nobody is waiting. Students you add appear here until they sign in.'
-        }}
-      </p>
-      <button
-        v-if="entries.length < total"
-        type="button"
-        class="adm-btn ghost"
-        :disabled="loading || busy"
-        @click="load(true)"
-      >
+    <div class="adm-toolbar roster-toolbar">
+      <label class="adm-field grow">
+        <span>Search</span>
+        <input
+          v-model="query"
+          class="adm-input"
+          type="search"
+          maxlength="100"
+          placeholder="Email or name"
+          @input="onSearch"
+        />
+      </label>
+    </div>
+    <p v-if="error" class="adm-msg err" role="alert">{{ error }}</p>
+    <p v-if="query && query.length < 3" class="adm-note">Type at least 3 characters to search.</p>
+    <p
+      v-if="!loading && !error && (!query || query.trim().length >= 3)"
+      class="adm-note roster-count"
+      role="status"
+    >
+      Showing {{ entries.length }} of {{ total
+      }}{{ searchTerm ? ' matching students' : ' students waiting for first sign-in' }}. Search
+      checks the full roster you can access.
+    </p>
+    <div v-if="entries.length" class="adm-card roster-table adm-table-wrap">
+      <table class="adm-table">
+        <thead>
+          <tr>
+            <th scope="col">Student</th>
+            <th scope="col">Region</th>
+            <th scope="col">Added</th>
+            <th scope="col">Status</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="e in entries" :key="e.email">
+            <td>
+              <div class="roster-name">
+                <b>{{ e.full_name || 'Name not set' }}</b>
+                <small>{{ e.email }}</small>
+                <small v-if="e.phone" class="mono">{{ e.phone }}</small>
+              </div>
+            </td>
+            <td>{{ regionOf(e.region_id) }}</td>
+            <td>
+              <div class="roster-added">
+                <span>{{ dateOf(e.added_at) }}</span>
+                <small>by {{ e.added_by === auth.profile?.id ? 'you' : 'an admin' }}</small>
+              </div>
+            </td>
+            <td><span class="adm-badge">Waiting for first sign-in</span></td>
+            <td>
+              <button
+                type="button"
+                class="adm-btn danger small"
+                :disabled="busy"
+                @click="remove(e.email)"
+              >
+                Remove
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p v-else-if="!loading && !error" class="adm-empty">
+      {{
+        searchTerm
+          ? 'No student matches that search. Already signed-in students are on the Students tab.'
+          : 'Nobody is waiting. Students you add appear here until they sign in.'
+      }}
+    </p>
+    <p v-if="loading" class="adm-note" role="status">Loading roster…</p>
+    <div v-if="entries.length < total" class="more">
+      <button type="button" class="adm-btn ghost" :disabled="loading || busy" @click="load(true)">
         Show more ({{ total - entries.length }} left)
       </button>
     </div>
@@ -308,6 +317,9 @@ defineExpose({ create });
 let searchTimer;
 function onSearch() {
   clearTimeout(searchTimer);
+  const term = query.value.trim();
+  if (!term) return load();
+  if (term.length < 3) return;
   searchTimer = setTimeout(() => load(), 250);
 }
 
@@ -551,14 +563,38 @@ async function remove(email) {
 .add-modes {
   margin-bottom: 20px;
 }
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  align-items: start;
+.roster-toolbar {
+  align-items: end;
+  max-width: 640px;
 }
-.wide-col {
-  grid-column: 1 / -1;
+.roster-toolbar .adm-field {
+  flex: 1 1 280px;
+}
+.roster-table {
+  padding: 0;
+}
+.roster-name,
+.roster-added {
+  display: grid;
+  gap: 2px;
+  min-width: 180px;
+}
+.roster-name b {
+  font-size: 14px;
+}
+.roster-name small,
+.roster-added small {
+  color: var(--ink-3);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.roster-count {
+  margin: 0 0 10px;
+}
+.more {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
 }
 .tall {
   min-height: 150px;
@@ -575,10 +611,5 @@ async function remove(email) {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 </style>

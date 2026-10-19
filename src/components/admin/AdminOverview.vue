@@ -5,7 +5,7 @@
         <div class="hero-text">
           <div class="eyebrow">{{ today }}</div>
           <h1 id="summary-h">{{ greeting }}, {{ displayName }}</h1>
-          <p>{{ summary }}</p>
+          <p v-if="summary">{{ summary }}</p>
         </div>
       </div>
       <div v-if="membersVisible" class="kpis">
@@ -257,15 +257,11 @@ const summary = computed(() => {
   const eventMessage = nextEvent
     ? `${nextEvent} is ${isLive(event) ? 'live now' : 'coming up'}.`
     : '';
-  if (!membersVisible.value) {
-    return eventMessage || 'Your events and forms are gathered below.';
-  }
+  if (!membersVisible.value) return eventMessage || 'Your events and forms are gathered below.';
   if (count == null) return 'Review requests and upcoming events for your scope.';
   const requests = `${count} request${count === 1 ? '' : 's'} need${count === 1 ? 's' : ''} your decision`;
   if (count) return `${requests}.${eventMessage ? ` ${eventMessage}` : ''}`;
-  return eventMessage
-    ? `You're all caught up. ${eventMessage}`
-    : "You're all caught up. Nothing is scheduled next.";
+  return eventMessage;
 });
 const requestTarget = (request) =>
   request.type === 'event_publish'

@@ -20,11 +20,22 @@
             <span v-if="n.audience_cohorts?.length" class="mono">{{
               n.audience_cohorts.join(', ')
             }}</span>
-            <span v-if="new Date(n.starts_at) > new Date()" class="adm-badge">scheduled</span>
+            <span class="adm-badge" :class="n.published_at ? 'mari' : ''">{{
+              noticeState(n)
+            }}</span>
           </div>
         </div>
-        <div class="row-end">
+        <div class="adm-chips">
           <button type="button" class="adm-btn ghost small" @click="edit(n)">Edit</button>
+          <button
+            type="button"
+            class="adm-btn small"
+            :class="n.published_at ? 'danger' : 'mari'"
+            :disabled="busy"
+            @click="togglePublished(n)"
+          >
+            {{ n.published_at ? 'Unpublish' : 'Publish' }}
+          </button>
           <button type="button" class="adm-btn danger small" :disabled="busy" @click="remove(n)">
             Delete
           </button>
@@ -115,6 +126,7 @@ import {
   getAvailableCohorts,
   listNoticesAdmin,
   saveNotice,
+  setNoticePublished,
 } from '../../lib/admin.js';
 
 const props = defineProps({
@@ -153,6 +165,12 @@ const day = (iso) =>
     hour: 'numeric',
     minute: '2-digit',
   });
+const noticeState = (n) => {
+  if (!n.published_at) return 'unpublished';
+  if (new Date(n.starts_at) > new Date()) return 'scheduled';
+  if (n.ends_at && new Date(n.ends_at) <= new Date()) return 'ended';
+  return 'published';
+};
 const toLocal = (iso) => {
   if (!iso) return '';
   const d = new Date(iso);
@@ -289,6 +307,22 @@ async function remove(n) {
 }
 const save = () => write(new Date().toISOString());
 const saveFuture = () => write(fromLocal(form.value.starts) || new Date().toISOString());
+
+async function togglePublished(n) {
+  const published = !n.published_at;
+  busy.value = true;
+  error.value = '';
+  try {
+    await setNoticePublished(n.id, published);
+    notice.value = published ? 'Notice published.' : 'Notice unpublished.';
+    await load();
+    emit('changed');
+  } catch (e) {
+    error.value = errorText(e);
+  } finally {
+    busy.value = false;
+  }
+}
 </script>
 
 <style scoped>

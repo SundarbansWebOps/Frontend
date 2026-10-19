@@ -1,18 +1,18 @@
 # Sundarbans House — State
 
-> IITM BS frontend/backend · Last checkpoint: 2026-10-19 12:41 IST
+> IITM BS frontend/backend · Last checkpoint: 2026-10-19 13:04 IST
 
 ## In progress / next
 
-- **Admin Command Desk port — branch `feat/admin-dashboard-port`, worktree `~/Anuraj-dev/Frontend-admin-dashboard`.** Selected prototype A is ported across the overview and admin tabs. Admin uses one top bar with centered Lounge/Website links, Add students, Create, theme and Google avatar; no search field, region chip, Home/Events links, duplicate sidebar identity or Admin footer. Overview uses the Google profile's full name, Kolkata-time greeting and matching morning/afternoon/evening art; no “Whole house” or night greeting. Students see their latest region-request status and review note in Edit profile. Positions show assignment holders by name, member ID, email, assignment date and Google photo when available; initials remain the fallback. Destructive actions use red styling while Restore actions stay neutral. Avatar schema/backfill/sync is in `supabase/migrations/20261019130000_member_google_avatars.sql`; it must be applied to the target Supabase database before remote avatars can load. Local commit: `e1d473d`. Lint, design, source Prettier, build and 36 public-route screenshot checks pass. The signed-in Admin and student flows still need Raja's browser review because no signed-in local browser session is available. **Next:** apply the avatar migration through the intended Supabase workflow, then review `http://localhost:5173/#/admin?tab=positions` while signed in. See `specs/005-admin-lounge-ux.md` and `sessions/2026-10-19.md`.
-- **Admin database work.** `supabase/migrations/20261019120000_admin_dashboard_reads.sql` and `supabase/migrations/20261019130000_member_google_avatars.sql` are local source migrations; do not apply to production without an explicit request. Prior port session reported 23 SQL assertions passing for the dashboard-read migration.
+- **Admin Command Desk port — branch `feat/admin-dashboard-port`, worktree `~/Anuraj-dev/Frontend-admin-dashboard`.** Prototype A is ported across the overview and admin tabs. The single top bar centers Lounge/Website and keeps Add students, Create, theme, and profile controls; the admin has no search field, region chip, Home/Events links, duplicate sidebar identity, or footer. The overview uses the Google profile's full name, Kolkata-time greeting and morning/afternoon/evening art. Students can see their region-request status and review note. Positions use initials so the page does not depend on the optional Google avatar column. Roster now follows the Students table pattern; form responses open in a full-screen table; notice Delete has been replaced with reversible Publish/Unpublish. The new notice state migration is `supabase/migrations/20261019130300_notice_publishing.sql`; it must be applied to the connected database before the updated Notice page can load its publication state. No migration has been applied. Lint, design, source Prettier, production build and `git diff --check` passed. The signed-in Admin pages still need real-browser review. **Next:** apply the notice migration through the intended Supabase workflow and review `http://localhost:5173/#/admin` while signed in. See `specs/005-admin-lounge-ux.md` and `sessions/2026-10-19.md`.
+- **Admin database work.** `supabase/migrations/20261019120000_admin_dashboard_reads.sql`, `supabase/migrations/20261019130000_member_google_avatars.sql`, and `supabase/migrations/20261019130300_notice_publishing.sql` are source migrations; do not apply to production without an explicit request. Prior port session reported 23 SQL assertions passing for the dashboard-read migration.
 - **Legacy Board portraits** — branch `feat/legacy-council-portraits`, separate worktree, uncommitted. Raja to review; 2022 Secretary remains blank pending his confirmed name.
 - **Tenure story** — PR #163 is open for review. **Contributors board** — PR is open against upstream `main`. **Resources page** — local work remains uncommitted for Raja's review. See dated session logs.
 
 ## Status
 
 - Admin entry is `/#/admin`; shell and panels live in `src/pages/AdminPage.vue` and `src/components/admin/`. Prototype A is in `prototype/admin-dashboards/a-command-desk/`.
-- Recent feature work remains local until explicitly delivered. No deployment or external changes are implied by a local build.
+- Admin changes are committed locally on `feat/admin-dashboard-port`; no push, deployment or external change is implied by a local commit.
 - Older Lounge, Resources, Teams and audit decisions remain in `sessions/` and `decisions.md`; certificates are deferred.
 
 ## Architecture map
@@ -32,7 +32,7 @@
 ## Key decisions
 
 - Admin prototype A remains selected; reuse public design tokens and the shared navigation frame.
-- Admin profile avatar uses Google's photo when present, with the house crest as fallback.
+- Profile avatars are optional; admin member lists must keep working with initials when the database has no Google avatar column.
 - Overview only shows metrics supported by current backend data; no invented telemetry.
 - No commit, push, PR, deployment or live database migration without explicit authorization.
 

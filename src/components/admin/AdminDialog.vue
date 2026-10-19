@@ -1,12 +1,12 @@
-<!-- Admin dialogs use the shared card tokens. Centered for forms,
-     `wide` for big forms, `side` for a student's profile. Native <dialog> gives focus trapping,
-     Esc and the backdrop. The title and optional footer stay put; only the body scrolls, and the
-     page behind is locked while any sheet is open (admin.css: html.adm-sheet-open). -->
+<!-- Admin dialogs use the shared card tokens. Centered for forms, `wide` for big forms,
+     `fullscreen` for response tables, `side` for a student's profile. Native <dialog> gives focus
+     trapping, Esc and the backdrop. The title and optional footer stay put; only the body scrolls,
+     and the page behind is locked while any sheet is open (admin.css: html.adm-sheet-open). -->
 <template>
   <dialog
     ref="dlg"
     class="adm-dlg"
-    :class="side ? 'adm-side' : wide ? 'adm-wide' : 'adm-center'"
+    :class="side ? 'adm-side' : fullscreen ? 'adm-fullscreen' : wide ? 'adm-wide' : 'adm-center'"
     :aria-labelledby="`${uid}-h`"
     @close="emit('close')"
     @click.self="close"
@@ -30,6 +30,7 @@ import { onBeforeUnmount, onMounted, ref, useId } from 'vue';
 defineProps({
   title: { type: String, required: true },
   wide: { type: Boolean, default: false },
+  fullscreen: { type: Boolean, default: false },
   side: { type: Boolean, default: false },
 });
 const emit = defineEmits(['close']);
@@ -79,6 +80,11 @@ defineExpose({ close });
 }
 .adm-dlg.adm-wide {
   width: min(920px, calc(100vw - 32px));
+}
+.adm-dlg.adm-fullscreen {
+  width: min(1680px, calc(100vw - 48px));
+  height: calc(100dvh - 48px);
+  max-height: calc(100dvh - 48px);
 }
 .adm-dlg.adm-side {
   width: min(620px, 100vw);
@@ -155,6 +161,12 @@ defineExpose({ close });
   .adm-dlg.adm-side {
     width: 100vw;
     max-height: 100dvh;
+  }
+  .adm-dlg.adm-fullscreen {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
   }
   .head {
     padding: 14px 56px 14px 16px;

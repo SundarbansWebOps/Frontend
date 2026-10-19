@@ -19,6 +19,7 @@ import {
   saveForm as loungeSaveForm,
   saveNotice as loungeSaveNotice,
   deleteNotice as loungeDeleteNotice,
+  setNoticePublished as loungeSetNoticePublished,
   uploadCertificateTemplate as loungeUploadCertificateTemplate,
 } from './lounge.js';
 
@@ -866,7 +867,7 @@ export async function listNoticesAdmin({ page = 0 } = {}) {
   let query = supabase
     .from('announcements')
     .select(
-      'id, title, body, link, region_id, community_id, audience_cohorts, starts_at, ends_at, created_at'
+      'id, title, body, link, region_id, community_id, audience_cohorts, starts_at, ends_at, published_at, created_at'
     );
   if (isRc.value) query = query.eq('region_id', auth.dashboard.region_id).is('community_id', null);
   if (isHead.value)
@@ -881,6 +882,7 @@ export async function listNoticesAdmin({ page = 0 } = {}) {
 
 export const saveNotice = (notice) => loungeSaveNotice(notice);
 export const deleteNotice = (id) => loungeDeleteNotice(id);
+export const setNoticePublished = (id, published) => loungeSetNoticePublished(id, published);
 
 // Student region requests (Q15) and certificate-name requests (SA)
 
@@ -956,7 +958,7 @@ export async function listPositions() {
     await supabase
       .from('admin_assignments')
       .select(
-        'id, member_id, position, region_id, community_id, started_at, member:members!admin_assignments_member_id_fkey(id, full_name, preferred_name, email, member_code, google_avatar_url)'
+        'id, member_id, position, region_id, community_id, started_at, member:members!admin_assignments_member_id_fkey(id, full_name, preferred_name, email, member_code)'
       )
       .is('ended_at', null)
   );

@@ -306,7 +306,7 @@
     <AdminDialog
       v-if="responsesFor"
       ref="respDlg"
-      wide
+      fullscreen
       :title="`${responsesFor.title} responses`"
       @close="responsesFor = null"
     >
@@ -317,6 +317,7 @@
             {{ responses.length === 1 ? 'response' : 'responses' }}
             · {{ responseFields.length }}
             {{ responseFields.length === 1 ? 'question' : 'questions' }}
+            <span class="resp-scope"> · {{ scopeOf(responsesFor) }}</span>
           </template>
         </p>
         <button
@@ -335,7 +336,7 @@
         <table class="resp">
           <thead>
             <tr>
-              <th scope="col" class="who">Email</th>
+              <th scope="col" class="who">Submitted by</th>
               <th scope="col">Submitted</th>
               <th v-for="f in responseFields" :key="f.identity" scope="col">{{ f.label }}</th>
             </tr>
@@ -817,7 +818,9 @@ function downloadResponses() {
   color: var(--ink);
 }
 .resp-wrap {
-  overflow-x: auto;
+  max-height: calc(100dvh - 220px);
+  overflow: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--card);
@@ -842,6 +845,9 @@ function downloadResponses() {
   border-bottom: 0;
 }
 .resp th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   padding-top: 10px;
   padding-bottom: 10px;
   background: var(--sunk);
@@ -857,6 +863,7 @@ function downloadResponses() {
   background: var(--card);
 }
 .resp th.who {
+  z-index: 3;
   background: var(--sunk);
 }
 .resp td.who {
@@ -872,8 +879,17 @@ function downloadResponses() {
 .none {
   color: var(--ink-3);
 }
+.resp-scope {
+  color: var(--ink-3);
+  font-size: 12px;
+}
 .mono {
   font-family: var(--mono);
   font-size: 13px;
+}
+@media (max-width: 760px) {
+  .resp-wrap {
+    max-height: calc(100dvh - 180px);
+  }
 }
 </style>

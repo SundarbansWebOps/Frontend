@@ -24,17 +24,7 @@
           </div>
           <div v-if="!isInternationalRegion(r) && rcsOf(r.id).length" class="holder-list">
             <div v-for="p in rcsOf(r.id)" :key="p.id" class="position-holder">
-              <span class="person-avatar" aria-hidden="true">
-                <img
-                  v-if="avatarUrl(p.member)"
-                  :src="avatarUrl(p.member)"
-                  alt=""
-                  loading="lazy"
-                  referrerpolicy="no-referrer"
-                  @error="avatarFailed(p.member)"
-                />
-                <template v-else>{{ initials(p.member) }}</template>
-              </span>
+              <span class="person-avatar" aria-hidden="true">{{ initials(p.member) }}</span>
               <div class="person-info">
                 <b>{{ fullName(p.member) }}</b>
                 <span class="person-detail">
@@ -85,17 +75,9 @@
               <span class="adm-badge">{{ POSITION_LABEL[p] }}</span>
             </div>
             <div v-if="leadOf(c.id, p)" class="position-holder">
-              <span class="person-avatar" aria-hidden="true">
-                <img
-                  v-if="avatarUrl(leadOf(c.id, p).member)"
-                  :src="avatarUrl(leadOf(c.id, p).member)"
-                  alt=""
-                  loading="lazy"
-                  referrerpolicy="no-referrer"
-                  @error="avatarFailed(leadOf(c.id, p).member)"
-                />
-                <template v-else>{{ initials(leadOf(c.id, p).member) }}</template>
-              </span>
+              <span class="person-avatar" aria-hidden="true">{{
+                initials(leadOf(c.id, p).member)
+              }}</span>
               <div class="person-info">
                 <b>{{ fullName(leadOf(c.id, p).member) }}</b>
                 <span class="person-detail">
@@ -188,7 +170,6 @@ const reason = ref('');
 const formError = ref('');
 const busy = ref(false);
 const dlg = ref(null);
-const failedAvatars = ref(new Set());
 
 const regionalCount = computed(() => positions.value.filter((p) => p.position === 'rc').length);
 const communityCount = computed(
@@ -209,23 +190,6 @@ const initials = (member) => {
     .map((part) => part[0])
     .join('')
     .toLocaleUpperCase();
-};
-const avatarUrl = (member) => {
-  const url = member?.google_avatar_url;
-  if (!url || failedAvatars.value.has(member.id)) return '';
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === 'https:' &&
-      (parsed.hostname === 'googleusercontent.com' ||
-        parsed.hostname.endsWith('.googleusercontent.com'))
-      ? url
-      : '';
-  } catch {
-    return '';
-  }
-};
-const avatarFailed = (member) => {
-  failedAvatars.value = new Set(failedAvatars.value).add(member.id);
 };
 const day = (iso) =>
   new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -331,12 +295,6 @@ async function submit() {
   color: var(--mari-ink);
   font-size: 13px;
   font-weight: 800;
-}
-.person-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  object-fit: cover;
 }
 .person-info {
   display: grid;
