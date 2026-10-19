@@ -49,7 +49,14 @@
           aria-label="Your account"
           @click="emit('profile')"
         >
-          <span class="anav-initials" aria-hidden="true">{{ avatarInitials }}</span>
+          <img
+            v-if="avatarUrl"
+            :src="avatarUrl"
+            alt=""
+            referrerpolicy="no-referrer"
+            @error="avatarFailed"
+          />
+          <img v-else :src="CREST" alt="" />
         </button>
       </div>
     </div>
@@ -63,7 +70,8 @@ import CREST from '../../assets/crest.webp';
 defineProps({
   membersVisible: Boolean,
   theme: { type: String, required: true },
-  avatarInitials: { type: String, default: 'A' },
+  avatarUrl: { type: String, default: '' },
+  avatarFailed: { type: Function, required: true },
 });
 const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 </script>
@@ -249,28 +257,15 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
   overflow: hidden;
   width: 38px;
   height: 38px;
-  border: 0;
-  background: transparent;
+  padding: 0;
+  border: 1.5px solid var(--line-strong);
+  background: var(--paper);
 }
 
 .anav-profile img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
-}
-
-.anav-initials {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--mari);
-  color: var(--on-mari);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
 }
 
 @media (max-width: 1020px) {
