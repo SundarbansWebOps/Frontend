@@ -247,7 +247,7 @@
           </div>
           <button
             type="button"
-            class="adm-btn ghost small"
+            class="adm-btn danger small"
             :disabled="busy"
             @click="remove(e.email)"
           >

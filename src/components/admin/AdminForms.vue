@@ -32,7 +32,11 @@
           <button type="button" class="adm-btn ghost small" @click="openResponses(f)">
             Responses
           </button>
-          <button type="button" class="adm-btn ghost small" @click="archive(f)">
+          <button
+            type="button"
+            :class="['adm-btn', 'small', f.archived_at ? 'ghost' : 'danger']"
+            @click="archive(f)"
+          >
             {{ f.archived_at ? 'Restore' : 'Archive' }}
           </button>
         </div>
@@ -166,7 +170,7 @@
                 A saved invite stays private; enter a new link to replace it.
               </small>
             </label>
-            <label v-if="form.id" class="adm-check wide">
+            <label v-if="form.id" class="adm-check wide" :class="{ danger: form.remove_invite }">
               <input v-model="form.remove_invite" type="checkbox" />
               <span>Remove the saved WhatsApp invite</span>
             </label>
@@ -277,7 +281,7 @@
         <button
           v-if="form.published_at"
           type="button"
-          class="adm-btn ghost push"
+          class="adm-btn danger push"
           :disabled="busy"
           @click="save('unpublish')"
         >

@@ -142,7 +142,7 @@
           <button
             v-if="canRequestRemoval"
             type="button"
-            class="adm-btn ghost small"
+            class="adm-btn danger small"
             @click="ask('delete')"
           >
             Delete
@@ -168,7 +168,7 @@
               v-for="a in statusActions"
               :key="a"
               type="button"
-              class="adm-btn ghost small"
+              :class="['adm-btn', 'small', a === 'suspend' ? 'danger' : 'ghost']"
               @click="ask(a)"
             >
               {{ STATUS_ACTION_LABEL[a] }}
@@ -184,7 +184,7 @@
             <button
               v-if="detail.position"
               type="button"
-              class="adm-btn ghost small"
+              class="adm-btn danger small"
               @click="ask('revoke')"
             >
               Revoke position

@@ -956,7 +956,7 @@ export async function listPositions() {
     await supabase
       .from('admin_assignments')
       .select(
-        'id, position, region_id, community_id, started_at, member:members!admin_assignments_member_id_fkey(id, full_name, member_code)'
+        'id, member_id, position, region_id, community_id, started_at, member:members!admin_assignments_member_id_fkey(id, full_name, preferred_name, email, member_code, google_avatar_url)'
       )
       .is('ended_at', null)
   );

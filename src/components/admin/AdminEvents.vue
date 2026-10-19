@@ -57,7 +57,7 @@
           <button
             v-if="e.pending_request_id && !isSuperAdmin"
             type="button"
-            class="adm-btn ghost small"
+            class="adm-btn danger small"
             :disabled="busy"
             @click="cancelPublish(e)"
           >
@@ -70,7 +70,7 @@
             </button>
             <button
               type="button"
-              class="adm-btn ghost small"
+              :class="['adm-btn', 'small', e.cancelled_at ? 'ghost' : 'danger']"
               :disabled="busy"
               @click="toggleCancel(e)"
             >
@@ -158,7 +158,7 @@
             :required="!form.archive"
           />
         </label>
-        <label v-if="isSuperAdmin" class="adm-check wide">
+        <label v-if="isSuperAdmin" class="adm-check wide" :class="{ danger: form.archive }">
           <input v-model="form.archive" type="checkbox" />
           <span>Archive (dateless historical record)</span>
         </label>
@@ -220,7 +220,7 @@
               <button
                 v-if="form.image_url"
                 type="button"
-                class="adm-btn ghost small"
+                class="adm-btn danger small"
                 @click="clearPoster"
               >
                 Remove poster
@@ -316,7 +316,7 @@
           <button
             v-if="form.published_at"
             type="button"
-            class="adm-btn ghost"
+            class="adm-btn danger"
             :disabled="busy"
             @click="save('unpublish')"
           >

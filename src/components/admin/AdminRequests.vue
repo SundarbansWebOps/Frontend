@@ -152,11 +152,15 @@
                 maxlength="2000"
             /></label>
             <div class="decision-actions">
-              <button class="adm-btn mari" :disabled="busy" @click="approve(selected)">
+              <button
+                :class="['adm-btn', selected.type === 'member_hard_delete' ? 'danger' : 'mari']"
+                :disabled="busy"
+                @click="approve(selected)"
+              >
                 {{
                   selected.type === 'member_hard_delete' ? 'Approve and erase' : 'Approve'
                 }}</button
-              ><button class="adm-btn ghost" :disabled="busy" @click="reject(selected)">
+              ><button class="adm-btn danger" :disabled="busy" @click="reject(selected)">
                 Reject
               </button>
             </div></template
@@ -168,7 +172,7 @@
             </p>
             <button
               v-if="selected.category === 'admin' && selected.requested_by === me"
-              class="adm-btn ghost"
+              class="adm-btn danger"
               :disabled="busy"
               @click="cancel(selected)"
             >

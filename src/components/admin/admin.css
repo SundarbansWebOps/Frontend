@@ -137,8 +137,17 @@ textarea.adm-input {
   background: color-mix(in srgb, var(--ink) 5%, transparent);
 }
 .adm-btn.danger {
-  border-color: var(--verm);
+  border-color: color-mix(in srgb, var(--verm) 52%, var(--line));
+  background: color-mix(in srgb, var(--verm) 12%, var(--card));
   color: var(--verm);
+}
+.adm-btn.danger:hover:not(:disabled) {
+  border-color: var(--verm);
+  background: color-mix(in srgb, var(--verm) 20%, var(--card));
+}
+.adm-btn:focus-visible {
+  outline: 2px solid var(--mari-ink);
+  outline-offset: 2px;
 }
 .adm-btn.small {
   height: 30px;
@@ -234,6 +243,12 @@ textarea.adm-input {
 .adm-check input:focus-visible {
   outline: 2px solid var(--mari-ink);
   outline-offset: 2px;
+}
+.adm-check.danger {
+  color: var(--verm);
+}
+.adm-check.danger input:not(:checked) {
+  border-color: var(--verm);
 }
 .adm-check input:disabled {
   opacity: 0.45;
