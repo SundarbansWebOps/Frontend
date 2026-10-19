@@ -171,6 +171,18 @@ export async function mockSupabase(
           return json(row);
         }
         if (name in LOUNGE_DEFAULTS) return json(LOUNGE_DEFAULTS[name]);
+        // The desk falls back to the older table/RPC reads when these functions are absent.
+        if (name === 'admin_dashboard_summary' || name === 'admin_dashboard_requests') {
+          return json(
+            {
+              code: 'PGRST202',
+              details: null,
+              hint: null,
+              message: `Could not find the function public.${name} in the schema cache`,
+            },
+            404
+          );
+        }
       }
       const value = data[name];
       return json((typeof value === 'function' ? value(args) : value) ?? null);
@@ -202,4 +214,8 @@ export async function callTo(calls, path, method) {
   const match = (c) => c.path === path && (!method || c.method === method);
   await expect.poll(() => calls.some(match), { message: `request to ${path}` }).toBe(true);
   return calls.find(match);
+}
+
+export function adminSections(page) {
+  return page.getByRole('navigation', { name: 'Admin sections' });
 }

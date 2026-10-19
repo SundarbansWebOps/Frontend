@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { test, expect } from '@playwright/test';
-import { mockSupabase, PEOPLE, callTo } from './supabase-mock.js';
+import { adminSections, mockSupabase, PEOPLE, callTo } from './supabase-mock.js';
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
@@ -46,68 +46,66 @@ test('roster searches beyond the first thousand rows and paginates matches', asy
     });
   });
   await page.goto('/#/admin?tab=roster');
-  await expect(page.getByText('Showing 50 of 1101 students.', { exact: false })).toBeVisible();
+  await expect(page.getByText(/Showing 50 of 1101 students/)).toBeVisible();
   await page.getByRole('button', { name: 'Show more (1051 left)' }).click();
-  await expect(page.getByText('Showing 100 of 1101 students.', { exact: false })).toBeVisible();
+  await expect(page.getByText(/Showing 100 of 1101 students/)).toBeVisible();
   expect(requests.at(-1).get('offset')).toBe('50');
   expect(requests.at(-1).get('order')).toBe('added_at.desc,email.asc');
 
-  await page.getByLabel('Search roster').fill('99f9001100');
-  await page.getByRole('button', { name: 'Search', exact: true }).click();
-  await expect(page.getByText('Showing 1 of 1 matching students.', { exact: false })).toBeVisible();
+  const search = page.getByLabel('Search', { exact: true });
+  await search.fill('99f9001100');
+  await expect(page.getByText(/Showing 1 of 1 matching students/)).toBeVisible();
   await expect(page.getByText(rows[1100].email, { exact: true })).toBeVisible();
   expect(requests.at(-1).get('or')).toBe(
     '(email.ilike."%99f9001100%",full_name.ilike."%99f9001100%")'
   );
   expect(requests.at(-1).get('offset')).toBe('0');
 
-  await page.getByLabel('Search roster').fill('Search Target');
-  await page.getByLabel('Search roster').press('Enter');
+  await search.fill('Search Target');
   await expect
     .poll(() => requests.at(-1).get('or'))
     .toBe('(email.ilike."%Search Target%",full_name.ilike."%Search Target%")');
-  await expect(page.getByText('Showing 1 of 1 matching students.', { exact: false })).toBeVisible();
-  await page.getByLabel('Search roster').fill('missing');
-  await page.getByLabel('Search roster').press('Enter');
+  await expect(page.getByText(/Showing 1 of 1 matching students/)).toBeVisible();
+  await search.fill('missing');
   await expect(page.getByText(/No student matches that search/)).toBeVisible();
-  await page.getByLabel('Search roster').fill('');
-  await page.getByLabel('Search roster').press('Enter');
-  await expect(page.getByText('Showing 50 of 1101 students.', { exact: false })).toBeVisible();
+  await search.fill('');
+  await expect(page.getByText(/Showing 50 of 1101 students/)).toBeVisible();
 });
 
 test('roster accepts an email without a name and maps a CSV', async ({ page }) => {
   const calls = await mockSupabase(page, {
     as: 'rc',
     data: {
-      roster_add: 'ok',
-      roster_add_many: [
-        { email: '21f1000100@ds.study.iitm.ac.in', ok: true, category: 'processed' },
-      ],
+      roster_add_many: (args) =>
+        (args.p_rows || []).map((r) => ({ email: r.email, ok: true, category: 'processed' })),
     },
   });
   await page.goto('/#/admin?tab=roster');
-  await expect(page.getByText('Added to Patna.')).toBeVisible();
-  await page.getByLabel('IITM email').fill('21f1000099@ds.study.iitm.ac.in');
-  await page.getByRole('button', { name: 'Add to roster' }).first().click();
+  await expect(page.getByText('Loading admin data...')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Add students' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Add students' });
+  await expect(dialog.getByText('Added to Patna.')).toBeVisible();
+  await dialog.getByLabel('IITM email').fill('21f1000099@ds.study.iitm.ac.in');
+  await dialog.getByRole('button', { name: 'Add to roster' }).click();
   await expect(
-    page.getByText('21f1000099@ds.study.iitm.ac.in can now sign in with Google.')
+    dialog.getByText('1 processed, 0 invalid. Existing identities are preserved.')
   ).toBeVisible();
-  const added = await callTo(calls, '/rest/v1/rpc/roster_add');
-  expect(JSON.parse(added.body)).toMatchObject({
-    p_email: '21f1000099@ds.study.iitm.ac.in',
-    p_full_name: null,
-    p_phone: null,
-    p_region_id: null,
+  const added = await callTo(calls, '/rest/v1/rpc/roster_add_many');
+  expect(JSON.parse(added.body).p_rows[0]).toMatchObject({
+    email: '21f1000099@ds.study.iitm.ac.in',
+    full_name: '',
+    region_id: null,
   });
 
-  await page.setInputFiles('input[type="file"]', {
+  await dialog.getByRole('button', { name: 'Upload CSV' }).click();
+  await dialog.getByLabel('Upload roster CSV').setInputFiles({
     name: 'members.csv',
     mimeType: 'text/csv',
     buffer: Buffer.from('Student_Email,Allocated_Region\n21f1000100@ds.study.iitm.ac.in,Patna\n'),
   });
-  await expect(page.getByText('1 row after de-duplicating this file.')).toBeVisible();
-  await expect(page.getByRole('combobox', { name: 'Email' })).toHaveValue(/0/);
-  await page.getByRole('button', { name: /Import/ }).click();
+  await expect(dialog.getByText('1 row after de-duplicating this file.')).toBeVisible();
+  await expect(dialog.getByRole('combobox', { name: 'Email' })).toHaveValue(/0/);
+  await dialog.getByRole('button', { name: /Import/ }).click();
   await expect(
     page.getByText('1 processed, 0 invalid. Existing identities are preserved.')
   ).toBeVisible();
@@ -272,8 +270,9 @@ test('notices publish in scope and positions keep the two-RC cap with no Super A
     audience_cohorts: [],
   });
 
-  await page.getByRole('tab', { name: 'Positions' }).click();
-  await expect(page.getByText('A region may have none, one or two coordinators.')).toBeVisible();
+  await adminSections(page).getByRole('button', { name: 'Positions' }).click();
+  await expect(page.getByRole('heading', { name: 'Positions' })).toBeVisible();
+  await expect(page.getByText('Two slots per region.', { exact: false })).toBeVisible();
   await expect(
     page.getByText('Super Admin login emails stay the three fixed accounts.')
   ).toBeVisible();
@@ -304,10 +303,14 @@ test('a current-region RC reviews a student region request without the two-perso
     data: { member_region_requests: [request], review_region_change: request.id },
   });
   await page.goto('/#/admin?tab=requests');
-  await expect(page.getByRole('heading', { name: 'Student region corrections' })).toBeVisible();
-  await expect(page.getByText('Patna → Delhi NCR')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Requests' })).toBeVisible();
+  await expect(page.getByRole('article').getByText('Region change')).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Patna' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Delhi NCR' })).toBeVisible();
   await page.getByRole('button', { name: 'Approve', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('Region change applied.');
+  await expect(
+    page.getByRole('status').filter({ hasText: 'Region change applied.' })
+  ).toBeVisible();
   const reviewed = await callTo(calls, '/rest/v1/rpc/review_region_change');
   expect(JSON.parse(reviewed.body)).toMatchObject({ p_request_id: request.id, p_approve: true });
   expect(calls.some((c) => c.path === '/rest/v1/rpc/approve_request')).toBe(false);
