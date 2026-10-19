@@ -5,6 +5,9 @@ public/
 # Nested agent worktrees and local agent state — never rewrite from repo root.
 .claude/
 
+# Throwaway single-file prototypes (hand-authored, not production source).
+prototype/admin-dashboards/a-command-desk/index.html
+
 # Agent memory / project docs — not source; T-04 format pass must not thrash them.
 docs/**
 README.md

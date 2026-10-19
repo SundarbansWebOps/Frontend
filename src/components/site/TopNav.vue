@@ -11,7 +11,7 @@
         <img :src="CREST" alt="" width="34" height="34" />
         <span class="word">
           <b>Sundarbans</b>
-          <small>IIT Madras BS · House</small>
+          <small>IIT Madras BS</small>
         </span>
       </RouterLink>
       <nav class="links" aria-label="Main">
@@ -223,10 +223,11 @@ onBeforeUnmount(() => {
   }
 }
 .in {
-  max-width: 1240px;
+  width: 100%;
+  max-width: none;
   height: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
+  margin: 0;
+  padding: 0 clamp(16px, 2.2vw, 40px);
   display: flex;
   align-items: center;
   gap: 24px;

@@ -1,5 +1,5 @@
-<!-- Organizer forms: house, region, community or bound to an event. Field order is stored as
-     given. Invite URLs are WhatsApp-only and shown to a student after they submit, not before. -->
+<!-- Organizer forms: house, region, community or bound to an event. Question order is stored as
+     given. The invite link is WhatsApp-only and shown to a student after they submit, not before. -->
 <template>
   <div>
     <div class="adm-toolbar between">
@@ -32,7 +32,11 @@
           <button type="button" class="adm-btn ghost small" @click="openResponses(f)">
             Responses
           </button>
-          <button type="button" class="adm-btn ghost small" @click="archive(f)">
+          <button
+            type="button"
+            :class="['adm-btn', 'small', f.archived_at ? 'ghost' : 'danger']"
+            @click="archive(f)"
+          >
             {{ f.archived_at ? 'Restore' : 'Archive' }}
           </button>
         </div>
@@ -47,241 +51,314 @@
       :title="form.id ? 'Edit form' : 'New form'"
       @close="form = null"
     >
-      <form class="adm-form" @submit.prevent="save(false)">
-        <label class="adm-field wide">
-          <span>Title</span>
-          <input v-model.trim="form.title" class="adm-input" required maxlength="200" />
-        </label>
-        <label class="adm-field wide">
-          <span>Description</span>
-          <textarea v-model.trim="form.description" class="adm-input" maxlength="4000" />
-        </label>
-        <label class="adm-field">
-          <span>Form kind</span>
-          <select v-model="form.form_kind" class="adm-input">
-            <option value="general">General form</option>
-            <option value="group">Group application</option>
-            <option value="recruitment">Recruitment</option>
-          </select>
-        </label>
-        <label v-if="form.form_kind === 'group'" class="adm-field">
-          <span>Group label</span>
-          <input v-model.trim="form.group_label" class="adm-input" maxlength="80" />
-        </label>
-        <label v-if="form.form_kind === 'group'" class="adm-field wide">
-          <span>Group purpose</span>
-          <input v-model.trim="form.group_purpose" class="adm-input" maxlength="300" />
-          <small>Use verified source copy; applicants see this beside the group label.</small>
-        </label>
-        <p v-if="form.archived_at" class="adm-note wide">
+      <form :id="editorId" class="editor" @submit.prevent="save(false)">
+        <p v-if="form.archived_at" class="adm-note">
           Archived forms stay available to organizers and can be restored.
         </p>
-        <label class="adm-field">
-          <span>Scope</span>
-          <select v-model="form.scope" class="adm-input" @change="onScope">
-            <option v-if="isSuperAdmin" value="house">House</option>
-            <option v-if="isSuperAdmin || isRc" value="region">Region</option>
-            <option v-if="isSuperAdmin || isHead" value="community">Community</option>
-            <option value="event">Bound to an event</option>
-          </select>
-        </label>
-        <label v-if="form.scope === 'region'" class="adm-field">
-          <span>Region</span>
-          <select v-model="form.region_id" class="adm-input" :disabled="isRc">
-            <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-          </select>
-        </label>
-        <label v-if="form.scope === 'community'" class="adm-field">
-          <span>Community</span>
-          <select v-model="form.community_id" class="adm-input" :disabled="isHead">
-            <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
-          </select>
-        </label>
-        <label v-if="form.scope === 'event'" class="adm-field">
-          <span>Event</span>
-          <select v-model="form.event_id" class="adm-input">
-            <option v-for="e in eventOptions" :key="e.id" :value="e.id">
-              {{ e.name }} · {{ eventStatus(e) }}
-            </option>
-          </select>
-        </label>
-        <label class="adm-field">
-          <span>
-            <input v-model="form.is_open" type="checkbox" />
-            Accepting responses
-          </span>
-        </label>
-        <label class="adm-field">
-          <span>Opens</span>
-          <input v-model="form.opens" class="adm-input" type="datetime-local" />
-        </label>
-        <label class="adm-field">
-          <span>Closes</span>
-          <input v-model="form.closes" class="adm-input" type="datetime-local" />
-        </label>
-        <div class="wide">
-          <p class="adm-kicker">Audience</p>
-          <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
-        </div>
-        <label class="adm-field wide">
-          <span>WhatsApp invite (optional)</span>
-          <input
-            v-model.trim="form.invite_url"
-            class="adm-input"
-            type="url"
-            :disabled="form.remove_invite"
-            placeholder="https://chat.whatsapp.com/…"
-          />
-          <small>
-            Students see this only after they submit. Use a chat.whatsapp.com or wa.me HTTPS link.
-            Saved invites stay private; enter a URL here to set or replace one.
-          </small>
-        </label>
+        <p v-if="form.published_at" class="adm-note">
+          This form is published. Saving changes updates it straight away.
+        </p>
 
-        <label v-if="form.id" class="adm-field wide">
-          <span>
-            <input v-model="form.remove_invite" type="checkbox" />
-            Remove the saved WhatsApp invite
-          </span>
-        </label>
-
-        <div class="wide fields">
-          <p class="adm-kicker">Fields</p>
-          <p class="adm-note">Order is the order students see. Keys must stay unique.</p>
-          <div v-for="(field, i) in form.fields" :key="field._id" class="adm-card field">
-            <label class="adm-field">
-              <span>Label</span>
-              <input
-                v-model.trim="field.label"
-                class="adm-input"
-                required
-                maxlength="300"
-                @change="syncKey(field, i)"
-              />
+        <section class="grp" aria-labelledby="form-details-heading">
+          <h3 id="form-details-heading" class="adm-kicker">Details</h3>
+          <div class="adm-form">
+            <label class="adm-field wide">
+              <span>Title</span>
+              <input v-model.trim="form.title" class="adm-input" required maxlength="200" />
             </label>
-            <label class="adm-field">
-              <span>Key</span>
-              <input v-model.trim="field.key" class="adm-input mono" required maxlength="64" />
+            <label class="adm-field wide">
+              <span>Description</span>
+              <textarea v-model.trim="form.description" class="adm-input" maxlength="4000" />
             </label>
-            <label class="adm-field">
-              <span>Type</span>
-              <select v-model="field.type" class="adm-input">
-                <option v-for="t in FORM_FIELD_TYPES" :key="t" :value="t">{{ t }}</option>
-              </select>
-            </label>
-            <label class="adm-field">
-              <span>Prefill</span>
-              <select v-model="field.prefill" class="adm-input">
-                <option :value="''">None</option>
-                <option v-for="p in PREFILL_KEYS" :key="p" :value="p">{{ p }}</option>
-              </select>
-            </label>
-            <label class="adm-field">
-              <span>
-                <input v-model="field.required" type="checkbox" />
-                Required
-              </span>
-            </label>
-            <label v-if="field.type === 'select' || field.type === 'multiselect'" class="adm-field">
-              <span>
-                <input v-model="field.allow_other" type="checkbox" />
-                Allow “Other”
-              </span>
-            </label>
-            <label
-              v-if="field.type === 'select' || field.type === 'multiselect'"
-              class="adm-field wide"
-            >
-              <span>Options (one per line)</span>
-              <textarea v-model="field.optionsText" class="adm-input" />
-            </label>
-            <div class="acts">
-              <button
-                type="button"
-                class="adm-btn ghost small"
-                :disabled="i === 0"
-                @click="move(i, -1)"
-              >
-                Up
-              </button>
-              <button
-                type="button"
-                class="adm-btn ghost small"
-                :disabled="i === form.fields.length - 1"
-                @click="move(i, 1)"
-              >
-                Down
-              </button>
-              <button type="button" class="adm-btn danger small" @click="form.fields.splice(i, 1)">
-                Remove
-              </button>
-            </div>
           </div>
-          <button type="button" class="adm-btn ghost" @click="addField">Add field</button>
-        </div>
+        </section>
 
-        <p v-if="formError" class="adm-msg err wide" role="alert">{{ formError }}</p>
-        <div class="wide row-end">
-          <button type="submit" class="adm-btn ghost" :disabled="busy">Save draft</button>
-          <button
-            v-if="form.published_at"
-            type="button"
-            class="adm-btn ghost"
-            :disabled="busy"
-            @click="save('unpublish')"
-          >
-            Unpublish
+        <section class="grp" aria-labelledby="form-audience-heading">
+          <h3 id="form-audience-heading" class="adm-kicker">Who sees it</h3>
+          <div class="adm-form">
+            <label class="adm-field">
+              <span>Form kind</span>
+              <select v-model="form.form_kind" class="adm-input">
+                <option value="general">General form</option>
+                <option value="group">Group application</option>
+                <option value="recruitment">Recruitment</option>
+              </select>
+            </label>
+            <label class="adm-field">
+              <span>Scope</span>
+              <select v-model="form.scope" class="adm-input" @change="onScope">
+                <option v-if="isSuperAdmin" value="house">Whole house</option>
+                <option v-if="isSuperAdmin || isRc" value="region">Region</option>
+                <option v-if="isSuperAdmin || isHead" value="community">Community</option>
+                <option value="event">Bound to an event</option>
+              </select>
+            </label>
+            <label v-if="form.form_kind === 'group'" class="adm-field">
+              <span>Group label</span>
+              <input v-model.trim="form.group_label" class="adm-input" maxlength="80" />
+            </label>
+            <label v-if="form.form_kind === 'group'" class="adm-field wide">
+              <span>Group purpose</span>
+              <input v-model.trim="form.group_purpose" class="adm-input" maxlength="300" />
+              <small
+                >Copy from the verified source. Applicants see it beside the group label.</small
+              >
+            </label>
+            <label v-if="form.scope === 'region'" class="adm-field">
+              <span>Region</span>
+              <select v-model="form.region_id" class="adm-input" :disabled="isRc">
+                <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
+              </select>
+            </label>
+            <label v-if="form.scope === 'community'" class="adm-field">
+              <span>Community</span>
+              <select v-model="form.community_id" class="adm-input" :disabled="isHead">
+                <option v-for="c in lookups.communities" :key="c.id" :value="c.id">
+                  {{ c.name }}
+                </option>
+              </select>
+            </label>
+            <label v-if="form.scope === 'event'" class="adm-field">
+              <span>Event</span>
+              <select v-model="form.event_id" class="adm-input">
+                <option v-for="e in eventOptions" :key="e.id" :value="e.id">
+                  {{ e.name }} · {{ eventStatus(e) }}
+                </option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="grp" aria-labelledby="form-responses-heading">
+          <h3 id="form-responses-heading" class="adm-kicker">Responses</h3>
+          <div class="adm-form">
+            <label class="adm-check wide">
+              <input v-model="form.is_open" type="checkbox" />
+              <span>Accepting responses</span>
+            </label>
+            <label class="adm-field">
+              <span>Opens</span>
+              <input v-model="form.opens" class="adm-input" type="datetime-local" />
+            </label>
+            <label class="adm-field">
+              <span>Closes</span>
+              <input v-model="form.closes" class="adm-input" type="datetime-local" />
+            </label>
+            <p class="adm-note wide">Leave a date empty for no limit.</p>
+          </div>
+        </section>
+
+        <section class="grp" aria-labelledby="form-cohorts-heading">
+          <h3 id="form-cohorts-heading" class="adm-kicker">Audience</h3>
+          <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
+        </section>
+
+        <section class="grp" aria-labelledby="form-invite-heading">
+          <h3 id="form-invite-heading" class="adm-kicker">WhatsApp invite</h3>
+          <div class="adm-form">
+            <label class="adm-field wide">
+              <span>WhatsApp invite (optional)</span>
+              <input
+                v-model.trim="form.invite_url"
+                class="adm-input"
+                type="url"
+                :disabled="form.remove_invite"
+                placeholder="https://chat.whatsapp.com/…"
+              />
+              <small>
+                Students see it only after they submit. Use a chat.whatsapp.com or wa.me HTTPS link.
+                A saved invite stays private; enter a new link to replace it.
+              </small>
+            </label>
+            <label v-if="form.id" class="adm-check wide" :class="{ danger: form.remove_invite }">
+              <input v-model="form.remove_invite" type="checkbox" />
+              <span>Remove the saved WhatsApp invite</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="grp" aria-labelledby="form-questions-heading">
+          <h3 id="form-questions-heading" class="adm-kicker">Questions</h3>
+          <p class="adm-note">Students answer in this order.</p>
+          <ol class="questions">
+            <li v-for="(field, i) in form.fields" :key="field._id" class="adm-card question">
+              <div class="question-head">
+                <span class="adm-kicker">Question {{ i + 1 }}</span>
+                <div class="adm-chips">
+                  <button
+                    type="button"
+                    class="adm-btn ghost small"
+                    :disabled="i === 0"
+                    @click="move(i, -1)"
+                  >
+                    Move up
+                  </button>
+                  <button
+                    type="button"
+                    class="adm-btn ghost small"
+                    :disabled="i === form.fields.length - 1"
+                    @click="move(i, 1)"
+                  >
+                    Move down
+                  </button>
+                  <button
+                    type="button"
+                    class="adm-btn danger small"
+                    @click="form.fields.splice(i, 1)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <div class="adm-form">
+                <label class="adm-field wide">
+                  <span>Question</span>
+                  <input
+                    v-model.trim="field.label"
+                    class="adm-input"
+                    required
+                    maxlength="300"
+                    @change="syncKey(field, i)"
+                  />
+                </label>
+                <label class="adm-field">
+                  <span>Answer type</span>
+                  <select v-model="field.type" class="adm-input">
+                    <option v-for="t in FORM_FIELD_TYPES" :key="t" :value="t">
+                      {{ TYPE_LABEL[t] ?? t }}
+                    </option>
+                  </select>
+                </label>
+                <div class="checks">
+                  <label class="adm-check">
+                    <input v-model="field.required" type="checkbox" />
+                    <span>Required</span>
+                  </label>
+                  <label v-if="isChoice(field)" class="adm-check">
+                    <input v-model="field.allow_other" type="checkbox" />
+                    <span>Allow “Other”</span>
+                  </label>
+                </div>
+                <label v-if="isChoice(field)" class="adm-field wide">
+                  <span>Options (one per line)</span>
+                  <textarea v-model="field.optionsText" class="adm-input" />
+                </label>
+                <details class="advanced wide">
+                  <summary>Advanced</summary>
+                  <div class="adm-form advanced-body">
+                    <label class="adm-field">
+                      <span>Key</span>
+                      <input
+                        v-model.trim="field.key"
+                        class="adm-input mono"
+                        required
+                        maxlength="64"
+                      />
+                      <small>Identifies the answer. Must be unique in this form.</small>
+                    </label>
+                    <label class="adm-field">
+                      <span>Prefill from profile</span>
+                      <select v-model="field.prefill" class="adm-input">
+                        <option :value="''">Nothing</option>
+                        <option v-for="p in PREFILL_KEYS" :key="p" :value="p">
+                          {{ PREFILL_LABEL[p] ?? p }}
+                        </option>
+                      </select>
+                    </label>
+                  </div>
+                </details>
+              </div>
+            </li>
+          </ol>
+          <button type="button" class="adm-btn ghost add-question" @click="addField">
+            Add question
+          </button>
+        </section>
+      </form>
+
+      <template #footer>
+        <p v-if="formError" class="adm-msg err foot-msg" role="alert">{{ formError }}</p>
+        <button
+          v-if="form.published_at"
+          type="button"
+          class="adm-btn danger push"
+          :disabled="busy"
+          @click="save('unpublish')"
+        >
+          Unpublish
+        </button>
+        <template v-if="form.published_at">
+          <button type="submit" class="adm-btn mari" :form="editorId" :disabled="busy">
+            Save changes
+          </button>
+        </template>
+        <template v-else>
+          <button type="submit" class="adm-btn ghost" :form="editorId" :disabled="busy">
+            Save draft
           </button>
           <button type="button" class="adm-btn mari" :disabled="busy" @click="save('publish')">
             Publish
           </button>
-        </div>
-      </form>
+        </template>
+      </template>
     </AdminDialog>
 
     <AdminDialog
       v-if="responsesFor"
       ref="respDlg"
-      wide
+      fullscreen
       :title="`${responsesFor.title} responses`"
       @close="responsesFor = null"
     >
-      <p v-if="respError" class="adm-msg err" role="alert">{{ respError }}</p>
-      <p v-else-if="!responses.length" class="adm-empty">No responses yet.</p>
-      <div v-else class="adm-table-wrap">
-        <table class="adm-table">
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Submitted</th>
-              <th v-for="f in responseFields" :key="f.key">{{ f.label }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="r in responses" :key="r.id">
-              <td class="mono">{{ r.email }}</td>
-              <td class="mono">{{ day(r.submitted_at) }}</td>
-              <td v-for="f in responseFields" :key="f.identity">{{ answerText(r, f) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="row-end">
+      <div class="resp-bar">
+        <p class="adm-note" aria-live="polite">
+          <template v-if="!respLoading && !respError">
+            <b>{{ responses.length }}</b>
+            {{ responses.length === 1 ? 'response' : 'responses' }}
+            · {{ responseFields.length }}
+            {{ responseFields.length === 1 ? 'question' : 'questions' }}
+            <span class="resp-scope"> · {{ scopeOf(responsesFor) }}</span>
+          </template>
+        </p>
         <button
           type="button"
-          class="adm-btn"
-          :disabled="!responses.length"
+          class="adm-btn ghost small"
+          :disabled="respLoading || !responses.length"
           @click="downloadResponses"
         >
           Download CSV
         </button>
+      </div>
+      <p v-if="respError" class="adm-msg err" role="alert">{{ respError }}</p>
+      <p v-else-if="respLoading" class="adm-empty" role="status">Loading responses…</p>
+      <p v-else-if="!responses.length" class="adm-empty">Nobody has answered yet.</p>
+      <div v-else class="resp-wrap">
+        <table class="resp">
+          <thead>
+            <tr>
+              <th scope="col" class="who">Submitted by</th>
+              <th scope="col">Submitted</th>
+              <th v-for="f in responseFields" :key="f.identity" scope="col">{{ f.label }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="r in responses" :key="r.id">
+              <td class="who">{{ r.email }}</td>
+              <td class="when">{{ day(r.submitted_at) }}</td>
+              <td v-for="f in responseFields" :key="f.identity">
+                <span v-if="answerText(r, f) === '–'" class="none">–</span>
+                <template v-else>{{ answerText(r, f) }}</template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </AdminDialog>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, useId } from 'vue';
 import AdminDialog from './AdminDialog.vue';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
@@ -299,8 +376,23 @@ import {
   saveForm,
 } from '../../lib/admin.js';
 
-const props = defineProps({ lookups: { type: Object, required: true } });
+const props = defineProps({
+  lookups: { type: Object, required: true },
+  initialId: { type: String, default: null },
+});
 const emit = defineEmits(['changed']);
+
+const TYPE_LABEL = {
+  text: 'Short text',
+  textarea: 'Long text',
+  email: 'Email',
+  phone: 'Phone number',
+  select: 'Choose one',
+  checkbox: 'Tick box',
+  multiselect: 'Choose many',
+};
+const PREFILL_LABEL = { name: 'Preferred name', phone: 'Phone number', email: 'Email' };
+const editorId = useId();
 
 const isHead = computed(
   () => auth.dashboard?.position === 'head' || auth.dashboard?.position === 'co_head'
@@ -319,6 +411,7 @@ const responsesFor = ref(null);
 const responses = ref([]);
 const responseFields = ref([]);
 const respError = ref('');
+const respLoading = ref(false);
 let fieldN = 0;
 
 const mine = computed(() => forms.value.filter((f) => f.can_manage !== false));
@@ -376,6 +469,7 @@ const toLocal = (iso) => {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 };
 const fromLocal = (v) => (v ? new Date(v).toISOString() : null);
+const isChoice = (field) => field.type === 'select' || field.type === 'multiselect';
 
 async function load() {
   loading.value = true;
@@ -397,7 +491,11 @@ async function load() {
     loading.value = false;
   }
 }
-onMounted(load);
+onMounted(async () => {
+  await load();
+  const row = forms.value.find((r) => r.id === props.initialId);
+  if (row) edit(row);
+});
 
 function defaultScope() {
   if (isSuperAdmin.value)
@@ -430,6 +528,15 @@ function wrapField(f) {
     optionsText: (f.options || []).join('\n'),
   };
 }
+
+defineExpose({
+  create: () => edit(),
+  openRecord: async (id) => {
+    await load();
+    const row = forms.value.find((r) => r.id === id);
+    if (row) edit(row);
+  },
+});
 
 function edit(f) {
   formError.value = '';
@@ -609,12 +716,15 @@ async function openResponses(f) {
   responses.value = [];
   responseFields.value = [];
   respError.value = '';
+  respLoading.value = true;
   try {
     const rows = await exportFormResponses(f.id);
     responses.value = rows;
     responseFields.value = formResponsesToCsv(rows).fields;
   } catch (e) {
     respError.value = errorText(e);
+  } finally {
+    respLoading.value = false;
   }
 }
 
@@ -629,31 +739,157 @@ function downloadResponses() {
   justify-content: space-between;
   align-items: center;
 }
-.fields {
-  display: grid;
-  gap: 12px;
+.grp + .grp {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
 }
-.field {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+.editor > .adm-note {
+  margin-bottom: 20px;
 }
-.acts,
-.row-end {
+.grp .adm-kicker {
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.grp > .adm-note {
+  margin-bottom: 14px;
+}
+.checks {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  align-self: end;
+  min-height: 40px;
+  gap: 10px 24px;
+}
+.questions {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+.question {
+  display: grid;
+  gap: 14px;
+}
+.question-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
 }
-.row-end {
-  justify-content: flex-end;
+.question-head .adm-kicker {
+  margin: 0;
+}
+.advanced {
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+.advanced summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--ink-2);
+}
+.advanced-body {
+  margin-top: 14px;
+}
+.add-question {
+  width: 100%;
+}
+.push {
+  margin-right: auto;
+}
+.foot-msg {
+  flex-basis: 100%;
+}
+.resp-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.resp-bar b {
+  color: var(--ink);
+}
+.resp-wrap {
+  max-height: calc(100dvh - 220px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+}
+.resp {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+}
+.resp th,
+.resp td {
+  min-width: 140px;
+  max-width: 280px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.resp tbody tr:last-child td {
+  border-bottom: 0;
+}
+.resp th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: var(--sunk);
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--ink-2);
+}
+.resp .who {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 220px;
+  background: var(--card);
+}
+.resp th.who {
+  z-index: 3;
+  background: var(--sunk);
+}
+.resp td.who {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.resp .when {
+  min-width: 0;
+  white-space: nowrap;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.none {
+  color: var(--ink-3);
+}
+.resp-scope {
+  color: var(--ink-3);
+  font-size: 12px;
 }
 .mono {
   font-family: var(--mono);
   font-size: 13px;
 }
-@media (max-width: 640px) {
-  .field {
-    grid-template-columns: minmax(0, 1fr);
+@media (max-width: 760px) {
+  .resp-wrap {
+    max-height: calc(100dvh - 180px);
   }
 }
 </style>

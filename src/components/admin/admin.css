@@ -1,5 +1,10 @@
-/* Shared pieces of the admin lounge (all classes start with adm-). Values come from tokens.css;
-   the shapes copy the public site: Verify's fields and buttons, the section rail's chips. */
+/* Shared Admin controls use the public site's paper, ink, and marigold tokens. */
+
+/* While an AdminDialog is open, the page behind it stays still. Dialogs own their own scrolling. */
+html.adm-sheet-open {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
 
 .adm-card {
   padding: 18px 20px;
@@ -10,12 +15,13 @@
 }
 
 .adm-kicker {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   font-size: 11px;
-  font-weight: 650;
+  font-weight: 700;
+  font-stretch: 112.5%;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--mari-ink);
 }
 
 .adm-note {
@@ -34,18 +40,15 @@
   margin-bottom: 16px;
 }
 
-/* Fields */
+/* Admin fields */
 .adm-field {
   display: grid;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
 }
 .adm-field > span {
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 600;
 }
 .adm-field small {
   font-size: 12.5px;
@@ -54,31 +57,32 @@
 .adm-input {
   width: 100%;
   min-width: 0;
-  height: 44px;
-  padding: 0 14px;
-  border: 1.5px solid var(--line-strong);
-  border-radius: 12px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
   background: var(--paper);
   color: var(--ink);
   font: inherit;
-  font-size: 15px;
-  transition: border-color 0.2s;
+  font-size: 14px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 textarea.adm-input {
   height: auto;
-  min-height: 96px;
-  padding: 10px 14px;
+  min-height: 90px;
+  padding: 10px 12px;
   line-height: 1.45;
   resize: vertical;
 }
 .adm-input::placeholder {
   color: var(--ink-3);
-  opacity: 0.7;
 }
-.adm-input:focus {
+.adm-input:focus-visible {
   outline: none;
   border-color: var(--mari);
-  box-shadow: 0 0 0 4px var(--mari-soft);
+  box-shadow: 0 0 0 3px var(--mari-soft);
 }
 .adm-form {
   display: grid;
@@ -89,52 +93,66 @@ textarea.adm-input {
   grid-column: 1 / -1;
 }
 
-/* Buttons */
+/* Admin buttons follow the prototype: neutral outlined actions and a marigold primary. */
 .adm-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 40px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 99px;
-  background: var(--ink);
-  color: var(--paper);
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--ink);
   font: inherit;
   font-size: 14px;
-  font-weight: 650;
+  font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
-  transition:
-    transform 0.25s var(--ease-spring),
-    opacity 0.2s;
+  transition: border-color 0.2s;
 }
 .adm-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
+  border-color: var(--ink-3);
 }
 .adm-btn:disabled {
   opacity: 0.5;
-  cursor: default;
+  cursor: not-allowed;
 }
 .adm-btn.mari {
+  border-color: var(--mari);
   background: var(--mari);
   color: var(--on-mari);
 }
+.adm-btn.mari:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
 .adm-btn.ghost {
+  border-color: transparent;
   background: transparent;
-  color: var(--ink);
-  border: 1.5px solid var(--line-strong);
+}
+.adm-btn.ghost:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
 }
 .adm-btn.danger {
-  background: transparent;
+  border-color: color-mix(in srgb, var(--verm) 52%, var(--line));
+  background: color-mix(in srgb, var(--verm) 12%, var(--card));
   color: var(--verm);
-  border: 1.5px solid var(--verm);
+}
+.adm-btn.danger:hover:not(:disabled) {
+  border-color: var(--verm);
+  background: color-mix(in srgb, var(--verm) 20%, var(--card));
+}
+.adm-btn:focus-visible {
+  outline: 2px solid var(--mari-ink);
+  outline-offset: 2px;
 }
 .adm-btn.small {
-  height: 32px;
-  padding: 0 12px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
   font-size: 13px;
 }
 .adm-btn .ic {
@@ -142,18 +160,19 @@ textarea.adm-input {
   height: 16px;
 }
 
-/* Chips and badges */
+/* Chips and badges: the Events page's community chips (events.css .chip). */
 .adm-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 .adm-chip {
-  padding: 6px 12px;
-  border: 1.5px solid var(--line-strong);
-  border-radius: 99px;
-  background: transparent;
-  color: var(--ink-2);
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
   font: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -164,30 +183,99 @@ textarea.adm-input {
     border-color 0.2s;
 }
 .adm-chip:hover {
-  color: var(--ink);
+  border-color: var(--line);
 }
 .adm-chip.on {
   border-color: var(--ink);
   background: var(--ink);
   color: var(--paper);
 }
+:root[data-theme='dark'] .adm-chip.on {
+  border-color: var(--mari-ink);
+  background: var(--sunk);
+  color: var(--mari-ink);
+}
+
+/* Checkbox: a visible box that fills with the lamp and draws a tick when ticked. */
+.adm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink);
+  cursor: pointer;
+}
+.adm-check input {
+  appearance: none;
+  display: grid;
+  place-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  border: 1.5px solid color-mix(in srgb, var(--line) 75%, transparent);
+  border-radius: 4px;
+  background: var(--paper);
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.adm-check input::before {
+  content: '';
+  width: 5px;
+  height: 10px;
+  border: solid var(--on-mari);
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg) scale(0);
+  transition: transform 0.15s var(--ease-out);
+}
+.adm-check input:checked {
+  border-color: var(--on-mari);
+  background: var(--mari);
+}
+.adm-check input:checked::before {
+  transform: translateY(-1px) rotate(45deg) scale(1);
+}
+.adm-check:hover input:not(:disabled) {
+  border-color: var(--ink-2);
+}
+.adm-check input:focus-visible {
+  outline: 2px solid var(--mari-ink);
+  outline-offset: 2px;
+}
+.adm-check.danger {
+  color: var(--verm);
+}
+.adm-check.danger input:not(:checked) {
+  border-color: var(--verm);
+}
+.adm-check input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.adm-check:has(input:disabled) {
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
 .adm-badge {
   display: inline-block;
   padding: 2px 9px;
-  border-radius: 99px;
+  border: 1px solid color-mix(in srgb, var(--line) 30%, transparent);
+  border-radius: 999px;
   background: var(--sunk);
   color: var(--ink-2);
   font-size: 11.5px;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
 .adm-badge.mari {
-  background: var(--mari-soft);
+  background: color-mix(in srgb, var(--mari) 26%, var(--paper));
   color: var(--mari-ink);
 }
 .adm-badge.verm {
-  background: var(--verm-soft);
+  background: color-mix(in srgb, var(--verm) 18%, var(--paper));
   color: var(--verm);
 }
 
@@ -204,9 +292,9 @@ textarea.adm-input {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 6px 14px;
-  padding: 12px 16px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+  border-radius: 10px;
   background: var(--card);
 }
 .adm-row.button {
@@ -215,16 +303,13 @@ textarea.adm-input {
   color: inherit;
   text-align: left;
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    transform 0.25s var(--ease-out);
+  transition: border-color 0.2s;
 }
 .adm-row.button:hover {
-  border-color: var(--line-strong);
-  transform: translateY(-1px);
+  border-color: var(--line);
 }
 .adm-row b {
-  font-weight: 650;
+  font-weight: 700;
 }
 .adm-meta {
   display: flex;
@@ -236,8 +321,8 @@ textarea.adm-input {
 }
 .adm-empty {
   padding: 26px 16px;
-  border: 1px dashed var(--line-strong);
-  border-radius: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
   color: var(--ink-2);
   font-size: 14px;
   text-align: center;
@@ -247,16 +332,16 @@ textarea.adm-input {
 .adm-msg {
   margin: 0;
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 14px;
   line-height: 1.45;
 }
 .adm-msg.ok {
-  background: var(--mari-soft);
-  color: var(--mari-ink);
+  background: color-mix(in srgb, var(--mari) 26%, var(--paper));
+  color: var(--ink);
 }
 .adm-msg.err {
-  background: var(--verm-soft);
+  background: color-mix(in srgb, var(--verm) 18%, var(--paper));
   color: var(--verm);
 }
 
@@ -269,7 +354,7 @@ textarea.adm-input {
 }
 .adm-facts dt {
   font-size: 11px;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -287,17 +372,18 @@ textarea.adm-input {
   width: 100%;
   border-collapse: collapse;
   font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
 }
 .adm-table th,
 .adm-table td {
   padding: 8px 10px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px dotted var(--line);
   text-align: left;
   vertical-align: top;
 }
 .adm-table th {
   font-size: 11px;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -309,6 +395,68 @@ textarea.adm-input {
 .adm-stack {
   display: grid;
   gap: 12px;
+}
+
+/* File pickers: a dashed drop area. The native input stays in the DOM, visually hidden and
+   still focusable; clicking or dropping a file on the box chooses it. */
+.adm-drop {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  width: 100%;
+  max-width: 400px;
+  padding: 18px;
+  border: 1.5px dashed color-mix(in srgb, var(--line) 75%, transparent);
+  border-radius: 4px;
+  background: var(--sunk);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.adm-drop:hover,
+.adm-drop.over {
+  border-color: var(--line);
+}
+.adm-drop.over {
+  background: color-mix(in srgb, var(--mari) 26%, var(--paper));
+}
+.adm-drop:focus-within {
+  outline: 2px solid var(--mari-ink);
+  outline-offset: 2px;
+}
+.adm-drop.busy {
+  cursor: progress;
+  opacity: 0.7;
+}
+.adm-drop-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--ink-2);
+}
+.adm-drop-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+.adm-drop-sub {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.adm-pick-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (max-width: 640px) {

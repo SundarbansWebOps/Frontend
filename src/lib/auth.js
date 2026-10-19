@@ -58,7 +58,7 @@ function readCallback() {
     return 'error';
   }
   if (!url.searchParams.has('code')) return null;
-  // Back from Google: show the sign-in door, which carries on to the Lounge (or /admin).
+  // Back from Google: show the sign-in door, which carries on to the Lounge.
   history.replaceState(history.state, '', `${url.origin}${url.pathname}${url.search}#/login`);
   return 'code';
 }

@@ -19,6 +19,7 @@ import {
   saveForm as loungeSaveForm,
   saveNotice as loungeSaveNotice,
   deleteNotice as loungeDeleteNotice,
+  setNoticePublished as loungeSetNoticePublished,
   uploadCertificateTemplate as loungeUploadCertificateTemplate,
 } from './lounge.js';
 
@@ -108,6 +109,7 @@ export async function loadCounts() {
     supabase.from('events').select('id', head).is('deleted_at', null).gte('ends_at', now),
     supabase.from('approval_requests').select('id', head).eq('status', 'pending'),
   ]);
+  for (const result of [members, roster, events, pending]) if (result.error) throw result.error;
   return {
     members: members.count ?? 0,
     roster: roster.count ?? 0,
@@ -195,7 +197,7 @@ export const requestHardDelete = (memberId, reason) =>
 export async function listRoster({ query = '', page = 0 } = {}) {
   let q = supabase
     .from('member_roster')
-    .select('email, full_name, phone, region_id, gender, added_at', { count: 'exact' })
+    .select('email, full_name, phone, region_id, gender, added_by, added_at', { count: 'exact' })
     .order('added_at', { ascending: false })
     .order('email')
     .range(page * PAGE, page * PAGE + PAGE - 1);
@@ -243,7 +245,10 @@ export function parseRosterPaste(text, regions) {
       full_name: full_name || null,
       phone: phone || null,
       region_id: regionIdFrom(region, regions),
-      region_error: region && !regionIdFrom(region, regions) ? `Unknown region: ${region}` : null,
+      region_error:
+        isSuperAdmin.value && region && !regionIdFrom(region, regions)
+          ? `Unknown region: ${region}`
+          : null,
       gender: gender || null,
     }));
 }
@@ -329,13 +334,14 @@ export function rowsFromRosterCsv(rows, mapping, regions) {
       phone: col('phone', line) || null,
       region_id: regionIdFrom(rawRegion, regions),
       region_error:
-        rawRegion && !regionIdFrom(rawRegion, regions) ? `Unknown region: ${rawRegion}` : null,
+        isSuperAdmin.value && rawRegion && !regionIdFrom(rawRegion, regions)
+          ? `Unknown region: ${rawRegion}`
+          : null,
       gender: col('gender', line) || null,
       _headers: headers,
       _raw: line,
     };
     if (seen.has(email)) {
-      seen.get(email).duplicate = true;
       row.duplicate = true;
     } else {
       seen.set(email, row);
@@ -619,7 +625,7 @@ export function yearFromCohort(code) {
   return 2000 + yy;
 }
 
-// Forms — lounge.js adapters, with list/export normalized to arrays for the admin UI.
+// Forms use lounge.js adapters, with list and export results normalized to arrays.
 
 export async function listForms() {
   return asList(await loungeListForms());
@@ -858,12 +864,16 @@ export function applyReviewedEligibility(preview, email, eligible) {
 // Notices (organizer)
 
 export async function listNoticesAdmin({ page = 0 } = {}) {
+  let query = supabase
+    .from('announcements')
+    .select(
+      'id, title, body, link, region_id, community_id, audience_cohorts, starts_at, ends_at, published_at, created_at'
+    );
+  if (isRc.value) query = query.eq('region_id', auth.dashboard.region_id).is('community_id', null);
+  if (isHead.value)
+    query = query.eq('community_id', auth.dashboard.community_id).is('region_id', null);
   return unwrap(
-    await supabase
-      .from('announcements')
-      .select(
-        'id, title, body, link, region_id, community_id, audience_cohorts, starts_at, ends_at, created_at'
-      )
+    await query
       .order('starts_at', { ascending: false })
       .order('id')
       .range(page * PAGE, page * PAGE + PAGE - 1)
@@ -872,6 +882,7 @@ export async function listNoticesAdmin({ page = 0 } = {}) {
 
 export const saveNotice = (notice) => loungeSaveNotice(notice);
 export const deleteNotice = (id) => loungeDeleteNotice(id);
+export const setNoticePublished = (id, published) => loungeSetNoticePublished(id, published);
 
 // Student region requests (Q15) and certificate-name requests (SA)
 
@@ -947,7 +958,7 @@ export async function listPositions() {
     await supabase
       .from('admin_assignments')
       .select(
-        'id, position, region_id, community_id, started_at, member:members!admin_assignments_member_id_fkey(id, full_name, member_code)'
+        'id, member_id, position, region_id, community_id, started_at, member:members!admin_assignments_member_id_fkey(id, full_name, preferred_name, email, member_code)'
       )
       .is('ended_at', null)
   );
@@ -967,4 +978,122 @@ export async function listAudit(page = 0) {
     : [];
   const byId = new Map(names.map((n) => [n.id, n.full_name]));
   return rows.map((r) => ({ ...r, actor: byId.get(r.actor_id) ?? null }));
+}
+
+function missingRpc(error) {
+  return error?.code === 'PGRST202' || error?.code === '42883';
+}
+
+function decorateRequest(row, category = 'admin') {
+  const own = (row.requested_by || row.member_id) === auth.profile?.id;
+  const canReview =
+    category === 'admin'
+      ? isSuperAdmin.value
+      : category === 'region'
+        ? isSuperAdmin.value || isRc.value
+        : isSuperAdmin.value;
+  const normalized = { ...row, category, type: category === 'admin' ? row.type : category };
+  if (category !== 'admin') {
+    normalized.target = row.member;
+    normalized.target_member_id = row.member_id;
+    normalized.requested_by = row.member_id;
+    normalized.requester = row.member;
+    normalized.target_snapshot =
+      category === 'region'
+        ? { region_id: row.from_region_id }
+        : { certificate_name: row.old_name };
+    normalized.requested_change =
+      category === 'region' ? { region_id: row.to_region_id } : { certificate_name: row.new_name };
+  }
+  return {
+    ...normalized,
+    can_decide: row.can_decide ?? (row.status === 'pending' && canReview && !own),
+    waiting_on:
+      row.waiting_on ?? (own && isSuperAdmin.value ? 'Another Super Admin' : 'A Super Admin'),
+    age_seconds: row.age_seconds ?? Math.max(0, (Date.now() - new Date(row.requested_at)) / 1000),
+  };
+}
+
+export async function loadRequestDesk({ status = 'pending', page = 0 } = {}) {
+  const result = await supabase.rpc('admin_dashboard_requests', {
+    p_status: status,
+    p_offset: page * 100,
+  });
+  if (!result.error)
+    return { ...result.data, rows: result.data.rows.map((r) => decorateRequest(r, r.category)) };
+  if (!missingRpc(result.error)) throw result.error;
+  const [admin, region, certificate] = await Promise.all([
+    listRequests({ status }),
+    listRegionRequests(),
+    isSuperAdmin.value ? listCertificateNameRequests() : [],
+  ]);
+  const rows = [
+    ...admin.map((r) => decorateRequest(r)),
+    ...region
+      .filter((r) => (status === 'pending' ? r.status === 'pending' : r.status !== 'pending'))
+      .map((r) => decorateRequest(r, 'region')),
+    ...certificate
+      .filter((r) => (status === 'pending' ? r.status === 'pending' : r.status !== 'pending'))
+      .map((r) => decorateRequest(r, 'certificate')),
+  ].sort((a, b) => new Date(b.requested_at) - new Date(a.requested_at));
+  return { rows: page === 0 ? rows : [], total: rows.length, legacy: true };
+}
+
+export async function loadAdminOverview() {
+  const result = await supabase.rpc('admin_dashboard_summary');
+  if (!result.error) return result.data;
+  if (!missingRpc(result.error)) throw result.error;
+  const membersVisible = isSuperAdmin.value || isRc.value;
+  const now = Date.now();
+  const [counts, events, forms, notices, requests, audit] = await Promise.all([
+    membersVisible ? loadCounts() : null,
+    listEvents(),
+    listForms(),
+    membersVisible ? listNoticesAdmin() : [],
+    membersVisible ? loadRequestDesk() : { rows: [] },
+    isSuperAdmin.value ? listAudit() : [],
+  ]);
+  return {
+    legacy: true,
+    counts,
+    queue: {
+      for_you: requests.rows.filter((r) => r.can_decide).length,
+      waiting: requests.rows.filter((r) => !r.can_decide).length,
+    },
+    requests: requests.rows,
+    events: events
+      .filter(
+        (event) =>
+          canManageEvent(event) &&
+          event.published_at &&
+          new Date(event.published_at).getTime() <= now &&
+          new Date(event.ends_at).getTime() > now &&
+          !event.cancelled_at &&
+          !event.archive
+      )
+      .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))
+      .slice(0, 5),
+    forms: forms
+      .filter(
+        (f) =>
+          f.can_manage &&
+          !f.archived_at &&
+          f.is_open &&
+          f.published_at &&
+          new Date(f.published_at).getTime() <= now &&
+          (!f.opens_at || new Date(f.opens_at).getTime() <= now) &&
+          (!f.closes_at || new Date(f.closes_at).getTime() > now)
+      )
+      .sort((a, b) => (a.closes_at || '\uffff').localeCompare(b.closes_at || '\uffff'))
+      .slice(0, 4),
+    notices: notices
+      .filter(
+        (n) =>
+          new Date(n.starts_at) <= new Date() && (!n.ends_at || new Date(n.ends_at) > new Date())
+      )
+      .slice(0, 4),
+    audit: audit.slice(0, 6),
+    regions: [],
+    joins: [],
+  };
 }

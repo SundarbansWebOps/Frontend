@@ -57,7 +57,7 @@
           <button
             v-if="e.pending_request_id && !isSuperAdmin"
             type="button"
-            class="adm-btn ghost small"
+            class="adm-btn danger small"
             :disabled="busy"
             @click="cancelPublish(e)"
           >
@@ -70,7 +70,7 @@
             </button>
             <button
               type="button"
-              class="adm-btn ghost small"
+              :class="['adm-btn', 'small', e.cancelled_at ? 'ghost' : 'danger']"
               :disabled="busy"
               @click="toggleCancel(e)"
             >
@@ -103,7 +103,13 @@
       <form class="adm-form" @submit.prevent="save(false)">
         <label class="adm-field wide">
           <span>Name</span>
-          <input v-model.trim="form.name" class="adm-input" required maxlength="200" />
+          <input
+            ref="nameInput"
+            v-model.trim="form.name"
+            class="adm-input"
+            required
+            maxlength="200"
+          />
         </label>
         <label v-if="isSuperAdmin" class="adm-field">
           <span>Scope</span>
@@ -152,23 +158,21 @@
             :required="!form.archive"
           />
         </label>
-        <label v-if="isSuperAdmin" class="adm-field wide">
-          <span>
-            <input v-model="form.archive" type="checkbox" />
-            Archive (dateless historical record)
-          </span>
+        <label v-if="isSuperAdmin" class="adm-check wide" :class="{ danger: form.archive }">
+          <input v-model="form.archive" type="checkbox" />
+          <span>Archive (dateless historical record)</span>
         </label>
         <div class="wide">
           <p class="adm-kicker">Audience</p>
           <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
         </div>
-        <label v-if="!form.archive" class="adm-field wide check">
-          <span>
+        <div v-if="!form.archive" class="adm-field wide">
+          <label class="adm-check">
             <input v-model="form.is_public" type="checkbox" />
-            Public: also list it on the public Events page
-          </span>
+            <span>Public: also list it on the public Events page</span>
+          </label>
           <small>Otherwise only its audience sees it in the Lounge until it ends.</small>
-        </label>
+        </div>
         <div class="adm-field wide">
           <span>Poster</span>
           <div class="poster">
@@ -180,23 +184,41 @@
               height="96"
             />
             <div class="poster-acts">
-              <input
-                class="adm-input"
-                type="file"
-                :accept="POSTER_TYPES.join(',')"
-                aria-label="Upload poster"
-                :disabled="busy || !form.name"
-                @change="onPoster"
-              />
+              <label
+                class="adm-drop"
+                :class="{ over: dragging, busy: posterBusy }"
+                @dragenter.prevent="dragging = true"
+                @dragover.prevent
+                @dragleave="dragging = false"
+                @drop.prevent="onPosterDrop"
+              >
+                <input
+                  class="adm-pick-input"
+                  type="file"
+                  :accept="POSTER_TYPES.join(',')"
+                  aria-label="Upload poster"
+                  :disabled="busy"
+                  @click="needName"
+                  @change="onPoster"
+                />
+                <LineIcon name="upload" class="adm-drop-icon" />
+                <span class="adm-drop-title">{{
+                  form.image_url ? 'Replace poster' : 'Choose a poster image'
+                }}</span>
+                <span class="adm-drop-sub">{{ posterStatus }}</span>
+              </label>
               <small>
-                The picture shown on the Events page and in the Lounge. JPG, PNG or WebP, up to 10
-                MB.<template v-if="!form.id"> Adding one saves this event as a draft.</template>
+                JPG, PNG or WebP, up to 10 MB. You can also drop the file onto the box.<template
+                  v-if="!form.id"
+                >
+                  Adding one saves this event as a draft.</template
+                >
               </small>
               <p v-if="posterBusy" class="adm-note" role="status">Uploading the poster…</p>
               <button
                 v-if="form.image_url"
                 type="button"
-                class="adm-btn ghost small"
+                class="adm-btn danger small"
                 @click="clearPoster"
               >
                 Remove poster
@@ -234,17 +256,34 @@
             poster.
           </small>
         </label>
-        <label v-if="form.id && !form.certificates_released_at" class="adm-field wide">
+        <div v-if="form.id && !form.certificates_released_at" class="adm-field wide">
           <span>Or upload a certificate template (not the poster)</span>
-          <input
-            class="adm-input"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            @change="onTemplate"
-          />
-        </label>
+          <label
+            class="adm-drop"
+            :class="{ over: templateDragging, busy: templateBusy }"
+            @dragenter.prevent="templateDragging = true"
+            @dragover.prevent
+            @dragleave="templateDragging = false"
+            @drop.prevent="onTemplateDrop"
+          >
+            <input
+              class="adm-pick-input"
+              type="file"
+              :accept="TEMPLATE_TYPES.join(',')"
+              aria-label="Upload certificate template"
+              :disabled="busy"
+              @change="onTemplate"
+            />
+            <LineIcon name="upload" class="adm-drop-icon" />
+            <span class="adm-drop-title">{{
+              form.certificate_template_url ? 'Replace template' : 'Choose a template image'
+            }}</span>
+            <span class="adm-drop-sub">{{ templateStatus }}</span>
+          </label>
+          <small>PNG, JPG or WebP, up to 10 MB. You can also drop the file onto the box.</small>
+        </div>
         <label class="adm-field wide">
-          <span>Members’ meeting link (optional)</span>
+          <span>Members' meeting link (optional)</span>
           <input
             v-model.trim="form.gmail_link"
             class="adm-input"
@@ -263,12 +302,17 @@
           </label>
         </template>
         <p v-if="formError" class="adm-msg err wide" role="alert">{{ formError }}</p>
+        <p v-if="form.published_at" class="adm-note wide">
+          Saving changes updates this published record immediately.
+        </p>
         <div class="wide row-end">
-          <button type="submit" class="adm-btn ghost" :disabled="busy">Save draft</button>
+          <button type="submit" class="adm-btn ghost" :disabled="busy">
+            {{ form.published_at ? 'Save changes' : 'Save draft' }}
+          </button>
           <button
             v-if="form.published_at"
             type="button"
-            class="adm-btn ghost"
+            class="adm-btn danger"
             :disabled="busy"
             @click="save('unpublish')"
           >
@@ -292,14 +336,34 @@
         <p class="adm-note">
           {{ ops.name }} · {{ ops.attendance_mode === 'meet' ? 'Google Meet' : 'Reviewed' }}
         </p>
-        <label class="adm-field">
+        <div class="adm-field">
           <span>Attendance CSV</span>
-          <input class="adm-input" type="file" accept=".csv,text/csv" @change="onAttendFile" />
+          <label
+            class="adm-drop"
+            :class="{ over: attendDragging }"
+            @dragenter.prevent="attendDragging = true"
+            @dragover.prevent
+            @dragleave="attendDragging = false"
+            @drop.prevent="onAttendDrop"
+          >
+            <input
+              class="adm-pick-input"
+              type="file"
+              accept=".csv,text/csv"
+              aria-label="Upload attendance CSV"
+              @change="onAttendFile"
+            />
+            <LineIcon name="upload" class="adm-drop-icon" />
+            <span class="adm-drop-title">{{
+              attendFile ? 'Replace CSV' : 'Choose a CSV file'
+            }}</span>
+            <span class="adm-drop-sub">{{ attendFile || 'No file chosen' }}</span>
+          </label>
           <small>
             Google Meet headers: First name, Last name, Email, Duration. Masked emails stay
             unresolved. Save only after you have reviewed the lists.
           </small>
-        </label>
+        </div>
         <label class="adm-field">
           <span>Import behavior</span>
           <select v-model="attendanceMode" class="adm-input">
@@ -393,12 +457,16 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
+import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
   applyReviewedEligibility,
+  POSTER_MAX_BYTES,
   POSTER_TYPES,
+  TEMPLATE_MAX_BYTES,
+  TEMPLATE_TYPES,
   canManageEvent,
   cancelRequest,
   deleteEvent,
@@ -424,7 +492,10 @@ import {
 } from '../../lib/admin.js';
 import { img } from '../../lib/events.js';
 
-const props = defineProps({ lookups: { type: Object, required: true } });
+const props = defineProps({
+  lookups: { type: Object, required: true },
+  initialId: { type: String, default: null },
+});
 const emit = defineEmits(['changed']);
 
 const view = ref('upcoming');
@@ -459,6 +530,8 @@ const replaceDelta = computed(() => {
       (row.import_sources ?? [row.import_source]).includes(sourceId) && !keys.has(row.row_key)
   ).length;
 });
+const attendFile = ref('');
+const attendDragging = ref(false);
 const attend = reactive({
   headers: [],
   rows: [],
@@ -527,7 +600,7 @@ async function load() {
   loading.value = true;
   error.value = '';
   try {
-    events.value = await listEvents({ view: view.value });
+    events.value = (await listEvents({ view: view.value })).filter(canManageEvent);
   } catch (e) {
     error.value = errorText(e);
   } finally {
@@ -540,7 +613,9 @@ onMounted(async () => {
   } catch (e) {
     error.value = errorText(e);
   }
-  load();
+  await load();
+  const row = events.value.find((r) => r.id === props.initialId);
+  if (row) edit(row);
 });
 
 function show(v) {
@@ -554,6 +629,15 @@ function defaultScope() {
     return { scope: 'region', region_id: auth.dashboard.region_id, community_id: null };
   return { scope: 'community', region_id: null, community_id: auth.dashboard.community_id };
 }
+
+defineExpose({
+  create: () => edit(),
+  openRecord: async (id) => {
+    await load();
+    const row = events.value.find((r) => r.id === id);
+    if (row) edit(row);
+  },
+});
 
 function edit(e) {
   formError.value = '';
@@ -625,7 +709,7 @@ function friendly(e) {
   if (/events_image_cloudinary/.test(m)) return 'Posters must be uploaded here.';
   if (/waiting for/.test(m))
     return 'This event is waiting for a Super Admin; cancel the request to edit it.';
-  if (e?.code === '42501') return 'You can’t change this event.';
+  if (e?.code === '42501') return 'You cannot change this event.';
   return errorText(e);
 }
 
@@ -654,9 +738,46 @@ async function save(mode) {
 }
 
 const posterBusy = ref(false);
+const posterName = ref('');
+const dragging = ref(false);
+const nameInput = ref(null);
+const posterStatus = computed(() => {
+  if (posterBusy.value) return `Uploading ${posterName.value}…`;
+  if (!form.value?.name) return 'Add the event name first, then choose a file.';
+  if (form.value?.image_url) return posterName.value || 'Poster saved';
+  return 'No file chosen';
+});
+// Without a name the poster cannot be saved yet: send the cursor to the name instead of
+// opening a file dialog that would then do nothing.
+function needName(ev) {
+  if (form.value?.name) return;
+  ev.preventDefault();
+  nameInput.value?.focus();
+}
 async function onPoster(ev) {
   const file = ev.target.files?.[0];
+  ev.target.value = '';
+  await sendPoster(file);
+}
+function onPosterDrop(ev) {
+  dragging.value = false;
+  if (!form.value?.name) {
+    nameInput.value?.focus();
+    return;
+  }
+  sendPoster(ev.dataTransfer?.files?.[0]);
+}
+async function sendPoster(file) {
   if (!file || !form.value) return;
+  if (!POSTER_TYPES.includes(file.type)) {
+    formError.value = 'Use a JPG, PNG or WebP image.';
+    return;
+  }
+  if (file.size > POSTER_MAX_BYTES) {
+    formError.value = 'The image is larger than 10 MB.';
+    return;
+  }
+  posterName.value = file.name;
   formError.value = '';
   busy.value = posterBusy.value = true;
   try {
@@ -668,7 +789,6 @@ async function onPoster(ev) {
     formError.value = friendly(e);
   } finally {
     busy.value = posterBusy.value = false;
-    ev.target.value = '';
   }
 }
 
@@ -678,17 +798,39 @@ function clearPoster() {
 
 const cancelPublish = (e) => act(() => cancelRequest(e.pending_request_id));
 
-async function onTemplate(ev) {
+const templateBusy = ref(false);
+const templateDragging = ref(false);
+const templateStatus = computed(() => {
+  if (templateBusy.value) return 'Uploading…';
+  return form.value?.certificate_template_url ? 'Template saved' : 'No file chosen';
+});
+function onTemplate(ev) {
   const file = ev.target.files?.[0];
+  ev.target.value = '';
+  sendTemplate(file);
+}
+function onTemplateDrop(ev) {
+  templateDragging.value = false;
+  sendTemplate(ev.dataTransfer?.files?.[0]);
+}
+async function sendTemplate(file) {
   if (!file || !form.value?.id) return;
+  if (!TEMPLATE_TYPES.includes(file.type)) {
+    formError.value = 'Use a PNG, JPG or WebP image.';
+    return;
+  }
+  if (file.size > TEMPLATE_MAX_BYTES) {
+    formError.value = 'The image is larger than 10 MB.';
+    return;
+  }
   formError.value = '';
-  busy.value = true;
+  busy.value = templateBusy.value = true;
   try {
     form.value.certificate_template_url = await uploadCertificateTemplate(form.value.id, file);
   } catch (e) {
     formError.value = errorText(e);
   } finally {
-    busy.value = false;
+    busy.value = templateBusy.value = false;
   }
 }
 
@@ -707,7 +849,7 @@ async function act(run) {
 }
 const toggleCancel = (e) => act(() => setEventCancelled(e.id, !e.cancelled_at));
 const remove = (e) => {
-  if (confirm(`Remove “${e.name}”? Members will no longer see it.`)) act(() => deleteEvent(e.id));
+  if (confirm(`Remove "${e.name}"? Members will no longer see it.`)) act(() => deleteEvent(e.id));
 };
 
 async function openOps(e) {
@@ -717,6 +859,7 @@ async function openOps(e) {
   preview.value = null;
   attend.headers = [];
   attend.rows = [];
+  attendFile.value = '';
   try {
     existingAttendance.value = await listAttendance(e.id);
   } catch (error) {
@@ -725,11 +868,24 @@ async function openOps(e) {
   }
 }
 
-async function onAttendFile(ev) {
+function onAttendFile(ev) {
   const file = ev.target.files?.[0];
+  ev.target.value = '';
+  readAttendance(file);
+}
+function onAttendDrop(ev) {
+  attendDragging.value = false;
+  readAttendance(ev.dataTransfer?.files?.[0]);
+}
+function readAttendance(file) {
   preview.value = null;
   if (!file || !ops.value) return;
+  if (!/\.csv$/i.test(file.name) && file.type !== 'text/csv') {
+    opsError.value = 'Use a CSV file.';
+    return;
+  }
   opsError.value = '';
+  attendFile.value = file.name;
   const reader = new FileReader();
   reader.onload = async () => {
     try {
@@ -767,7 +923,7 @@ async function saveAttendance() {
   if (
     attendanceMode.value === 'replace' &&
     !confirm(
-      `Replace “${attendanceSource.value.trim()}” for this event? ${replaceDelta.value} omitted rows will lose this source's ownership. Rows owned by other sources remain.`
+      `Replace "${attendanceSource.value.trim()}" for this event? ${replaceDelta.value} omitted rows will lose this source's ownership. Rows owned by other sources remain.`
     )
   )
     return;
@@ -843,15 +999,6 @@ async function release() {
   flex: 1 1 auto;
   min-width: 0;
   justify-items: start;
-}
-.check > span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 14px;
-  color: var(--ink);
 }
 .between {
   justify-content: space-between;

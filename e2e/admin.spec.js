@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mockSupabase, PEOPLE, callTo } from './supabase-mock.js';
+import { adminSections, mockSupabase, PEOPLE, callTo } from './supabase-mock.js';
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
@@ -54,30 +54,49 @@ test('a normal member cannot open the admin lounge', async ({ page }) => {
 });
 
 test('a Regional Coordinator opens the admin lounge from the Lounge', async ({ page }) => {
-  const calls = await mockSupabase(page, { as: 'rc', data: { roster_add: 'ok' } });
+  const calls = await mockSupabase(page, {
+    as: 'rc',
+    data: {
+      roster_add_many: (args) =>
+        (args.p_rows || []).map((r) => ({ email: r.email, ok: true, category: 'processed' })),
+    },
+  });
   await page.goto('/#/lounge');
   await page.getByRole('button', { name: /Your profile/ }).click();
   await page.getByRole('button', { name: 'Admin lounge' }).click();
   await expect(page).toHaveURL(/#\/admin/);
-  await expect(page.getByRole('heading', { name: 'Admin lounge', level: 1 })).toBeVisible();
-  await expect(page.getByText('Regional Coordinator · Patna')).toBeVisible();
-  const tabs = page.getByRole('tab');
-  await expect(tabs).toHaveText(['Students', 'Roster', 'Events', 'Forms', 'Notices', 'Requests']);
-  await page.getByRole('tab', { name: 'Roster' }).click();
-  await expect(page.getByText('Added to Patna.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Good .+, Arjun Rao/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Your account' }).click();
+  const account = page.getByRole('dialog', { name: 'Your account' });
+  await expect(account.getByText('Regional Coordinator')).toBeVisible();
+  await expect(account.getByText('Patna', { exact: true })).toBeVisible();
+  await account.getByRole('button', { name: 'Close' }).click();
+  const nav = adminSections(page);
+  for (const label of ['Overview', 'Requests', 'Students', 'Roster', 'Events', 'Forms', 'Notices'])
+    await expect(nav.getByRole('button', { name: new RegExp(`^${label}`) })).toBeVisible();
+  await expect(nav.getByRole('button', { name: 'Positions' })).toHaveCount(0);
+  await nav.getByRole('button', { name: 'Roster' }).click();
+  await expect(page.getByRole('heading', { name: 'Roster' })).toBeVisible();
+  await expect(page.getByText('Loading admin data...')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Add students' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Add students' });
+  await expect(dialog.getByText('Added to Patna.')).toBeVisible();
   // Phone is optional: a student can be added with email and name only.
-  await page.getByLabel('IITM email').fill('21f1000001@ds.study.iitm.ac.in');
-  await page.getByLabel(/^Full name/).fill('No Phone Student');
-  await page.getByRole('button', { name: 'Add to roster' }).first().click();
+  await dialog.getByLabel('IITM email').fill('21f1000001@ds.study.iitm.ac.in');
+  await dialog.getByLabel(/^Full name/).fill('No Phone Student');
+  await dialog.getByRole('button', { name: 'Add to roster' }).click();
   await expect(
-    page.getByText('21f1000001@ds.study.iitm.ac.in can now sign in with Google.')
+    dialog.getByText('1 processed, 0 invalid. Existing identities are preserved.')
   ).toBeVisible();
-  const added = await callTo(calls, '/rest/v1/rpc/roster_add');
-  expect(JSON.parse(added.body)).toMatchObject({
-    p_email: '21f1000001@ds.study.iitm.ac.in',
-    p_phone: null,
-    p_region_id: null,
+  const added = await callTo(calls, '/rest/v1/rpc/roster_add_many');
+  expect(JSON.parse(added.body).p_rows[0]).toMatchObject({
+    email: '21f1000001@ds.study.iitm.ac.in',
+    full_name: 'No Phone Student',
+    region_id: null,
   });
+  await dialog.getByRole('button', { name: 'Close' }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator('html.adm-sheet-open')).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     await page.evaluate(() => innerWidth)
   );
@@ -105,20 +124,25 @@ test('a Super Admin approves another admin’s request', async ({ page }) => {
     data: { approval_requests: [request], approve_request: request.id },
   });
   await page.goto('/#/admin?tab=requests');
-  await expect(page.getByRole('tab')).toHaveText([
+  const nav = adminSections(page);
+  for (const label of [
+    'Overview',
+    'Requests',
     'Students',
     'Roster',
     'Events',
     'Forms',
     'Notices',
-    /Requests/,
     'Positions',
-    'Audit log',
-  ]);
-  await expect(page.getByText('Phone → +919990000044')).toBeVisible();
-  await expect(page.getByText('Asked by Arjun Rao')).toBeVisible();
+    'Activity',
+  ])
+    await expect(nav.getByRole('button', { name: new RegExp(`^${label}`) })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Requests' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Phone' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: '+919990000044' })).toBeVisible();
+  await expect(page.getByText('Arjun Rao')).toBeVisible();
   await page.getByRole('button', { name: 'Approve', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText('Approved and applied.');
+  await expect(page.getByRole('status').filter({ hasText: 'Approved and applied.' })).toBeVisible();
   expect(calls.some((c) => c.path === '/rest/v1/rpc/approve_request')).toBe(true);
 });
 
@@ -141,12 +165,14 @@ test('a login email change is approved through change-member-contact', async ({ 
   };
   const calls = await mockSupabase(page, { as: 'sa', data: { approval_requests: [request] } });
   await page.goto('/#/admin?tab=requests');
-  await expect(page.getByText('Login email → 21f1000099@ds.study.iitm.ac.in')).toBeVisible();
-  await page.getByPlaceholder('Note (optional)').fill('Checked with the student');
+  await expect(page.getByRole('heading', { name: 'Requests' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Login email' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: '21f1000099@ds.study.iitm.ac.in' })).toBeVisible();
+  await page.getByLabel('Review note, optional').fill('Checked with the student');
   await page.getByRole('button', { name: 'Approve', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText(
-    'Approved. Their sign-in now uses the new email.'
-  );
+  await expect(
+    page.getByRole('status').filter({ hasText: 'Approved. Their sign-in now uses the new email.' })
+  ).toBeVisible();
   const fn = await callTo(calls, '/functions/v1/change-member-contact');
   expect(JSON.parse(fn.body)).toEqual({ request_id: request.id, note: 'Checked with the student' });
   expect(calls.some((c) => c.path === '/rest/v1/rpc/approve_request')).toBe(false);

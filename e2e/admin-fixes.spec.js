@@ -6,7 +6,11 @@ import { callTo, mockSupabase } from './supabase-mock.js';
 test('roster import blocks unrecognized region labels until corrected', async ({ page }) => {
   await mockSupabase(page, { as: 'sa' });
   await page.goto('/#/admin?tab=roster');
-  await page.setInputFiles('input[type="file"]', {
+  await expect(page.getByText('Loading admin data...')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Add students' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Add students' });
+  await dialog.getByRole('button', { name: 'Upload CSV' }).click();
+  await dialog.getByLabel('Upload roster CSV').setInputFiles({
     name: 'members.csv',
     mimeType: 'text/csv',
     buffer: Buffer.from('Email,Region\n26f1000001@ds.study.iitm.ac.in,Atlantis\n'),
@@ -105,7 +109,7 @@ test('editing an event preserves an exact zero attendee count', async ({ page })
   });
   await page.goto('/#/admin?tab=events');
   await page.getByRole('button', { name: 'Edit' }).click();
-  await page.getByRole('button', { name: 'Save draft' }).click();
+  await page.getByRole('button', { name: 'Save changes' }).click();
   const call = await callTo(calls, '/rest/v1/events', 'PATCH');
   expect(JSON.parse(call.body).attendee_count).toBe(0);
 });

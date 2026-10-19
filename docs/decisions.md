@@ -262,3 +262,27 @@ records remain separate from the fixed login accounts. See `docs/specs/003-backe
 ## 2026-10-16 — Contributors board ends the Teams page; /contributors redirects
 
 **Why:** Raja asked for the contributions view at the bottom of Teams with motion and Codex-made pat art, and dropped the idea of a button on the webops team card, which stays as it was. `/contributors` now redirects to `/teams#contributors` so old links still work. Helper (non-code) cards are removed, since they had no data. Rejected: a team-card button that opens a separate page.
+
+## 2026-10-19 — Admin overview only shows metrics backed by available data
+
+**Why:** The current backend does not provide reliable join trends or region pulse metrics. Keep the prototype's visual hierarchy and show supported queue, roster, event, notice, form, and audit data; omit unsupported telemetry instead of rendering placeholders or invented numbers.
+
+## 2026-10-19 — Admin actions share one top bar; Launch opens the Lounge
+
+**Why:** The duplicate navbar consumed space and repeated Admin identity. Keep search, Admin actions, profile, Launch (`/lounge`) and Website together; remove the region chip and duplicated sidebar identity/account blocks.
+
+## 2026-10-19 — Admin navigation removes search and centers Lounge/Website
+
+**Why:** Raja asked to remove the search field and place the two destinations in the middle of the single Admin bar. Add students, Create, theme and profile stay grouped at the right. This supersedes the prior decision to keep search in the top bar.
+
+## 2026-10-19 — Admin greeting uses the saved name, local time and matching art
+
+**Why:** The overview greets the admin with their full Google/profile name and uses morning, afternoon or evening language and artwork based on Asia/Kolkata time. “Good night” is omitted because it reads as an instruction to sleep rather than a work greeting.
+
+## 2026-10-19 — Student region review notes appear in the Lounge profile
+
+**Why:** The review note is the admin/coordinator's reply to the requesting student. Show the latest request status and note beside the student's region details in Edit profile, using the existing requester-scoped row access.
+
+## 2026-10-19 — Hold the stale audit migration outside the runnable migration set
+
+**Why:** `20261010000000_audit_fixes.sql` was never applied remotely and conflicts with `20261016120000_soft_delete_event_scope.sql`: it recreates an existing function and narrows the event policy. Preserve the source under `supabase/held-migrations/`; do not mark it applied or run it with `--include-all`. Reconcile any still-needed fixes in reviewed forward migrations.

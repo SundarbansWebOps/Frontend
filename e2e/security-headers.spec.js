@@ -67,7 +67,7 @@ test('no CSP violations in the Lounge and the admin lounge (signed in)', async (
   await page.goto('/#/lounge');
   await expect(page.locator('.home')).toBeVisible();
   await page.goto('/#/admin?tab=events');
-  await expect(page.getByRole('heading', { name: 'Admin lounge', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Events', level: 1 })).toBeVisible();
   await page.waitForLoadState('networkidle');
   expect(violations).toEqual([]);
 });

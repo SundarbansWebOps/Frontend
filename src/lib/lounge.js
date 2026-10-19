@@ -136,6 +136,8 @@ export const setNoticeState = (id, { read = true, dismiss = false } = {}) =>
   rpc('set_my_notice_state', { p_announcement_id: id, p_read: read, p_dismiss: dismiss });
 export const deleteNotice = (id) => rpc('delete_announcement', { p_announcement_id: id });
 export const saveNotice = (notice) => rpc('save_announcement', { p_announcement: notice });
+export const setNoticePublished = (id, published) =>
+  rpc('set_announcement_published', { p_announcement_id: id, p_published: published });
 export const listCertificates = () => rpc('list_my_certificates');
 export const confirmCertificateName = (name) =>
   rpc('confirm_my_certificate_name', { p_name: name });

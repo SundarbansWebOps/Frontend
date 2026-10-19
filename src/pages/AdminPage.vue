@@ -1,82 +1,176 @@
-<!--
-  The admin lounge, opened from the Lounge's profile menu by Regional Coordinators, community
-  Heads/Co-Heads and Super Admins (the router keeps everyone else out; the database checks every
-  call again). RC: students and roster of their region, own-region events/forms/notices, requests.
-  Head/Co-Head: own community events and forms. Super Admin: house-wide plus every region and
-  community, the approval queue, positions and the audit log. Admin-initiated student changes
-  still need a different Super Admin. Student region corrections are reviewed by the current-region
-  RC or a Super Admin.
--->
 <template>
-  <main class="wrap">
-    <header class="head rise" style="--i: 0">
-      <div>
-        <p class="adm-kicker">{{ roleLabel }}</p>
-        <h1>Admin lounge</h1>
+  <div class="admin-page">
+    <AdminNav
+      :members-visible="membersVisible"
+      :theme="theme"
+      :avatar-url="avatarUrl"
+      :avatar-failed="avatarFailed"
+      :profile-open="profileOpen"
+      @add-students="create('roster')"
+      @create="createOpen = true"
+      @profile="profileOpen = true"
+      @toggle-theme="toggleTheme"
+    />
+    <div class="command-desk">
+      <aside class="sidebar" aria-label="Admin navigation">
+        <nav class="desk-nav" aria-label="Admin sections">
+          <template v-for="item in tabs" :key="item.id">
+            <p v-if="item.id === 'positions'" class="nav-label">Administration</p>
+            <button :aria-current="tab === item.id ? 'page' : undefined" @click="navigate(item.id)">
+              <LineIcon :name="item.icon" />{{ item.label
+              }}<span
+                v-if="item.id === 'requests' && overview?.queue?.for_you"
+                class="queue-count"
+                >{{ overview.queue.for_you }}</span
+              >
+            </button>
+          </template>
+        </nav>
+      </aside>
+      <div class="desk-main">
+        <main id="main-content" class="content" tabindex="-1">
+          <header v-if="tab !== 'overview'" class="page-head">
+            <h1>{{ current.label }}</h1>
+            <p>{{ current.description }}</p>
+          </header>
+          <p v-if="loadError" class="adm-msg err" role="alert">
+            {{ loadError }} <button class="retry" @click="refresh">Try again</button>
+          </p>
+          <AdminOverview v-if="tab === 'overview'" :data="overview" @navigate="navigate" />
+          <component
+            v-else-if="lookups"
+            :is="current.component"
+            :key="tab"
+            ref="panel"
+            :lookups="lookups"
+            :initial-id="selectedId"
+            @changed="refresh"
+          />
+          <p v-else-if="!loadError" class="adm-note" role="status">Loading admin data...</p>
+        </main>
       </div>
-      <dl class="stats">
-        <div v-for="s in STATS" :key="s.key">
-          <dt>{{ s.label }}</dt>
-          <dd class="mono">{{ counts[s.key] ?? '–' }}</dd>
-        </div>
-      </dl>
-      <div class="who">
-        <p class="sub">
-          Signed in as <b>{{ auth.profile?.preferred_name || auth.profile?.full_name }}</b
-          >.
-          {{ scopeNote }}
-        </p>
-        <div class="acts">
-          <RouterLink class="adm-btn ghost small" to="/lounge">
-            <LineIcon class="ic" name="back" /> Lounge
-          </RouterLink>
-          <button type="button" class="adm-btn ghost small" @click="leave">Sign out</button>
-        </div>
-      </div>
-    </header>
-
-    <nav class="tabs rise" style="--i: 1" aria-label="Admin sections">
-      <div class="chips" role="tablist">
+      <nav class="bottom-nav" aria-label="Admin phone navigation">
         <button
-          v-for="t in tabs"
-          :key="t.id"
-          type="button"
-          role="tab"
-          class="chip"
-          :class="{ on: tab === t.id }"
-          :aria-selected="tab === t.id"
-          @click="setTab(t.id)"
+          v-for="item in phoneTabs"
+          :key="item.id"
+          :aria-current="tab === item.id ? 'page' : undefined"
+          @click="navigate(item.id)"
         >
-          {{ t.label }}
-          <b v-if="t.id === 'requests' && counts.pending" class="dot mono">{{ counts.pending }}</b>
+          <LineIcon :name="item.icon" />{{ item.label }}</button
+        ><button
+          :aria-current="!phoneTabs.some((t) => t.id === tab) ? 'page' : undefined"
+          @click="moreOpen = true"
+        >
+          <LineIcon name="portal" />More
         </button>
-      </div>
-    </nav>
-
-    <p v-if="loadError" class="adm-msg err" role="alert">{{ loadError }}</p>
-
-    <section
-      v-if="lookups && current"
-      class="sec rise"
-      style="--i: 2"
-      :aria-labelledby="`${tab}-h`"
-    >
-      <h2 :id="`${tab}-h`" class="sec-h">
-        <span class="mono">{{
-          String(tabs.findIndex((t) => t.id === tab) + 1).padStart(2, '0')
-        }}</span>
-        {{ current.label }}
-      </h2>
-      <p class="sec-sub">{{ current.sub }}</p>
-      <component :is="current.component" :lookups="lookups" @changed="refreshCounts" />
-    </section>
-  </main>
+      </nav>
+      <AdminCommands
+        v-if="paletteOpen"
+        :tabs="tabs"
+        :members-visible="membersVisible"
+        @close="paletteOpen = false"
+        @navigate="navigate"
+        @student="openStudent"
+        @create="create"
+      />
+      <AdminDialog v-if="moreOpen" title="Admin sections" @close="moreOpen = false"
+        ><div class="menu-list">
+          <button v-for="item in tabs" :key="item.id" @click="navigate(item.id)">
+            <LineIcon :name="item.icon" />{{ item.label }}</button
+          ><button
+            @click="
+              profileOpen = true;
+              moreOpen = false;
+            "
+          >
+            Your account
+          </button>
+        </div></AdminDialog
+      >
+      <AdminDialog v-if="createOpen" title="Create" @close="createOpen = false"
+        ><div class="menu-list">
+          <button @click="create('events')"><LineIcon name="cal" />New event</button
+          ><button @click="create('forms')"><LineIcon name="book" />New form</button
+          ><button v-if="membersVisible" @click="create('notices')">
+            <LineIcon name="chat" />New notice
+          </button>
+        </div></AdminDialog
+      >
+      <AdminDialog v-if="profileOpen" title="Your account" drop @close="profileOpen = false">
+        <section class="adm-profile" aria-labelledby="admin-profile-heading">
+          <div class="adm-profile-identity">
+            <span class="adm-profile-avatar" aria-hidden="true">
+              <img
+                v-if="avatarUrl"
+                :src="avatarUrl"
+                alt=""
+                referrerpolicy="no-referrer"
+                @error="avatarFailed"
+              />
+              <img v-else :src="CREST" alt="" />
+            </span>
+            <div class="adm-profile-person">
+              <p class="adm-kicker">Admin profile</p>
+              <h3 id="admin-profile-heading">{{ profileName }}</h3>
+              <p class="adm-profile-email">{{ auth.profile?.email || 'Signed-in admin' }}</p>
+            </div>
+          </div>
+          <div class="adm-profile-scope" aria-label="Administrator scope">
+            <span><LineIcon name="seal" />{{ roleLabel }}</span>
+            <span><LineIcon name="pin" />{{ scope }}</span>
+          </div>
+          <nav class="adm-profile-actions" aria-label="Account actions">
+            <button
+              type="button"
+              class="adm-profile-action"
+              @click="
+                helpOpen = true;
+                profileOpen = false;
+              "
+            >
+              <span class="adm-profile-action-icon">
+                <LineIcon name="keyboard" />
+              </span>
+              <span>Keyboard shortcuts</span>
+              <kbd>?</kbd>
+            </button>
+            <button type="button" class="adm-profile-action" @click="leave">
+              <span class="adm-profile-action-icon">
+                <LineIcon name="logout" />
+              </span>
+              <span>Sign out</span>
+              <LineIcon name="next" />
+            </button>
+          </nav>
+        </section>
+      </AdminDialog>
+      <AdminDialog v-if="helpOpen" title="Keyboard shortcuts" @close="helpOpen = false"
+        ><dl class="shortcuts">
+          <dt>Search and commands</dt>
+          <dd><kbd>Ctrl K</kbd> or <kbd>/</kbd></dd>
+          <dt>Overview / requests / students / events</dt>
+          <dd><kbd>G</kbd> then <kbd>O / R / S / E</kbd></dd>
+          <dt>Next / previous request</dt>
+          <dd><kbd>J / K</kbd></dd>
+          <dt>Review decision</dt>
+          <dd><kbd>A</kbd> approve, <kbd>R</kbd> focus rejection note</dd>
+          <dt>Close drawer or menu</dt>
+          <dd><kbd>Esc</kbd></dd>
+          <dt>Keyboard shortcuts</dt>
+          <dd><kbd>?</kbd></dd>
+        </dl></AdminDialog
+      >
+    </div>
+  </div>
 </template>
-
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import AdminNav from '../components/admin/AdminNav.vue';
 import LineIcon from '../components/site/LineIcon.vue';
+import AdminDialog from '../components/admin/AdminDialog.vue';
+import AdminCommands from '../components/admin/AdminCommands.vue';
+import AdminOverview from '../components/admin/AdminOverview.vue';
 import AdminStudents from '../components/admin/AdminStudents.vue';
 import AdminRoster from '../components/admin/AdminRoster.vue';
 import AdminEvents from '../components/admin/AdminEvents.vue';
@@ -86,310 +180,210 @@ import AdminRequests from '../components/admin/AdminRequests.vue';
 import AdminPositions from '../components/admin/AdminPositions.vue';
 import AdminAudit from '../components/admin/AdminAudit.vue';
 import '../components/admin/admin.css';
-import { auth, errorText, isRc, isSuperAdmin, signOut } from '../lib/auth.js';
-import { loadCounts, loadLookups } from '../lib/admin.js';
-
+import CREST from '../assets/crest.webp';
+import {
+  auth,
+  avatarFailed,
+  avatarUrl,
+  errorText,
+  isRc,
+  isSuperAdmin,
+  signOut,
+} from '../lib/auth.js';
+import { loadAdminOverview, loadLookups } from '../lib/admin.js';
+import { theme, toggleTheme } from '../lib/theme.js';
 const route = useRoute();
 const router = useRouter();
-
-const position = computed(() => auth.dashboard?.position);
-const isHead = computed(() => position.value === 'head' || position.value === 'co_head');
-const membersTabs = computed(() => isSuperAdmin.value || isRc.value);
-
-const ALL_TABS = [
+const membersVisible = computed(() => isSuperAdmin.value || isRc.value);
+const profileName = computed(() => {
+  const metadata = auth.session?.user?.user_metadata ?? {};
+  return (
+    metadata.full_name?.trim() ||
+    metadata.name?.trim() ||
+    auth.profile?.full_name?.trim() ||
+    auth.profile?.preferred_name?.trim() ||
+    'Admin'
+  );
+});
+const allTabs = [
+  { id: 'overview', label: 'Overview', icon: 'home' },
+  {
+    id: 'requests',
+    label: 'Requests',
+    icon: 'door',
+    component: AdminRequests,
+    members: true,
+    description:
+      'Review student corrections and admin changes. Your own changes need a different Super Admin.',
+  },
   {
     id: 'students',
     label: 'Students',
+    icon: 'people',
     component: AdminStudents,
     members: true,
-    sub: 'Find a student, see their details and ask for a change. A Super Admin approves every admin-initiated change.',
+    description: 'Find a student or request a change to their record.',
   },
   {
     id: 'roster',
     label: 'Roster',
+    icon: 'book',
     component: AdminRoster,
     members: true,
-    sub: 'Add students before their first sign-in. Only emails on the roster can sign in with Google. Name and region may be left empty.',
+    description: 'Approved students waiting for their first Google sign-in.',
   },
   {
     id: 'events',
     label: 'Events',
+    icon: 'cal',
     component: AdminEvents,
-    sub: 'Draft, publish and unpublish events in your scope. Attendance and certificates live on each event.',
+    description: 'Manage events, posters, attendance and certificates in your scope.',
   },
   {
     id: 'forms',
     label: 'Forms',
+    icon: 'book',
     component: AdminForms,
-    sub: 'House-themed forms, group applications and event registration. Invite links appear to students only after they submit.',
+    description: 'Build forms, manage registration and export responses.',
   },
   {
     id: 'notices',
     label: 'Notices',
+    icon: 'chat',
     component: AdminNotices,
-    sub: 'House, region or community notices, with optional cohort targeting. Group applications live on Forms, with the WhatsApp invite shown after submit.',
-  },
-  {
-    id: 'requests',
-    label: 'Requests',
-    component: AdminRequests,
     members: true,
-    sub: '',
+    description: 'Publish notices for your audience.',
   },
   {
     id: 'positions',
     label: 'Positions',
+    icon: 'seal',
     component: AdminPositions,
-    superAdmin: true,
-    sub: 'Up to two Regional Coordinators per region, and a Head and Co-Head per community. Super Admin accounts are fixed.',
+    sa: true,
+    description: 'Coordinator and community positions. Changes need another Super Admin.',
   },
   {
     id: 'audit',
-    label: 'Audit log',
+    label: 'Activity',
+    icon: 'chart',
     component: AdminAudit,
-    superAdmin: true,
-    sub: 'Every change, who made it and when. Nothing here can be edited.',
+    sa: true,
+    description: 'A record of who changed what and when.',
   },
 ];
-
 const tabs = computed(() =>
-  ALL_TABS.filter((t) => {
-    if (t.superAdmin) return isSuperAdmin.value;
-    if (t.members) return membersTabs.value;
-    return true;
-  }).map((t) =>
-    t.id === 'requests'
-      ? {
-          ...t,
-          sub: isSuperAdmin.value
-            ? 'Student region corrections, certificate-name corrections, and admin changes waiting for a different Super Admin.'
-            : 'Student region corrections for your region, and the admin changes you asked for.',
-        }
-      : t
-  )
+  allTabs.filter((t) => (!t.members || membersVisible.value) && (!t.sa || isSuperAdmin.value))
 );
 const tab = computed(() =>
-  tabs.value.some((t) => t.id === route.query.tab) ? route.query.tab : tabs.value[0]?.id
+  tabs.value.some((t) => t.id === route.query.tab) ? route.query.tab : 'overview'
 );
 const current = computed(() => tabs.value.find((t) => t.id === tab.value));
-function setTab(id) {
-  router.replace({ query: { tab: id } });
-}
-
-const STATS = [
-  { key: 'members', label: 'students' },
-  { key: 'roster', label: 'on roster' },
-  { key: 'events', label: 'upcoming events' },
-  { key: 'pending', label: 'pending requests' },
-];
-const counts = reactive({});
+const phoneTabs = computed(() =>
+  tabs.value.filter((t) =>
+    [
+      'overview',
+      ...(membersVisible.value ? ['requests', 'students'] : ['events', 'forms']),
+    ].includes(t.id)
+  )
+);
 const lookups = ref(null);
+const overview = ref({});
 const loadError = ref('');
-
-const regionName = computed(
-  () => lookups.value?.regions.find((r) => r.id === auth.dashboard?.region_id)?.name ?? ''
+const panel = ref(null);
+const selectedId = ref(null);
+const paletteOpen = ref(false);
+const moreOpen = ref(false);
+const createOpen = ref(false);
+const profileOpen = ref(false);
+const helpOpen = ref(false);
+const scope = computed(() =>
+  isSuperAdmin.value
+    ? 'All regions'
+    : isRc.value
+      ? lookups.value?.regions.find((r) => r.id === auth.dashboard?.region_id)?.name ||
+        'Your region'
+      : lookups.value?.communities.find((c) => c.id === auth.dashboard?.community_id)?.name ||
+        'Your community'
 );
-const communityName = computed(
-  () => lookups.value?.communities.find((c) => c.id === auth.dashboard?.community_id)?.name ?? ''
+const roleLabel = computed(() =>
+  isSuperAdmin.value
+    ? 'Super Admin'
+    : isRc.value
+      ? 'Regional Coordinator'
+      : auth.dashboard?.position === 'co_head'
+        ? 'Co-Head'
+        : 'Head'
 );
-const roleLabel = computed(() => {
-  if (isSuperAdmin.value) return 'Super Admin';
-  if (isHead.value)
-    return `${position.value === 'co_head' ? 'Co-Head' : 'Head'}${communityName.value ? ` · ${communityName.value}` : ''}`;
-  return `Regional Coordinator${regionName.value ? ` · ${regionName.value}` : ''}`;
-});
-const scopeNote = computed(() => {
-  if (isSuperAdmin.value) return 'You see every region and community.';
-  if (isHead.value)
-    return `You manage events, forms and notices for ${communityName.value || 'your community'}. You cannot open the student list.`;
-  return `You see students in ${regionName.value || 'your region'}, and events, forms and notices for that region.`;
-});
-
-async function refreshCounts() {
+async function navigate(id, recordId = null) {
+  if (!tabs.value.some((t) => t.id === id)) return;
+  const same = tab.value === id;
+  selectedId.value = recordId;
+  paletteOpen.value = moreOpen.value = createOpen.value = false;
+  await router.replace({ query: { tab: id } });
+  await nextTick();
+  if (same && recordId) panel.value?.openRecord?.(recordId);
+  window.scrollTo({ top: 0 });
+}
+async function openStudent(id) {
+  await navigate('students');
+  panel.value?.openRecord?.(id);
+}
+async function create(id) {
+  await navigate(id);
+  panel.value?.create?.();
+}
+async function refresh() {
+  loadError.value = '';
   try {
-    Object.assign(counts, await loadCounts());
-  } catch (e) {
-    loadError.value = errorText(e);
+    if (!lookups.value) lookups.value = await loadLookups();
+    overview.value = await loadAdminOverview();
+  } catch (error) {
+    loadError.value = errorText(error);
   }
 }
-
-onMounted(async () => {
-  try {
-    lookups.value = await loadLookups();
-  } catch (e) {
-    loadError.value = errorText(e);
+let gAt = 0;
+function shortcuts(event) {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault();
+    paletteOpen.value = !paletteOpen.value;
+    return;
   }
-  refreshCounts();
+  if (
+    document.querySelector('dialog[open]') ||
+    /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) ||
+    event.target.isContentEditable ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey
+  )
+    return;
+  const key = event.key.toLowerCase();
+  if (key === '?' || key === '/') {
+    event.preventDefault();
+    if (key === '?') helpOpen.value = true;
+    else paletteOpen.value = true;
+    return;
+  }
+  if (Date.now() - gAt < 900) {
+    gAt = 0;
+    const id = { o: 'overview', r: 'requests', s: 'students', e: 'events', a: 'audit' }[key];
+    if (id) {
+      event.preventDefault();
+      navigate(id);
+      return;
+    }
+  }
+  if (key === 'g') gAt = Date.now();
+  if (tab.value === 'requests') panel.value?.shortcut?.(key, event);
+}
+onMounted(async () => {
+  window.addEventListener('keydown', shortcuts);
+  await refresh();
 });
-
+onBeforeUnmount(() => window.removeEventListener('keydown', shortcuts));
 async function leave() {
-  await signOut().catch(() => {});
+  await signOut();
   router.push('/login');
 }
 </script>
-
-<style scoped>
-.wrap {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 18px 24px 80px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 18px;
-}
-.head {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: end;
-  gap: 4px 28px;
-}
-h1 {
-  margin: 0;
-  font-size: clamp(34px, 4.4vw, 48px);
-  font-weight: 750;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
-}
-.stats {
-  display: flex;
-  justify-content: flex-end;
-  gap: 26px;
-  margin: 0;
-}
-.stats div {
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: flex-end;
-}
-.stats dt {
-  font-size: 12px;
-  color: var(--ink-2);
-}
-.stats dd {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-.who {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 18px;
-  margin-top: 6px;
-}
-.sub {
-  margin: 0;
-  max-width: 62ch;
-  font-size: 15px;
-  color: var(--ink-2);
-}
-.sub b {
-  color: var(--ink);
-  font-weight: 650;
-}
-.acts {
-  display: flex;
-  gap: 8px;
-}
-.tabs {
-  position: sticky;
-  top: calc(var(--nav-h) + 8px);
-  z-index: 20;
-  justify-self: start;
-  max-width: 100%;
-}
-.chips {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 99px;
-  background: color-mix(in srgb, var(--sunk) 88%, transparent);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 15px;
-  border: 0;
-  border-radius: 99px;
-  background: transparent;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-2);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    color 0.25s,
-    background 0.35s var(--ease-out);
-}
-.chip:hover {
-  color: var(--ink);
-}
-.chip.on {
-  background: var(--ink);
-  color: var(--paper);
-}
-.dot {
-  min-width: 20px;
-  padding: 1px 6px;
-  border-radius: 99px;
-  background: var(--mari);
-  color: var(--on-mari);
-  font-size: 11.5px;
-  font-weight: 700;
-}
-.sec {
-  padding-top: 18px;
-}
-.sec-h {
-  margin: 0 0 22px;
-  font-size: clamp(24px, 2.6vw, 30px);
-  font-weight: 750;
-  letter-spacing: -0.035em;
-}
-.sec-h span {
-  margin-right: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--mari-ink);
-  vertical-align: 0.5em;
-}
-.sec-sub {
-  margin: -12px 0 22px;
-  max-width: 62ch;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-@media (max-width: 900px) {
-  .head {
-    grid-template-columns: 1fr;
-  }
-  .stats {
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-  .stats div {
-    align-items: flex-start;
-  }
-}
-@media (max-width: 560px) {
-  .wrap {
-    padding: 14px 16px 90px;
-  }
-  .chip {
-    padding: 8px 12px;
-    font-size: 13.5px;
-  }
-}
-</style>
+<style scoped src="../components/admin/desk.css"></style>

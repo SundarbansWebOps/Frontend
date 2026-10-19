@@ -6,74 +6,76 @@
 -->
 <template>
   <header class="lnav">
-    <a class="lnav-brand" href="#/lounge" aria-label="Sundarbans House, the Lounge: Home">
-      <img :src="CREST" alt="" width="34" height="34" />
-      <span class="lnav-word" aria-hidden="true">
-        <b>Sundarbans</b>
-        <small>The Lounge</small>
-      </span>
-    </a>
-    <nav class="lnav-links" aria-label="Main">
-      <a href="#/lounge" :aria-current="view === 'home' ? 'page' : undefined">Home</a>
-      <a href="#/lounge?view=events" :aria-current="view === 'events' ? 'page' : undefined"
-        >Events</a
-      >
-      <a class="lnav-site" href="#/" aria-label="Back to the website">
-        <span>Website</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+    <div class="lnav-in">
+      <a class="lnav-brand" href="#/lounge" aria-label="Sundarbans House, the Lounge: Home">
+        <img :src="CREST" alt="" width="34" height="34" />
+        <span class="lnav-word" aria-hidden="true">
+          <b>Sundarbans</b>
+          <small>The Lounge</small>
+        </span>
       </a>
-    </nav>
-    <div class="lnav-acts">
-      <button
-        type="button"
-        class="lnav-btn"
-        :aria-label="unread ? `Notices, ${unread} unread` : 'Notices'"
-        aria-haspopup="dialog"
-        @click="emit('notices')"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 9a6 6 0 1 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9Z" />
-          <path d="M10 18.5a2 2 0 0 0 4 0" />
-        </svg>
-        <span v-if="unread" class="gp-badge lnav-badge" aria-hidden="true">{{ unread }}</span>
-      </button>
-      <button
-        type="button"
-        class="lnav-btn lnav-theme"
-        :class="{ dark: theme === 'dark' }"
-        :aria-label="theme === 'dark' ? 'Switch to day' : 'Switch to night'"
-        @pointerenter="tide.warmOther?.()"
-        @focus="tide.warmOther?.()"
-        @click="(e) => tide.toggleTheme?.(e)"
-      >
-        <svg class="lnav-sun" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.4" />
-          <path
-            d="M12 2.2v2.4M12 19.4v2.4M2.2 12h2.4M19.4 12h2.4M5.1 5.1l1.7 1.7M17.2 17.2l1.7 1.7M5.1 18.9l1.7-1.7M17.2 6.8l1.7-1.7"
+      <nav class="lnav-links" aria-label="Main">
+        <a href="#/lounge" :aria-current="view === 'home' ? 'page' : undefined">Home</a>
+        <a href="#/lounge?view=events" :aria-current="view === 'events' ? 'page' : undefined"
+          >Events</a
+        >
+        <a class="lnav-site" href="#/" aria-label="Back to the website">
+          <span>Website</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+        </a>
+      </nav>
+      <div class="lnav-acts">
+        <button
+          type="button"
+          class="lnav-btn"
+          :aria-label="unread ? `Notices, ${unread} unread` : 'Notices'"
+          aria-haspopup="dialog"
+          @click="emit('notices')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 9a6 6 0 1 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9Z" />
+            <path d="M10 18.5a2 2 0 0 0 4 0" />
+          </svg>
+          <span v-if="unread" class="gp-badge lnav-badge" aria-hidden="true">{{ unread }}</span>
+        </button>
+        <button
+          type="button"
+          class="lnav-btn lnav-theme"
+          :class="{ dark: theme === 'dark' }"
+          :aria-label="theme === 'dark' ? 'Switch to day' : 'Switch to night'"
+          @pointerenter="tide.warmOther?.()"
+          @focus="tide.warmOther?.()"
+          @click="(e) => tide.toggleTheme?.(e)"
+        >
+          <svg class="lnav-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.4" />
+            <path
+              d="M12 2.2v2.4M12 19.4v2.4M2.2 12h2.4M19.4 12h2.4M5.1 5.1l1.7 1.7M17.2 17.2l1.7 1.7M5.1 18.9l1.7-1.7M17.2 6.8l1.7-1.7"
+            />
+          </svg>
+          <svg class="lnav-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1Z" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="lnav-me"
+          :aria-label="callName ? `Your profile, ${callName}` : 'Your profile'"
+          aria-haspopup="dialog"
+          :aria-expanded="profileOpen ? 'true' : 'false'"
+          @click="emit('profile')"
+        >
+          <img
+            v-if="avatarUrl"
+            :src="avatarUrl"
+            alt=""
+            referrerpolicy="no-referrer"
+            @error="avatarFailed"
           />
-        </svg>
-        <svg class="lnav-moon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1Z" />
-        </svg>
-      </button>
-      <button
-        type="button"
-        class="lnav-me"
-        :aria-label="callName ? `Your profile, ${callName}` : 'Your profile'"
-        aria-haspopup="dialog"
-        :aria-expanded="profileOpen ? 'true' : 'false'"
-        @click="emit('profile')"
-      >
-        <img
-          v-if="avatarUrl"
-          :src="avatarUrl"
-          alt=""
-          referrerpolicy="no-referrer"
-          @error="avatarFailed"
-        />
-        <span v-else-if="initials" aria-hidden="true">{{ initials }}</span>
-        <img v-else :src="CREST" alt="" />
-      </button>
+          <span v-else-if="initials" aria-hidden="true">{{ initials }}</span>
+          <img v-else :src="CREST" alt="" />
+        </button>
+      </div>
     </div>
   </header>
 
@@ -139,14 +141,21 @@ onBeforeUnmount(() => document.documentElement.classList.remove('has-banner'));
   inset: 0 0 auto;
   z-index: 20;
   height: var(--nav-h);
+  background: var(--bg);
+  color: var(--t-1);
+  border-bottom: 1px solid color-mix(in srgb, var(--keyline) 55%, transparent);
+}
+
+:where(html.lounge-active) .lnav-in {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+  padding: 0 clamp(16px, 2.2vw, 40px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 12px;
-  padding: 0 24px;
-  background: var(--bg);
-  color: var(--t-1);
-  border-bottom: 1px solid color-mix(in srgb, var(--keyline) 55%, transparent);
 }
 
 :where(html.lounge-active) .lnav-brand {
@@ -473,7 +482,7 @@ html:where(.lounge-active).vt-page .lnav-strip {
     padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
   }
 
-  :where(html.lounge-active) .lnav {
+  :where(html.lounge-active) .lnav-in {
     gap: 6px;
     padding: 0 16px;
   }
@@ -535,21 +544,6 @@ html:where(.lounge-active).vt-page .lnav-strip {
 
   :where(html.lounge-active) .lnav-strip-open {
     padding-left: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  /* No room for equal side columns: the links take the middle and stay centred in it. */
-  :where(html.lounge-active) .lnav {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-  }
-
-  :where(html.lounge-active) .lnav-links {
-    justify-self: center;
-  }
-
-  :where(html.lounge-active) .lnav-word {
-    display: none;
   }
 }
 

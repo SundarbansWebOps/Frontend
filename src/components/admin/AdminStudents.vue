@@ -35,28 +35,43 @@
     <p v-if="error" class="adm-msg err" role="alert">{{ error }}</p>
     <p v-if="query && query.length < 3" class="adm-note">Type at least 3 characters to search.</p>
 
-    <ul v-if="rows.length" class="adm-list">
-      <li v-for="m in rows" :key="m.id">
-        <button type="button" class="adm-row button" @click="open(m.id)">
-          <div>
-            <b>{{ m.preferred_name || m.full_name || m.email }}</b>
-            <div class="adm-meta">
-              <span class="mono">{{ m.member_code }}</span>
-              <span>{{ regionOf(m.region_id) }}</span>
-              <span>{{ m.email }}</span>
-            </div>
-          </div>
-          <span class="adm-badge" :class="statusTone(m.account_status)">{{
-            m.account_status
-          }}</span>
-        </button>
-      </li>
-    </ul>
+    <div v-if="rows.length" class="adm-card student-table adm-table-wrap">
+      <table class="adm-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Region</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th><span class="visually-hidden">Open profile</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="m in rows" :key="m.id">
+            <td>
+              <button class="student-name" @click="open(m.id)">
+                <b>{{ m.preferred_name || m.full_name || 'Name not set' }}</b
+                ><small>{{ m.email }}</small
+                ><small class="mono">{{ m.member_code }}</small>
+              </button>
+            </td>
+            <td>{{ regionOf(m.region_id) }}</td>
+            <td>
+              <span class="adm-badge" :class="statusTone(m.account_status)">{{
+                m.account_status
+              }}</span>
+            </td>
+            <td>{{ day(m.created_at) }}</td>
+            <td><button class="adm-btn ghost small" @click="open(m.id)">Profile</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <p v-else-if="!loading" class="adm-empty">
       {{
         query.length >= 3
           ? 'No student matches that search.'
-          : 'No students here yet. Add them on the Roster tab.'
+          : 'No students match these filters. Students waiting for their first sign-in are on the roster.'
       }}
     </p>
     <div v-if="!searching && rows.length < total" class="more">
@@ -65,7 +80,7 @@
       </button>
     </div>
 
-    <AdminDialog v-if="detail" ref="dlg" :title="detailTitle" @close="detail = null">
+    <AdminDialog v-if="detail" ref="dlg" side :title="detailTitle" @close="detail = null">
       <template v-if="mode === 'view'">
         <dl class="adm-facts">
           <div>
@@ -127,7 +142,7 @@
           <button
             v-if="canRequestRemoval"
             type="button"
-            class="adm-btn ghost small"
+            class="adm-btn danger small"
             @click="ask('delete')"
           >
             Delete
@@ -153,7 +168,7 @@
               v-for="a in statusActions"
               :key="a"
               type="button"
-              class="adm-btn ghost small"
+              :class="['adm-btn', 'small', a === 'suspend' ? 'danger' : 'ghost']"
               @click="ask(a)"
             >
               {{ STATUS_ACTION_LABEL[a] }}
@@ -169,7 +184,7 @@
             <button
               v-if="detail.position"
               type="button"
-              class="adm-btn ghost small"
+              class="adm-btn danger small"
               @click="ask('revoke')"
             >
               Revoke position
@@ -193,7 +208,7 @@
         <label class="adm-field wide">
           <span>Full name (as on the roster)</span>
           <input v-model="form.full_name" class="adm-input" maxlength="200" />
-          <small>Optional. A missing name does not block Lounge access.</small>
+          <small>Leave an unknown name unchanged. A new full name cannot be blank.</small>
         </label>
         <label class="adm-field">
           <span>Preferred name</span>
@@ -333,7 +348,10 @@ import {
   searchMembers,
 } from '../../lib/admin.js';
 
-const props = defineProps({ lookups: { type: Object, required: true } });
+const props = defineProps({
+  lookups: { type: Object, required: true },
+  initialId: { type: String, default: null },
+});
 const emit = defineEmits(['changed']);
 
 const query = ref('');
@@ -424,7 +442,11 @@ async function runSearch() {
   }
 }
 
-onMounted(reload);
+onMounted(() => {
+  reload();
+  if (props.initialId) open(props.initialId);
+});
+defineExpose({ openRecord: open });
 
 // Detail and requests
 
@@ -517,7 +539,8 @@ const ASK = {
     run: (id, why) => requestDeletion(id, why),
   },
   blacklist: {
-    explain: 'The student is removed and can never be added again with the same email or phone.',
+    explain:
+      'The account is blacklisted. Sign-in is blocked until a Super Admin lifts the blacklist.',
     cta: 'Ask to blacklist',
     danger: true,
     run: (id, why) => requestBlacklist(id, why),
@@ -591,6 +614,10 @@ function submitEdit() {
     const after = typeof form[k] === 'string' ? form[k].trim() : form[k];
     if (String(after ?? '') !== String(before)) changes[k] = after === '' ? null : after;
   }
+  if (Object.hasOwn(changes, 'full_name') && !changes.full_name) {
+    actionError.value = 'A new full name cannot be blank.';
+    return;
+  }
   if (!Object.keys(changes).length) {
     actionError.value = 'Nothing has changed.';
     return;
@@ -629,6 +656,29 @@ function startPosition() {
 </script>
 
 <style scoped>
+.student-table {
+  padding: 0;
+}
+.student-name {
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  font: inherit;
+  text-align: left;
+  padding: 4px 0;
+  cursor: pointer;
+}
+.student-name b {
+  display: block;
+  font-size: 14px;
+}
+.student-name small {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
 .grow {
   flex: 1 1 280px;
 }

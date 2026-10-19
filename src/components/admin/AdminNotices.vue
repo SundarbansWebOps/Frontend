@@ -20,11 +20,22 @@
             <span v-if="n.audience_cohorts?.length" class="mono">{{
               n.audience_cohorts.join(', ')
             }}</span>
-            <span v-if="new Date(n.starts_at) > new Date()" class="adm-badge">scheduled</span>
+            <span class="adm-badge" :class="n.published_at ? 'mari' : ''">{{
+              noticeState(n)
+            }}</span>
           </div>
         </div>
-        <div class="row-end">
+        <div class="adm-chips">
           <button type="button" class="adm-btn ghost small" @click="edit(n)">Edit</button>
+          <button
+            type="button"
+            class="adm-btn small"
+            :class="n.published_at ? 'danger' : 'mari'"
+            :disabled="busy"
+            @click="togglePublished(n)"
+          >
+            {{ n.published_at ? 'Unpublish' : 'Publish' }}
+          </button>
           <button type="button" class="adm-btn danger small" :disabled="busy" @click="remove(n)">
             Delete
           </button>
@@ -91,6 +102,9 @@
           <input v-model.trim="form.link" class="adm-input" type="url" placeholder="https://…" />
         </label>
         <p v-if="formError" class="adm-msg err wide" role="alert">{{ formError }}</p>
+        <p v-if="form.published_at" class="adm-note wide">
+          Saving changes updates this published record immediately.
+        </p>
         <div class="wide row-end">
           <button type="button" class="adm-btn ghost" :disabled="busy" @click="saveFuture">
             Save scheduled
@@ -112,9 +126,13 @@ import {
   getAvailableCohorts,
   listNoticesAdmin,
   saveNotice,
+  setNoticePublished,
 } from '../../lib/admin.js';
 
-const props = defineProps({ lookups: { type: Object, required: true } });
+const props = defineProps({
+  lookups: { type: Object, required: true },
+  initialId: { type: String, default: null },
+});
 const emit = defineEmits(['changed']);
 
 const isHead = computed(
@@ -147,6 +165,12 @@ const day = (iso) =>
     hour: 'numeric',
     minute: '2-digit',
   });
+const noticeState = (n) => {
+  if (!n.published_at) return 'unpublished';
+  if (new Date(n.starts_at) > new Date()) return 'scheduled';
+  if (n.ends_at && new Date(n.ends_at) <= new Date()) return 'ended';
+  return 'published';
+};
 const toLocal = (iso) => {
   if (!iso) return '';
   const d = new Date(iso);
@@ -174,7 +198,11 @@ async function load(more = false) {
   }
 }
 const loadMore = () => load(true);
-onMounted(load);
+onMounted(async () => {
+  await load();
+  const row = rows.value.find((r) => r.id === props.initialId);
+  if (row) edit(row);
+});
 
 function defaultScope() {
   if (isSuperAdmin.value) return { scope: 'house', region_id: null, community_id: null };
@@ -182,6 +210,15 @@ function defaultScope() {
     return { scope: 'region', region_id: auth.dashboard.region_id, community_id: null };
   return { scope: 'community', region_id: null, community_id: auth.dashboard.community_id };
 }
+
+defineExpose({
+  create: () => edit(),
+  openRecord: async (id) => {
+    await load();
+    const row = rows.value.find((r) => r.id === id);
+    if (row) edit(row);
+  },
+});
 
 function edit(n) {
   formError.value = '';
@@ -270,6 +307,22 @@ async function remove(n) {
 }
 const save = () => write(new Date().toISOString());
 const saveFuture = () => write(fromLocal(form.value.starts) || new Date().toISOString());
+
+async function togglePublished(n) {
+  const published = !n.published_at;
+  busy.value = true;
+  error.value = '';
+  try {
+    await setNoticePublished(n.id, published);
+    notice.value = published ? 'Notice published.' : 'Notice unpublished.';
+    await load();
+    emit('changed');
+  } catch (e) {
+    error.value = errorText(e);
+  } finally {
+    busy.value = false;
+  }
+}
 </script>
 
 <style scoped>

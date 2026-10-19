@@ -18,14 +18,14 @@
   >
     Skip to main content
   </a>
-  <TopNav v-if="!isLounge" />
+  <TopNav v-if="!isLounge && route.name !== 'Admin'" />
   <!-- Keyed by route record: the two council pages share one component with different props, and
        a page reads its props once, so a move between them needs a fresh instance. -->
   <RouterView v-slot="{ Component, route: current }">
     <component :is="Component" :key="current.matched.at(-1)?.path" />
     <!-- Pages are lazy chunks: until one loads there is no page above the footer, so it would
          flash right under the nav on every refresh. -->
-    <SiteFooter v-if="Component && !isStandalone" />
+    <SiteFooter v-if="Component && !isStandalone && route.name !== 'Admin'" />
   </RouterView>
   <CourseSheet />
   <LoungeDoor v-if="door.rect" overlay entry :rect="door.rect" @done="endDoor" />
