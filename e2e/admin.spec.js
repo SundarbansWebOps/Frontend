@@ -102,6 +102,23 @@ test('a Regional Coordinator opens the admin lounge from the Lounge', async ({ p
   );
 });
 
+test('the account menu hangs from the profile button', async ({ page }) => {
+  await mockSupabase(page, { as: 'sa' });
+  for (const width of [1366, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/#/admin');
+    const avatar = page.getByRole('button', { name: 'Your account' });
+    await avatar.click();
+    const dialog = page.getByRole('dialog', { name: 'Your account' });
+    await expect(dialog).toBeVisible();
+    const a = await avatar.boundingBox();
+    const d = await dialog.boundingBox();
+    expect(Math.abs(a.x + a.width - (d.x + d.width))).toBeLessThanOrEqual(8);
+    expect(d.y).toBeGreaterThan(a.y + a.height - 4);
+    await dialog.getByRole('button', { name: 'Close' }).click();
+  }
+});
+
 test('a Super Admin approves another admin’s request', async ({ page }) => {
   const request = {
     id: 'b0000000-0000-4000-8000-000000000001',
