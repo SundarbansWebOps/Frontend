@@ -133,7 +133,7 @@ html:where(.lounge-active).has-banner {
   --banner-h: 36px;
 }
 
-@media (max-width: 759px) {
+@media (max-width: 760px) {
   :root:where(.lounge-active) {
     --nav-h: 56px;
   }

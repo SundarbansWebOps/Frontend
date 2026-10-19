@@ -473,7 +473,7 @@ html:where(.lounge-active).vt-page .lnav-strip {
   view-transition-name: lounge-notice;
 }
 
-@media (max-width: 759px) {
+@media (max-width: 760px) {
   :where(html.lounge-active) {
     --tab-h: 64px;
   }
@@ -483,6 +483,8 @@ html:where(.lounge-active).vt-page .lnav-strip {
   }
 
   :where(html.lounge-active) .lnav-in {
+    /* With the links in the bottom bar, the actions belong in the last column. */
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 6px;
     padding: 0 16px;
   }

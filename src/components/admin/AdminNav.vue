@@ -311,6 +311,15 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
     padding: 0 12px;
   }
 
+  .anav-links {
+    position: static;
+    transform: none;
+  }
+
+  .anav-actions {
+    margin-left: 0;
+  }
+
   .anav-word {
     display: none;
   }
@@ -333,13 +342,17 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
   }
 
   .anav-action {
-    width: clamp(26px, 7vw, 32px);
-    height: clamp(26px, 7vw, 32px);
+    width: 32px;
+    height: 32px;
+  }
+
+  .anav-links {
+    gap: 8px;
   }
 
   .anav-links a {
-    padding: 5px clamp(0px, 0.25vw, 2px);
-    font-size: clamp(10px, 2vw, 11px);
+    padding: 8px 0;
+    font-size: 12px;
   }
 
   .anav-site svg {
@@ -349,12 +362,12 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 
   .anav-icon,
   .anav-profile {
-    width: clamp(26px, 7vw, 30px);
-    height: clamp(26px, 7vw, 30px);
+    width: 32px;
+    height: 32px;
   }
 
   .anav-actions {
-    gap: 0;
+    gap: 2px;
   }
 }
 </style>
