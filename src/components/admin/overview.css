@@ -33,14 +33,7 @@
 .hero-art {
   position: relative;
   height: 196px;
-  --hero-image: url('../../assets/admin/banner.webp');
   background: var(--hero-image) center 58% / cover no-repeat;
-}
-.hero-afternoon {
-  --hero-image: url('../../assets/admin/banner-afternoon.webp');
-}
-.hero-evening {
-  --hero-image: url('../../assets/admin/banner-evening.webp');
 }
 .hero-art::before {
   content: '';

@@ -210,7 +210,8 @@ import {
 } from '../../lib/admin.js';
 
 import { nameOf, dateOf, ageOf, requestDiff, requestConsequence } from '../../lib/admin-display.js';
-import clearArt from '../../assets/admin/empty-clear.webp';
+import { ADMIN_ART } from './admin-art.js';
+const clearArt = ADMIN_ART.emptyClear;
 
 const props = defineProps({
   lookups: { type: Object, required: true },

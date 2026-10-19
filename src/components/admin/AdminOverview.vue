@@ -1,7 +1,11 @@
 <template>
   <div class="desk-grid">
     <section class="adm-card hero" aria-labelledby="summary-h">
-      <div class="hero-art" :class="`hero-${timeOfDay}`">
+      <div
+        class="hero-art"
+        :class="`hero-${timeOfDay}`"
+        :style="{ '--hero-image': `url('${heroArt}')` }"
+      >
         <div class="hero-text">
           <div class="eyebrow">{{ today }}</div>
           <h1 id="summary-h">{{ greeting }}, {{ displayName }}</h1>
@@ -202,8 +206,9 @@ import { auth, isRc, isSuperAdmin } from '../../lib/auth.js';
 import { REQUEST_LABEL } from '../../lib/admin.js';
 import { ageOf, dateOf, nameOf } from '../../lib/admin-display.js';
 import LineIcon from '../site/LineIcon.vue';
-import clearArt from '../../assets/admin/empty-clear.webp';
-import boatArt from '../../assets/admin/empty-boat.webp';
+import { ADMIN_ART } from './admin-art.js';
+const clearArt = ADMIN_ART.emptyClear;
+const boatArt = ADMIN_ART.emptyBoat;
 const props = defineProps({
   data: { type: Object, required: true },
 });
@@ -238,6 +243,11 @@ const hour = computed(() =>
 const timeOfDay = computed(() =>
   hour.value < 12 ? 'morning' : hour.value < 17 ? 'afternoon' : 'evening'
 );
+const heroArt = computed(() => {
+  if (timeOfDay.value === 'afternoon') return ADMIN_ART.bannerAfternoon;
+  if (timeOfDay.value === 'evening') return ADMIN_ART.bannerEvening;
+  return ADMIN_ART.banner;
+});
 const greeting = computed(() => `Good ${timeOfDay.value}`);
 const displayName = computed(() => {
   const name =

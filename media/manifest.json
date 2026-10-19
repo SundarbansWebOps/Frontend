@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-17T07:48:56.573Z",
+  "updatedAt": "2026-10-19T09:00:40.259Z",
   "assets": [
     {
       "order": 1,
@@ -1501,6 +1501,204 @@
       "bytes": 57374,
       "format": "jpg",
       "uploadedAt": "2026-10-17T07:48:56.572Z"
+    },
+    {
+      "order": 145,
+      "filename": "avatar-head.webp",
+      "source": "media/admin-command-desk/avatar-head.webp",
+      "publicId": "sundarbans/admin-command-desk/avatar-head",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400419/sundarbans/admin-command-desk/avatar-head.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400419/sundarbans/admin-command-desk/avatar-head.webp",
+      "bytes": 47318,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:20.014Z"
+    },
+    {
+      "order": 146,
+      "filename": "avatar-rc.webp",
+      "source": "media/admin-command-desk/avatar-rc.webp",
+      "publicId": "sundarbans/admin-command-desk/avatar-rc",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400420/sundarbans/admin-command-desk/avatar-rc.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400420/sundarbans/admin-command-desk/avatar-rc.webp",
+      "bytes": 45278,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:21.110Z"
+    },
+    {
+      "order": 147,
+      "filename": "avatar-super.webp",
+      "source": "media/admin-command-desk/avatar-super.webp",
+      "publicId": "sundarbans/admin-command-desk/avatar-super",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400421/sundarbans/admin-command-desk/avatar-super.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400421/sundarbans/admin-command-desk/avatar-super.webp",
+      "bytes": 45030,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:22.156Z"
+    },
+    {
+      "order": 148,
+      "filename": "banner-afternoon.webp",
+      "source": "media/admin-command-desk/banner-afternoon.webp",
+      "publicId": "sundarbans/admin-command-desk/banner-afternoon",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400422/sundarbans/admin-command-desk/banner-afternoon.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400422/sundarbans/admin-command-desk/banner-afternoon.webp",
+      "bytes": 156970,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:23.486Z"
+    },
+    {
+      "order": 149,
+      "filename": "banner-evening.webp",
+      "source": "media/admin-command-desk/banner-evening.webp",
+      "publicId": "sundarbans/admin-command-desk/banner-evening",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400423/sundarbans/admin-command-desk/banner-evening.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400423/sundarbans/admin-command-desk/banner-evening.webp",
+      "bytes": 143440,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:24.943Z"
+    },
+    {
+      "order": 150,
+      "filename": "banner.webp",
+      "source": "media/admin-command-desk/banner.webp",
+      "publicId": "sundarbans/admin-command-desk/banner",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400425/sundarbans/admin-command-desk/banner.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400425/sundarbans/admin-command-desk/banner.webp",
+      "bytes": 114138,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:26.132Z"
+    },
+    {
+      "order": 151,
+      "filename": "empty-boat.webp",
+      "source": "media/admin-command-desk/empty-boat.webp",
+      "publicId": "sundarbans/admin-command-desk/empty-boat",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400426/sundarbans/admin-command-desk/empty-boat.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400426/sundarbans/admin-command-desk/empty-boat.webp",
+      "bytes": 46924,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:26.951Z"
+    },
+    {
+      "order": 152,
+      "filename": "empty-clear.webp",
+      "source": "media/admin-command-desk/empty-clear.webp",
+      "publicId": "sundarbans/admin-command-desk/empty-clear",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400427/sundarbans/admin-command-desk/empty-clear.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400427/sundarbans/admin-command-desk/empty-clear.webp",
+      "bytes": 35744,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:27.767Z"
+    },
+    {
+      "order": 153,
+      "filename": "region-bengaluru.webp",
+      "source": "media/admin-command-desk/region-bengaluru.webp",
+      "publicId": "sundarbans/admin-command-desk/region-bengaluru",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400428/sundarbans/admin-command-desk/region-bengaluru.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400428/sundarbans/admin-command-desk/region-bengaluru.webp",
+      "bytes": 51886,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:28.734Z"
+    },
+    {
+      "order": 154,
+      "filename": "region-chandigarh.webp",
+      "source": "media/admin-command-desk/region-chandigarh.webp",
+      "publicId": "sundarbans/admin-command-desk/region-chandigarh",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400428/sundarbans/admin-command-desk/region-chandigarh.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400428/sundarbans/admin-command-desk/region-chandigarh.webp",
+      "bytes": 43502,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:29.592Z"
+    },
+    {
+      "order": 155,
+      "filename": "region-chennai.webp",
+      "source": "media/admin-command-desk/region-chennai.webp",
+      "publicId": "sundarbans/admin-command-desk/region-chennai",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400430/sundarbans/admin-command-desk/region-chennai.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400430/sundarbans/admin-command-desk/region-chennai.webp",
+      "bytes": 50868,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:31.158Z"
+    },
+    {
+      "order": 156,
+      "filename": "region-delhi.webp",
+      "source": "media/admin-command-desk/region-delhi.webp",
+      "publicId": "sundarbans/admin-command-desk/region-delhi",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400431/sundarbans/admin-command-desk/region-delhi.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400431/sundarbans/admin-command-desk/region-delhi.webp",
+      "bytes": 55690,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:33.129Z"
+    },
+    {
+      "order": 157,
+      "filename": "region-hyderabad.webp",
+      "source": "media/admin-command-desk/region-hyderabad.webp",
+      "publicId": "sundarbans/admin-command-desk/region-hyderabad",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400433/sundarbans/admin-command-desk/region-hyderabad.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400433/sundarbans/admin-command-desk/region-hyderabad.webp",
+      "bytes": 50910,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:34.410Z"
+    },
+    {
+      "order": 158,
+      "filename": "region-international.webp",
+      "source": "media/admin-command-desk/region-international.webp",
+      "publicId": "sundarbans/admin-command-desk/region-international",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400434/sundarbans/admin-command-desk/region-international.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400434/sundarbans/admin-command-desk/region-international.webp",
+      "bytes": 52060,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:35.604Z"
+    },
+    {
+      "order": 159,
+      "filename": "region-kolkata.webp",
+      "source": "media/admin-command-desk/region-kolkata.webp",
+      "publicId": "sundarbans/admin-command-desk/region-kolkata",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400435/sundarbans/admin-command-desk/region-kolkata.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400435/sundarbans/admin-command-desk/region-kolkata.webp",
+      "bytes": 51634,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:36.576Z"
+    },
+    {
+      "order": 160,
+      "filename": "region-lucknow.webp",
+      "source": "media/admin-command-desk/region-lucknow.webp",
+      "publicId": "sundarbans/admin-command-desk/region-lucknow",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400436/sundarbans/admin-command-desk/region-lucknow.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400436/sundarbans/admin-command-desk/region-lucknow.webp",
+      "bytes": 54966,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:37.528Z"
+    },
+    {
+      "order": 161,
+      "filename": "region-mumbai.webp",
+      "source": "media/admin-command-desk/region-mumbai.webp",
+      "publicId": "sundarbans/admin-command-desk/region-mumbai",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400437/sundarbans/admin-command-desk/region-mumbai.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400437/sundarbans/admin-command-desk/region-mumbai.webp",
+      "bytes": 49274,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:38.655Z"
+    },
+    {
+      "order": 162,
+      "filename": "region-patna.webp",
+      "source": "media/admin-command-desk/region-patna.webp",
+      "publicId": "sundarbans/admin-command-desk/region-patna",
+      "url": "https://res.cloudinary.com/l59gy0g2/image/upload/f_auto,q_auto:good,w_1000,c_limit/v1792400439/sundarbans/admin-command-desk/region-patna.webp",
+      "masterUrl": "https://res.cloudinary.com/l59gy0g2/image/upload/v1792400439/sundarbans/admin-command-desk/region-patna.webp",
+      "bytes": 49680,
+      "format": "webp",
+      "uploadedAt": "2026-10-19T09:00:40.258Z"
     }
   ]
 }
