@@ -141,6 +141,11 @@ export async function searchMembers(query, includeDeleted = false) {
   );
 }
 
+// House-wide exact-email check for any admin. The database audits every lookup.
+export async function lookupEmail(email) {
+  return unwrap(await supabase.rpc('admin_lookup_email', { p_email: email }));
+}
+
 export async function getMember(id) {
   const [m, pos, reg] = await Promise.all([
     supabase.from('members').select(MEMBER_COLS).eq('id', id).maybeSingle(),

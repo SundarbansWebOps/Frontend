@@ -22,6 +22,12 @@ export const PEOPLE = {
     full_name: 'Arjun Rao',
     dashboard: { role: 'admin', position: 'rc', region_id: 1, community_id: null },
   },
+  head: {
+    id: 'a9000000-0000-4000-8000-000000000005',
+    email: '99f9000005@ds.study.iitm.ac.in',
+    full_name: 'Meera Nair',
+    dashboard: { role: 'admin', position: 'head', region_id: null, community_id: 2 },
+  },
   sa: {
     id: 'a9000000-0000-4000-8000-000000000001',
     email: '99f9000001@ds.study.iitm.ac.in',
