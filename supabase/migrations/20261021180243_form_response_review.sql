@@ -4,6 +4,7 @@ alter table public.form_responses
   add column review_reason text,
   add column reviewed_by uuid references public.members(id),
   add column reviewed_at timestamptz,
+  add column resubmitted_at timestamptz,
   add constraint form_responses_review_reason_check check (
     (review_status = 'rejected' and review_reason is not null and review_reason = btrim(review_reason) and length(review_reason) between 1 and 500)
     or (review_status <> 'rejected' and review_reason is null));
@@ -72,7 +73,8 @@ begin
   v_wrote:=true;
  elsif v_status='rejected' then
   -- A rejected application is corrected in place: same response row (and event registration), back to pending.
-  update public.form_responses set submitted_email=(select email from public.members where id=auth.uid()),field_schema=f.fields,answers=a,submitted_at=now(),review_status='pending',review_reason=null,reviewed_by=null,reviewed_at=null where id=rid;
+  -- submitted_at stays the first-received time so serial numbers never move.
+  update public.form_responses set submitted_email=(select email from public.members where id=auth.uid()),field_schema=f.fields,answers=a,resubmitted_at=now(),review_status='pending',review_reason=null,reviewed_by=null,reviewed_at=null where id=rid;
   perform private.write_audit('form.resubmit','form_responses',rid::text,jsonb_build_object('review_status','rejected'),jsonb_build_object('review_status','pending','form_id',f.id));
   v_wrote:=true;
  end if;
@@ -89,12 +91,19 @@ begin
  return coalesce((select jsonb_agg(to_jsonb(f)||jsonb_build_object('submitted',exists(select 1 from public.form_responses where form_id=f.id and member_id=auth.uid()),'can_manage',private.manages_form(f.id),'accepting_responses',private.can_submit_form(f.id),'review_status',(select r.review_status from public.form_responses r where r.form_id=f.id and r.member_id=auth.uid()),'review_reason',(select r.review_reason from public.form_responses r where r.form_id=f.id and r.member_id=auth.uid())) order by f.created_at desc) from public.lounge_forms f where private.manages_form(f.id) or (f.published_at is not null and f.published_at<=now() and private.in_audience(f.region_id,f.audience_cohorts) and (f.event_id is null or private.can_register_event(f.event_id))) or exists(select 1 from public.form_responses where form_id=f.id and member_id=auth.uid())),'[]');
 end; $$;
 
+-- A rejected application does not unlock the invite; resubmitting returns it to pending first.
+create or replace function public.get_lounge_form_invite(p_form_id uuid) returns text language plpgsql stable security definer set search_path='' as $$
+begin
+ if not private.is_active_member() or not exists(select 1 from public.form_responses where form_id=p_form_id and member_id=auth.uid() and review_status<>'rejected') then raise exception 'Submit this application before viewing the invite' using errcode='42501'; end if;
+ return (select i.invite_url from private.lounge_form_invites i join public.lounge_forms f on f.id=i.form_id left join public.events e on e.id=f.event_id where f.id=p_form_id and private.in_audience(f.region_id,f.audience_cohorts) and (f.event_id is null or private.in_audience(e.region_id,e.audience_cohorts)));
+end; $$;
+
 create or replace function public.export_form_responses(p_form_id uuid) returns jsonb language plpgsql stable security definer set search_path='' as $$
 begin
  if private.manages_form(p_form_id) is not true then raise exception 'This form is outside your organizer scope' using errcode='42501'; end if;
  -- serial = arrival order (1 = first received), stable regardless of how the caller sorts or filters.
  return coalesce((select jsonb_agg(jsonb_build_object('id',x.id,'email',x.submitted_email,'submitted_at',x.submitted_at,'answers',x.answers,'field_schema',x.field_schema,
-   'serial',x.serial,'review_status',x.review_status,'review_reason',x.review_reason,'reviewed_at',x.reviewed_at,
+   'serial',x.serial,'resubmitted_at',x.resubmitted_at,'review_status',x.review_status,'review_reason',x.review_reason,'reviewed_at',x.reviewed_at,
    'reviewer_name',x.reviewer_name,'reviewer_email',x.reviewer_email,'member_full_name',x.full_name,'member_preferred_name',x.preferred_name) order by x.submitted_at,x.id)
   from (select r.*,row_number() over(order by r.submitted_at,r.id) as serial,m.full_name,m.preferred_name,rv.full_name as reviewer_name,rv.email as reviewer_email
    from public.form_responses r join public.members m on m.id=r.member_id left join public.members rv on rv.id=r.reviewed_by where r.form_id=p_form_id) x),'[]');

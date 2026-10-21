@@ -17,6 +17,7 @@ function reviewDesk() {
     member_full_name: `${name} Full`,
     member_preferred_name: name,
     submitted_at: `2026-10-0${i + 1}T10:00:00Z`,
+    resubmitted_at: null,
     answers: { name },
     field_schema: SCHEMA,
     review_status: 'pending',
@@ -79,6 +80,27 @@ test('responses show arrival serials; sort and filter never renumber them', asyn
   await dialog.getByRole('button', { name: /^Pending/ }).click();
   await dialog.getByLabel('Sort').selectOption('newest');
   expect(await serialsInOrder(dialog)).toEqual(['#3', '#1']);
+});
+
+test('a resent response keeps its serial and place, and says when it was resent', async ({
+  page,
+}) => {
+  const data = reviewDesk();
+  const rows = data.export_form_responses();
+  rows[0].resubmitted_at = '2026-10-12T08:00:00Z';
+  const { dialog } = await openResponses(page, data);
+  await expect(dialog.locator('tbody tr')).toHaveCount(3);
+  // Resent #1 stays #1: serial and order follow the first-received time.
+  expect(await serialsInOrder(dialog)).toEqual(['#3', '#2', '#1']);
+  await expect(dialog.getByText(/^Resent /)).toHaveCount(1);
+  await expect(
+    dialog
+      .locator('tbody tr')
+      .nth(2)
+      .getByText(/^Resent /)
+  ).toBeVisible();
+  await dialog.getByLabel('Sort').selectOption('oldest');
+  expect(await serialsInOrder(dialog)).toEqual(['#1', '#2', '#3']);
 });
 
 test('approve sends the decision and shows who made it', async ({ page }) => {

@@ -117,7 +117,14 @@ reset role;
 select is((select count(*)::int from public.form_responses where form_id='fa710000-0000-4000-8000-000000000001'), 2, 'resubmit does not add a row');
 select is((select id from public.form_responses where member_id='fa700000-0000-4000-8000-000000000004' and form_id='fa710000-0000-4000-8000-000000000001'), (select id from rv_ids where member_id='fa700000-0000-4000-8000-000000000004'), 'the same response row is reused');
 select is((select answers->>'name'||':'||review_status||':'||coalesce(review_reason,'-')||':'||coalesce(reviewed_by::text,'-') from public.form_responses where id=(select id from rv_ids where member_id='fa700000-0000-4000-8000-000000000004')), 'S Two fixed:pending:-:-', 'answers replaced and review reset');
-select ok((select submitted_at > now() - interval '5 minutes' from public.form_responses where id=(select id from rv_ids where member_id='fa700000-0000-4000-8000-000000000004')), 'submitted_at refreshed');
+select ok((select submitted_at < now() - interval '30 minutes' and resubmitted_at > now() - interval '5 minutes' from public.form_responses where id=(select id from rv_ids where member_id='fa700000-0000-4000-8000-000000000004')), 'submitted_at keeps the first-received time and resubmitted_at records the resend');
+select is((select resubmitted_at from public.form_responses where id=(select id from rv_ids where member_id='fa700000-0000-4000-8000-000000000003')), null, 'resubmitted_at is null until a resubmit');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"fa700000-0000-4000-8000-000000000002","role":"authenticated"}';
+select is((public.export_form_responses('fa710000-0000-4000-8000-000000000001')->1->>'serial')::int, 2, 'serial is unchanged after a resubmit');
+select is(public.export_form_responses('fa710000-0000-4000-8000-000000000001')->1->>'member_full_name', 'Student two', 'the resubmitted response keeps its place in arrival order');
+select ok(public.export_form_responses('fa710000-0000-4000-8000-000000000001')->1->>'resubmitted_at' is not null, 'export carries resubmitted_at');
+reset role;
 select ok(exists(select 1 from public.audit_log where action='form.resubmit' and target_id=(select id::text from rv_ids where member_id='fa700000-0000-4000-8000-000000000004')), 'resubmit is audited');
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"fa700000-0000-4000-8000-000000000004","role":"authenticated"}';
@@ -141,7 +148,9 @@ select lives_ok($$select public.review_form_response((select id from public.form
 reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"fa700000-0000-4000-8000-000000000003","role":"authenticated"}';
+select throws_ok($$select public.get_lounge_form_invite('fa710000-0000-4000-8000-000000000002')$$, '42501', null, 'a rejected response does not unlock the invite');
 select is(public.submit_lounge_form('fa710000-0000-4000-8000-000000000002','{"name":"S One corrected"}')->>'invite_url', 'https://chat.whatsapp.com/ReviewInvite1', 'group resubmit still returns the invite');
+select is(public.get_lounge_form_invite('fa710000-0000-4000-8000-000000000002'), 'https://chat.whatsapp.com/ReviewInvite1', 'the invite is available again once the response is pending');
 reset role;
 
 -- Suspended reviewer

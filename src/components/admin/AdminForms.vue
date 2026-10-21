@@ -377,7 +377,12 @@
                 {{ r.email }}
                 <small v-if="memberName(r)" class="member-name">{{ memberName(r) }}</small>
               </td>
-              <td class="when">{{ day(r.submitted_at) }}</td>
+              <td class="when">
+                {{ day(r.submitted_at) }}
+                <small v-if="r.resubmitted_at" class="resent"
+                  >Resent {{ day(r.resubmitted_at) }}</small
+                >
+              </td>
               <td class="review">
                 <span class="adm-badge" :class="STATUS_TONE[r.review_status]">{{
                   REVIEW_LABEL[r.review_status] ?? 'Pending'
@@ -1145,6 +1150,12 @@ function downloadResponses() {
 }
 .by {
   margin: 4px 0 0;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.resent {
+  display: block;
+  margin-top: 4px;
   color: var(--ink-3);
   font-size: 12px;
 }
