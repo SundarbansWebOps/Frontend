@@ -85,6 +85,7 @@ function profileOf(person) {
     phone: '+919990000004',
     cohort: '26F1',
     tour_seen_at: '2026-10-01T00:00:00Z',
+    group_forms_hidden: false,
     certificate_name: null,
     certificate_name_confirmed_at: null,
     gender: null,
@@ -170,6 +171,11 @@ export async function mockSupabase(
         if (name === 'set_my_tour_seen') {
           row.tour_seen_at = args.p_seen ? new Date().toISOString() : null;
           return json(row.tour_seen_at);
+        }
+        // Persists on the member row like the real RPC, so a reload reads it back.
+        if (name === 'set_group_forms_hidden') {
+          row.group_forms_hidden = !!args.p_hidden;
+          return json(row.group_forms_hidden);
         }
         if (name === 'update_my_profile') {
           row.preferred_name = args.p_preferred_name;

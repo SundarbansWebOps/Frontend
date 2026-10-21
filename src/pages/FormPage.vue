@@ -32,7 +32,19 @@
       </p>
 
       <form v-else class="slip" @submit.prevent="send">
-        <p v-if="form.submitted && !isSuperAdmin && !invite" class="msg" role="status">
+        <p v-if="rejected" class="msg" role="status">
+          <strong>Not approved.</strong>
+          {{ form.review_reason || 'The admins could not approve this one.' }}
+          <template v-if="canSubmit">Fill it in again below and send it for another look.</template>
+        </p>
+        <p
+          v-else-if="form.review_status === 'pending' && form.form_kind === 'group'"
+          class="msg"
+          role="status"
+        >
+          Under review.
+        </p>
+        <p v-if="locked && !isSuperAdmin && !invite" class="msg" role="status">
           Your application is saved. Sending this form is not WhatsApp admission.
         </p>
         <FormFields
@@ -40,10 +52,10 @@
           ref="fieldsEl"
           v-model:save-phone="savePhone"
           :fields="form.fields || []"
-          :disabled="previewOnly || form.submitted"
+          :disabled="previewOnly || locked || (rejected && !canSubmit)"
         />
         <p v-if="previewOnly" class="msg" role="status">Preview only. {{ unavailableMessage }}</p>
-        <p v-else-if="!canSubmit && !form.submitted" class="msg" role="status">
+        <p v-else-if="!canSubmit && !locked" class="msg" role="status">
           {{ unavailableMessage }}
         </p>
         <p v-if="error" class="msg err" role="alert">{{ error }}</p>
@@ -51,11 +63,11 @@
           <strong>Saved. One step left.</strong>
           Open the invite and request to join. An admin adds you after checking.
         </p>
-        <p v-else-if="form.submitted && inviteError" class="msg err" role="alert">
+        <p v-else-if="locked && inviteError" class="msg err" role="alert">
           {{ inviteError }}
           <button class="text-action" type="button" @click="loadInvite">Try again</button>
         </p>
-        <p v-else-if="form.submitted && form.form_kind === 'group'" class="msg" role="status">
+        <p v-else-if="locked && form.form_kind === 'group'" class="msg" role="status">
           No invite link is available for this group yet. Your application remains saved; an
           application does not confirm admission.
         </p>
@@ -64,13 +76,8 @@
           your response.
         </p>
         <div class="acts">
-          <button
-            v-if="!form.submitted && !done && canSubmit"
-            class="go"
-            type="submit"
-            :disabled="busy"
-          >
-            {{ busy ? 'Sending…' : 'Send' }}
+          <button v-if="!locked && !done && canSubmit" class="go" type="submit" :disabled="busy">
+            {{ busy ? 'Sending…' : rejected ? 'Send again' : 'Send' }}
           </button>
           <a v-if="invite" class="go join" :href="invite" target="_blank" rel="noopener noreferrer"
             >Open WhatsApp invite <span aria-hidden="true">→</span></a
@@ -99,7 +106,7 @@ import {
   submitLoungeForm,
 } from '../components/lounge/session.js';
 import { auth, errorText, isSuperAdmin } from '../lib/auth.js';
-import { formUnavailableMessage } from '../lib/lounge.js';
+import { formUnavailableMessage, isLocked, reviewOf } from '../lib/lounge.js';
 import { member } from '../components/lounge/fixtures.js';
 
 const route = useRoute();
@@ -117,6 +124,9 @@ const invite = ref('');
 const inviteError = ref('');
 
 const form = computed(() => formById(route.params.id));
+/* Submitted and not rejected: final. A rejected response can be filled in again. */
+const locked = computed(() => isLocked(form.value));
+const rejected = computed(() => !done.value && reviewOf(form.value) === 'rejected');
 const canSubmit = computed(
   () => !!form.value && (form.value.accepting_responses ?? form.value.is_open ?? false)
 );
@@ -146,7 +156,7 @@ onMounted(async () => {
   if (!auth.session || !auth.profile) return;
   try {
     if (!lounge.ready) await hydrateLounge();
-    if (form.value?.submitted) await loadInvite();
+    if (locked.value) await loadInvite();
   } catch (err) {
     loadError.value = errorText(err);
   } finally {
@@ -155,7 +165,7 @@ onMounted(async () => {
 });
 
 async function loadInvite() {
-  if (!form.value?.submitted) return;
+  if (!locked.value) return;
   inviteError.value = '';
   try {
     invite.value = (await fetchInvite(form.value.id)) || '';
@@ -165,7 +175,7 @@ async function loadInvite() {
 }
 
 async function send() {
-  if (busy.value || !form.value || form.value.submitted || !canSubmit.value) return;
+  if (busy.value || !form.value || locked.value || !canSubmit.value) return;
   if (!(await fieldsEl.value?.validate())) return;
   busy.value = true;
   error.value = '';

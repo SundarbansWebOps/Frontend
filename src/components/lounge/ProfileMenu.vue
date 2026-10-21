@@ -1,7 +1,8 @@
 <!--
   The profile menu from the avatar: a sheet of ghat paper with the band on top. Who you are
   (preferred name as the title, never the roll number; then roll, region and Regional
-  Coordinator), then My certificates, Edit profile, Retake the tour and the theme. Sign out is
+  Coordinator), then My certificates, Edit profile, the "I've joined all my groups" switch,
+  Retake the tour and the theme. Sign out is
   in the public site's navbar, one tap away via the Lounge header's Website link.
   Comes down from under the header on every width (the drop variant in LoungeDialog.vue).
 -->
@@ -65,6 +66,28 @@
             <span>Edit profile</span>
           </button>
         </li>
+        <li v-if="!isSuperAdmin">
+          <button
+            type="button"
+            role="switch"
+            class="pm-sw-row"
+            :aria-checked="hidden"
+            :disabled="saving"
+            @click="toggleGroups"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 16c3 0 3-2 6-2s3 2 6 2 3-2 6-2" />
+              <path d="M6 12.5 8 9h8l2 3.5" />
+              <path d="m5 20 .4-1.5M19 20l-.4-1.5" />
+            </svg>
+            <span>
+              I've joined all my groups
+              <small>Hides the WhatsApp groups on your Lounge. Switch it off to see them.</small>
+            </span>
+            <i class="pm-sw" :class="{ on: hidden }" aria-hidden="true"></i>
+          </button>
+          <p v-if="saveError" class="pm-err" role="alert">{{ saveError }}</p>
+        </li>
         <li>
           <button type="button" @click="go('tour')">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -111,11 +134,28 @@ import LoungeDialog from './LoungeDialog.vue';
 import * as ev from './events.js';
 import { member } from './fixtures.js';
 import { callName, initialsOf, theme } from './state.js';
-import { avatarFailed, avatarUrl, canAdmin } from '../../lib/auth.js';
+import { avatarFailed, avatarUrl, canAdmin, errorText, isSuperAdmin } from '../../lib/auth.js';
+import { saveGroupFormsHidden } from './session.js';
 
 const emit = defineEmits(['close', 'edit', 'certs', 'tour', 'theme']);
 const router = useRouter();
 const dlg = ref(null);
+
+const hidden = computed(() => !!member.group_forms_hidden);
+const saving = ref(false);
+const saveError = ref('');
+async function toggleGroups() {
+  if (saving.value) return;
+  saving.value = true;
+  saveError.value = '';
+  try {
+    await saveGroupFormsHidden(!hidden.value);
+  } catch (err) {
+    saveError.value = errorText(err) || 'That did not save. Try again.';
+  } finally {
+    saving.value = false;
+  }
+}
 
 const initials = computed(() => initialsOf(callName.value));
 const certCount = computed(() => ev.certificates?.value?.length ?? 0);

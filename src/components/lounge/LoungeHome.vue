@@ -47,8 +47,9 @@
         </div>
       </div>
 
-      <a class="h-cue" href="#groups" @click.prevent="toGroups"
-        >Your WhatsApp groups <span aria-hidden="true">↓</span></a
+      <a v-if="groupsSection.show" class="h-cue" href="#groups" @click.prevent="toGroups"
+        >{{ groupsSection.rejectedOnly ? 'A group form needs you' : 'Your WhatsApp groups' }}
+        <span aria-hidden="true">↓</span></a
       >
     </section>
 
@@ -74,6 +75,7 @@ import NameBeacon from './home/NameBeacon.vue';
 import RiverBoat from './home/RiverBoat.vue';
 import { PLATE } from './home/art.js';
 import { animate, motionHeld, motionTimeout, onScreen, reduced, vLoop } from './home/motion.js';
+import { groupsSection } from './session.js';
 import { nameFlight, openNameCard, shownName } from './state.js';
 
 const props = defineProps({ entry: { type: [String, Object], default: 'none' } });
