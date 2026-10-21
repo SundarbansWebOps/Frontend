@@ -40,11 +40,18 @@ function reviewDesk() {
     export_form_responses: () => rows,
     review_form_response: (args) => {
       const row = rows.find((r) => r.id === args.p_response_id);
+      if (args.p_expected_at !== (row.resubmitted_at ?? row.submitted_at))
+        throw new Error('stale expected_at');
       row.review_status = args.p_status;
       row.review_reason = args.p_status === 'rejected' ? args.p_reason : null;
       row.reviewed_at = args.p_status === 'pending' ? null : '2026-10-10T09:00:00Z';
       row.reviewer_name = args.p_status === 'pending' ? null : 'House Secretary';
-      return { id: row.id, review_status: row.review_status, review_reason: row.review_reason };
+      return {
+        id: row.id,
+        review_status: row.review_status,
+        review_reason: row.review_reason,
+        reviewed_at: row.reviewed_at,
+      };
     },
     get_available_cohorts: { current: '26F3', next: '27F1', options: ['26F3', '27F1'] },
   };
@@ -110,6 +117,7 @@ test('approve sends the decision and shows who made it', async ({ page }) => {
   expect(JSON.parse(call.body)).toEqual({
     p_response_id: ids[0],
     p_status: 'approved',
+    p_expected_at: '2026-10-01T10:00:00Z',
     p_reason: null,
   });
   const row = dialog.locator('tbody tr', { hasText: '#1' });
@@ -135,6 +143,7 @@ test('reject needs a reason, accepts a quick pick, and undo clears it', async ({
   expect(JSON.parse(call.body)).toEqual({
     p_response_id: ids[2],
     p_status: 'rejected',
+    p_expected_at: '2026-10-03T10:00:00Z',
     p_reason: 'Wrong region for this group — try Delhi NCR',
   });
   await expect(reject).toHaveCount(0);
@@ -148,28 +157,69 @@ test('reject needs a reason, accepts a quick pick, and undo clears it', async ({
   await expect(row.getByText('Wrong region')).toHaveCount(0);
 });
 
+// Answers one RPC with a database error, still letting the CORS preflight through.
+function failRpc(page, name, status, error, before = () => {}) {
+  return page.route(`**/rest/v1/rpc/${name}`, (route) => {
+    if (route.request().method() === 'OPTIONS')
+      return route.fulfill({
+        status: 204,
+        headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' },
+      });
+    before();
+    return route.fulfill({
+      status,
+      headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' },
+      body: JSON.stringify(error),
+    });
+  });
+}
+
 test('a failed review shows the error and leaves the row alone', async ({ page }) => {
   const { dialog } = await openResponses(page);
-  await page.route('**/rest/v1/rpc/review_form_response', (route) =>
-    route.request().method() === 'OPTIONS'
-      ? route.fulfill({
-          status: 204,
-          headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' },
-        })
-      : route.fulfill({
-          status: 403,
-          headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' },
-          body: JSON.stringify({
-            code: '42501',
-            message: 'This response is outside your organizer scope',
-          }),
-        })
-  );
+  await failRpc(page, 'review_form_response', 403, {
+    code: '42501',
+    message: 'This response is outside your organizer scope',
+  });
   await dialog.getByRole('button', { name: 'Approve 26f1000001@ds.study.iitm.ac.in' }).click();
   await expect(dialog.getByRole('alert')).toContainText('outside your organizer scope');
   await expect(
     dialog.locator('tbody tr', { hasText: '#1' }).getByText('Pending', { exact: true })
   ).toBeVisible();
+});
+
+test('a response that changed since it loaded is refused, reloaded and explained', async ({
+  page,
+}) => {
+  const data = reviewDesk();
+  const rows = data.export_form_responses();
+  const { dialog } = await openResponses(page, data);
+  await failRpc(
+    page,
+    'review_form_response',
+    409,
+    {
+      code: 'PT409',
+      message: 'This response changed since you loaded it. Refresh and review again.',
+    },
+    () => {
+      rows[0].resubmitted_at = '2026-10-12T08:00:00Z';
+    }
+  );
+  await dialog.getByRole('button', { name: 'Approve 26f1000001@ds.study.iitm.ac.in' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('changed since you loaded it');
+  const row = dialog.locator('tbody tr', { hasText: '#1' });
+  await expect(row.getByText(/^Resent /)).toBeVisible();
+  await expect(row.getByText('Pending', { exact: true })).toBeVisible();
+});
+
+test('a failed refresh after a saved review is a notice, not a failed review', async ({ page }) => {
+  const { dialog } = await openResponses(page);
+  await failRpc(page, 'export_form_responses', 500, { code: 'XX000', message: 'boom' });
+  await dialog.getByRole('button', { name: 'Approve 26f1000001@ds.study.iitm.ac.in' }).click();
+  const row = dialog.locator('tbody tr', { hasText: '#1' });
+  await expect(row.getByText('Approved', { exact: true })).toBeVisible();
+  await expect(dialog.getByText("Saved, but couldn't refresh the list.")).toBeVisible();
+  await expect(dialog.getByRole('alert')).toHaveCount(0);
 });
 
 test('CSV export carries the serial and review columns', async ({ page }) => {

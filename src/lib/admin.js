@@ -648,10 +648,17 @@ export const REVIEW_REASON_MAX = 500;
 export const REVIEW_LABEL = { pending: 'Pending', approved: 'Approved', rejected: 'Rejected' };
 
 // Approve, reject (reason required) or undo (back to pending) one response. The database checks
-// that the caller manages the form.
-export const reviewFormResponse = (responseId, status, reason = null) =>
+// that the caller manages the form. expectedAt is the version the reviewer saw, passed back
+// exactly as loaded (resubmitted_at ?? submitted_at); if the member has since resent their
+// answers the database refuses with code PT409.
+export const reviewFormResponse = (responseId, status, expectedAt, reason = null) =>
   supabase
-    .rpc('review_form_response', { p_response_id: responseId, p_status: status, p_reason: reason })
+    .rpc('review_form_response', {
+      p_response_id: responseId,
+      p_status: status,
+      p_expected_at: expectedAt,
+      p_reason: reason,
+    })
     .then(unwrap);
 
 // Serial numbers are the arrival order the database assigned; the sort/filter views never renumber.

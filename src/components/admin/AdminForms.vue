@@ -353,6 +353,7 @@
       </div>
       <p v-if="respError" class="adm-msg err" role="alert">{{ respError }}</p>
       <p v-if="reviewError" class="adm-msg err" role="alert">{{ reviewError }}</p>
+      <p v-if="refreshNotice" class="adm-msg" role="status">{{ refreshNotice }}</p>
       <p v-if="respLoading" class="adm-empty" role="status">Loading responses…</p>
       <p v-else-if="!responses.length && !respError" class="adm-empty">Nobody has answered yet.</p>
       <p v-else-if="responses.length && !shownResponses.length" class="adm-empty">
@@ -560,6 +561,7 @@ const statusFilter = ref('all');
 const sortOrder = ref('newest');
 const saving = reactive({});
 const reviewError = ref('');
+const refreshNotice = ref('');
 const rejecting = ref(null);
 const rejectReason = ref('');
 const rejectError = ref('');
@@ -890,6 +892,7 @@ async function openResponses(f) {
   responseFields.value = [];
   respError.value = '';
   reviewError.value = '';
+  refreshNotice.value = '';
   statusFilter.value = 'all';
   sortOrder.value = 'newest';
   respLoading.value = true;
@@ -910,23 +913,61 @@ function askReject(r) {
   rejectError.value = '';
 }
 
-// Saves one decision, then re-reads the list so reviewer and time come from the database.
+// Re-reads the list so reviewer and time come from the database. Returns false when that fails.
+async function refreshResponses(formId) {
+  try {
+    const rows = await exportFormResponses(formId);
+    if (responsesFor.value?.id === formId) responses.value = rows;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// The decision is saved once the RPC succeeds: patch the row from its result so the table is right
+// at once, then refresh in the background. A failed refresh is a notice, never a failed review.
 async function review(r, status, reason = null) {
   if (saving[r.id]) return false;
   saving[r.id] = true;
   reviewError.value = '';
+  refreshNotice.value = '';
   const formId = responsesFor.value?.id;
   try {
-    await reviewFormResponse(r.id, status, reason);
+    const saved = await reviewFormResponse(
+      r.id,
+      status,
+      r.resubmitted_at ?? r.submitted_at,
+      reason
+    );
     if (responsesFor.value?.id === formId) {
-      const rows = await exportFormResponses(formId);
-      if (responsesFor.value?.id === formId) responses.value = rows;
+      const pending = saved.review_status === 'pending';
+      responses.value = responses.value.map((x) =>
+        x.id === r.id
+          ? {
+              ...x,
+              review_status: saved.review_status,
+              review_reason: saved.review_reason,
+              reviewed_at: saved.reviewed_at,
+              reviewer_name: pending ? null : (auth.profile?.full_name ?? null),
+              reviewer_email: pending ? null : (auth.profile?.email ?? null),
+            }
+          : x
+      );
     }
+    refreshResponses(formId).then((ok) => {
+      if (!ok && responsesFor.value?.id === formId)
+        refreshNotice.value = "Saved, but couldn't refresh the list.";
+    });
     return true;
   } catch (e) {
-    const message = errorText(e);
-    if (rejecting.value) rejectError.value = message;
-    else reviewError.value = message;
+    if (e?.code === 'PT409') {
+      // The member changed their answers since this list loaded: drop the decision and reload.
+      rejectDlg.value?.close();
+      reviewError.value = errorText(e);
+      if (!(await refreshResponses(formId)))
+        refreshNotice.value = "Couldn't refresh the list. Close and reopen it.";
+    } else if (rejecting.value) rejectError.value = errorText(e);
+    else reviewError.value = errorText(e);
     return false;
   } finally {
     delete saving[r.id];
