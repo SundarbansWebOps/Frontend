@@ -305,7 +305,7 @@
         <p v-if="form.published_at" class="adm-note wide">
           Saving changes updates this published record immediately.
         </p>
-        <div class="wide row-end">
+        <div class="wide adm-actions">
           <button type="submit" class="adm-btn ghost" :disabled="busy">
             {{ form.published_at ? 'Save changes' : 'Save draft' }}
           </button>
@@ -434,7 +434,7 @@
         </div>
         <p v-if="opsError" class="adm-msg err" role="alert">{{ opsError }}</p>
         <p v-if="opsNotice" class="adm-msg ok" role="status">{{ opsNotice }}</p>
-        <div class="row-end">
+        <div class="adm-actions">
           <button
             type="button"
             class="adm-btn ghost"
@@ -459,6 +459,7 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
+import { askConfirm } from '../../lib/admin-confirm.js';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
@@ -714,6 +715,16 @@ function friendly(e) {
 }
 
 async function save(mode) {
+  if (
+    mode === 'unpublish' &&
+    !(await askConfirm({
+      title: 'Unpublish this event?',
+      message: 'It goes back to a draft and disappears for members until you publish it again.',
+      confirmLabel: 'Unpublish',
+      danger: true,
+    }))
+  )
+    return;
   busy.value = true;
   formError.value = '';
   try {
@@ -848,8 +859,14 @@ async function act(run) {
   }
 }
 const toggleCancel = (e) => act(() => setEventCancelled(e.id, !e.cancelled_at));
-const remove = (e) => {
-  if (confirm(`Remove "${e.name}"? Members will no longer see it.`)) act(() => deleteEvent(e.id));
+const remove = async (e) => {
+  const yes = await askConfirm({
+    title: `Remove “${e.name}”?`,
+    message: 'Members will no longer see this event.',
+    confirmLabel: 'Remove event',
+    danger: true,
+  });
+  if (yes) act(() => deleteEvent(e.id));
 };
 
 async function openOps(e) {
@@ -922,9 +939,11 @@ async function saveAttendance() {
   }
   if (
     attendanceMode.value === 'replace' &&
-    !confirm(
-      `Replace "${attendanceSource.value.trim()}" for this event? ${replaceDelta.value} omitted rows will lose this source's ownership. Rows owned by other sources remain.`
-    )
+    !(await askConfirm({
+      title: `Replace “${attendanceSource.value.trim()}”?`,
+      message: `${replaceDelta.value} omitted row${replaceDelta.value === 1 ? '' : 's'} will lose this source's ownership. Rows owned by other sources stay.`,
+      confirmLabel: 'Replace',
+    }))
   )
     return;
   busy.value = true;
@@ -959,6 +978,13 @@ async function downloadRecords() {
 
 async function release() {
   if (!ops.value) return;
+  const yes = await askConfirm({
+    title: 'Release certificates?',
+    message:
+      'Certificates are issued to every student the saved attendance marks as eligible. Save the attendance first if you have a newer list.',
+    confirmLabel: 'Release',
+  });
+  if (!yes) return;
   busy.value = true;
   opsError.value = '';
   opsNotice.value = '';
@@ -1003,11 +1029,5 @@ async function release() {
 .between {
   justify-content: space-between;
   align-items: center;
-}
-.row-end {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
 }
 </style>

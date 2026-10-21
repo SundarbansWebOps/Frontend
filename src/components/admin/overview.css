@@ -102,7 +102,7 @@
   border-right: 0;
 }
 .kpi:hover {
-  background: var(--sunk);
+  background: color-mix(in srgb, var(--mari-soft) 55%, transparent);
 }
 .kpi span {
   font-size: 13px;
@@ -141,9 +141,9 @@ h2 {
   gap: 2px;
   padding: 2px;
   overflow-x: auto;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 9px;
-  background: var(--sunk);
+  background: var(--card);
 }
 .adm-chip {
   min-height: 28px;
@@ -157,16 +157,21 @@ h2 {
   white-space: nowrap;
 }
 .adm-chip:hover {
-  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  background: var(--mari-soft);
+  color: var(--ink);
 }
 .adm-chip.on {
-  background: var(--card);
-  color: var(--ink);
-  box-shadow: var(--shadow);
+  background: var(--mari);
+  color: var(--on-mari);
+  box-shadow: none;
 }
 .adm-chip .n {
   margin-left: 4px;
   color: var(--ink-3);
+}
+.adm-chip.on .n {
+  color: inherit;
+  opacity: 0.75;
 }
 .link {
   display: inline-flex;
@@ -204,7 +209,7 @@ h2 {
 .request-row:hover,
 .event-row:hover,
 .list-row:hover {
-  background: var(--sunk);
+  background: color-mix(in srgb, var(--mari-soft) 55%, transparent);
 }
 .row-text {
   flex: 1;

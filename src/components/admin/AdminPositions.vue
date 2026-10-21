@@ -140,7 +140,7 @@
           <textarea v-model.trim="reason" class="adm-input" required maxlength="2000" />
         </label>
         <p v-if="formError" class="adm-msg err wide" role="alert">{{ formError }}</p>
-        <div class="wide row-end">
+        <div class="wide adm-actions">
           <button type="submit" class="adm-btn mari" :disabled="busy">Send for approval</button>
         </div>
       </form>
@@ -338,10 +338,6 @@ async function submit() {
 }
 .spaced {
   margin-top: 14px;
-}
-.row-end {
-  display: flex;
-  justify-content: flex-end;
 }
 @media (max-width: 900px) {
   .grid {

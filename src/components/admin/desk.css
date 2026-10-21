@@ -37,13 +37,12 @@
 }
 .desk-nav button:hover {
   background: var(--sunk);
-}
-.desk-nav button[aria-current] {
-  background: var(--mari-soft);
   color: var(--ink);
 }
-.desk-nav button[aria-current] svg {
-  color: var(--mari-ink);
+.desk-nav button[aria-current] {
+  background: var(--sunk);
+  color: var(--ink);
+  font-weight: 600;
 }
 .desk-nav svg {
   width: 18px;
@@ -51,16 +50,15 @@
 }
 .nav-label {
   margin: 20px 10px 6px;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--ink-3);
 }
 .queue-count {
   margin-left: auto;
   padding: 0 7px;
   border-radius: 99px;
-  background: var(--verm);
+  background: var(--ink);
   color: var(--paper);
   font-size: 12px;
 }
@@ -122,12 +120,24 @@ kbd {
   text-decoration: none;
   font: inherit;
   text-align: left;
-  background: var(--sunk);
+  background: var(--card);
   color: var(--ink);
+  min-height: 48px;
   padding: 12px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
+  box-shadow: 0 1px 0 var(--line-strong);
   cursor: pointer;
+}
+.menu-list button:hover,
+.menu-list a:hover {
+  background: var(--mari-soft);
+  border-color: var(--mari-ink);
+}
+.menu-list svg {
+  width: 20px;
+  height: 20px;
+  color: var(--mari-ink);
 }
 .adm-profile {
   display: grid;
@@ -227,7 +237,7 @@ kbd {
   cursor: pointer;
 }
 .adm-profile-action:hover {
-  background: var(--sunk);
+  background: color-mix(in srgb, var(--mari-soft) 55%, transparent);
 }
 .adm-profile-action:focus-visible {
   outline: 2px solid var(--mari-ink);
@@ -244,11 +254,8 @@ kbd {
   height: 32px;
   place-items: center;
   border-radius: 9px;
-  background: var(--sunk);
-  color: var(--mari-ink);
-}
-.adm-profile-action:hover .adm-profile-action-icon {
   background: var(--mari-soft);
+  color: var(--mari-ink);
 }
 .adm-profile-action-icon svg {
   width: 18px;
@@ -310,27 +317,69 @@ kbd {
     left: 0;
     right: 0;
     z-index: 30;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--line-strong);
     padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
     background: var(--card);
+    box-shadow: 0 -6px 18px color-mix(in srgb, var(--ink) 7%, transparent);
   }
   .bottom-nav button {
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
+    min-width: 0;
     background: transparent;
     border: 0;
     font: inherit;
     font-size: 11px;
-    color: var(--ink-3);
-    border-radius: 9px;
-    padding: 6px 0;
+    font-weight: 600;
+    color: var(--ink-2);
+    border-radius: 12px;
+    padding: 4px 0;
     cursor: pointer;
+  }
+  /* The icon sits in a pill; the current section's pill fills marigold. */
+  .bottom-nav .ico {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 30px;
+    border-radius: 99px;
+    transition:
+      background 0.18s,
+      transform 0.12s;
+  }
+  .bottom-nav button:active .ico {
+    transform: scale(0.94);
+  }
+  .bottom-nav svg {
+    width: 21px;
+    height: 21px;
   }
   .bottom-nav button[aria-current] {
     color: var(--ink);
-    background: var(--mari-soft);
+    font-weight: 700;
+  }
+  .bottom-nav button[aria-current] .ico {
+    background: var(--mari);
+    color: var(--on-mari);
+  }
+  .bottom-nav .ico b {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 17px;
+    padding: 0 4px;
+    border: 2px solid var(--card);
+    border-radius: 99px;
+    background: var(--verm);
+    color: var(--paper);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 13px;
+    text-align: center;
+    box-sizing: content-box;
   }
 }
 @media (max-width: 560px) {

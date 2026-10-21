@@ -59,15 +59,23 @@ html.adm-sheet-open {
   min-width: 0;
   height: 38px;
   padding: 0 12px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 9px;
-  background: var(--paper);
+  background: var(--card);
   color: var(--ink);
   font: inherit;
   font-size: 14px;
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
+}
+.adm-input:hover:not(:focus-visible):not(:disabled) {
+  border-color: var(--ink-3);
+}
+.adm-input:disabled {
+  background: var(--sunk);
+  color: var(--ink-3);
+  cursor: not-allowed;
 }
 textarea.adm-input {
   height: auto;
@@ -93,7 +101,26 @@ textarea.adm-input {
   grid-column: 1 / -1;
 }
 
-/* Admin buttons follow the prototype: neutral outlined actions and a marigold primary. */
+/* The save / publish row of a dialog form. It stays at the foot of the dialog body, so the primary
+   action is never a long scroll away on a phone. The offsets cancel the body's own padding
+   (--dlg-px / --dlg-pb, set by AdminDialog). */
+.adm-actions {
+  position: sticky;
+  bottom: calc(-1 * var(--dlg-pb, 0px));
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 6px calc(-1 * var(--dlg-px, 0px)) calc(-1 * var(--dlg-pb, 0px));
+  padding: 12px var(--dlg-px, 0px);
+  border-top: 1px solid var(--line);
+  background: var(--card);
+}
+
+/* Admin buttons: every one reads as pressable at rest. Neutral buttons are outlined cards with a
+   short base edge, the primary is a marigold fill, danger is a vermilion wash. Hover only deepens. */
 .adm-btn {
   display: inline-flex;
   align-items: center;
@@ -101,9 +128,10 @@ textarea.adm-input {
   gap: 8px;
   height: 36px;
   padding: 0 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 9px;
   background: var(--card);
+  box-shadow: 0 1px 0 var(--line-strong);
   color: var(--ink);
   font: inherit;
   font-size: 14px;
@@ -112,33 +140,50 @@ textarea.adm-input {
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s var(--ease-out);
 }
 .adm-btn:hover:not(:disabled) {
   border-color: var(--ink-3);
+  background: var(--sunk);
+}
+.adm-btn:active:not(:disabled) {
+  box-shadow: none;
+  transform: translateY(1px);
 }
 .adm-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 .adm-btn.mari {
-  border-color: var(--mari);
+  border-color: var(--mari-ink);
   background: var(--mari);
+  box-shadow: 0 1px 0 var(--mari-ink);
   color: var(--on-mari);
 }
 .adm-btn.mari:hover:not(:disabled) {
-  filter: brightness(1.05);
+  background: var(--mari);
+  filter: brightness(1.06);
 }
+/* Ghost is the quiet option, not an invisible one: it keeps its outline and loses the card fill. */
 .adm-btn.ghost {
-  border-color: transparent;
+  border-color: var(--line-strong);
   background: transparent;
+  box-shadow: none;
+  color: var(--ink-2);
 }
 .adm-btn.ghost:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  background: var(--mari-soft);
+  border-color: var(--mari-ink);
+  color: var(--ink);
 }
 .adm-btn.danger {
-  border-color: color-mix(in srgb, var(--verm) 52%, var(--line));
-  background: color-mix(in srgb, var(--verm) 12%, var(--card));
+  border-color: color-mix(in srgb, var(--verm) 60%, var(--line));
+  background: color-mix(in srgb, var(--verm) 10%, var(--card));
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--verm) 35%, var(--line));
   color: var(--verm);
 }
 .adm-btn.danger:hover:not(:disabled) {
@@ -169,9 +214,9 @@ textarea.adm-input {
 .adm-chip {
   min-height: 34px;
   padding: 0 13px;
-  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
-  background: var(--paper);
+  background: var(--card);
   color: var(--ink);
   font: inherit;
   font-size: 13px;
@@ -183,17 +228,13 @@ textarea.adm-input {
     border-color 0.2s;
 }
 .adm-chip:hover {
-  border-color: var(--line);
+  border-color: var(--mari-ink);
+  background: var(--mari-soft);
 }
 .adm-chip.on {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-}
-:root[data-theme='dark'] .adm-chip.on {
   border-color: var(--mari-ink);
-  background: var(--sunk);
-  color: var(--mari-ink);
+  background: var(--mari);
+  color: var(--on-mari);
 }
 
 /* Checkbox: a visible box that fills with the lamp and draws a tick when ticked. */
@@ -214,9 +255,9 @@ textarea.adm-input {
   width: 20px;
   height: 20px;
   margin: 1px 0 0;
-  border: 1.5px solid color-mix(in srgb, var(--line) 75%, transparent);
-  border-radius: 4px;
-  background: var(--paper);
+  border: 1.5px solid var(--ink-3);
+  border-radius: 5px;
+  background: var(--card);
   transition:
     background 0.15s,
     border-color 0.15s;
@@ -231,7 +272,7 @@ textarea.adm-input {
   transition: transform 0.15s var(--ease-out);
 }
 .adm-check input:checked {
-  border-color: var(--on-mari);
+  border-color: var(--mari-ink);
   background: var(--mari);
 }
 .adm-check input:checked::before {
@@ -261,9 +302,9 @@ textarea.adm-input {
 .adm-badge {
   display: inline-block;
   padding: 2px 9px;
-  border: 1px solid color-mix(in srgb, var(--line) 30%, transparent);
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
-  background: var(--sunk);
+  background: var(--card);
   color: var(--ink-2);
   font-size: 11.5px;
   font-weight: 700;
@@ -271,11 +312,13 @@ textarea.adm-input {
   white-space: nowrap;
 }
 .adm-badge.mari {
-  background: color-mix(in srgb, var(--mari) 26%, var(--paper));
+  border-color: color-mix(in srgb, var(--mari-ink) 45%, transparent);
+  background: var(--mari-soft);
   color: var(--mari-ink);
 }
 .adm-badge.verm {
-  background: color-mix(in srgb, var(--verm) 18%, var(--paper));
+  border-color: color-mix(in srgb, var(--verm) 45%, transparent);
+  background: var(--verm-soft);
   color: var(--verm);
 }
 
@@ -293,7 +336,7 @@ textarea.adm-input {
   align-items: center;
   gap: 6px 14px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+  border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--card);
 }
@@ -306,7 +349,8 @@ textarea.adm-input {
   transition: border-color 0.2s;
 }
 .adm-row.button:hover {
-  border-color: var(--line);
+  border-color: var(--mari-ink);
+  background: color-mix(in srgb, var(--mari-soft) 40%, var(--card));
 }
 .adm-row b {
   font-weight: 700;
@@ -366,6 +410,7 @@ textarea.adm-input {
 }
 
 .adm-table-wrap {
+  position: relative;
   overflow-x: auto;
 }
 .adm-table {
@@ -380,6 +425,13 @@ textarea.adm-input {
   border-bottom: 1px dotted var(--line);
   text-align: left;
   vertical-align: top;
+}
+.adm-table thead th {
+  border-bottom: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--mari-soft) 45%, var(--card));
+}
+.adm-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--mari-soft) 30%, transparent);
 }
 .adm-table th {
   font-size: 11px;
@@ -459,11 +511,77 @@ textarea.adm-input {
   pointer-events: none;
 }
 
+/* Tables that become a stack of cards on a phone: each cell carries its column name in data-label. */
 @media (max-width: 640px) {
   .adm-form {
     grid-template-columns: minmax(0, 1fr);
   }
   .adm-row {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .adm-table.stack,
+  .adm-table.stack tbody,
+  .adm-table.stack tr,
+  .adm-table.stack td {
+    display: block;
+  }
+  .adm-table.stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .adm-table.stack tr {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .adm-table.stack tr:last-child {
+    border-bottom: 0;
+  }
+  .adm-table.stack td {
+    padding: 0;
+    border: 0;
+  }
+  .adm-table.stack td:first-child,
+  .adm-table.stack td:last-child {
+    grid-column: 1 / -1;
+  }
+  .adm-table.stack td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 1px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+}
+
+/* Fingers, not cursors: every control is at least 44px tall on a phone. */
+@media (max-width: 760px) {
+  .adm-input {
+    height: 44px;
+    font-size: 16px; /* below 16px iOS zooms the page when a field is focused */
+  }
+  textarea.adm-input {
+    height: auto;
+  }
+  .adm-btn {
+    height: 44px;
+  }
+  .adm-btn.small {
+    height: 40px;
+  }
+  .adm-chip {
+    min-height: 40px;
+  }
+  .adm-check input {
+    width: 22px;
+    height: 22px;
   }
 }

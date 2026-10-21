@@ -16,7 +16,7 @@
             :class="{ on: status === 'pending' && bucket === 'waiting' }"
             @click="show('pending', 'waiting')"
           >
-            With others</button
+            Waiting for someone else</button
           ><button class="adm-chip" :class="{ on: status === 'decided' }" @click="show('decided')">
             Decided
           </button>
@@ -60,7 +60,7 @@
         >
           Load older requests
         </button>
-        <p class="queue-footer">J / K move · A approve · R rejection note</p>
+        <p class="queue-footer keys">J / K move · A approve · R rejection note</p>
       </aside>
       <article v-if="selected" class="adm-card request-detail">
         <button class="adm-btn ghost small back" @click="mobileOpen = false">
@@ -195,6 +195,7 @@
 </template>
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { askConfirm } from '../../lib/admin-confirm.js';
 import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
 import {
   REQUEST_LABEL,
@@ -332,8 +333,14 @@ function approve(r) {
       'Approved. Their sign-in now uses the new email.'
     );
   if (r.type === 'member_hard_delete') {
-    if (!confirm(`Erase ${targetName(r)} permanently? This cannot be undone.`)) return;
-    return act(() => executeHardDelete(r.id), 'Erased. Their account has been removed.');
+    return askConfirm({
+      title: `Erase ${targetName(r)}?`,
+      message: 'Their account and data are removed for good. This cannot be undone.',
+      confirmLabel: 'Erase permanently',
+      danger: true,
+    }).then(
+      (yes) => yes && act(() => executeHardDelete(r.id), 'Erased. Their account has been removed.')
+    );
   }
   return act(async () => {
     await approveRequest(r.id, notes[r.id]);
@@ -378,8 +385,8 @@ const reviewCert = (r, approve) =>
 }
 .queue {
   position: sticky;
-  top: 86px;
-  max-height: calc(100svh - 110px);
+  top: calc(var(--nav-h, 64px) + 22px);
+  max-height: calc(100svh - var(--nav-h, 64px) - 44px);
   overflow: auto;
   padding: 8px;
 }
@@ -403,7 +410,7 @@ const reviewCert = (r, approve) =>
   border-color: var(--mari);
 }
 .queue-row:hover {
-  background: var(--sunk);
+  background: color-mix(in srgb, var(--mari-soft) 55%, transparent);
 }
 .queue-row b {
   display: block;
@@ -465,7 +472,7 @@ blockquote {
   margin: 0;
   padding: 10px 12px;
   border-left: 3px solid var(--mari);
-  background: var(--sunk);
+  background: color-mix(in srgb, var(--mari-soft) 55%, transparent);
   border-radius: 0 10px 10px 0;
   color: var(--ink-2);
   font-size: 14px;
@@ -483,8 +490,8 @@ blockquote {
   padding: 2px 4px;
 }
 .consequence {
-  background: var(--sunk);
-  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--mari-soft) 55%, transparent);
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
   padding: 12px;
   font-size: 14px;
@@ -509,6 +516,7 @@ blockquote {
 }
 .decision-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
 }
@@ -541,6 +549,11 @@ blockquote {
   }
   .people {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (hover: none), (max-width: 760px) {
+  .keys {
+    display: none;
   }
 }
 @media (max-width: 760px) {

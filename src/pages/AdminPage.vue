@@ -56,12 +56,17 @@
           :aria-current="tab === item.id ? 'page' : undefined"
           @click="navigate(item.id)"
         >
-          <LineIcon :name="item.icon" />{{ item.label }}</button
+          <span class="ico"
+            ><LineIcon :name="item.icon" /><b
+              v-if="item.id === 'requests' && overview?.queue?.for_you"
+              >{{ overview.queue.for_you }}</b
+            ></span
+          >{{ item.label }}</button
         ><button
           :aria-current="!phoneTabs.some((t) => t.id === tab) ? 'page' : undefined"
           @click="moreOpen = true"
         >
-          <LineIcon name="portal" />More
+          <span class="ico"><LineIcon name="portal" /></span>More
         </button>
       </nav>
       <AdminCommands
@@ -73,6 +78,7 @@
         @student="openStudent"
         @create="create"
       />
+      <AdminConfirmHost />
       <AdminDialog v-if="moreOpen" title="Admin sections" @close="moreOpen = false"
         ><div class="menu-list">
           <button v-for="item in tabs" :key="item.id" @click="navigate(item.id)">
@@ -169,6 +175,7 @@ import { useRoute, useRouter } from 'vue-router';
 import AdminNav from '../components/admin/AdminNav.vue';
 import LineIcon from '../components/site/LineIcon.vue';
 import AdminDialog from '../components/admin/AdminDialog.vue';
+import AdminConfirmHost from '../components/admin/AdminConfirmHost.vue';
 import AdminCommands from '../components/admin/AdminCommands.vue';
 import AdminOverview from '../components/admin/AdminOverview.vue';
 import AdminStudents from '../components/admin/AdminStudents.vue';
