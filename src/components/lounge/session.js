@@ -13,7 +13,9 @@ import {
   markTourSeen as persistTour,
   requestCertificateNameChange,
   requestRegionChange,
+  reviewOf,
   selectInitialRegion,
+  setGroupFormsHidden as persistGroupFormsHidden,
   setNoticeState,
   submitForm,
   updateProfile,
@@ -74,6 +76,7 @@ function clearMemberData() {
     coordinator: coordinatorFor(''),
     certificate_name: '',
     tour_seen_at: null,
+    group_forms_hidden: false,
   });
   preferredName.value = null;
   certName.value = '';
@@ -107,6 +110,7 @@ export function fillMember(profile) {
     coordinator: coordinatorFor(regionName),
     certificate_name: profile.certificate_name ?? '',
     tour_seen_at: profile.tour_seen_at ?? null,
+    group_forms_hidden: !!profile.group_forms_hidden,
   });
   applyProfile(profile);
 }
@@ -179,6 +183,14 @@ export async function completeTour() {
   if (auth.profile) auth.profile.tour_seen_at = seen;
   member.tour_seen_at = seen;
   return seen;
+}
+
+// "I've joined all my groups": persisted on the member row, reversible.
+export async function saveGroupFormsHidden(hidden) {
+  const saved = !!(await persistGroupFormsHidden(hidden));
+  member.group_forms_hidden = saved;
+  if (auth.profile) auth.profile.group_forms_hidden = saved;
+  return saved;
 }
 
 export async function retakeTourOnServer() {
@@ -296,6 +308,21 @@ export const openGroupForms = computed(() => {
   return groupFormsForMember(lounge.forms, member.region_id).filter(
     (f) => (f.accepting_responses ?? f.is_open) && !f.submitted
   );
+});
+
+// What the WhatsApp groups section shows. Approved forms are gone and "I've joined all my
+// groups" hides the rest; a rejected response always stays as a notice so the student can
+// fix it. With nothing left to show the section is removed, not left as an empty frame, but a
+// student whose groups have not been published yet keeps today's "will appear here" note.
+export const groupsSection = computed(() => {
+  if (isSuperAdmin.value) return { show: true, rejectedOnly: false };
+  const mine = groupFormsForMember(lounge.forms, member.region_id);
+  const rejected = mine.some((f) => f.submitted && reviewOf(f) === 'rejected');
+  if (member.group_forms_hidden) return { show: rejected, rejectedOnly: true };
+  const anyBoat =
+    openGroupForms.value.length > 0 || mine.some((f) => f.submitted && reviewOf(f) !== 'approved');
+  const emptiedByApproval = !anyBoat && mine.some((f) => reviewOf(f) === 'approved');
+  return { show: !emptiedByApproval, rejectedOnly: false };
 });
 
 export const formByEvent = (eventId) => lounge.forms.find((f) => f.event_id === eventId) ?? null;

@@ -7,7 +7,15 @@
       <p v-if="form.group_purpose || form.description" class="evd-desc">
         {{ form.group_purpose || form.description }}
       </p>
-      <p v-if="form.submitted && !isSuperAdmin && !invite" class="evd-done">
+      <p v-if="rejected" class="evd-plain" role="status">
+        <b>Not approved.</b>
+        {{ form.review_reason || 'The admins could not approve this one.' }}
+        Fill it in again below and send it for another look.
+      </p>
+      <p v-else-if="form.review_status === 'pending'" class="evd-small" role="status">
+        Under review.
+      </p>
+      <p v-if="locked && !isSuperAdmin && !invite" class="evd-done">
         Your application is saved. Sending this form is not WhatsApp admission.
       </p>
       <FormFields
@@ -15,12 +23,12 @@
         ref="fieldsEl"
         v-model:save-phone="savePhone"
         :fields="form.fields || []"
-        :disabled="previewOnly || form.submitted"
+        :disabled="previewOnly || locked || done"
       />
       <p v-if="previewOnly" class="evd-plain" role="status">
         Preview only. {{ unavailableMessage }}
       </p>
-      <p v-else-if="!canSubmit && !form.submitted" class="evd-plain" role="status">
+      <p v-else-if="!canSubmit && !locked" class="evd-plain" role="status">
         {{ unavailableMessage }}
       </p>
       <p v-if="error" class="ff-err" role="alert">{{ error }}</p>
@@ -34,12 +42,12 @@
       </p>
       <div class="evd-acts">
         <button
-          v-if="!form.submitted && !done && canSubmit"
+          v-if="!locked && !done && canSubmit"
           type="submit"
           class="gp-btn is-big"
           :disabled="busy"
         >
-          {{ busy ? 'Sending…' : submitLabel }}
+          {{ busy ? 'Sending…' : rejected ? 'Send again' : submitLabel }}
         </button>
         <a
           v-if="invite"
@@ -50,7 +58,7 @@
           >Open WhatsApp invite <span aria-hidden="true">→</span></a
         >
         <button type="button" class="gp-btn is-ghost" @click="dlg?.close()">
-          {{ done || form.submitted ? 'Back to the river' : 'Back' }}
+          {{ done || locked ? 'Back to the river' : 'Back' }}
         </button>
       </div>
     </form>
@@ -60,7 +68,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { errorText, isSuperAdmin } from '../../lib/auth.js';
-import { formUnavailableMessage } from '../../lib/lounge.js';
+import { formUnavailableMessage, isLocked, reviewOf } from '../../lib/lounge.js';
 import { member } from './fixtures.js';
 import FormFields from './FormFields.vue';
 import LoungeDialog from './LoungeDialog.vue';
@@ -74,6 +82,11 @@ const props = defineProps({
 const emit = defineEmits(['close', 'done']);
 
 const dlg = ref(null);
+const done = ref(false);
+/* Submitted and not rejected: final. A rejected response can be filled in again. */
+const locked = computed(() => isLocked(props.form));
+/* The dialog holds the form as it was when opened, so a resend ends the rejected state here. */
+const rejected = computed(() => !done.value && reviewOf(props.form) === 'rejected');
 const canSubmit = computed(() => props.form.accepting_responses ?? props.form.is_open ?? false);
 const previewOnly = computed(() => isSuperAdmin.value && !canSubmit.value);
 const canViewFields = computed(() => canSubmit.value || isSuperAdmin.value);
@@ -84,11 +97,10 @@ const fieldsEl = ref(null);
 const savePhone = ref(false);
 const busy = ref(false);
 const error = ref('');
-const done = ref(false);
 const invite = ref('');
 
 async function send() {
-  if (busy.value || props.form.submitted || !canSubmit.value) return;
+  if (busy.value || locked.value || !canSubmit.value) return;
   if (!(await fieldsEl.value?.validate())) return;
   busy.value = true;
   error.value = '';

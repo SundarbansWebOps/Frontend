@@ -57,7 +57,16 @@
         </div>
 
         <div v-else-if="st === 'upcoming'" class="evd-act">
-          <p v-if="isRegistered(event)" class="evd-done">
+          <template v-if="rejected">
+            <p class="evd-plain" role="status">
+              <b>Not approved.</b>
+              {{ regForm.review_reason || 'The admins could not approve this registration.' }}
+            </p>
+            <button v-if="regOpen" type="button" class="gp-btn is-big" @click="step = 'form'">
+              Register again
+            </button>
+          </template>
+          <p v-else-if="isRegistered(event)" class="evd-done">
             <span class="evd-tick" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="m5 12.5 4.2 4L19 7" /></svg>
             </span>
@@ -66,9 +75,7 @@
               {{ until(event.starts_at) }}.</span
             >
           </p>
-          <template
-            v-else-if="regForm && (regForm.accepting_responses ?? regForm.is_open ?? false)"
-          >
+          <template v-else-if="regOpen">
             <button type="button" class="gp-btn is-big" @click="step = 'form'">Register</button>
             <p class="evd-small">Starts {{ until(event.starts_at) }}.</p>
           </template>
@@ -160,6 +167,7 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue';
 import { errorText } from '../../lib/auth.js';
+import { reviewOf } from '../../lib/lounge.js';
 import { img } from '../../lib/events.js';
 import { KITE_MINE, LANTERN } from './home/art.js';
 import FormFields from './FormFields.vue';
@@ -199,11 +207,17 @@ const st = computed(() => status(props.event));
 const mark = computed(() => markOf(props.event));
 const cert = computed(() => certOf(props.event));
 const regForm = computed(() => formByEvent(props.event.id));
+const regOpen = computed(
+  () => !!regForm.value && (regForm.value.accepting_responses ?? regForm.value.is_open ?? false)
+);
+/* An admin turned this registration down: it shows the reason and can be sent again. The
+   registration itself stays listed wherever it already appears. */
+const rejected = computed(() => reviewOf(regForm.value) === 'rejected');
 
 /* Already registered: never show the form again. */
 const step = ref(
   props.start === 'form' &&
-    !isRegistered(props.event) &&
+    (!isRegistered(props.event) || reviewOf(formByEvent(props.event.id)) === 'rejected') &&
     st.value === 'upcoming' &&
     formByEvent(props.event.id)
     ? 'form'

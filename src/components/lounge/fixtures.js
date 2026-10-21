@@ -15,4 +15,5 @@ export const member = reactive({
   communities: [],
   certificate_name: '',
   tour_seen_at: null,
+  group_forms_hidden: false,
 });

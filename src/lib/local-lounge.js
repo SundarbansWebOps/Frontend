@@ -35,6 +35,7 @@ const defaults = {
     tour_seen_at: params.get('local-tour') === '1' ? null : iso(-24),
     certificate_name: null,
     certificate_name_confirmed_at: null,
+    group_forms_hidden: false,
   },
   forms: [
     ...['Technical', 'Cultural', 'Esports', 'Patna regional'].map((title, i) => ({
@@ -210,6 +211,10 @@ export const localSupabase = {
           phone: args.p_phone,
         });
         value = state.profile;
+        break;
+      case 'set_group_forms_hidden':
+        state.profile.group_forms_hidden = !!args.p_hidden;
+        value = state.profile.group_forms_hidden;
         break;
       case 'set_my_tour_seen':
         state.profile.tour_seen_at = args.p_seen ? new Date().toISOString() : null;

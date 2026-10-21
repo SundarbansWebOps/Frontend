@@ -7,12 +7,26 @@
   splashes; the link opens at once (the splash never delays navigation).
 -->
 <template>
-  <section id="groups" v-loop class="moor" :class="{ in: shown }" aria-labelledby="moor-h">
+  <section
+    v-if="groupsSection.show"
+    id="groups"
+    v-loop
+    class="moor"
+    :class="{ in: shown }"
+    aria-labelledby="moor-h"
+  >
     <div class="moor-in">
       <header class="moor-head">
-        <p class="moor-kick">Moored at the ghat</p>
-        <h2 id="moor-h">Your WhatsApp groups</h2>
-        <p class="moor-sub">Tap a boat to board. Each one opens in WhatsApp.</p>
+        <template v-if="groupsSection.rejectedOnly">
+          <p class="moor-kick">Needs another look</p>
+          <h2 id="moor-h">A group form wasn't approved</h2>
+          <p class="moor-sub">Fill it in again and the admins will take another look.</p>
+        </template>
+        <template v-else>
+          <p class="moor-kick">Moored at the ghat</p>
+          <h2 id="moor-h">Your WhatsApp groups</h2>
+          <p class="moor-sub">Tap a boat to board. Each one opens in WhatsApp.</p>
+        </template>
       </header>
       <p v-if="!boats.length" class="moor-sub">
         Your community and regional groups will appear here when available.
@@ -96,7 +110,13 @@
                 <small>{{ g.why }}</small>
               </span>
               <span class="mb-go">{{
-                g.previewOnly ? 'Preview' : g.applied ? 'Applied' : 'Apply'
+                g.previewOnly
+                  ? 'Preview'
+                  : g.review === 'rejected'
+                    ? 'Fill again'
+                    : g.applied
+                      ? 'Applied'
+                      : 'Apply'
               }}</span>
             </span>
           </RouterLink>
@@ -111,7 +131,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { isSuperAdmin } from '../../../lib/auth.js';
 import { formUnavailableMessage } from '../../../lib/lounge.js';
 import { member } from '../fixtures.js';
-import { lounge, openGroupForms } from '../session.js';
+import { groupsSection, lounge, openGroupForms } from '../session.js';
 import { mode } from '../state.js';
 import { MOORED } from './art.js';
 import { animate, reduced, vLoop } from './motion.js';
@@ -121,24 +141,34 @@ const list = ref(null);
 const shown = ref(false);
 
 const boats = computed(() => {
-  const joined = lounge.groups.map((g) => ({
-    id: g.id,
-    label: g.name || g.label,
-    why: [
-      g.purpose,
-      g.invite_error
-        ? 'Invite link could not be loaded. Open to retry.'
-        : !g.invite_url && g.applied
-          ? 'No invite link is available yet. Your application is saved.'
-          : '',
-    ]
-      .filter(Boolean)
-      .join(' '),
-    href: g.invite_url || g.href,
-    to: `/lounge/forms/${g.id}`,
-    applied: true,
-    kind: g.community_id ? 'community' : g.region_id ? 'region' : 'house',
-  }));
+  const rejected = (g) => g.review_status === 'rejected';
+  const joined = lounge.groups
+    // Hidden ("I've joined all my groups") keeps only what needs fixing.
+    .filter((g) => !member.group_forms_hidden || isSuperAdmin.value || rejected(g))
+    .map((g) => ({
+      id: g.id,
+      label: g.name || g.label,
+      why: rejected(g)
+        ? g.review_reason
+          ? `Note from the admins: ${g.review_reason}`
+          : 'The admins could not approve this one. You can send it again.'
+        : [
+            g.purpose,
+            g.review_status === 'pending' ? 'Under review.' : '',
+            g.invite_error
+              ? 'Invite link could not be loaded. Open to retry.'
+              : !g.invite_url && g.applied
+                ? 'No invite link is available yet. Your application is saved.'
+                : '',
+          ]
+            .filter(Boolean)
+            .join(' '),
+      href: g.invite_url || g.href,
+      to: `/lounge/forms/${g.id}`,
+      applied: true,
+      review: g.review_status,
+      kind: g.community_id ? 'community' : g.region_id ? 'region' : 'house',
+    }));
   // A joined boat already carries its invite; list each form once.
   const joinedIds = new Set(joined.map((g) => g.id));
   const apply = openGroupForms.value
@@ -166,21 +196,24 @@ const boats = computed(() => {
             : 'other-region'
           : 'house',
     }));
+  if (member.group_forms_hidden && !isSuperAdmin.value) return joined;
   return isSuperAdmin.value ? apply : [...apply, ...joined];
 });
 
 const kick = (g) =>
   g.previewOnly
     ? 'Preview only'
-    : g.kind === 'house'
-      ? 'Start here'
-      : g.kind === 'region'
-        ? 'Your region'
-        : g.kind === 'other-region'
-          ? 'Regional group'
-          : g.applied
-            ? 'You applied'
-            : 'Apply';
+    : g.review === 'rejected'
+      ? 'Not approved'
+      : g.kind === 'house'
+        ? 'Start here'
+        : g.kind === 'region'
+          ? 'Your region'
+          : g.kind === 'other-region'
+            ? 'Regional group'
+            : g.applied
+              ? 'You applied'
+              : 'Apply';
 
 let io = null;
 onMounted(() => {

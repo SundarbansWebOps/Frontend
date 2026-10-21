@@ -19,7 +19,7 @@ export async function loadLounge() {
     supabase
       .from('members')
       .select(
-        'id,member_code,full_name,preferred_name,email,phone,region_id,tour_seen_at,certificate_name,certificate_name_confirmed_at,cohort,region:regions(code,name)'
+        'id,member_code,full_name,preferred_name,email,phone,region_id,tour_seen_at,group_forms_hidden,certificate_name,certificate_name_confirmed_at,cohort,region:regions(code,name)'
       )
       .eq('id', uid)
       .single()
@@ -35,6 +35,8 @@ export async function loadLounge() {
 export const updateProfile = ({ preferred_name = null, phone = null }) =>
   rpc('update_my_profile', { p_preferred_name: preferred_name, p_phone: phone });
 export const markTourSeen = (seen = true) => rpc('set_my_tour_seen', { p_seen: seen });
+export const setGroupFormsHidden = (hidden) =>
+  rpc('set_group_forms_hidden', { p_hidden: !!hidden });
 export const selectInitialRegion = (regionId) =>
   rpc('select_my_initial_region', { p_region_id: regionId });
 export const requestRegionChange = (regionId, reason) =>
@@ -74,6 +76,11 @@ export const groupFormsForMember = (forms, regionId) =>
       !form.event_id &&
       (form.region_id == null || form.region_id === regionId)
   );
+// The admin review of a student's response: 'pending' | 'approved' | 'rejected', or null when
+// not submitted (or when the database predates review, which behaves as before).
+export const reviewOf = (form) => form?.review_status ?? null;
+// A response is final unless an admin rejected it; a rejected one can be sent again.
+export const isLocked = (form) => !!form?.submitted && reviewOf(form) !== 'rejected';
 export function formUnavailableMessage(form, regionId, cohort) {
   if (!form) {
     return 'This form is unavailable to your account. It may be unpublished or restricted to another region or cohort.';
@@ -99,11 +106,26 @@ export function formUnavailableMessage(form, regionId, cohort) {
 }
 
 export async function listGroups(forms = null, regionId = null) {
+  // Approved forms leave the Lounge: the student is in, nothing is left to do.
   const submitted = groupFormsForMember(forms ?? (await listForms()), regionId).filter(
-    (form) => form.submitted
+    (form) => form.submitted && reviewOf(form) !== 'approved'
   );
   return Promise.all(
     submitted.map(async (form) => {
+      const review = { review_status: reviewOf(form), review_reason: form.review_reason ?? null };
+      // A rejected response has no invite to show: the student fills the form again.
+      if (review.review_status === 'rejected') {
+        return {
+          id: form.id,
+          name: form.group_label || form.title,
+          purpose: form.group_purpose || '',
+          invite_url: '',
+          applied: true,
+          region_id: form.region_id,
+          community_id: form.community_id,
+          ...review,
+        };
+      }
       try {
         const invite = await getFormInvite(form.id);
         return {
@@ -115,6 +137,7 @@ export async function listGroups(forms = null, regionId = null) {
           applied: true,
           region_id: form.region_id,
           community_id: form.community_id,
+          ...review,
         };
       } catch (error) {
         return {
@@ -126,6 +149,7 @@ export async function listGroups(forms = null, regionId = null) {
           applied: true,
           region_id: form.region_id,
           community_id: form.community_id,
+          ...review,
         };
       }
     })
