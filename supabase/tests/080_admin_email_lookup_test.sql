@@ -11,7 +11,9 @@ values
  ('e1000000-0000-4000-8000-000000000004', '99f1920004', '99f1920004@ds.study.iitm.ac.in', 'Lookup co-head', null, null, null, 1, '99F1'),
  ('e1000000-0000-4000-8000-000000000005', '99f1920005', '99f1920005@ds.study.iitm.ac.in', 'Lookup plain', null, null, null, 2, '99F1'),
  ('e1000000-0000-4000-8000-000000000006', '99f1920006', '99f1920006@ds.study.iitm.ac.in', 'Far student', 'Faraway', '+919000000006', 'F', 2, '99F1'),
- ('e1000000-0000-4000-8000-000000000007', '99f1920007', '99f1920007@ds.study.iitm.ac.in', 'Lookup past head', null, null, null, 1, '99F1');
+ ('e1000000-0000-4000-8000-000000000007', '99f1920007', '99f1920007@ds.study.iitm.ac.in', 'Lookup past head', null, null, null, 1, '99F1'),
+ ('e1000000-0000-4000-8000-000000000008', '99f1920008', '99f1920008@ds.study.iitm.ac.in', 'Gone student', null, '+919000000008', 'M', 2, '99F1');
+update public.members set account_status = 'deleted', deleted_at = now() where id = 'e1000000-0000-4000-8000-000000000008';
 
 -- The allowlist references auth.users, so the Super Admin signs up through the roster claim.
 insert into public.member_roster(email, full_name, region_id, added_by)
@@ -94,7 +96,21 @@ set local request.jwt.claims = '{"sub":"e1000000-0000-4000-8000-000000000004","r
 select is(public.admin_lookup_email('99f1920006@ds.study.iitm.ac.in')->>'found', 'true', 'Co-Head can look up');
 reset role;
 
+-- Soft-deleted members: invisible to Heads, still visible (flagged) to Super Admins.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"e1000000-0000-4000-8000-000000000003","role":"authenticated"}';
+select is(public.admin_lookup_email('99f1920008@ds.study.iitm.ac.in')->>'found', 'false', 'Head cannot find a soft-deleted member');
+select is(public.admin_lookup_email('99f1920008@ds.study.iitm.ac.in'), '{"found": false, "source": null, "student": null, "pending": null}'::jsonb, 'A deleted member returns no fields to a Head');
+reset role;
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"e1000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select is(public.admin_lookup_email('99f1920008@ds.study.iitm.ac.in')->>'found', 'true', 'Super Admin still finds a soft-deleted member');
+select is(public.admin_lookup_email('99f1920008@ds.study.iitm.ac.in')->'student'->>'account_status', 'deleted', 'Super Admin sees the deleted status');
+reset role;
+
 -- Audit trail: every lookup leaves a row, found or not.
+select is((select new_values->>'found' from public.audit_log where action = 'member.lookup'
+  and actor_id = 'e1000000-0000-4000-8000-000000000003' and new_values->>'email' = '99f1920008@ds.study.iitm.ac.in' order by id limit 1), 'false', 'A hidden deleted-member lookup is still audited as not found');
 select ok((select count(*) from public.audit_log where action = 'member.lookup') >= 20, 'Lookups are audited');
 select is((select new_values->>'found' from public.audit_log where action = 'member.lookup'
   and actor_id = 'e1000000-0000-4000-8000-000000000004' order by id desc limit 1), 'true', 'Audit row records the result');
@@ -119,6 +135,29 @@ select throws_ok($$select public.admin_lookup_email('99f1920006@ds.study.iitm.ac
 reset role;
 set local role anon;
 select throws_ok($$select public.admin_lookup_email('99f1920006@ds.study.iitm.ac.in')$$, '42501', null, 'Anonymous callers have no execute grant');
+reset role;
+
+-- Rate limit: 60 lookups an hour per caller, Super Admins included. The Co-Head already has one real lookup above; synthetic audit rows stand in
+-- for earlier lookups; rows older than an hour or from other actions or callers do not count.
+insert into public.audit_log(actor_id, action, target_table, target_id, new_values)
+select 'e1000000-0000-4000-8000-000000000004', 'member.lookup', 'members', null, '{}'::jsonb from generate_series(1, 58);
+insert into public.audit_log(actor_id, action, target_table, target_id, new_values, created_at)
+select 'e1000000-0000-4000-8000-000000000004', 'member.lookup', 'members', null, '{}'::jsonb, now() - interval '2 hours' from generate_series(1, 20);
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"e1000000-0000-4000-8000-000000000004","role":"authenticated"}';
+select is(public.admin_lookup_email('99f1920006@ds.study.iitm.ac.in')->>'found', 'true', 'Lookup under the limit still works (older rows are not counted)');
+select throws_ok($$select public.admin_lookup_email('99f1920006@ds.study.iitm.ac.in')$$, '54000', 'Too many lookups in the last hour. Try again later.', 'The 61st lookup in an hour is refused');
+reset role;
+select is((select count(*)::int from public.audit_log where action = 'member.lookup' and actor_id = 'e1000000-0000-4000-8000-000000000004' and created_at > now() - interval '1 hour'), 60, 'A refused lookup writes no audit row');
+insert into public.audit_log(actor_id, action, target_table, target_id, new_values)
+select 'e1000000-0000-4000-8000-000000000001', 'member.lookup', 'members', null, '{}'::jsonb from generate_series(1, 60);
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"e1000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select throws_ok($$select public.admin_lookup_email('99f1920006@ds.study.iitm.ac.in')$$, '54000', 'Too many lookups in the last hour. Try again later.', 'Super Admins are limited too');
+reset role;
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"e1000000-0000-4000-8000-000000000002","role":"authenticated"}';
+select is(public.admin_lookup_email('99f1920006@ds.study.iitm.ac.in')->>'found', 'true', 'The limit is per caller');
 reset role;
 
 select * from finish();

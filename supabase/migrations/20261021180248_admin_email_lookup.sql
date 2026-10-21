@@ -1,7 +1,9 @@
 -- House-wide exact-email lookup for admins. Any active Super Admin, Regional Coordinator, Head
 -- or Co-Head may ask "does this email exist anywhere in the house?" This deliberately crosses
 -- region and community scope, so it takes one exact address, never lists, and always leaves an
--- audit row (member.lookup) because it returns personal data.
+-- audit row (member.lookup) because it returns personal data. Because the audit trail is also the
+-- meter, one caller is limited to 60 lookups an hour (Super Admins included). Soft-deleted
+-- members are invisible to everyone except Super Admins.
 create function public.admin_lookup_email(p_email text)
 returns jsonb
 language plpgsql volatile security definer set search_path = ''
@@ -13,6 +15,8 @@ declare
   v_student jsonb;
   v_pending jsonb;
   v_source  text;
+  v_uid     uuid := (select auth.uid());
+  v_super   boolean;
 begin
   -- Each helper checks that the caller is an active member; positions and Super Admin rows
   -- are read live, so a revoked admin loses access on the next call.
@@ -21,12 +25,26 @@ begin
              or cardinality(private.my_community_ids()) > 0) then
     raise exception 'Admin access is required' using errcode = '42501';
   end if;
+  -- Rate limit: the audit log is the meter (actor index), so a throttled call writes nothing.
+  if (select count(*) from public.audit_log l
+      where l.actor_id = v_uid and l.action = 'member.lookup'
+        and l.created_at > now() - interval '1 hour') >= 60 then
+    raise exception 'Too many lookups in the last hour. Try again later.' using errcode = '54000';
+  end if;
+  v_super := private.is_super_admin();
   if length(v_email) > 320 or v_email !~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' then
     raise exception 'Enter a full email address' using errcode = '22023';
   end if;
 
   select * into v_member from public.members m where m.email = v_email;
   select * into v_roster from public.member_roster r where r.email = v_email;
+
+  -- A soft-deleted member reads as not found to everyone but Super Admins, with no fields at all.
+  if v_member.id is not null and not v_super
+     and (v_member.account_status = 'deleted' or v_member.deleted_at is not null) then
+    v_member := null;
+    v_roster := null;
+  end if;
 
   if v_member.id is not null then
     select jsonb_build_object(

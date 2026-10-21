@@ -152,3 +152,38 @@ test('a refused lookup shows the error', async ({ page }) => {
   await page.getByRole('button', { name: 'Find', exact: true }).click();
   await expect(page.getByRole('alert')).toBeVisible();
 });
+
+test('hitting the hourly limit shows the server message and can be retried', async ({ page }) => {
+  await mockSupabase(page, { as: 'head' });
+  await page.route('**/rest/v1/rpc/admin_lookup_email', (route) =>
+    route.fulfill({
+      status: 400,
+      headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        code: '54000',
+        message: 'Too many lookups in the last hour. Try again later.',
+      }),
+    })
+  );
+  await page.goto('/#/admin?tab=lookup');
+  await page.getByLabel('Email').fill('21f1000010@ds.study.iitm.ac.in');
+  await page.getByRole('button', { name: 'Find', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText(
+    'Too many lookups in the last hour. Try again later.'
+  );
+  await expect(page.getByRole('article')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Find', exact: true })).toBeEnabled();
+});
+
+test('a Super Admin sees a soft-deleted student with the deleted badge', async ({ page }) => {
+  const deleted = {
+    ...STUDENT,
+    student: { ...STUDENT.student, account_status: 'deleted', deleted_at: '2026-10-15T00:00:00Z' },
+  };
+  await mockSupabase(page, { as: 'sa', data: { admin_lookup_email: () => deleted } });
+  await page.goto('/#/admin?tab=lookup');
+  await page.getByLabel('Email').fill('21f1000010@ds.study.iitm.ac.in');
+  await page.getByRole('button', { name: 'Find', exact: true }).click();
+  const card = page.getByRole('article', { name: 'Student' });
+  await expect(card.getByText('deleted', { exact: true })).toBeVisible();
+});
