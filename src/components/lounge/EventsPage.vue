@@ -175,7 +175,10 @@
                       >
                     </template>
                     <template v-else-if="status(e) === 'upcoming'">
-                      <span v-if="isRegistered(e)" class="mark m-registered">
+                      <span v-if="markOf(e)?.kind === 'rejected'" class="mark m-rejected">
+                        Not approved
+                      </span>
+                      <span v-else-if="isRegistered(e)" class="mark m-registered">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                           <path d="m5 12.5 4.2 4L19 7" /></svg
                         >Registered

@@ -81,6 +81,12 @@ export const groupFormsForMember = (forms, regionId) =>
 export const reviewOf = (form) => form?.review_status ?? null;
 // A response is final unless an admin rejected it; a rejected one can be sent again.
 export const isLocked = (form) => !!form?.submitted && reviewOf(form) !== 'rejected';
+// Whether the form takes responses right now (the backend's verdict, else the open flag).
+export const canSubmitForm = (form) =>
+  !!form && (form.accepting_responses ?? form.is_open ?? false);
+// A rejected response the student can still fix: the form has to be taking responses.
+export const isFixable = (form) =>
+  !!form?.submitted && reviewOf(form) === 'rejected' && canSubmitForm(form);
 export function formUnavailableMessage(form, regionId, cohort) {
   if (!form) {
     return 'This form is unavailable to your account. It may be unpublished or restricted to another region or cohort.';
@@ -123,6 +129,7 @@ export async function listGroups(forms = null, regionId = null) {
           applied: true,
           region_id: form.region_id,
           community_id: form.community_id,
+          fixable: canSubmitForm(form),
           ...review,
         };
       }

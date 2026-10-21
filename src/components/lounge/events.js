@@ -3,6 +3,7 @@
 import { computed, ref } from 'vue';
 import CREST from '../../assets/crest.webp';
 import { MONTH, parseDate } from '../../lib/events.js';
+import { reviewOf } from '../../lib/lounge.js';
 import { lounge, dismissNotice, readAllNotices, readNotice } from './session.js';
 import { liveOn } from './state.js';
 
@@ -96,6 +97,11 @@ export const nextUp = computed(
 );
 
 export const isRegistered = (e) => !!e?.registration;
+// The registration row stays after an admin turns the registration down, so the marks read the
+// event form's review too: a rejected one never says "Registered".
+export const isRejected = (e) =>
+  isRegistered(e) && reviewOf(lounge.forms.find((f) => f.event_id === e?.id)) === 'rejected';
+const REJECTED = { kind: 'rejected', text: 'Not approved' };
 export const ATTEND_MIN = 20;
 
 export function minutesOf(e) {
@@ -106,6 +112,7 @@ export function minutesOf(e) {
 
 export function markOf(e) {
   const s = status(e);
+  if (s !== 'past' && isRejected(e)) return REJECTED;
   if (s === 'live') return isRegistered(e) ? { kind: 'live', text: 'Live now' } : null;
   if (s === 'upcoming') return isRegistered(e) ? { kind: 'registered', text: 'Registered' } : null;
   const a = e?.attendance;
@@ -115,7 +122,7 @@ export function markOf(e) {
   const reviewedOk = e?.attendance_mode === 'reviewed' && a?.reviewed_eligible;
   if (meetOk || reviewedOk) return { kind: 'attended', text: 'Attended', minutes: m };
   if (m > 0) return { kind: 'early', text: 'Left early', minutes: m };
-  if (e?.registration) return { kind: 'missed', text: 'Missed' };
+  if (e?.registration) return isRejected(e) ? REJECTED : { kind: 'missed', text: 'Missed' };
   return null;
 }
 

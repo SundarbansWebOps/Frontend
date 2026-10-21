@@ -10,9 +10,13 @@
       <p v-if="rejected" class="evd-plain" role="status">
         <b>Not approved.</b>
         {{ form.review_reason || 'The admins could not approve this one.' }}
-        Fill it in again below and send it for another look.
+        <template v-if="canSubmit">Fill it in again below and send it for another look.</template>
       </p>
-      <p v-else-if="form.review_status === 'pending'" class="evd-small" role="status">
+      <p
+        v-else-if="form.review_status === 'pending' && form.form_kind === 'group'"
+        class="evd-small"
+        role="status"
+      >
         Under review.
       </p>
       <p v-if="locked && !isSuperAdmin && !invite" class="evd-done">
@@ -23,7 +27,7 @@
         ref="fieldsEl"
         v-model:save-phone="savePhone"
         :fields="form.fields || []"
-        :disabled="previewOnly || locked || done"
+        :disabled="previewOnly || locked || done || (rejected && !canSubmit)"
       />
       <p v-if="previewOnly" class="evd-plain" role="status">
         Preview only. {{ unavailableMessage }}

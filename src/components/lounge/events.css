@@ -601,6 +601,7 @@
   color: var(--t-2);
 }
 
+:where(html.lounge-active) .mark.m-rejected,
 :where(html.lounge-active) .mark.m-missed {
   border-color: color-mix(in srgb, var(--keyline) 40%, transparent);
   color: var(--t-3);

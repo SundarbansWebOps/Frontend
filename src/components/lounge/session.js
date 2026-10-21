@@ -7,6 +7,7 @@ import {
   confirmCertificateName as persistCertName,
   getFormInvite,
   groupFormsForMember,
+  isFixable,
   listGroups,
   loadLounge,
   listNotices,
@@ -110,7 +111,8 @@ export function fillMember(profile) {
     coordinator: coordinatorFor(regionName),
     certificate_name: profile.certificate_name ?? '',
     tour_seen_at: profile.tour_seen_at ?? null,
-    group_forms_hidden: !!profile.group_forms_hidden,
+    // A payload without the field (an RPC that returns a trimmed profile) keeps what we know.
+    group_forms_hidden: profile.group_forms_hidden ?? member.group_forms_hidden,
   });
   applyProfile(profile);
 }
@@ -122,8 +124,14 @@ async function loadRegions() {
   return data ?? [];
 }
 
+// Bumped when "I've joined all my groups" is saved. A refresh that was already in flight read
+// the old value, so it re-applies the saved one instead of putting the old one back.
+let hiddenSaves = 0;
+let savedHidden = false;
+
 export async function hydrateLounge() {
   const generation = ++hydrateGeneration;
+  const savesAtStart = hiddenSaves;
   const requestedUid = auth.session?.user?.id ?? auth.profile?.id ?? null;
   lounge.error = '';
   const data = await loadLounge();
@@ -137,6 +145,10 @@ export async function hydrateLounge() {
   if (data.profile) {
     auth.profile = { ...auth.profile, ...data.profile };
     fillMember(data.profile);
+    if (hiddenSaves !== savesAtStart) {
+      member.group_forms_hidden = savedHidden;
+      auth.profile.group_forms_hidden = savedHidden;
+    }
   }
   lounge.events = asList(data.events);
   lounge.forms = asList(data.forms);
@@ -188,6 +200,8 @@ export async function completeTour() {
 // "I've joined all my groups": persisted on the member row, reversible.
 export async function saveGroupFormsHidden(hidden) {
   const saved = !!(await persistGroupFormsHidden(hidden));
+  hiddenSaves++;
+  savedHidden = saved;
   member.group_forms_hidden = saved;
   if (auth.profile) auth.profile.group_forms_hidden = saved;
   return saved;
@@ -317,8 +331,9 @@ export const openGroupForms = computed(() => {
 export const groupsSection = computed(() => {
   if (isSuperAdmin.value) return { show: true, rejectedOnly: false };
   const mine = groupFormsForMember(lounge.forms, member.region_id);
-  const rejected = mine.some((f) => f.submitted && reviewOf(f) === 'rejected');
-  if (member.group_forms_hidden) return { show: rejected, rejectedOnly: true };
+  // Only a rejection the student can still fix pulls the section back while it is hidden.
+  const fixable = mine.some(isFixable);
+  if (member.group_forms_hidden) return { show: fixable, rejectedOnly: true };
   const anyBoat =
     openGroupForms.value.length > 0 || mine.some((f) => f.submitted && reviewOf(f) !== 'approved');
   const emptiedByApproval = !anyBoat && mine.some((f) => reviewOf(f) === 'approved');

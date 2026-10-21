@@ -66,7 +66,7 @@
             <span>Edit profile</span>
           </button>
         </li>
-        <li>
+        <li v-if="!isSuperAdmin">
           <button
             type="button"
             role="switch"
@@ -134,7 +134,7 @@ import LoungeDialog from './LoungeDialog.vue';
 import * as ev from './events.js';
 import { member } from './fixtures.js';
 import { callName, initialsOf, theme } from './state.js';
-import { avatarFailed, avatarUrl, canAdmin, errorText } from '../../lib/auth.js';
+import { avatarFailed, avatarUrl, canAdmin, errorText, isSuperAdmin } from '../../lib/auth.js';
 import { saveGroupFormsHidden } from './session.js';
 
 const emit = defineEmits(['close', 'edit', 'certs', 'tour', 'theme']);

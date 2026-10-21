@@ -113,7 +113,9 @@
                 g.previewOnly
                   ? 'Preview'
                   : g.review === 'rejected'
-                    ? 'Fill again'
+                    ? g.closed
+                      ? 'Form closed'
+                      : 'Fill again'
                     : g.applied
                       ? 'Applied'
                       : 'Apply'
@@ -143,15 +145,17 @@ const shown = ref(false);
 const boats = computed(() => {
   const rejected = (g) => g.review_status === 'rejected';
   const joined = lounge.groups
-    // Hidden ("I've joined all my groups") keeps only what needs fixing.
-    .filter((g) => !member.group_forms_hidden || isSuperAdmin.value || rejected(g))
+    // Hidden ("I've joined all my groups") keeps only what the student can still fix.
+    .filter((g) => !member.group_forms_hidden || isSuperAdmin.value || (rejected(g) && g.fixable))
     .map((g) => ({
       id: g.id,
       label: g.name || g.label,
       why: rejected(g)
         ? g.review_reason
           ? `Note from the admins: ${g.review_reason}`
-          : 'The admins could not approve this one. You can send it again.'
+          : g.fixable
+            ? 'The admins could not approve this one. You can send it again.'
+            : 'The admins could not approve this one.'
         : [
             g.purpose,
             g.review_status === 'pending' ? 'Under review.' : '',
@@ -167,6 +171,7 @@ const boats = computed(() => {
       to: `/lounge/forms/${g.id}`,
       applied: true,
       review: g.review_status,
+      closed: rejected(g) && !g.fixable,
       kind: g.community_id ? 'community' : g.region_id ? 'region' : 'house',
     }));
   // A joined boat already carries its invite; list each form once.

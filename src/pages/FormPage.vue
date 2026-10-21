@@ -35,9 +35,15 @@
         <p v-if="rejected" class="msg" role="status">
           <strong>Not approved.</strong>
           {{ form.review_reason || 'The admins could not approve this one.' }}
-          Fill it in again below and send it for another look.
+          <template v-if="canSubmit">Fill it in again below and send it for another look.</template>
         </p>
-        <p v-else-if="form.review_status === 'pending'" class="msg" role="status">Under review.</p>
+        <p
+          v-else-if="form.review_status === 'pending' && form.form_kind === 'group'"
+          class="msg"
+          role="status"
+        >
+          Under review.
+        </p>
         <p v-if="locked && !isSuperAdmin && !invite" class="msg" role="status">
           Your application is saved. Sending this form is not WhatsApp admission.
         </p>
@@ -46,7 +52,7 @@
           ref="fieldsEl"
           v-model:save-phone="savePhone"
           :fields="form.fields || []"
-          :disabled="previewOnly || locked"
+          :disabled="previewOnly || locked || (rejected && !canSubmit)"
         />
         <p v-if="previewOnly" class="msg" role="status">Preview only. {{ unavailableMessage }}</p>
         <p v-else-if="!canSubmit && !locked" class="msg" role="status">
