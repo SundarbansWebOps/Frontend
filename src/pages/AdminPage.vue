@@ -186,6 +186,7 @@ import AdminNotices from '../components/admin/AdminNotices.vue';
 import AdminRequests from '../components/admin/AdminRequests.vue';
 import AdminPositions from '../components/admin/AdminPositions.vue';
 import AdminAudit from '../components/admin/AdminAudit.vue';
+import AdminLookup from '../components/admin/AdminLookup.vue';
 import '../components/admin/admin.css';
 import CREST from '../assets/crest.webp';
 import {
@@ -260,6 +261,14 @@ const allTabs = [
     component: AdminNotices,
     members: true,
     description: 'Publish notices for your audience.',
+  },
+  {
+    id: 'lookup',
+    label: 'Find email',
+    icon: 'search',
+    component: AdminLookup,
+    description:
+      'Check one exact email against the whole house. Every lookup is recorded in the activity log.',
   },
   {
     id: 'positions',
