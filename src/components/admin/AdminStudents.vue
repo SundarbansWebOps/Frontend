@@ -36,7 +36,7 @@
     <p v-if="query && query.length < 3" class="adm-note">Type at least 3 characters to search.</p>
 
     <div v-if="rows.length" class="adm-card student-table adm-table-wrap">
-      <table class="adm-table">
+      <table class="adm-table stack">
         <thead>
           <tr>
             <th>Student</th>
@@ -47,7 +47,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="m in rows" :key="m.id">
+          <tr v-for="m in rows" :key="m.id" class="student-row" @click="onRowClick($event, m.id)">
             <td>
               <button class="student-name" @click="open(m.id)">
                 <b>{{ m.preferred_name || m.full_name || 'Name not set' }}</b
@@ -55,14 +55,22 @@
                 ><small class="mono">{{ m.member_code }}</small>
               </button>
             </td>
-            <td>{{ regionOf(m.region_id) }}</td>
-            <td>
+            <td data-label="Region">{{ regionOf(m.region_id) }}</td>
+            <td data-label="Status">
               <span class="adm-badge" :class="statusTone(m.account_status)">{{
                 m.account_status
               }}</span>
             </td>
-            <td>{{ day(m.created_at) }}</td>
-            <td><button class="adm-btn ghost small" @click="open(m.id)">Profile</button></td>
+            <td data-label="Joined">{{ day(m.created_at) }}</td>
+            <td>
+              <button
+                class="adm-btn small open"
+                :aria-label="`Open ${m.preferred_name || m.full_name || m.email}`"
+                @click="open(m.id)"
+              >
+                Open <LineIcon name="next" />
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -135,14 +143,14 @@
         <p v-if="actionError" class="adm-msg err spaced" role="alert">{{ actionError }}</p>
 
         <p class="adm-kicker spaced">Ask for a change</p>
-        <div class="adm-chips">
-          <button v-if="canEdit" type="button" class="adm-btn small" @click="startEdit">
+        <div class="ask-grid">
+          <button v-if="canEdit" type="button" class="adm-btn mari" @click="startEdit">
             Edit details
           </button>
           <button
             v-if="canRequestRemoval"
             type="button"
-            class="adm-btn danger small"
+            class="adm-btn danger"
             @click="ask('delete')"
           >
             Delete
@@ -150,7 +158,7 @@
           <button
             v-if="canRequestRemoval"
             type="button"
-            class="adm-btn danger small"
+            class="adm-btn danger"
             @click="ask('blacklist')"
           >
             Blacklist
@@ -159,7 +167,7 @@
             <button
               v-if="detail.member.account_status !== 'deleted'"
               type="button"
-              class="adm-btn ghost small"
+              class="adm-btn ghost"
               @click="startEmail"
             >
               Change login email
@@ -168,23 +176,18 @@
               v-for="a in statusActions"
               :key="a"
               type="button"
-              :class="['adm-btn', 'small', a === 'suspend' ? 'danger' : 'ghost']"
+              :class="['adm-btn', a === 'suspend' ? 'danger' : 'ghost']"
               @click="ask(a)"
             >
               {{ STATUS_ACTION_LABEL[a] }}
             </button>
-            <button
-              v-if="canErase"
-              type="button"
-              class="adm-btn danger small"
-              @click="ask('erase')"
-            >
+            <button v-if="canErase" type="button" class="adm-btn danger" @click="ask('erase')">
               Erase permanently
             </button>
             <button
               v-if="detail.position"
               type="button"
-              class="adm-btn danger small"
+              class="adm-btn danger"
               @click="ask('revoke')"
             >
               Revoke position
@@ -192,7 +195,7 @@
             <button
               v-else-if="detail.member.account_status === 'active'"
               type="button"
-              class="adm-btn ghost small"
+              class="adm-btn ghost"
               @click="startPosition"
             >
               Give a position
@@ -242,7 +245,7 @@
           </small>
         </label>
         <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
-        <div class="wide row-end">
+        <div class="wide adm-actions">
           <button type="button" class="adm-btn ghost" @click="mode = 'view'">Back</button>
           <button type="submit" class="adm-btn mari" :disabled="busy">Send for approval</button>
         </div>
@@ -274,7 +277,7 @@
           </small>
         </label>
         <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
-        <div class="wide row-end">
+        <div class="wide adm-actions">
           <button type="button" class="adm-btn ghost" @click="mode = 'view'">Back</button>
           <button type="submit" class="adm-btn mari" :disabled="busy">Send for approval</button>
         </div>
@@ -299,7 +302,7 @@
           <textarea v-model.trim="form.reason" class="adm-input" required maxlength="2000" />
         </label>
         <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
-        <div class="wide row-end">
+        <div class="wide adm-actions">
           <button type="button" class="adm-btn ghost" @click="mode = 'view'">Back</button>
           <button type="submit" class="adm-btn mari" :disabled="busy">Send for approval</button>
         </div>
@@ -312,7 +315,7 @@
           <textarea v-model.trim="form.reason" class="adm-input" required maxlength="2000" />
         </label>
         <p v-if="actionError" class="adm-msg err wide" role="alert">{{ actionError }}</p>
-        <div class="wide row-end">
+        <div class="wide adm-actions">
           <button type="button" class="adm-btn ghost" @click="mode = 'view'">Back</button>
           <button
             type="submit"
@@ -331,6 +334,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
 import AdminDialog from './AdminDialog.vue';
+import LineIcon from '../site/LineIcon.vue';
 import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
 import {
   POSITION_LABEL,
@@ -502,6 +506,13 @@ const canErase = computed(() => {
   );
 });
 
+// A click anywhere on the row opens the student. Buttons keep their own handlers,
+// so clicks on them are left alone here to avoid opening twice.
+function onRowClick(event, id) {
+  if (event.target.closest('button, a, select, input, label')) return;
+  open(id);
+}
+
 async function open(id) {
   done.value = actionError.value = '';
   mode.value = 'view';
@@ -659,6 +670,12 @@ function startPosition() {
 .student-table {
   padding: 0;
 }
+.student-row {
+  cursor: pointer;
+}
+.student-row:hover {
+  background: var(--sunk);
+}
 .student-name {
   background: transparent;
   color: var(--ink);
@@ -671,6 +688,27 @@ function startPosition() {
 .student-name b {
   display: block;
   font-size: 14px;
+}
+.open svg {
+  width: 14px;
+  height: 14px;
+}
+.ask-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.ask-grid .adm-btn {
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+@media (max-width: 640px) {
+  .open {
+    width: 100%;
+    justify-content: center;
+  }
 }
 .student-name small {
   display: block;
@@ -692,10 +730,5 @@ select.adm-input {
 }
 .spaced {
   margin-top: 18px;
-}
-.row-end {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
 }
 </style>

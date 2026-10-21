@@ -56,7 +56,7 @@
             :aria-pressed="waiting"
             @click="waiting = true"
           >
-            With others <span class="n">{{ otherRequests.length }}</span>
+            Waiting for someone else <span class="n">{{ otherRequests.length }}</span>
           </button>
         </div>
         <button class="link" @click="emit('navigate', 'requests')">

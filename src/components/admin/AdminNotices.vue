@@ -105,7 +105,7 @@
         <p v-if="form.published_at" class="adm-note wide">
           Saving changes updates this published record immediately.
         </p>
-        <div class="wide row-end">
+        <div class="wide adm-actions">
           <button type="button" class="adm-btn ghost" :disabled="busy" @click="saveFuture">
             Save scheduled
           </button>
@@ -119,6 +119,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import AdminDialog from './AdminDialog.vue';
+import { askConfirm } from '../../lib/admin-confirm.js';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
@@ -290,7 +291,13 @@ async function write(startsAt) {
   }
 }
 async function remove(n) {
-  if (!confirm(`Delete “${n.title}” for everyone? Members will no longer see it.`)) return;
+  const yes = await askConfirm({
+    title: `Delete “${n.title}”?`,
+    message: 'Members will no longer see this notice.',
+    confirmLabel: 'Delete notice',
+    danger: true,
+  });
+  if (!yes) return;
   busy.value = true;
   error.value = '';
   notice.value = '';

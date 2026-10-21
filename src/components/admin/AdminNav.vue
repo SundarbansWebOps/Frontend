@@ -163,7 +163,7 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 
 .anav-links a:hover {
   color: var(--ink);
-  background: var(--sunk);
+  background: var(--mari-soft);
 }
 
 .anav-links .anav-site {
@@ -196,9 +196,10 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
   gap: 7px;
   height: 36px;
   padding: 0 12px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 9px;
   background: var(--card);
+  box-shadow: 0 1px 0 var(--line-strong);
   color: var(--ink);
   font: inherit;
   font-size: 13px;
@@ -208,7 +209,8 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 }
 
 .anav-action:hover {
-  border-color: var(--ink-3);
+  border-color: var(--mari-ink);
+  background: var(--mari-soft);
 }
 
 .anav-action :deep(svg) {
@@ -217,13 +219,15 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
 }
 
 .anav-create {
-  border-color: var(--mari);
+  border-color: var(--mari-ink);
   background: var(--mari);
+  box-shadow: 0 1px 0 var(--mari-ink);
   color: var(--on-mari);
 }
 
 .anav-create:hover {
-  filter: brightness(1.05);
+  background: var(--mari);
+  filter: brightness(1.06);
 }
 
 .plus {
@@ -238,17 +242,18 @@ const emit = defineEmits(['add-students', 'create', 'profile', 'toggle-theme']);
   width: 34px;
   height: 34px;
   place-items: center;
-  border: 1px solid transparent;
+  border: 1px solid var(--line-strong);
   border-radius: 50%;
-  background: transparent;
+  background: var(--card);
   color: var(--ink-2);
   cursor: pointer;
 }
 
 .anav-icon:hover,
 .anav-profile:hover {
-  border-color: var(--line);
-  background: var(--sunk);
+  border-color: var(--mari-ink);
+  background: var(--mari-soft);
+  color: var(--ink);
 }
 
 .anav-icon :deep(svg) {

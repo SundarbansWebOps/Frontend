@@ -1,7 +1,9 @@
 <!-- Admin dialogs use the shared card tokens. Centered for forms, `wide` for big forms,
      `fullscreen` for response tables, `side` for a student's profile, and `drop` for the account
      menu. Native <dialog> gives focus trapping, Esc and the backdrop. The title and optional footer
-     stay put; only the body scrolls, and the page behind is locked while any sheet is open. -->
+     stay put; only the body scrolls, and the page behind is locked while any sheet is open.
+     Leaving a dialog the user has typed in (close button, Esc, backdrop) asks before discarding;
+     submitting a form counts as saving it; `close()` is the unconditional way out. -->
 <template>
   <dialog
     ref="dlg"
@@ -14,20 +16,21 @@
           : wide
             ? 'adm-wide'
             : drop
-              ? 'adm-drop'
+              ? 'adm-menu'
               : 'adm-center'
     "
     :aria-labelledby="`${uid}-h`"
     @close="emit('close')"
-    @click.self="close"
+    @cancel.prevent="requestClose"
+    @click.self="requestClose"
   >
     <header class="adm-dialog-head">
       <h2 :id="`${uid}-h`" class="head">{{ title }}</h2>
-      <button type="button" class="adm-dialog-close" aria-label="Close" @click="close">
+      <button type="button" class="adm-dialog-close" aria-label="Close" @click="requestClose">
         <LineIcon name="close" />
       </button>
     </header>
-    <div class="body">
+    <div class="body" @input="dirty = true" @change="dirty = true" @submit="dirty = false">
       <slot />
     </div>
     <footer v-if="$slots.footer" class="foot">
@@ -39,6 +42,7 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, useId } from 'vue';
 import LineIcon from '../site/LineIcon.vue';
+import { askConfirm } from '../../lib/admin-confirm.js';
 
 defineProps({
   title: { type: String, required: true },
@@ -50,6 +54,7 @@ defineProps({
 const emit = defineEmits(['close']);
 const dlg = ref(null);
 const uid = useId();
+const dirty = ref(false);
 
 // Sheets can stack (a menu opening a form), so the page stays locked until the last one closes.
 let openCount = 0;
@@ -67,6 +72,19 @@ onBeforeUnmount(() => lockPage(false));
 function close() {
   dlg.value?.close();
 }
+async function requestClose() {
+  if (
+    dirty.value &&
+    !(await askConfirm({
+      title: 'Discard your changes?',
+      message: 'You have typed in this form. Closing it now loses what you entered.',
+      confirmLabel: 'Discard',
+      danger: true,
+    }))
+  )
+    return;
+  close();
+}
 defineExpose({ close });
 </script>
 
@@ -74,6 +92,7 @@ defineExpose({ close });
 .adm-dlg {
   position: fixed;
   width: min(540px, calc(100vw - 32px));
+  max-width: none; /* the browser's own dialog max-width would otherwise clip the full-screen sheets */
   max-height: calc(100dvh - 48px);
   margin: auto;
   padding: 0;
@@ -100,7 +119,7 @@ defineExpose({ close });
 .adm-dlg.adm-wide {
   width: min(920px, calc(100vw - 32px));
 }
-.adm-dlg.adm-drop {
+.adm-dlg.adm-menu {
   inset: calc(var(--nav-h) + 8px) var(--admin-gutter, 16px) auto auto;
   width: min(360px, calc(100vw - 32px));
   max-height: calc(100dvh - var(--nav-h) - 24px);
@@ -111,7 +130,7 @@ defineExpose({ close });
     0 3px 0 color-mix(in srgb, var(--line-strong) 35%, transparent),
     var(--shadow);
 }
-.adm-dlg.adm-drop::before {
+.adm-dlg.adm-menu::before {
   position: absolute;
   inset: 0 0 auto;
   z-index: 1;
@@ -122,7 +141,7 @@ defineExpose({ close });
   opacity: 0.82;
   pointer-events: none;
 }
-.adm-dlg.adm-drop[open] {
+.adm-dlg.adm-menu[open] {
   transform-origin: top right;
   animation: adm-drop-in 180ms var(--ease-out) both;
 }
@@ -157,7 +176,7 @@ defineExpose({ close });
   gap: 12px;
   border-bottom: 1px solid var(--line);
 }
-.adm-drop .adm-dialog-head {
+.adm-menu .adm-dialog-head {
   padding-top: 10px;
 }
 .adm-dialog-close {
@@ -199,16 +218,19 @@ defineExpose({ close });
   line-height: 1.2;
 }
 .body {
+  --dlg-px: 24px;
+  --dlg-pb: 24px;
   flex: 1 1 auto;
   min-height: 0;
-  padding: 18px 24px 24px;
+  padding: 18px var(--dlg-px) var(--dlg-pb);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-.adm-drop .body {
-  padding: 18px 18px 16px;
+.adm-menu .body {
+  --dlg-px: 18px;
+  --dlg-pb: 16px;
 }
-.adm-drop .head {
+.adm-menu .head {
   font-size: 16px;
 }
 .foot {
@@ -238,7 +260,7 @@ defineExpose({ close });
     width: 100vw;
     max-height: 100dvh;
   }
-  .adm-dlg.adm-drop {
+  .adm-dlg.adm-menu {
     inset: calc(var(--nav-h) + 8px) var(--admin-gutter, 12px) auto auto;
     width: min(360px, calc(100vw - 28px));
   }
@@ -255,14 +277,25 @@ defineExpose({ close });
     margin-right: 8px;
   }
   .body {
-    padding: 16px 16px 20px;
+    --dlg-px: 16px;
+    --dlg-pb: 20px;
   }
   .foot {
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   }
 }
+/* A big form takes the whole screen on a phone rather than floating in a 12px frame. */
+@media (max-width: 560px) {
+  .adm-dlg.adm-wide {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .adm-dlg.adm-drop[open] {
+  .adm-dlg.adm-menu[open] {
     animation: none;
   }
 }

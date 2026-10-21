@@ -59,7 +59,7 @@
         <p v-if="oneMsg" class="adm-msg wide" :class="oneOk ? 'ok' : 'err'" role="status">
           {{ oneMsg }}
         </p>
-        <div class="wide">
+        <div class="wide adm-actions">
           <button type="submit" class="adm-btn mari" :disabled="busy">Add to roster</button>
         </div>
       </form>
@@ -94,7 +94,7 @@
         <p v-if="bulkMsg" class="adm-msg wide" :class="bulkOk ? 'ok' : 'err'" role="status">
           {{ bulkMsg }}
         </p>
-        <div class="wide">
+        <div class="wide adm-actions">
           <button
             type="submit"
             class="adm-btn"
@@ -181,7 +181,7 @@
         <p v-if="csvMsg" class="adm-msg wide" :class="csvOk ? 'ok' : 'err'" role="status">
           {{ csvMsg }}
         </p>
-        <div class="wide acts">
+        <div class="wide adm-actions">
           <button
             type="submit"
             class="adm-btn mari"
@@ -225,7 +225,7 @@
       checks the full roster you can access.
     </p>
     <div v-if="entries.length" class="adm-card roster-table adm-table-wrap">
-      <table class="adm-table">
+      <table class="adm-table stack">
         <thead>
           <tr>
             <th scope="col">Student</th>
@@ -244,14 +244,14 @@
                 <small v-if="e.phone" class="mono">{{ e.phone }}</small>
               </div>
             </td>
-            <td>{{ regionOf(e.region_id) }}</td>
-            <td>
+            <td data-label="Region">{{ regionOf(e.region_id) }}</td>
+            <td data-label="Added">
               <div class="roster-added">
                 <span>{{ dateOf(e.added_at) }}</span>
                 <small>by {{ e.added_by === auth.profile?.id ? 'you' : 'an admin' }}</small>
               </div>
             </td>
-            <td><span class="adm-badge">Waiting for first sign-in</span></td>
+            <td data-label="Status"><span class="adm-badge">Waiting for first sign-in</span></td>
             <td>
               <button
                 type="button"
@@ -286,6 +286,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
+import { askConfirm } from '../../lib/admin-confirm.js';
 import { dateOf } from '../../lib/admin-display.js';
 import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
 import {
@@ -539,12 +540,13 @@ function exportCsvResult() {
 }
 
 async function remove(email) {
-  if (
-    !confirm(
-      `Remove ${email} from the roster? They will no longer be able to sign in for the first time.`
-    )
-  )
-    return;
+  const yes = await askConfirm({
+    title: 'Remove from the roster?',
+    message: `${email} will no longer be able to sign in for the first time.`,
+    confirmLabel: 'Remove',
+    danger: true,
+  });
+  if (!yes) return;
   busy.value = true;
   try {
     await rosterRemove(email);
@@ -581,6 +583,12 @@ async function remove(email) {
 .roster-name b {
   font-size: 14px;
 }
+@media (max-width: 640px) {
+  .roster-name,
+  .roster-added {
+    min-width: 0;
+  }
+}
 .roster-name small,
 .roster-added small {
   color: var(--ink-3);
@@ -605,10 +613,5 @@ async function remove(email) {
   padding-left: 18px;
   font-size: 13px;
   color: var(--verm);
-}
-.acts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 </style>
