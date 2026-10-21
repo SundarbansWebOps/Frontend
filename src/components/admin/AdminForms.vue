@@ -329,22 +329,104 @@
           Download CSV
         </button>
       </div>
+      <div v-if="responses.length" class="resp-tools">
+        <div class="adm-chips" role="group" aria-label="Filter by review status">
+          <button
+            v-for="o in STATUS_FILTERS"
+            :key="o.value"
+            type="button"
+            class="adm-chip"
+            :class="{ on: statusFilter === o.value }"
+            :aria-pressed="statusFilter === o.value"
+            @click="statusFilter = o.value"
+          >
+            {{ o.label }} <span class="n">{{ statusCounts[o.value] }}</span>
+          </button>
+        </div>
+        <label class="sort">
+          <span>Sort</span>
+          <select v-model="sortOrder" class="adm-input">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
+      </div>
       <p v-if="respError" class="adm-msg err" role="alert">{{ respError }}</p>
-      <p v-else-if="respLoading" class="adm-empty" role="status">Loading responses…</p>
-      <p v-else-if="!responses.length" class="adm-empty">Nobody has answered yet.</p>
-      <div v-else class="resp-wrap">
+      <p v-if="reviewError" class="adm-msg err" role="alert">{{ reviewError }}</p>
+      <p v-if="refreshNotice" class="adm-msg" role="status">{{ refreshNotice }}</p>
+      <p v-if="respLoading" class="adm-empty" role="status">Loading responses…</p>
+      <p v-else-if="!responses.length && !respError" class="adm-empty">Nobody has answered yet.</p>
+      <p v-else-if="responses.length && !shownResponses.length" class="adm-empty">
+        No {{ statusFilter }} responses.
+      </p>
+      <div v-else-if="shownResponses.length" class="resp-wrap">
         <table class="resp">
           <thead>
             <tr>
               <th scope="col" class="who">Submitted by</th>
               <th scope="col">Submitted</th>
+              <th scope="col" class="review">Review</th>
               <th v-for="f in responseFields" :key="f.identity" scope="col">{{ f.label }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="r in responses" :key="r.id">
-              <td class="who">{{ r.email }}</td>
-              <td class="when">{{ day(r.submitted_at) }}</td>
+            <tr v-for="r in shownResponses" :key="r.id">
+              <td class="who">
+                <span class="serial" :title="`Response ${r.serial} in order received`"
+                  >#{{ r.serial }}</span
+                >
+                {{ r.email }}
+                <small v-if="memberName(r)" class="member-name">{{ memberName(r) }}</small>
+              </td>
+              <td class="when">
+                {{ day(r.submitted_at) }}
+                <small v-if="r.resubmitted_at" class="resent"
+                  >Resent {{ day(r.resubmitted_at) }}</small
+                >
+              </td>
+              <td class="review">
+                <span class="adm-badge" :class="STATUS_TONE[r.review_status]">{{
+                  REVIEW_LABEL[r.review_status] ?? 'Pending'
+                }}</span>
+                <p v-if="r.review_status === 'rejected' && r.review_reason" class="why">
+                  {{ r.review_reason }}
+                </p>
+                <p v-if="r.review_status !== 'pending' && reviewedBy(r)" class="by">
+                  {{ reviewedBy(r) }}
+                </p>
+                <div class="adm-chips actions">
+                  <button
+                    v-if="r.review_status !== 'approved'"
+                    type="button"
+                    class="adm-btn mari small"
+                    :disabled="saving[r.id]"
+                    :aria-label="`Approve ${r.email}`"
+                    @click="review(r, 'approved')"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    v-if="r.review_status !== 'rejected'"
+                    type="button"
+                    class="adm-btn danger small"
+                    :disabled="saving[r.id]"
+                    :aria-label="`Reject ${r.email}`"
+                    @click="askReject(r)"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    v-if="r.review_status !== 'pending'"
+                    type="button"
+                    class="adm-btn ghost small"
+                    :disabled="saving[r.id]"
+                    :aria-label="`Undo review of ${r.email}`"
+                    @click="review(r, 'pending')"
+                  >
+                    Undo
+                  </button>
+                </div>
+              </td>
               <td v-for="f in responseFields" :key="f.identity">
                 <span v-if="answerText(r, f) === '–'" class="none">–</span>
                 <template v-else>{{ answerText(r, f) }}</template>
@@ -354,17 +436,70 @@
         </table>
       </div>
     </AdminDialog>
+
+    <AdminDialog
+      v-if="rejecting"
+      ref="rejectDlg"
+      :title="`Reject #${rejecting.serial}`"
+      @close="rejecting = null"
+    >
+      <form :id="rejectId" class="reject" @submit.prevent="confirmReject">
+        <p class="adm-note">
+          The student sees this reason on their Lounge and can correct their answers and apply
+          again.
+        </p>
+        <div class="adm-chips" role="group" aria-label="Common rejection reasons">
+          <button
+            v-for="reason in REJECT_REASONS"
+            :key="reason"
+            type="button"
+            class="adm-chip"
+            :class="{ on: rejectReason === reason }"
+            :aria-pressed="rejectReason === reason"
+            @click="rejectReason = reason"
+          >
+            {{ reason }}
+          </button>
+        </div>
+        <label class="adm-field">
+          <span>Reason</span>
+          <textarea
+            v-model="rejectReason"
+            class="adm-input"
+            required
+            :maxlength="REVIEW_REASON_MAX"
+            rows="3"
+          />
+          <small>{{ rejectReason.length }} / {{ REVIEW_REASON_MAX }}</small>
+        </label>
+        <p v-if="rejectError" class="adm-msg err" role="alert">{{ rejectError }}</p>
+      </form>
+      <template #footer>
+        <button type="button" class="adm-btn ghost" @click="rejectDlg?.close()">Cancel</button>
+        <button
+          type="submit"
+          class="adm-btn danger"
+          :form="rejectId"
+          :disabled="!rejectReason.trim() || saving[rejecting.id]"
+        >
+          Reject response
+        </button>
+      </template>
+    </AdminDialog>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, useId } from 'vue';
+import { computed, onMounted, reactive, ref, useId } from 'vue';
 import AdminDialog from './AdminDialog.vue';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
   FORM_FIELD_TYPES,
   PREFILL_KEYS,
+  REJECT_REASONS,
+  REVIEW_LABEL,
+  REVIEW_REASON_MAX,
   canManageEvent,
   downloadCsv,
   exportFormResponses,
@@ -373,7 +508,9 @@ import {
   getAvailableCohorts,
   listEvents,
   listForms,
+  reviewFormResponse,
   saveForm,
+  sortResponses,
 } from '../../lib/admin.js';
 
 const props = defineProps({
@@ -393,6 +530,14 @@ const TYPE_LABEL = {
 };
 const PREFILL_LABEL = { name: 'Preferred name', phone: 'Phone number', email: 'Email' };
 const editorId = useId();
+const rejectId = useId();
+const STATUS_FILTERS = [
+  { value: 'all', label: 'All' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'approved', label: 'Approved' },
+  { value: 'rejected', label: 'Rejected' },
+];
+const STATUS_TONE = { pending: '', approved: 'mari', rejected: 'verm' };
 
 const isHead = computed(
   () => auth.dashboard?.position === 'head' || auth.dashboard?.position === 'co_head'
@@ -412,7 +557,37 @@ const responses = ref([]);
 const responseFields = ref([]);
 const respError = ref('');
 const respLoading = ref(false);
+const statusFilter = ref('all');
+const sortOrder = ref('newest');
+const saving = reactive({});
+const reviewError = ref('');
+const refreshNotice = ref('');
+const rejecting = ref(null);
+const rejectReason = ref('');
+const rejectError = ref('');
+const rejectDlg = ref(null);
 let fieldN = 0;
+
+const statusOf = (r) => r.review_status ?? 'pending';
+const statusCounts = computed(() => {
+  const counts = { all: responses.value.length, pending: 0, approved: 0, rejected: 0 };
+  for (const r of responses.value) counts[statusOf(r)] += 1;
+  return counts;
+});
+// Serials come from the server and never change with the view.
+const shownResponses = computed(() =>
+  sortResponses(
+    statusFilter.value === 'all'
+      ? responses.value
+      : responses.value.filter((r) => statusOf(r) === statusFilter.value),
+    sortOrder.value
+  )
+);
+const memberName = (r) => r.member_full_name || r.member_preferred_name || '';
+const reviewedBy = (r) =>
+  [r.reviewer_name ?? r.reviewer_email, r.reviewed_at && day(r.reviewed_at)]
+    .filter(Boolean)
+    .join(' · ');
 
 const mine = computed(() => forms.value.filter((f) => f.can_manage !== false));
 const eventOptions = computed(() => {
@@ -716,6 +891,10 @@ async function openResponses(f) {
   responses.value = [];
   responseFields.value = [];
   respError.value = '';
+  reviewError.value = '';
+  refreshNotice.value = '';
+  statusFilter.value = 'all';
+  sortOrder.value = 'newest';
   respLoading.value = true;
   try {
     const rows = await exportFormResponses(f.id);
@@ -726,6 +905,81 @@ async function openResponses(f) {
   } finally {
     respLoading.value = false;
   }
+}
+
+function askReject(r) {
+  rejecting.value = r;
+  rejectReason.value = '';
+  rejectError.value = '';
+}
+
+// Re-reads the list so reviewer and time come from the database. Returns false when that fails.
+async function refreshResponses(formId) {
+  try {
+    const rows = await exportFormResponses(formId);
+    if (responsesFor.value?.id === formId) responses.value = rows;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// The decision is saved once the RPC succeeds: patch the row from its result so the table is right
+// at once, then refresh in the background. A failed refresh is a notice, never a failed review.
+async function review(r, status, reason = null) {
+  if (saving[r.id]) return false;
+  saving[r.id] = true;
+  reviewError.value = '';
+  refreshNotice.value = '';
+  const formId = responsesFor.value?.id;
+  try {
+    const saved = await reviewFormResponse(
+      r.id,
+      status,
+      r.resubmitted_at ?? r.submitted_at,
+      reason
+    );
+    if (responsesFor.value?.id === formId) {
+      const pending = saved.review_status === 'pending';
+      responses.value = responses.value.map((x) =>
+        x.id === r.id
+          ? {
+              ...x,
+              review_status: saved.review_status,
+              review_reason: saved.review_reason,
+              reviewed_at: saved.reviewed_at,
+              reviewer_name: pending ? null : (auth.profile?.full_name ?? null),
+              reviewer_email: pending ? null : (auth.profile?.email ?? null),
+            }
+          : x
+      );
+    }
+    refreshResponses(formId).then((ok) => {
+      if (!ok && responsesFor.value?.id === formId)
+        refreshNotice.value = "Saved, but couldn't refresh the list.";
+    });
+    return true;
+  } catch (e) {
+    if (e?.code === 'PT409') {
+      // The member changed their answers since this list loaded: drop the decision and reload.
+      rejectDlg.value?.close();
+      reviewError.value = errorText(e);
+      if (!(await refreshResponses(formId)))
+        refreshNotice.value = "Couldn't refresh the list. Close and reopen it.";
+    } else if (rejecting.value) rejectError.value = errorText(e);
+    else reviewError.value = errorText(e);
+    return false;
+  } finally {
+    delete saving[r.id];
+  }
+}
+
+async function confirmReject() {
+  const target = rejecting.value;
+  const reason = rejectReason.value.trim();
+  if (!target || !reason) return;
+  rejectError.value = '';
+  if (await review(target, 'rejected', reason)) rejectDlg.value?.close();
 }
 
 function downloadResponses() {
@@ -886,6 +1140,76 @@ function downloadResponses() {
 .mono {
   font-family: var(--mono);
   font-size: 13px;
+}
+.resp-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: 14px;
+}
+.resp-tools .n {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.sort .adm-input {
+  width: auto;
+}
+.serial {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--sunk);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 700;
+}
+.member-name {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-2);
+  font-family: var(--font);
+  font-size: 12.5px;
+}
+.resp .review {
+  min-width: 210px;
+}
+.why {
+  margin: 6px 0 0;
+  color: var(--verm);
+  font-size: 13px;
+}
+.by {
+  margin: 4px 0 0;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.resent {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.actions {
+  margin-top: 8px;
+}
+.reject {
+  display: grid;
+  gap: 14px;
+}
+.reject .adm-input {
+  height: auto;
+  resize: vertical;
 }
 @media (max-width: 760px) {
   .resp-wrap {

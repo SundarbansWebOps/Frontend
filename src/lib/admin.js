@@ -637,6 +637,40 @@ export async function exportFormResponses(formId) {
   return asList(await loungeExportFormResponses(formId));
 }
 
+// Reasons a reviewer can pick when rejecting a response; the text stays editable.
+export const REJECT_REASONS = [
+  "Name doesn't match your IITM ID — use your full official name",
+  'Not a Sundarbans House member',
+  'Wrong region for this group',
+  'Answers incomplete or incorrect',
+];
+export const REVIEW_REASON_MAX = 500;
+export const REVIEW_LABEL = { pending: 'Pending', approved: 'Approved', rejected: 'Rejected' };
+
+// Approve, reject (reason required) or undo (back to pending) one response. The database checks
+// that the caller manages the form. expectedAt is the version the reviewer saw, passed back
+// exactly as loaded (resubmitted_at ?? submitted_at); if the member has since resent their
+// answers the database refuses with code PT409.
+export const reviewFormResponse = (responseId, status, expectedAt, reason = null) =>
+  supabase
+    .rpc('review_form_response', {
+      p_response_id: responseId,
+      p_status: status,
+      p_expected_at: expectedAt,
+      p_reason: reason,
+    })
+    .then(unwrap);
+
+// Serial numbers are the arrival order the database assigned; the sort/filter views never renumber.
+export function sortResponses(rows, order = 'newest') {
+  const dir = order === 'oldest' ? 1 : -1;
+  return [...rows].sort(
+    (a, b) =>
+      dir * (new Date(a.submitted_at) - new Date(b.submitted_at)) ||
+      dir * ((a.serial ?? 0) - (b.serial ?? 0))
+  );
+}
+
 export function formResponsesToCsv(payload) {
   const rows = asList(payload);
   const fields = [];
@@ -652,7 +686,17 @@ export function formResponsesToCsv(payload) {
       fields.push(entry);
     }
   }
-  const usedLabels = new Set(['email', 'submitted_at']);
+  const usedLabels = new Set([
+    'serial',
+    'email',
+    'full_name',
+    'preferred_name',
+    'submitted_at',
+    'review_status',
+    'review_reason',
+    'reviewed_by',
+    'reviewed_at',
+  ]);
   const labelCounts = new Map();
   for (const field of fields) {
     const base = String(field.label || field.key);
@@ -667,12 +711,29 @@ export function formResponsesToCsv(payload) {
     usedLabels.add(label);
   }
   const columns = [
+    { key: 'serial', label: 'serial' },
     { key: 'email', label: 'email' },
+    { key: 'full_name', label: 'full_name' },
+    { key: 'preferred_name', label: 'preferred_name' },
     { key: 'submitted_at', label: 'submitted_at' },
+    { key: 'review_status', label: 'review_status' },
+    { key: 'review_reason', label: 'review_reason' },
+    { key: 'reviewed_by', label: 'reviewed_by' },
+    { key: 'reviewed_at', label: 'reviewed_at' },
     ...fields.map((field) => ({ key: field.column, label: field.label })),
   ];
   const csvRows = rows.map((row) => {
-    const out = { email: row.email, submitted_at: row.submitted_at };
+    const out = {
+      serial: row.serial,
+      email: row.email,
+      full_name: row.member_full_name,
+      preferred_name: row.member_preferred_name,
+      submitted_at: row.submitted_at,
+      review_status: row.review_status,
+      review_reason: row.review_reason,
+      reviewed_by: row.reviewer_name ?? row.reviewer_email,
+      reviewed_at: row.reviewed_at,
+    };
     for (const captured of row.field_schema || []) {
       const identity = JSON.stringify([
         captured.key,
