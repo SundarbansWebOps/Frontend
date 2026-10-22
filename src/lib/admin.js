@@ -1030,13 +1030,14 @@ export async function listPositions() {
   );
 }
 
-export async function listAudit(page = 0) {
+// The Overview's "Recent changes" when admin_dashboard_summary is missing (older databases).
+async function listRecentAudit() {
   const rows = unwrap(
     await supabase
       .from('audit_log')
       .select('id, created_at, action, target_table, target_id, result, actor_id, request_id')
       .order('created_at', { ascending: false })
-      .range(page * PAGE, page * PAGE + PAGE - 1)
+      .limit(6)
   );
   const ids = [...new Set(rows.map((r) => r.actor_id).filter(Boolean))];
   const names = ids.length
@@ -1044,6 +1045,20 @@ export async function listAudit(page = 0) {
     : [];
   const byId = new Map(names.map((n) => [n.id, n.full_name]));
   return rows.map((r) => ({ ...r, actor: byId.get(r.actor_id) ?? null }));
+}
+
+// Super Admin activity feed, newest first. `args` come from feedArgs() in audit-actions.js;
+// `cursor` is the previous page's `next` ({ at, id }) for keyset paging.
+export async function listAuditFeed(args, cursor = null) {
+  const data = unwrap(
+    await supabase.rpc('admin_audit_feed', {
+      ...args,
+      p_before_at: cursor?.at ?? null,
+      p_before_id: cursor?.id ?? null,
+      p_limit: PAGE,
+    })
+  );
+  return { rows: asList(data?.rows), next: data?.next ?? null };
 }
 
 function missingRpc(error) {
@@ -1117,7 +1132,7 @@ export async function loadAdminOverview() {
     listForms(),
     membersVisible ? listNoticesAdmin() : [],
     membersVisible ? loadRequestDesk() : { rows: [] },
-    isSuperAdmin.value ? listAudit() : [],
+    isSuperAdmin.value ? listRecentAudit() : [],
   ]);
   return {
     legacy: true,

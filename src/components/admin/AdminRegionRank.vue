@@ -1,6 +1,6 @@
-<!-- Meetups per region, ranked by turnout count (Super Admin only; shown above the audit log). -->
+<!-- Meetups per region, ranked by turnout count (Super Admin only; an Overview card). -->
 <template>
-  <section class="rank-wrap" aria-labelledby="rank-h">
+  <section aria-labelledby="rank-h">
     <h3 id="rank-h" class="rank-h">Meetups by region</h3>
     <ol class="rank">
       <li v-for="(g, i) in ranked" :key="g.id" class="row" :style="{ '--i': i }">
@@ -31,14 +31,11 @@ const ranked = regions;
 </script>
 
 <style scoped>
-.rank-wrap {
-  margin-bottom: 26px;
-}
 .rank-h {
   margin: 0 0 10px;
   font-size: 15px;
-  font-weight: 650;
-  color: var(--ink-2);
+  font-weight: 700;
+  color: var(--ink);
 }
 .rank {
   display: grid;

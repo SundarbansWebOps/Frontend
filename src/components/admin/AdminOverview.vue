@@ -198,6 +198,8 @@
         <p>Admin activity will appear here when something changes.</p>
       </div>
     </section>
+
+    <AdminRegionRank v-if="isSuperAdmin" class="adm-card span12" />
   </div>
 </template>
 <script setup>
@@ -206,6 +208,7 @@ import { auth, isRc, isSuperAdmin } from '../../lib/auth.js';
 import { REQUEST_LABEL } from '../../lib/admin.js';
 import { ageOf, dateOf, nameOf } from '../../lib/admin-display.js';
 import LineIcon from '../site/LineIcon.vue';
+import AdminRegionRank from './AdminRegionRank.vue';
 import { ADMIN_ART } from './admin-art.js';
 const clearArt = ADMIN_ART.emptyClear;
 const boatArt = ADMIN_ART.emptyBoat;
