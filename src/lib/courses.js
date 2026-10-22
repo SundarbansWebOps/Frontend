@@ -186,7 +186,7 @@ export const TOOLS = [
     label: 'Grading Documents',
     hint: 'Grading criteria for your programme',
     href: '/#/grading',
-    icon: 'book',
+    icon: 'file-text',
     options: [
       {
         label: 'Data Science & Applications Grading',
@@ -235,15 +235,7 @@ export const TOOLS = [
       },
     ],
   },
-  {
-    id: 'cities',
-    label: 'Exam cities',
-    hint: 'Centres near you',
-    href: '#cities',
-    icon: 'pin',
-    internal: true,
-    soon: true,
-  },
+  
   {
     id: 'verify',
     label: 'Verify certificate',
