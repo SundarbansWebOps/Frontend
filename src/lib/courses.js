@@ -180,6 +180,36 @@ export const TOOLS = [
     icon: 'calc',
     internal: true,
   },
+
+  {
+    id: 'grading',
+    label: 'Grading Documents',
+    hint: 'Grading criteria for your programme',
+    href: '/#/grading',
+    icon: 'file-text',
+    options: [
+      {
+        label: 'Data Science & Applications Grading',
+        hint: 'DS grading information',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vT_FeqnTq0Br4sUaN7OYAmj1B9MwjchyTEed1Bh5FkZvi5NyIMeAvvkuttostVsJBPjZcs3SjjEfiho/pub?urp=gmail_link',
+      },
+      {
+        label: 'Electronic Systems Grading',
+        hint: 'ES grading information',
+        href: 'https://docs.google.com/document/d/e/2PACX-1vSkoDSTyn0V08_sPt-G1CKdAQk8ntYCcxgQKQaqjgzl4Tfr8gWnJKMJppW1jA6pN2BN83MPyFZIq7Wr/pub',
+      },
+      {
+        label: 'Aeronautics and Space Technology Grading',
+        hint: 'AE grading information',
+        href: 'https://docs.google.com/document/u/3/d/e/2PACX-1vQJ2fE8-LRXgHJMpZZKyGE3bG5uI6zO1TOdWOSYQkQ-h8YVfukm6eeKwa9Dz5WVzs5F1jM2Hc1iz94n/pub',
+      },
+      {
+        label: 'Management and Data Science Grading',
+        hint: 'MG grading information',
+        href: 'https://docs.google.com/document/u/3/d/e/2PACX-1vSn46R_x5cmXfG-L7-uOWPedW35kn-Z2BkWsFQYrLYkT1FSCbu5fwuA37pZKHUn6OutOvVVndUHbi6S/pub',
+      },
+    ],
+  },
   {
     id: 'handbook',
     label: 'Student handbook',
@@ -205,15 +235,7 @@ export const TOOLS = [
       },
     ],
   },
-  {
-    id: 'cities',
-    label: 'Exam cities',
-    hint: 'Centres near you',
-    href: '#cities',
-    icon: 'pin',
-    internal: true,
-    soon: true,
-  },
+
   {
     id: 'verify',
     label: 'Verify certificate',
