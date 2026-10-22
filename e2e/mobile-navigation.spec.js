@@ -89,6 +89,7 @@ for (const role of ['member', 'rc', 'sa']) {
     await page.getByRole('button', { name: /^Your profile/ }).click();
     await expect(page.getByRole('button', { name: 'Edit profile', exact: true })).toBeVisible();
     await page.keyboard.press('Escape');
+    await expect(page.getByRole('button', { name: 'Edit profile', exact: true })).toBeHidden();
     if (role !== 'member') {
       await page.goto('/#/admin');
       await page.locator('.bottom-nav').getByRole('button', { name: 'More', exact: true }).click();
