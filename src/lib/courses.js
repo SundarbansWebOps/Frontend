@@ -235,7 +235,7 @@ export const TOOLS = [
       },
     ],
   },
-  
+
   {
     id: 'verify',
     label: 'Verify certificate',
