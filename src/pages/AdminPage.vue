@@ -45,6 +45,7 @@
             :lookups="lookups"
             :initial-id="selectedId"
             @changed="refresh"
+            @navigate="navigate"
           />
           <p v-else-if="!loadError" class="adm-note" role="status">Loading admin data...</p>
         </main>
@@ -284,7 +285,7 @@ const allTabs = [
     icon: 'chart',
     component: AdminAudit,
     sa: true,
-    description: 'A record of who changed what and when.',
+    description: 'Every admin action: who did it, to whom, and what changed.',
   },
 ];
 const tabs = computed(() =>
