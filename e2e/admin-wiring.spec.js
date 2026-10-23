@@ -31,6 +31,9 @@ test('students page through the server and search by roll number or email', asyn
   await expect(page.getByText(/Showing 50 of 1101 students/)).toBeVisible();
   await page.getByRole('button', { name: 'Show more (1051 left)' }).click();
   await expect(page.getByText(/Showing 100 of 1101 students/)).toBeVisible();
+  // Row numbers run on across pages, so the last row shown counts the rows.
+  await expect(page.locator('td.serial').first()).toHaveText('1');
+  await expect(page.locator('td.serial').last()).toHaveText('100');
   expect(sent().at(-1)).toEqual({
     p_query: null,
     p_status: 'current',

@@ -60,6 +60,7 @@
       <table class="adm-table stack">
         <thead>
           <tr>
+            <th class="serial" scope="col">#</th>
             <th>Student</th>
             <th>Region</th>
             <th>Communities</th>
@@ -69,11 +70,12 @@
         </thead>
         <tbody>
           <tr
-            v-for="m in rows"
+            v-for="(m, i) in rows"
             :key="m.id ?? m.email"
             class="student-row"
             @click="onRowClick($event, m)"
           >
+            <td class="serial">{{ i + 1 }}</td>
             <td>
               <button class="student-name" @click="open(m)">
                 <b>{{ m.preferred_name || m.full_name || 'Name not set' }}</b
@@ -926,6 +928,17 @@ function startPosition() {
 .student-row:hover {
   background: var(--sunk);
 }
+/* A running count down the list, like a spreadsheet's row numbers; Show more carries it on. */
+.serial {
+  width: 1%;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+td.serial {
+  padding-top: 12px; /* level with the name, which sits 4px down in its button */
+}
 .student-name {
   background: transparent;
   color: var(--ink);
@@ -955,6 +968,21 @@ function startPosition() {
   text-align: center;
 }
 @media (max-width: 640px) {
+  /* On a phone card the number sits in the top corner and the name keeps the full first line. */
+  .student-row {
+    position: relative;
+  }
+  .student-row .serial {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: auto;
+    padding: 0;
+  }
+  .student-row td:nth-child(2) {
+    grid-column: 1 / -1;
+    padding-right: 40px;
+  }
   .open {
     width: 100%;
     justify-content: center;
