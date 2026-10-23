@@ -46,10 +46,12 @@
       </label>
       <label v-if="isSuperAdmin" class="adm-field wide">
         <span>Region</span>
-        <select v-model="one.region_id" class="adm-input">
-          <option :value="null">Not allocated yet</option>
-          <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-        </select>
+        <AdminSelect
+          v-model="one.region_id"
+          :options="[{ id: null, name: 'Not allocated yet' }, ...lookups.regions]"
+          value-key="id"
+          label-key="name"
+        />
       </label>
       <p v-if="isSuperAdmin && !one.region_id" class="adm-note wide">
         Without a region, only Super Admins can see this roster entry.
@@ -137,10 +139,7 @@
       <template v-if="csv.headers.length">
         <label v-for="field in CSV_FIELDS" :key="field.key" class="adm-field">
           <span>{{ field.label }}</span>
-          <select v-model.number="csv.mapping[field.key]" class="adm-input">
-            <option :value="-1">Not in this file</option>
-            <option v-for="(h, i) in csv.headers" :key="`${h}-${i}`" :value="i">{{ h }}</option>
-          </select>
+          <AdminSelect v-model="csv.mapping[field.key]" :options="csvColumns" />
         </label>
         <p class="adm-note wide">
           {{ uniqueCsv.length }} row{{ uniqueCsv.length === 1 ? '' : 's' }} after de-duplicating
@@ -205,6 +204,7 @@
 import { computed, reactive, ref } from 'vue';
 import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
+import AdminSelect from './AdminSelect.vue';
 import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
 import {
   downloadCsv,
@@ -259,6 +259,11 @@ const csv = reactive({
   mapping: { email: -1, full_name: -1, phone: -1, region: -1, gender: -1 },
 });
 const csvRows = computed(() => rowsFromRosterCsv(csv.rows, csv.mapping, props.lookups.regions));
+// Which file column holds a field: -1 means the file has none.
+const csvColumns = computed(() => [
+  { value: -1, label: 'Not in this file' },
+  ...csv.headers.map((h, i) => ({ value: i, label: h })),
+]);
 const uniqueCsv = computed(() => {
   const seen = new Set();
   return csvRows.value.filter((r) => {

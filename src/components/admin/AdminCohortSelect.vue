@@ -32,9 +32,7 @@
       <div class="row">
         <label class="adm-field">
           <span>Year</span>
-          <select v-model.number="year" class="adm-input">
-            <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-          </select>
+          <AdminSelect v-model="year" :options="yearOptions" />
         </label>
         <div class="adm-field grow">
           <span>Term</span>
@@ -74,6 +72,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue';
+import AdminSelect from './AdminSelect.vue';
 import { termsForYear, yearFromCohort } from '../../lib/admin.js';
 
 const props = defineProps({
@@ -89,6 +88,7 @@ const years = computed(() => {
   const set = new Set(props.cohorts.options.map(yearFromCohort).filter(Boolean));
   return [...set].sort((a, b) => b - a);
 });
+const yearOptions = computed(() => years.value.map((y) => ({ value: y, label: String(y) })));
 const year = ref(yearFromCohort(props.cohorts.current) || years.value[0]);
 const terms = computed(() => termsForYear(year.value, props.cohorts));
 const allTermsOn = computed(

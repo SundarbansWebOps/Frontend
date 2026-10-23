@@ -1,7 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
-import { callTo, mockSupabase } from './supabase-mock.js';
+import { callTo, mockSupabase, pick } from './supabase-mock.js';
 
 test('roster import blocks unrecognized region labels until corrected', async ({ page }) => {
   await mockSupabase(page, { as: 'sa' });
@@ -63,7 +63,9 @@ test('attendance defaults to merge and preserves duplicate unresolved source row
   await page.goto('/#/admin?tab=events');
   await page.getByRole('button', { name: 'Attendance' }).click();
   const dialog = page.getByRole('dialog');
-  await expect(dialog.getByLabel('Import behavior')).toHaveValue('merge');
+  await expect(dialog.getByRole('combobox', { name: 'Import behavior' })).toHaveText(
+    'Merge; keep omitted rows'
+  );
   await dialog.locator('input[type="file"]').setInputFiles({
     name: 'attendance.csv',
     mimeType: 'text/csv',
@@ -72,11 +74,11 @@ test('attendance defaults to merge and preserves duplicate unresolved source row
     ),
   });
   await expect(dialog.getByText(/2 unresolved/)).toBeVisible();
-  await dialog.getByLabel('Import behavior').selectOption('replace');
+  await pick(dialog, 'Import behavior', 'Replace one named source');
   await expect(
     dialog.getByText(/Preview: 1 omitted row will lose this source's ownership/)
   ).toBeVisible();
-  await dialog.getByLabel('Import behavior').selectOption('merge');
+  await pick(dialog, 'Import behavior', 'Merge; keep omitted rows');
   await dialog.getByRole('button', { name: 'Save attendance' }).click();
   const call = await callTo(calls, '/rest/v1/rpc/import_event_attendance');
   const payload = JSON.parse(call.body);

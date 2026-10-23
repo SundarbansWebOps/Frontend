@@ -4,9 +4,12 @@
   <AdminDialog title="Add to a community" wide @close="emit('close')">
     <label class="adm-field community-pick">
       <span>Community</span>
-      <select v-model="communityId" class="adm-input">
-        <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
-      </select>
+      <AdminSelect
+        v-model="communityId"
+        :options="lookups.communities"
+        value-key="id"
+        label-key="name"
+      />
     </label>
     <div class="adm-chips add-modes">
       <button
@@ -120,6 +123,7 @@
 import { computed, ref } from 'vue';
 import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
+import AdminSelect from './AdminSelect.vue';
 import { errorText } from '../../lib/auth.js';
 import {
   COMMUNITY_ADD_MAX,
