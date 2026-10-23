@@ -17,7 +17,8 @@
           <b>{{ f.title }}</b>
           <div class="adm-meta">
             <span>{{ scopeOf(f) }}</span>
-            <span v-if="f.archived_at" class="adm-badge">archived</span>
+            <span v-if="f.pending_request_id" class="adm-badge mari">waiting for approval</span>
+            <span v-else-if="f.archived_at" class="adm-badge">archived</span>
             <span v-else-if="formStatus(f) === 'draft'" class="adm-badge">draft</span>
             <span v-else-if="formStatus(f) === 'scheduled'" class="adm-badge">scheduled</span>
             <span v-else-if="formStatus(f) === 'open'" class="adm-badge mari">
@@ -29,17 +30,28 @@
           </div>
         </div>
         <div class="adm-chips">
-          <button type="button" class="adm-btn ghost small" @click="edit(f)">Edit</button>
-          <button type="button" class="adm-btn ghost small" @click="openResponses(f)">
-            Responses
-          </button>
           <button
+            v-if="f.pending_request_id && !isSuperAdmin"
             type="button"
-            :class="['adm-btn', 'small', f.archived_at ? 'ghost' : 'danger']"
-            @click="archive(f)"
+            class="adm-btn danger small"
+            :disabled="busy"
+            @click="cancelPublish(f)"
           >
-            {{ f.archived_at ? 'Restore' : 'Archive' }}
+            Cancel request
           </button>
+          <template v-else>
+            <button type="button" class="adm-btn ghost small" @click="edit(f)">Edit</button>
+            <button type="button" class="adm-btn ghost small" @click="openResponses(f)">
+              Responses
+            </button>
+            <button
+              type="button"
+              :class="['adm-btn', 'small', f.archived_at ? 'ghost' : 'danger']"
+              @click="archive(f)"
+            >
+              {{ f.archived_at ? 'Restore' : 'Archive' }}
+            </button>
+          </template>
         </div>
       </li>
     </ul>
@@ -56,8 +68,17 @@
         <p v-if="form.archived_at" class="adm-note">
           Archived forms stay available to organizers and can be restored.
         </p>
-        <p v-if="form.published_at" class="adm-note">
-          This form is published. Saving changes updates it straight away.
+        <p v-if="form.pending_request_id" class="adm-note">
+          {{
+            isSuperAdmin
+              ? 'A Head asked to publish this form. Approve or reject it in Requests.'
+              : 'Waiting for a Super Admin to publish it. Cancel the request to edit it.'
+          }}
+        </p>
+        <p v-else-if="form.published_at" class="adm-note">
+          This form is published. Saving changes updates it straight away.{{
+            approvalScope ? ' If you unpublish it, a Super Admin has to approve it again.' : ''
+          }}
         </p>
 
         <section class="grp" aria-labelledby="form-details-heading">
@@ -305,7 +326,7 @@
             Save draft
           </button>
           <button type="button" class="adm-btn mari" :disabled="busy" @click="save('publish')">
-            Publish
+            {{ approvalScope ? 'Ask a Super Admin to publish' : 'Publish' }}
           </button>
         </template>
       </template>
@@ -504,6 +525,7 @@ import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
   FORM_FIELD_TYPES,
+  cancelRequest,
   PREFILL_KEYS,
   REJECT_REASONS,
   REVIEW_LABEL,
@@ -517,6 +539,7 @@ import {
   listEvents,
   listForms,
   membersOnlyAudience,
+  requestFormPublish,
   reviewFormResponse,
   saveForm,
   sortResponses,
@@ -599,6 +622,14 @@ const reviewedBy = (r) =>
     .join(' · ');
 
 const mine = computed(() => forms.value.filter((f) => f.can_manage !== false));
+// A Super Admin publishes Head and Co-Head forms: community forms and forms on a community event.
+const approvalScope = computed(
+  () =>
+    !isSuperAdmin.value &&
+    (form.value?.scope === 'community' ||
+      (form.value?.scope === 'event' &&
+        events.value.find((e) => e.id === form.value.event_id)?.community_id != null))
+);
 const eventOptions = computed(() => {
   const manageable = events.value.filter(canManageEvent);
   const eligible = manageable.filter(
@@ -859,9 +890,15 @@ async function save(mode) {
     };
     if (form.value.remove_invite) payload.invite_url = null;
     else if (form.value.invite_url) payload.invite_url = form.value.invite_url;
-    await saveForm(payload);
+    if (mode === 'publish' && approvalScope.value) {
+      const id = await saveForm({ ...payload, published_at: null });
+      await requestFormPublish(id);
+      notice.value = 'Sent to a Super Admin. The form opens once they approve it.';
+    } else {
+      await saveForm(payload);
+      notice.value = mode === 'publish' ? 'Published.' : 'Saved.';
+    }
     dlg.value?.close();
-    notice.value = mode === 'publish' ? 'Published.' : 'Saved.';
     await load();
     emit('changed');
   } catch (e) {
@@ -878,6 +915,21 @@ async function archive(f) {
   try {
     await saveForm({ ...f, archived_at });
     notice.value = archived_at ? 'Archived. Existing responses remain available.' : 'Restored.';
+    await load();
+    emit('changed');
+  } catch (e) {
+    error.value = errorText(e);
+  } finally {
+    busy.value = false;
+  }
+}
+
+async function cancelPublish(f) {
+  busy.value = true;
+  error.value = '';
+  try {
+    await cancelRequest(f.pending_request_id);
+    notice.value = 'Request cancelled. The form is a draft you can edit again.';
     await load();
     emit('changed');
   } catch (e) {

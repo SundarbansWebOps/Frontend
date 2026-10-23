@@ -67,6 +67,7 @@ export const RANGES = [
 // What each request type asks to do, phrased to follow "the request to …".
 const REQUEST_DOES = {
   event_publish: 'publish an event house-wide',
+  form_publish: 'publish a form',
   member_deletion: 'delete',
   member_blacklist: 'blacklist',
   member_hard_delete: 'permanently erase',
@@ -125,6 +126,11 @@ function requestSentence(r, verb) {
   if (v.type === 'event_publish')
     return {
       parts: [...parts, 'publishing ', record(r, 'an event'), ' house-wide'],
+      note: reason(nv(r)),
+    };
+  if (v.type === 'form_publish')
+    return {
+      parts: [...parts, 'publishing ', record(r, v.form_title || 'a form')],
       note: reason(nv(r)),
     };
   return {

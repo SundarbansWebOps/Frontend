@@ -47,6 +47,7 @@ export const TEMPLATE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
 export const REQUEST_LABEL = {
   event_publish: 'Publish house-wide event',
+  form_publish: 'Publish form',
   member_deletion: 'Delete member',
   member_blacklist: 'Blacklist member',
   member_hard_delete: 'Erase permanently',
@@ -687,10 +688,27 @@ export function yearFromCohort(code) {
 // Forms use lounge.js adapters, with list and export results normalized to arrays.
 
 export async function listForms() {
-  return asList(await loungeListForms());
+  const [forms, pending] = await Promise.all([
+    loungeListForms().then(asList),
+    // Head/Co-Head forms waiting for a Super Admin (RLS: the requester sees their own, Super Admins all).
+    supabase
+      .from('approval_requests')
+      .select('id, target_form_id')
+      .eq('type', 'form_publish')
+      .eq('status', 'pending')
+      .then(unwrap),
+  ]);
+  const pendingByForm = new Map(pending.map((r) => [r.target_form_id, r.id]));
+  return forms.map((f) => ({ ...f, pending_request_id: pendingByForm.get(f.id) ?? null }));
 }
 
 export const saveForm = (form) => loungeSaveForm(form);
+
+// Head/Co-Head forms go live only when a Super Admin approves this request.
+export const requestFormPublish = (formId, reason) =>
+  supabase
+    .rpc('request_form_publish', { p_form_id: formId, p_reason: reason || null })
+    .then(unwrap);
 
 export async function exportFormResponses(formId) {
   return asList(await loungeExportFormResponses(formId));

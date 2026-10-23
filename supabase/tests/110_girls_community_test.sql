@@ -122,6 +122,8 @@ select x.id, x.k, (select id from public.communities where code = case when x.k 
        case when x.k like '%past' then now() - interval '1 day' else now() + interval '2 days' end,
        now() - interval '1 minute', (select id from gc where k = 'sa'), (select id from gc where k = 'sa')
 from gcx x where x.k in ('girls_up', 'girls_past', 'tech_past', 'tech_up');
+-- Fixtures written outside any member's session (Head forms are published by a Super Admin).
+set local request.jwt.claims = '{}';
 insert into public.lounge_forms(id, title, event_id, published_at, created_by)
 values ('b6100000-0000-4000-8000-0000000000f1', 'Girls event registration', 'b6100000-0000-4000-8000-0000000000e1', now() - interval '1 minute', (select id from gc where k = 'sa'));
 insert into public.lounge_forms(id, title, community_id, form_kind, group_label, published_at, created_by)
