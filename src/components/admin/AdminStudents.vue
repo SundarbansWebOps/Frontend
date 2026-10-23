@@ -1,5 +1,7 @@
-<!-- Students in scope (RC: own region; Super Admin: all). Open one to see their details and file a
-     request: edit details, delete, blacklist; Super Admins also status and position changes. -->
+<!-- Every student in scope, signed in or not yet (Super Admin: all; RC: own region; Head or
+     Co-Head: their community's tagged students). Open one to see their details and community
+     tags. Super Admins and RCs file requests about signed-in students and add students; a Super
+     Admin tags and untags; a Head or Co-Head asks a Super Admin to remove a tag. -->
 <template>
   <div>
     <div class="adm-toolbar">
@@ -9,9 +11,16 @@
           v-model.trim="query"
           class="adm-input"
           type="search"
+          maxlength="100"
           placeholder="Name, email, phone or roll number"
           @input="onSearch"
         />
+      </label>
+      <label class="adm-field">
+        <span>Status</span>
+        <select v-model="status" class="adm-input" @change="reload">
+          <option v-for="s in statuses" :key="s.id" :value="s.id">{{ s.label }}</option>
+        </select>
       </label>
       <label v-if="isSuperAdmin" class="adm-field">
         <span>Region</span>
@@ -21,19 +30,26 @@
         </select>
       </label>
       <label class="adm-field">
-        <span>Status</span>
-        <select v-model="status" class="adm-input" @change="reload">
-          <option value="current">Current</option>
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
-          <option value="blacklisted">Blacklisted</option>
-          <option v-if="isSuperAdmin" value="deleted">Deleted</option>
+        <span>Community</span>
+        <select v-model="communityId" class="adm-input" @change="reload">
+          <option :value="null">Any community</option>
+          <option v-for="c in visibleCommunities" :key="c.id" :value="c.id">{{ c.name }}</option>
         </select>
       </label>
+      <!-- Add students lives in the admin bar; tagging many at once is a Super Admin's. -->
+      <button v-if="isSuperAdmin" type="button" class="adm-btn ghost" @click="tagging = true">
+        Add to a community
+      </button>
     </div>
 
     <p v-if="error" class="adm-msg err" role="alert">{{ error }}</p>
     <p v-if="query && query.length < 3" class="adm-note">Type at least 3 characters to search.</p>
+    <p v-else-if="query" class="adm-note">
+      Name and phone find signed-in students. Email and roll number find everyone.
+    </p>
+    <p v-if="!loading && !error && rows.length" class="adm-note count" role="status">
+      Showing {{ rows.length }} of {{ total }} {{ total === 1 ? 'student' : 'students' }}.
+    </p>
 
     <div v-if="rows.length" class="adm-card student-table adm-table-wrap">
       <table class="adm-table stack">
@@ -41,32 +57,45 @@
           <tr>
             <th>Student</th>
             <th>Region</th>
+            <th>Communities</th>
             <th>Status</th>
-            <th>Joined</th>
             <th><span class="visually-hidden">Open profile</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="m in rows" :key="m.id" class="student-row" @click="onRowClick($event, m.id)">
+          <tr
+            v-for="m in rows"
+            :key="m.id ?? m.email"
+            class="student-row"
+            @click="onRowClick($event, m)"
+          >
             <td>
-              <button class="student-name" @click="open(m.id)">
+              <button class="student-name" @click="open(m)">
                 <b>{{ m.preferred_name || m.full_name || 'Name not set' }}</b
                 ><small>{{ m.email }}</small
-                ><small class="mono">{{ m.member_code }}</small>
+                ><small v-if="m.member_code" class="mono">{{ m.member_code }}</small
+                ><small v-if="m.phone" class="mono">{{ m.phone }}</small>
               </button>
             </td>
             <td data-label="Region">{{ regionOf(m.region_id) }}</td>
+            <td data-label="Communities">
+              <span v-if="m.communities.length" class="tags">
+                <span v-for="c in m.communities" :key="c" class="adm-badge">{{
+                  communityName(c)
+                }}</span>
+              </span>
+              <span v-else class="none">–</span>
+            </td>
             <td data-label="Status">
               <span class="adm-badge" :class="statusTone(m.account_status)">{{
-                m.account_status
+                statusLabel(m.account_status)
               }}</span>
             </td>
-            <td data-label="Joined">{{ day(m.created_at) }}</td>
             <td>
               <button
                 class="adm-btn small open"
                 :aria-label="`Open ${m.preferred_name || m.full_name || m.email}`"
-                @click="open(m.id)"
+                @click="open(m)"
               >
                 Open <LineIcon name="next" />
               </button>
@@ -75,29 +104,40 @@
         </tbody>
       </table>
     </div>
-    <p v-else-if="!loading" class="adm-empty">
+    <p v-else-if="!loading && !error" class="adm-empty">
       {{
         query.length >= 3
           ? 'No student matches that search.'
-          : 'No students match these filters. Students waiting for their first sign-in are on the roster.'
+          : isHead && !isSuperAdmin && !isRc
+            ? 'No student is tagged with your community yet. Approving a response on its join form tags the student.'
+            : 'No students match these filters.'
       }}
     </p>
-    <div v-if="!searching && rows.length < total" class="more">
-      <button type="button" class="adm-btn ghost" :disabled="loading" @click="more">
+    <p v-if="loading" class="adm-note" role="status">Loading students…</p>
+    <div v-if="rows.length < total" class="more">
+      <button type="button" class="adm-btn ghost" :disabled="loading" @click="load(true)">
         Show more ({{ total - rows.length }} left)
       </button>
     </div>
 
+    <AdminRosterAdd v-if="adding" :lookups="lookups" @changed="changed" @close="adding = false" />
+    <AdminCommunityAdd
+      v-if="tagging"
+      :lookups="lookups"
+      @changed="changed"
+      @close="tagging = false"
+    />
+
     <AdminDialog v-if="detail" ref="dlg" side :title="detailTitle" @close="detail = null">
       <template v-if="mode === 'view'">
         <dl class="adm-facts">
-          <div>
+          <div v-if="detail.member.member_code">
             <dt>Roll / code</dt>
             <dd class="mono">{{ detail.member.member_code }}</dd>
           </div>
           <div>
             <dt>Status</dt>
-            <dd>{{ detail.member.account_status }}</dd>
+            <dd>{{ statusLabel(detail.member.account_status) }}</dd>
           </div>
           <div>
             <dt>Email</dt>
@@ -119,19 +159,19 @@
             <dt>Full name</dt>
             <dd>{{ detail.member.full_name || '–' }}</dd>
           </div>
-          <div>
+          <div v-if="!onRoster">
             <dt>Preferred name</dt>
             <dd>{{ detail.member.preferred_name || '–' }}</dd>
           </div>
-          <div>
+          <div v-if="detail.full">
             <dt>Position</dt>
             <dd>{{ positionText(detail.position) }}</dd>
           </div>
           <div>
-            <dt>Joined</dt>
+            <dt>{{ onRoster ? 'Added' : 'Joined' }}</dt>
             <dd>{{ day(detail.member.created_at) }}</dd>
           </div>
-          <div>
+          <div v-if="detail.full">
             <dt>Regional form</dt>
             <dd>
               {{ detail.regional ? `Filled ${day(detail.regional.updated_at)}` : 'Not filled' }}
@@ -142,69 +182,119 @@
         <p v-if="done" class="adm-msg ok spaced" role="status">{{ done }}</p>
         <p v-if="actionError" class="adm-msg err spaced" role="alert">{{ actionError }}</p>
 
-        <p class="adm-kicker spaced">Ask for a change</p>
-        <div class="ask-grid">
-          <button v-if="canEdit" type="button" class="adm-btn mari" @click="startEdit">
-            Edit details
-          </button>
-          <button
-            v-if="canRequestRemoval"
-            type="button"
-            class="adm-btn danger"
-            @click="ask('delete')"
-          >
-            Delete
-          </button>
-          <button
-            v-if="canRequestRemoval"
-            type="button"
-            class="adm-btn danger"
-            @click="ask('blacklist')"
-          >
-            Blacklist
-          </button>
-          <template v-if="isSuperAdmin && !isSelf">
+        <p class="adm-kicker spaced">Communities</p>
+        <ul v-if="detail.communities.length" class="tag-list">
+          <li v-for="c in detail.communities" :key="c">
+            <span>{{ communityName(c) }}</span>
             <button
-              v-if="detail.member.account_status !== 'deleted'"
+              v-if="isSuperAdmin"
               type="button"
-              class="adm-btn ghost"
-              @click="startEmail"
+              class="adm-btn danger small"
+              :disabled="busy"
+              @click="untag(c)"
             >
-              Change login email
+              Remove
             </button>
             <button
-              v-for="a in statusActions"
-              :key="a"
+              v-else-if="c === myCommunityId"
               type="button"
-              :class="['adm-btn', a === 'suspend' ? 'danger' : 'ghost']"
-              @click="ask(a)"
+              class="adm-btn ghost small"
+              @click="askUntag(c)"
             >
-              {{ STATUS_ACTION_LABEL[a] }}
+              Ask to remove
             </button>
-            <button v-if="canErase" type="button" class="adm-btn danger" @click="ask('erase')">
-              Erase permanently
+          </li>
+        </ul>
+        <p v-else class="adm-note">Not in any community{{ isSuperAdmin ? '' : ' you can see' }}.</p>
+        <form
+          v-if="isSuperAdmin && untagged.length && detail.member.account_status !== 'deleted'"
+          class="tag-add"
+          @submit.prevent="tag"
+        >
+          <label class="adm-field">
+            <span>Add to</span>
+            <select v-model="form.tag_id" class="adm-input">
+              <option v-for="c in untagged" :key="c.id" :value="c.id">{{ c.name }}</option>
+            </select>
+          </label>
+          <button type="submit" class="adm-btn ghost" :disabled="busy || !form.tag_id">Add</button>
+        </form>
+
+        <template v-if="onRoster && (isSuperAdmin || isRc)">
+          <p class="adm-kicker spaced">Roster</p>
+          <p class="adm-note">This student has not signed in yet.</p>
+          <div class="ask-grid">
+            <button type="button" class="adm-btn danger" :disabled="busy" @click="removeRoster">
+              Remove from roster
+            </button>
+          </div>
+        </template>
+
+        <template v-if="detail.full">
+          <p class="adm-kicker spaced">Ask for a change</p>
+          <div class="ask-grid">
+            <button v-if="canEdit" type="button" class="adm-btn mari" @click="startEdit">
+              Edit details
             </button>
             <button
-              v-if="detail.position"
+              v-if="canRequestRemoval"
               type="button"
               class="adm-btn danger"
-              @click="ask('revoke')"
+              @click="ask('delete')"
             >
-              Revoke position
+              Delete
             </button>
             <button
-              v-else-if="detail.member.account_status === 'active'"
+              v-if="canRequestRemoval"
               type="button"
-              class="adm-btn ghost"
-              @click="startPosition"
+              class="adm-btn danger"
+              @click="ask('blacklist')"
             >
-              Give a position
+              Blacklist
             </button>
-          </template>
-        </div>
-        <p v-if="!canEdit && !isSuperAdmin" class="adm-note spaced">
-          Coordinators and Super Admins are changed by a Super Admin only.
-        </p>
+            <template v-if="isSuperAdmin && !isSelf">
+              <button
+                v-if="detail.member.account_status !== 'deleted'"
+                type="button"
+                class="adm-btn ghost"
+                @click="startEmail"
+              >
+                Change login email
+              </button>
+              <button
+                v-for="a in statusActions"
+                :key="a"
+                type="button"
+                :class="['adm-btn', a === 'suspend' ? 'danger' : 'ghost']"
+                @click="ask(a)"
+              >
+                {{ STATUS_ACTION_LABEL[a] }}
+              </button>
+              <button v-if="canErase" type="button" class="adm-btn danger" @click="ask('erase')">
+                Erase permanently
+              </button>
+              <button
+                v-if="detail.position"
+                type="button"
+                class="adm-btn danger"
+                @click="ask('revoke')"
+              >
+                Revoke position
+              </button>
+              <button
+                v-else-if="detail.member.account_status === 'active'"
+                type="button"
+                class="adm-btn ghost"
+                @click="startPosition"
+              >
+                Give a position
+              </button>
+            </template>
+          </div>
+          <p v-if="!canEdit && !isSuperAdmin" class="adm-note spaced">
+            Coordinators and Super Admins are changed by a Super Admin only.
+          </p>
+        </template>
       </template>
 
       <form v-else-if="mode === 'edit'" class="adm-form" @submit.prevent="submitEdit">
@@ -332,24 +422,30 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import AdminDialog from './AdminDialog.vue';
+import AdminCommunityAdd from './AdminCommunityAdd.vue';
+import AdminRosterAdd from './AdminRosterAdd.vue';
 import LineIcon from '../site/LineIcon.vue';
-import { auth, errorText, isSuperAdmin } from '../../lib/auth.js';
+import { askConfirm } from '../../lib/admin-confirm.js';
+import { auth, errorText, isHead, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
   POSITION_LABEL,
   STATUS_ACTION_LABEL,
+  addCommunityMembers,
   getMember,
   isInternationalRegion,
-  listMembers,
+  listStudents,
+  removeCommunityMember,
   requestBlacklist,
   requestDeletion,
   requestContactChange,
   requestHardDelete,
   requestPosition,
   requestStatus,
+  requestTagRemoval,
   requestUpdate,
-  searchMembers,
+  rosterRemove,
 } from '../../lib/admin.js';
 
 const props = defineProps({
@@ -359,17 +455,46 @@ const props = defineProps({
 const emit = defineEmits(['changed']);
 
 const query = ref('');
-const regionId = ref(null);
 const status = ref('current');
+const regionId = ref(null);
+const communityId = ref(null);
 const rows = ref([]);
 const total = ref(0);
 const page = ref(0);
 const loading = ref(false);
-const searching = ref(false);
 const error = ref('');
+const adding = ref(false);
+const tagging = ref(false);
+
+const statuses = computed(() => [
+  { id: 'current', label: 'Everyone' },
+  { id: 'signed_in', label: 'Signed in' },
+  { id: 'not_signed_in', label: 'Not signed in yet' },
+  { id: 'suspended', label: 'Suspended' },
+  { id: 'blacklisted', label: 'Blacklisted' },
+  ...(isSuperAdmin.value ? [{ id: 'deleted', label: 'Deleted' }] : []),
+]);
+const STATUS_LABEL = {
+  active: 'Signed in',
+  not_signed_in: 'Not signed in yet',
+  suspended: 'Suspended',
+  blacklisted: 'Blacklisted',
+  deleted: 'Deleted',
+};
+const canAddStudents = computed(() => isSuperAdmin.value || isRc.value);
+const myCommunityId = computed(() => (isHead.value ? auth.dashboard?.community_id : null));
+// A members-only community's tags show only to Super Admins and its own Head and Co-Head.
+const visibleCommunities = computed(() =>
+  props.lookups.communities.filter(
+    (c) => !c.members_only || isSuperAdmin.value || c.id === myCommunityId.value
+  )
+);
 
 const regionOf = (id) => props.lookups.regions.find((r) => r.id === id)?.name ?? '–';
-const statusTone = (s) => (s === 'active' ? '' : s === 'suspended' ? 'mari' : 'verm');
+const communityName = (id) => props.lookups.communities.find((c) => c.id === id)?.name ?? '–';
+const statusLabel = (s) => STATUS_LABEL[s] ?? s;
+const statusTone = (s) =>
+  ['active', 'not_signed_in'].includes(s) ? '' : s === 'suspended' ? 'mari' : 'verm';
 const day = (iso) =>
   iso
     ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -379,81 +504,66 @@ const positionText = (p) =>
     ? 'None'
     : p.position === 'rc'
       ? `RC, ${regionOf(p.region_id)}`
-      : `${POSITION_LABEL[p.position]}, ${props.lookups.communities.find((c) => c.id === p.community_id)?.name ?? ''}`;
+      : `${POSITION_LABEL[p.position]}, ${communityName(p.community_id)}`;
 
-async function reload() {
-  if (query.value.length >= 3) return runSearch();
-  searching.value = false;
-  page.value = 0;
+const filters = () => ({
+  query: query.value.length >= 3 ? query.value.slice(0, 100) : '',
+  status: status.value,
+  regionId: regionId.value,
+  communityId: communityId.value,
+});
+
+let loadId = 0;
+async function load(more = false) {
+  const id = ++loadId;
+  const nextPage = more ? page.value + 1 : 0;
   loading.value = true;
   error.value = '';
   try {
-    const { data, count } = await listMembers({
-      regionId: regionId.value,
-      status: status.value,
-      page: 0,
-    });
-    rows.value = data;
-    total.value = count;
+    const result = await listStudents({ ...filters(), page: nextPage });
+    if (id !== loadId) return;
+    rows.value = more ? rows.value.concat(result.rows) : result.rows;
+    total.value = result.total;
+    page.value = nextPage;
   } catch (e) {
+    if (id !== loadId) return;
     error.value = errorText(e);
   } finally {
-    loading.value = false;
+    if (id === loadId) loading.value = false;
   }
 }
-
-async function more() {
-  loading.value = true;
-  try {
-    const { data } = await listMembers({
-      regionId: regionId.value,
-      status: status.value,
-      page: page.value + 1,
-    });
-    page.value += 1;
-    rows.value = rows.value.concat(data);
-  } catch (e) {
-    error.value = errorText(e);
-  } finally {
-    loading.value = false;
-  }
-}
+const reload = () => load();
 
 let searchTimer;
 function onSearch() {
   clearTimeout(searchTimer);
-  if (!query.value) return reload();
-  if (query.value.length < 3) return;
-  searchTimer = setTimeout(runSearch, 300);
+  if (query.value && query.value.length < 3) return;
+  searchTimer = setTimeout(reload, 300);
 }
-async function runSearch() {
-  searching.value = true;
-  loading.value = true;
-  error.value = '';
-  try {
-    const found = await searchMembers(query.value.slice(0, 100), status.value === 'deleted');
-    rows.value = found.filter(
-      (m) =>
-        (!regionId.value || m.region_id === regionId.value) &&
-        (status.value === 'current'
-          ? m.account_status !== 'deleted'
-          : m.account_status === status.value)
-    );
-  } catch (e) {
-    error.value = errorText(e);
-  } finally {
-    loading.value = false;
-  }
+
+function changed() {
+  reload();
+  emit('changed');
+}
+
+function create() {
+  if (canAddStudents.value) adding.value = true;
 }
 
 onMounted(() => {
   reload();
   if (props.initialId) open(props.initialId);
 });
-defineExpose({ openRecord: open });
+onBeforeUnmount(() => {
+  loadId++;
+  clearTimeout(searchTimer);
+});
+defineExpose({ openRecord: open, create });
 
 // Detail and requests
 
+// detail: { member, communities, full } plus position and regional when full. Super Admins and
+// RCs read a signed-in student's whole record; roster students and a Head's view use the row.
 const detail = ref(null);
 const mode = ref('view');
 const busy = ref(false);
@@ -468,6 +578,10 @@ const detailTitle = computed(() =>
       detail.value.member.full_name ||
       detail.value.member.email
     : ''
+);
+const onRoster = computed(() => detail.value?.member.account_status === 'not_signed_in');
+const untagged = computed(() =>
+  props.lookups.communities.filter((c) => !detail.value?.communities.includes(c.id))
 );
 const isSelf = computed(() => detail.value?.member.id === auth.profile?.id);
 const targetIsAdmin = computed(() => !!detail.value?.position);
@@ -508,24 +622,141 @@ const canErase = computed(() => {
 
 // A click anywhere on the row opens the student. Buttons keep their own handlers,
 // so clicks on them are left alone here to avoid opening twice.
-function onRowClick(event, id) {
+function onRowClick(event, row) {
   if (event.target.closest('button, a, select, input, label')) return;
-  open(id);
+  open(row);
 }
 
-async function open(id) {
+const fromRow = (row) => ({
+  member: { ...row, created_at: row.joined_at },
+  communities: row.communities ?? [],
+  full: false,
+});
+
+// Opens a list row, or a member id from search and links elsewhere in Admin.
+async function open(rowOrId) {
   done.value = actionError.value = '';
   mode.value = 'view';
+  const row = typeof rowOrId === 'string' ? null : rowOrId;
+  const id = row ? row.id : rowOrId;
+  if (row && (row.kind === 'roster' || !(isSuperAdmin.value || isRc.value))) {
+    detail.value = fromRow(row);
+    reset();
+    return;
+  }
   try {
-    detail.value = await getMember(id);
+    const record = await getMember(id);
+    if (!record.member) throw new Error('This student is outside your scope.');
+    let communities = row?.communities;
+    if (!communities) {
+      // Linked by id: the tags come from the list, found by exact email.
+      const found = await listStudents({
+        query: record.member.email,
+        status: record.member.account_status === 'deleted' ? 'deleted' : 'current',
+      });
+      communities = found.rows.find((r) => r.email === record.member.email)?.communities ?? [];
+    }
+    detail.value = { ...record, communities, full: true };
+    reset();
   } catch (e) {
     error.value = errorText(e);
   }
 }
 
+function setTags(email, communities) {
+  if (detail.value?.member.email === email) detail.value.communities = communities;
+  const row = rows.value.find((r) => r.email === email);
+  if (row) row.communities = communities;
+}
+
+async function tag() {
+  const { email } = detail.value.member;
+  const cid = form.tag_id;
+  busy.value = true;
+  done.value = actionError.value = '';
+  try {
+    const result = await addCommunityMembers(cid, [email]);
+    if (result?.not_in_house?.length || result?.invalid?.length)
+      throw new Error('Only students in the house can be tagged.');
+    setTags(
+      email,
+      [...detail.value.communities, cid].sort((a, b) => a - b)
+    );
+    done.value = `Added to ${communityName(cid)}.`;
+    form.tag_id = untagged.value[0]?.id ?? null;
+    emit('changed');
+  } catch (e) {
+    actionError.value = errorText(e);
+  } finally {
+    busy.value = false;
+  }
+}
+
+async function untag(cid) {
+  const { email } = detail.value.member;
+  const name = communityName(cid);
+  const yes = await askConfirm({
+    title: `Remove from ${name}?`,
+    message: `${email} loses the ${name} tag.`,
+    confirmLabel: 'Remove',
+    danger: true,
+  });
+  if (!yes) return;
+  busy.value = true;
+  done.value = actionError.value = '';
+  try {
+    await removeCommunityMember(cid, email);
+    setTags(
+      email,
+      detail.value.communities.filter((c) => c !== cid)
+    );
+    done.value = `Removed from ${name}.`;
+    form.tag_id = untagged.value[0]?.id ?? null;
+    emit('changed');
+  } catch (e) {
+    actionError.value = errorText(e);
+  } finally {
+    busy.value = false;
+  }
+}
+
+function askUntag(cid) {
+  const name = communityName(cid);
+  pending.value = {
+    explain: `A Super Admin reviews this. Once approved, the student loses the ${name} tag.`,
+    cta: 'Ask to remove',
+    danger: true,
+    run: (_, why) => requestTagRemoval(cid, detail.value.member.email, why),
+  };
+  reset();
+  mode.value = 'reason';
+}
+
+async function removeRoster() {
+  const { email } = detail.value.member;
+  const yes = await askConfirm({
+    title: 'Remove from the roster?',
+    message: `${email} will no longer be able to sign in for the first time.`,
+    confirmLabel: 'Remove',
+    danger: true,
+  });
+  if (!yes) return;
+  busy.value = true;
+  actionError.value = '';
+  try {
+    await rosterRemove(email);
+    detail.value = null;
+    changed();
+  } catch (e) {
+    actionError.value = errorText(e);
+  } finally {
+    busy.value = false;
+  }
+}
+
 function reset(extra = {}) {
   for (const k of Object.keys(form)) delete form[k];
-  Object.assign(form, { reason: '' }, extra);
+  Object.assign(form, { reason: '', tag_id: untagged.value[0]?.id ?? null }, extra);
   actionError.value = '';
 }
 
@@ -719,6 +950,40 @@ function startPosition() {
 
 .grow {
   flex: 1 1 280px;
+}
+.count {
+  margin: 0 0 10px;
+}
+.tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.none {
+  color: var(--ink-3);
+}
+.tag-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.tag-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+}
+.tag-add {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  margin-top: 10px;
 }
 select.adm-input {
   min-width: 160px;

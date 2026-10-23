@@ -32,12 +32,22 @@ export function requestConsequence(request) {
       certificate: 'The new certificate name is used for future certificates.',
       community_record_update: 'The approved fields replace the community registration.',
       community_record_deletion: 'The community registration is removed.',
+      community_tag_removal:
+        'The student loses this community tag. Members-only community content stops reaching them.',
     }[request.type] || 'The requested change is applied after approval.'
   );
 }
 export function requestDiff(request, lookups) {
   if (request.type === 'event_publish')
     return [{ field: 'Publication', before: 'Draft', after: 'Published for the house' }];
+  if (request.type === 'community_tag_removal')
+    return [
+      {
+        field: 'Community',
+        before: request.requested_change?.community_name || 'Tagged',
+        after: 'Removed',
+      },
+    ];
   const snapshot = request.target_snapshot ?? {};
   const before = snapshot.member ?? snapshot.event ?? snapshot.registration ?? snapshot;
   const labels = {

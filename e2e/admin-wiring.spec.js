@@ -4,70 +4,53 @@ import { adminSections, mockSupabase, PEOPLE, callTo } from './supabase-mock.js'
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
-test('roster searches beyond the first thousand rows and paginates matches', async ({ page }) => {
-  await mockSupabase(page, { as: 'sa' });
+test('students page through the server and search by roll number or email', async ({ page }) => {
   const rows = Array.from({ length: 1101 }, (_, i) => ({
+    kind: i % 2 ? 'roster' : 'member',
+    id: i % 2 ? null : `c0000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
     email: `99f90${String(i).padStart(5, '0')}@ds.study.iitm.ac.in`,
+    member_code: null,
     full_name: i === 1100 ? 'Search Target' : null,
+    preferred_name: null,
+    phone: null,
+    gender: null,
     region_id: 1,
-    added_at: '2026-10-09T00:00:00Z',
+    account_status: i % 2 ? 'not_signed_in' : 'active',
+    joined_at: '2026-10-09T00:00:00Z',
+    communities: [],
   }));
-  const requests = [];
-  await page.route('**/rest/v1/member_roster?*', async (route) => {
-    const request = route.request();
-    const url = new URL(request.url());
-    const headers = {
-      'access-control-allow-origin': '*',
-      'access-control-allow-headers': '*',
-      'access-control-allow-methods': 'GET,HEAD,OPTIONS',
-      'access-control-expose-headers': 'content-range',
-    };
-    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers });
-    if (request.method() === 'HEAD')
-      return route.fulfill({ status: 200, headers: { ...headers, 'content-range': '*/1101' } });
-    requests.push(url.searchParams);
-    const filter = url.searchParams.get('or');
-    const matched = filter
-      ? filter.includes('99f9001100') || filter.includes('Search Target')
-        ? [rows[1100]]
-        : []
-      : rows;
-    const offset = Number(url.searchParams.get('offset'));
-    const limit = Number(url.searchParams.get('limit'));
-    const result = matched.slice(offset, offset + limit);
-    return route.fulfill({
-      status: 200,
-      headers: {
-        ...headers,
-        'content-type': 'application/json',
-        'content-range': `${offset}-${offset + result.length - 1}/${matched.length}`,
-      },
-      body: JSON.stringify(result),
-    });
-  });
-  await page.goto('/#/admin?tab=roster');
+  // Stand-in for list_students: 50 a page, the query matched against the email.
+  const list_students = ({ p_query, p_offset }) => {
+    const matched = p_query ? rows.filter((r) => r.email.includes(p_query)) : rows;
+    return { total: matched.length, rows: matched.slice(p_offset, p_offset + 50) };
+  };
+  const calls = await mockSupabase(page, { as: 'sa', data: { list_students } });
+  const sent = () =>
+    calls.filter((c) => c.path === '/rest/v1/rpc/list_students').map((c) => JSON.parse(c.body));
+  await page.goto('/#/admin?tab=students');
   await expect(page.getByText(/Showing 50 of 1101 students/)).toBeVisible();
   await page.getByRole('button', { name: 'Show more (1051 left)' }).click();
   await expect(page.getByText(/Showing 100 of 1101 students/)).toBeVisible();
-  expect(requests.at(-1).get('offset')).toBe('50');
-  expect(requests.at(-1).get('order')).toBe('added_at.desc,email.asc');
+  expect(sent().at(-1)).toEqual({
+    p_query: null,
+    p_status: 'current',
+    p_region: null,
+    p_community: null,
+    p_offset: 50,
+  });
 
   const search = page.getByLabel('Search', { exact: true });
+  // Under three characters the server is not asked.
+  const before = sent().length;
+  await search.fill('99');
+  await expect(page.getByText('Type at least 3 characters to search.')).toBeVisible();
+  expect(sent()).toHaveLength(before);
   await search.fill('99f9001100');
-  await expect(page.getByText(/Showing 1 of 1 matching students/)).toBeVisible();
+  await expect(page.getByText(/Showing 1 of 1 student\./)).toBeVisible();
   await expect(page.getByText(rows[1100].email, { exact: true })).toBeVisible();
-  expect(requests.at(-1).get('or')).toBe(
-    '(email.ilike."%99f9001100%",full_name.ilike."%99f9001100%")'
-  );
-  expect(requests.at(-1).get('offset')).toBe('0');
-
-  await search.fill('Search Target');
-  await expect
-    .poll(() => requests.at(-1).get('or'))
-    .toBe('(email.ilike."%Search Target%",full_name.ilike."%Search Target%")');
-  await expect(page.getByText(/Showing 1 of 1 matching students/)).toBeVisible();
+  expect(sent().at(-1)).toMatchObject({ p_query: '99f9001100', p_offset: 0 });
   await search.fill('missing');
-  await expect(page.getByText(/No student matches that search/)).toBeVisible();
+  await expect(page.getByText('No student matches that search.')).toBeVisible();
   await search.fill('');
   await expect(page.getByText(/Showing 50 of 1101 students/)).toBeVisible();
 });
@@ -80,7 +63,7 @@ test('roster accepts an email without a name and maps a CSV', async ({ page }) =
         (args.p_rows || []).map((r) => ({ email: r.email, ok: true, category: 'processed' })),
     },
   });
-  await page.goto('/#/admin?tab=roster');
+  await page.goto('/#/admin?tab=students');
   await expect(page.getByText('Loading admin data...')).toHaveCount(0);
   await page.getByRole('button', { name: 'Add students' }).click();
   const dialog = page.getByRole('dialog', { name: 'Add students' });

@@ -56,6 +56,7 @@ export const REQUEST_LABEL = {
   position_change: 'Change position',
   community_record_update: 'Edit community record',
   community_record_deletion: 'Delete community record',
+  community_tag_removal: 'Remove from community',
 };
 
 export const POSITION_LABEL = { rc: 'Regional Coordinator', head: 'Head', co_head: 'Co-Head' };
@@ -127,20 +128,29 @@ export async function loadCounts() {
 
 // Students
 
+// The one Students list: signed-in students and roster students who have not signed in yet,
+// scoped by the database (Super Admin: all; RC: own region; Head/Co-Head: own community's tags).
+// Each row has kind 'member' or 'roster' and the community ids the caller may see.
+export async function listStudents({
+  query = '',
+  status = 'current',
+  regionId = null,
+  communityId = null,
+  page = 0,
+} = {}) {
+  return unwrap(
+    await supabase.rpc('list_students', {
+      p_query: query || null,
+      p_status: status,
+      p_region: regionId,
+      p_community: communityId,
+      p_offset: page * PAGE,
+    })
+  );
+}
+
 const MEMBER_COLS =
   'id, member_code, full_name, preferred_name, email, phone, gender, region_id, account_status, deleted_at, created_at, last_login_at';
-
-export async function listMembers({ regionId = null, status = 'current', page = 0 } = {}) {
-  let q = supabase
-    .from('members')
-    .select(MEMBER_COLS, { count: 'exact' })
-    .order('full_name')
-    .range(page * PAGE, page * PAGE + PAGE - 1);
-  if (regionId) q = q.eq('region_id', regionId);
-  if (status === 'current') q = q.neq('account_status', 'deleted');
-  else if (status) q = q.eq('account_status', status);
-  return unwrap(await q);
-}
 
 export async function searchMembers(query, includeDeleted = false) {
   return unwrap(
@@ -206,21 +216,6 @@ export const requestHardDelete = (memberId, reason) =>
 
 // Roster (students who have not signed in yet)
 
-export async function listRoster({ query = '', page = 0 } = {}) {
-  let q = supabase
-    .from('member_roster')
-    .select('email, full_name, phone, region_id, gender, added_by, added_at', { count: 'exact' })
-    .order('added_at', { ascending: false })
-    .order('email')
-    .range(page * PAGE, page * PAGE + PAGE - 1);
-  if (query.trim()) {
-    // Quote PostgREST filter values and search wildcard characters literally.
-    const pattern = JSON.stringify(`%${query.trim().replace(/[\\%_]/g, '\\$&')}%`);
-    q = q.or(`email.ilike.${pattern},full_name.ilike.${pattern}`);
-  }
-  return unwrap(await q);
-}
-
 export const rosterAdd = (row) =>
   supabase
     .rpc('roster_add', {
@@ -236,13 +231,11 @@ export const rosterAddMany = (rows) =>
 export const rosterRemove = (email) =>
   supabase.rpc('roster_remove', { p_email: email }).then(unwrap);
 
-// Members-only communities: a Super Admin keeps the email list; that community's Head and
-// Co-Head can read it. Each entry carries the member when that email has signed in.
+// Community tags, by email. A Super Admin adds and removes them; approving a response on a join
+// form also adds one. A Head or Co-Head asks a Super Admin to remove one through Requests.
 
 export const COMMUNITY_ADD_MAX = 2000;
 
-export const listCommunityMembers = (communityId) =>
-  supabase.rpc('list_community_members', { p_community_id: communityId }).then(unwrap).then(asList);
 export const addCommunityMembers = (communityId, emails) =>
   supabase
     .rpc('add_community_members', { p_community_id: communityId, p_emails: emails })
@@ -250,6 +243,14 @@ export const addCommunityMembers = (communityId, emails) =>
 export const removeCommunityMember = (communityId, email) =>
   supabase
     .rpc('remove_community_member', { p_community_id: communityId, p_email: email })
+    .then(unwrap);
+export const requestTagRemoval = (communityId, email, reason) =>
+  supabase
+    .rpc('request_community_tag_removal', {
+      p_community_id: communityId,
+      p_email: email,
+      p_reason: reason,
+    })
     .then(unwrap);
 
 // Every distinct address in pasted text: one per line, or separated by commas, tabs or spaces.

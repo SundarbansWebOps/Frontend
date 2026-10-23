@@ -114,6 +114,8 @@ const LOUNGE_DEFAULTS = {
   list_my_certificates: [],
   list_public_past_events: [],
   get_available_cohorts: { current: '26F2', next: '26F3', options: ['26F1', '26F2'] },
+  // The admin Students tab, empty unless a test supplies students.
+  list_students: { total: 0, rows: [] },
 };
 
 // `profile` overrides members columns (e.g. tour_seen_at: null for a first-time member). The
