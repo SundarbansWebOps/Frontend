@@ -216,6 +216,7 @@ test('the Girls Head reads the list without add or remove controls', async ({ pa
       'This event belongs to the Girls community. Only Girls Community members see it.'
     )
   ).toBeVisible();
+  await expect(page.getByText('Public: also list it on the public Events page')).toHaveCount(0);
 
   // Girls notices reach only the list, so its Head publishes them too.
   await page.getByRole('dialog').getByRole('button', { name: 'Close' }).click();

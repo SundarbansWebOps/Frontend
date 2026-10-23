@@ -169,7 +169,7 @@
           <p class="adm-kicker">Audience</p>
           <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
         </div>
-        <div v-if="!form.archive" class="adm-field wide">
+        <div v-if="!form.archive && !membersOnlyEvent" class="adm-field wide">
           <label class="adm-check">
             <input v-model="form.is_public" type="checkbox" />
             <span>Public: also list it on the public Events page</span>
@@ -696,14 +696,21 @@ function onScope() {
 function payload() {
   const rcHouse = isRc.value && !isSuperAdmin.value && form.value.scope === 'house';
   const scope = isSuperAdmin.value || rcHouse ? form.value : { ...form.value, ...defaultScope() };
+  const communityId = scope.scope === 'community' ? scope.community_id : null;
   return {
     ...scope,
     starts_at: fromLocal(form.value.starts),
     ends_at: fromLocal(form.value.ends),
     region_id: scope.scope === 'region' ? scope.region_id : null,
-    community_id: scope.scope === 'community' ? scope.community_id : null,
+    community_id: communityId,
+    is_public: !!scope.is_public && !membersOnlyAudience(props.lookups, communityId),
   };
 }
+
+// A members-only community's events never go on the public Events page (the database rejects it).
+const membersOnlyEvent = computed(
+  () => !!membersOnlyAudience(props.lookups, payload().community_id)
+);
 
 function friendly(e) {
   const m = e?.message ?? '';
