@@ -87,9 +87,9 @@ const items = computed(() =>
       action: 'navigate',
       id: t.id,
     })),
-    ...['events', 'forms', ...(props.membersVisible ? ['notices', 'roster'] : [])].map((id) => ({
+    ...['events', 'forms', ...(props.membersVisible ? ['notices', 'students'] : [])].map((id) => ({
       key: `create-${id}`,
-      label: id === 'roster' ? 'Add students' : `New ${id.slice(0, -1)}`,
+      label: id === 'students' ? 'Add students' : `New ${id.slice(0, -1)}`,
       group: 'Create',
       action: 'create',
       id,

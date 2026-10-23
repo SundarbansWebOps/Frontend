@@ -5,7 +5,7 @@ import { callTo, mockSupabase } from './supabase-mock.js';
 
 test('roster import blocks unrecognized region labels until corrected', async ({ page }) => {
   await mockSupabase(page, { as: 'sa' });
-  await page.goto('/#/admin?tab=roster');
+  await page.goto('/#/admin?tab=students');
   await expect(page.getByText('Loading admin data...')).toHaveCount(0);
   await page.getByRole('button', { name: 'Add students' }).click();
   const dialog = page.getByRole('dialog', { name: 'Add students' });

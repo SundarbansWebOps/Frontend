@@ -6,7 +6,7 @@
       :avatar-url="avatarUrl"
       :avatar-failed="avatarFailed"
       :profile-open="profileOpen"
-      @add-students="create('roster')"
+      @add-students="create('students')"
       @create="createOpen = true"
       @profile="profileOpen = true"
       @toggle-theme="toggleTheme"
@@ -98,7 +98,7 @@
         ><div class="menu-list">
           <button @click="create('events')"><LineIcon name="cal" />New event</button
           ><button @click="create('forms')"><LineIcon name="book" />New form</button
-          ><button v-if="membersVisible" @click="create('notices')">
+          ><button v-if="noticesVisible" @click="create('notices')">
             <LineIcon name="chat" />New notice
           </button>
         </div></AdminDialog
@@ -180,7 +180,6 @@ import AdminConfirmHost from '../components/admin/AdminConfirmHost.vue';
 import AdminCommands from '../components/admin/AdminCommands.vue';
 import AdminOverview from '../components/admin/AdminOverview.vue';
 import AdminStudents from '../components/admin/AdminStudents.vue';
-import AdminRoster from '../components/admin/AdminRoster.vue';
 import AdminEvents from '../components/admin/AdminEvents.vue';
 import AdminForms from '../components/admin/AdminForms.vue';
 import AdminNotices from '../components/admin/AdminNotices.vue';
@@ -195,6 +194,7 @@ import {
   avatarFailed,
   avatarUrl,
   errorText,
+  isHead,
   isRc,
   isSuperAdmin,
   signOut,
@@ -203,7 +203,10 @@ import { loadAdminOverview, loadLookups } from '../lib/admin.js';
 import { theme, toggleTheme } from '../lib/theme.js';
 const route = useRoute();
 const router = useRouter();
+// Super Admins and RCs manage student records; a Head or Co-Head also sees Students (their
+// community's tagged students) and Requests (to ask for a tag removal).
 const membersVisible = computed(() => isSuperAdmin.value || isRc.value);
+const studentsVisible = computed(() => membersVisible.value || isHead.value);
 const profileName = computed(() => {
   const metadata = auth.session?.user?.user_metadata ?? {};
   return (
@@ -221,7 +224,7 @@ const allTabs = [
     label: 'Requests',
     icon: 'door',
     component: AdminRequests,
-    members: true,
+    students: true,
     description:
       'Review student corrections and admin changes. Your own changes need a different Super Admin.',
   },
@@ -230,16 +233,9 @@ const allTabs = [
     label: 'Students',
     icon: 'people',
     component: AdminStudents,
-    members: true,
-    description: 'Find a student or request a change to their record.',
-  },
-  {
-    id: 'roster',
-    label: 'Roster',
-    icon: 'book',
-    component: AdminRoster,
-    members: true,
-    description: 'Approved students waiting for their first Google sign-in.',
+    students: true,
+    description:
+      'Everyone in the house, signed in or not yet, with their communities. Open a student to see or change their record.',
   },
   {
     id: 'events',
@@ -260,7 +256,7 @@ const allTabs = [
     label: 'Notices',
     icon: 'chat',
     component: AdminNotices,
-    members: true,
+    notices: true,
     description: 'Publish notices for your audience.',
   },
   {
@@ -288,8 +284,29 @@ const allTabs = [
     description: 'Every admin action: who did it, to whom, and what changed.',
   },
 ];
+const ownCommunity = computed(() =>
+  lookups.value?.communities.find((c) => c.id === auth.dashboard?.community_id)
+);
+const membersOnlyHead = computed(() => isHead.value && !!ownCommunity.value?.members_only);
+// Other community heads publish only events and forms; a members-only community's notices reach
+// just its own list, so its Head/Co-Head may publish them too.
+const noticesVisible = computed(() => membersVisible.value || membersOnlyHead.value);
 const tabs = computed(() =>
-  allTabs.filter((t) => (!t.members || membersVisible.value) && (!t.sa || isSuperAdmin.value))
+  allTabs
+    .filter(
+      (t) =>
+        (!t.students || studentsVisible.value) &&
+        (!t.notices || noticesVisible.value) &&
+        (!t.sa || isSuperAdmin.value)
+    )
+    .map((t) =>
+      t.id === 'students' && !membersVisible.value
+        ? {
+            ...t,
+            description: `Students in ${ownCommunity.value?.name ?? 'your'} Community. Approving a response on its join form adds a student; a Super Admin removes one.`,
+          }
+        : t
+    )
 );
 const tab = computed(() =>
   tabs.value.some((t) => t.id === route.query.tab) ? route.query.tab : 'overview'
@@ -299,7 +316,7 @@ const phoneTabs = computed(() =>
   tabs.value.filter((t) =>
     [
       'overview',
-      ...(membersVisible.value ? ['requests', 'students'] : ['events', 'forms']),
+      ...(membersVisible.value ? ['requests', 'students'] : ['students', 'events', 'forms']),
     ].includes(t.id)
   )
 );

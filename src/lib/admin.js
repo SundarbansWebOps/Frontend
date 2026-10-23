@@ -56,6 +56,7 @@ export const REQUEST_LABEL = {
   position_change: 'Change position',
   community_record_update: 'Edit community record',
   community_record_deletion: 'Delete community record',
+  community_tag_removal: 'Remove from community',
 };
 
 export const POSITION_LABEL = { rc: 'Regional Coordinator', head: 'Head', co_head: 'Co-Head' };
@@ -92,9 +93,16 @@ export function fieldKeyFromLabel(label, used = []) {
 export async function loadLookups() {
   const [regions, communities] = await Promise.all([
     supabase.from('regions').select('id, code, name').order('code'),
-    supabase.from('communities').select('id, code, name').order('id'),
+    supabase.from('communities').select('id, code, name, members_only').order('id'),
   ]);
   return { regions: unwrap(regions), communities: unwrap(communities) };
+}
+
+// The audience line for an item a members-only community owns, or null for an ordinary
+// community (whose items reach every matching house member). The database enforces it.
+export function membersOnlyAudience(lookups, communityId) {
+  const community = lookups?.communities?.find((c) => c.id === communityId);
+  return community?.members_only ? `Only ${community.name} Community members` : null;
 }
 
 // Overview counts (each one already scoped by the database).
@@ -120,20 +128,29 @@ export async function loadCounts() {
 
 // Students
 
+// The one Students list: signed-in students and roster students who have not signed in yet,
+// scoped by the database (Super Admin: all; RC: own region; Head/Co-Head: own community's tags).
+// Each row has kind 'member' or 'roster' and the community ids the caller may see.
+export async function listStudents({
+  query = '',
+  status = 'current',
+  regionId = null,
+  communityId = null,
+  page = 0,
+} = {}) {
+  return unwrap(
+    await supabase.rpc('list_students', {
+      p_query: query || null,
+      p_status: status,
+      p_region: regionId,
+      p_community: communityId,
+      p_offset: page * PAGE,
+    })
+  );
+}
+
 const MEMBER_COLS =
   'id, member_code, full_name, preferred_name, email, phone, gender, region_id, account_status, deleted_at, created_at, last_login_at';
-
-export async function listMembers({ regionId = null, status = 'current', page = 0 } = {}) {
-  let q = supabase
-    .from('members')
-    .select(MEMBER_COLS, { count: 'exact' })
-    .order('full_name')
-    .range(page * PAGE, page * PAGE + PAGE - 1);
-  if (regionId) q = q.eq('region_id', regionId);
-  if (status === 'current') q = q.neq('account_status', 'deleted');
-  else if (status) q = q.eq('account_status', status);
-  return unwrap(await q);
-}
 
 export async function searchMembers(query, includeDeleted = false) {
   return unwrap(
@@ -199,21 +216,6 @@ export const requestHardDelete = (memberId, reason) =>
 
 // Roster (students who have not signed in yet)
 
-export async function listRoster({ query = '', page = 0 } = {}) {
-  let q = supabase
-    .from('member_roster')
-    .select('email, full_name, phone, region_id, gender, added_by, added_at', { count: 'exact' })
-    .order('added_at', { ascending: false })
-    .order('email')
-    .range(page * PAGE, page * PAGE + PAGE - 1);
-  if (query.trim()) {
-    // Quote PostgREST filter values and search wildcard characters literally.
-    const pattern = JSON.stringify(`%${query.trim().replace(/[\\%_]/g, '\\$&')}%`);
-    q = q.or(`email.ilike.${pattern},full_name.ilike.${pattern}`);
-  }
-  return unwrap(await q);
-}
-
 export const rosterAdd = (row) =>
   supabase
     .rpc('roster_add', {
@@ -228,6 +230,58 @@ export const rosterAddMany = (rows) =>
   supabase.rpc('roster_add_many', { p_rows: rows }).then(unwrap);
 export const rosterRemove = (email) =>
   supabase.rpc('roster_remove', { p_email: email }).then(unwrap);
+
+// Community tags, by email. A Super Admin adds and removes them; approving a response on a join
+// form also adds one. A Head or Co-Head asks a Super Admin to remove one through Requests.
+
+export const COMMUNITY_ADD_MAX = 2000;
+
+export const addCommunityMembers = (communityId, emails) =>
+  supabase
+    .rpc('add_community_members', { p_community_id: communityId, p_emails: emails })
+    .then(unwrap);
+export const removeCommunityMember = (communityId, email) =>
+  supabase
+    .rpc('remove_community_member', { p_community_id: communityId, p_email: email })
+    .then(unwrap);
+export const requestTagRemoval = (communityId, email, reason) =>
+  supabase
+    .rpc('request_community_tag_removal', {
+      p_community_id: communityId,
+      p_email: email,
+      p_reason: reason,
+    })
+    .then(unwrap);
+
+// Every distinct address in pasted text: one per line, or separated by commas, tabs or spaces.
+// Words without an @ (a header, a name copied beside the email) are left out; the server
+// reports anything else it cannot accept.
+export function emailsFromText(text) {
+  const seen = new Set();
+  for (const token of String(text ?? '').split(/[\s,;]+/)) {
+    const email = normalizeEmail(token.replace(/^[<"']+|[>"']+$/g, ''));
+    if (email.includes('@')) seen.add(email);
+  }
+  return [...seen];
+}
+
+// A CSV with an "Email Address" column (a Google Form export) or an "Email" column.
+export function emailsFromCsv(rows) {
+  const headers = (rows[0] ?? []).map((h) => h.trim().toLowerCase());
+  const i = ['email address', ...HEADER_ALIASES.email]
+    .map((name) => headers.indexOf(name))
+    .find((index) => index >= 0);
+  if (i === undefined) return { emails: [], error: 'The CSV needs an Email Address column.' };
+  return {
+    emails: emailsFromText(
+      rows
+        .slice(1)
+        .map((r) => r[i] ?? '')
+        .join('\n')
+    ),
+    error: '',
+  };
+}
 
 function regionIdFrom(value, regions) {
   if (!value) return null;

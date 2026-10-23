@@ -130,6 +130,9 @@
           <select v-model="form.community_id" class="adm-input">
             <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
           </select>
+          <small v-if="membersOnlyAudience(lookups, form.community_id)"
+            >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
+          >
         </label>
         <label v-else-if="isRc && !form.published_at" class="adm-field">
           <span>Scope</span>
@@ -166,7 +169,7 @@
           <p class="adm-kicker">Audience</p>
           <AdminCohortSelect v-if="cohorts" v-model="form.audience_cohorts" :cohorts="cohorts" />
         </div>
-        <div v-if="!form.archive" class="adm-field wide">
+        <div v-if="!form.archive && !membersOnlyEvent" class="adm-field wide">
           <label class="adm-check">
             <input v-model="form.is_public" type="checkbox" />
             <span>Public: also list it on the public Events page</span>
@@ -480,6 +483,7 @@ import {
   listEventRegistrations,
   listAttendance,
   listEvents,
+  membersOnlyAudience,
   normalizeEmail,
   parseCsv,
   previewAttendance,
@@ -545,7 +549,8 @@ const lockedScope = computed(() => {
     return `This event belongs to ${name || 'your region'}.`;
   }
   const name = props.lookups.communities.find((c) => c.id === auth.dashboard?.community_id)?.name;
-  return `This event belongs to the ${name || 'your'} community.`;
+  const only = membersOnlyAudience(props.lookups, auth.dashboard?.community_id);
+  return `This event belongs to the ${name || 'your'} community.${only ? ` ${only} see it.` : ''}`;
 });
 
 const myRegionName = computed(
@@ -560,7 +565,7 @@ const posterPreview = (url) => img.thumb(url) ?? url;
 
 const scopeOf = (e) => {
   if (e.community_id)
-    return `${props.lookups.communities.find((c) => c.id === e.community_id)?.name ?? ''} community`;
+    return `${props.lookups.communities.find((c) => c.id === e.community_id)?.name ?? ''} community${membersOnlyAudience(props.lookups, e.community_id) ? ' · members only' : ''}`;
   if (e.region_id) return props.lookups.regions.find((r) => r.id === e.region_id)?.name ?? 'Region';
   return 'House-wide';
 };
@@ -691,14 +696,21 @@ function onScope() {
 function payload() {
   const rcHouse = isRc.value && !isSuperAdmin.value && form.value.scope === 'house';
   const scope = isSuperAdmin.value || rcHouse ? form.value : { ...form.value, ...defaultScope() };
+  const communityId = scope.scope === 'community' ? scope.community_id : null;
   return {
     ...scope,
     starts_at: fromLocal(form.value.starts),
     ends_at: fromLocal(form.value.ends),
     region_id: scope.scope === 'region' ? scope.region_id : null,
-    community_id: scope.scope === 'community' ? scope.community_id : null,
+    community_id: communityId,
+    is_public: !!scope.is_public && !membersOnlyAudience(props.lookups, communityId),
   };
 }
+
+// A members-only community's events never go on the public Events page (the database rejects it).
+const membersOnlyEvent = computed(
+  () => !!membersOnlyAudience(props.lookups, payload().community_id)
+);
 
 function friendly(e) {
   const m = e?.message ?? '';

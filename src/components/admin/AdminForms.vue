@@ -25,6 +25,7 @@
             </span>
             <span v-else class="adm-badge">closed</span>
             <span v-if="f.event_id" class="adm-badge">event registration</span>
+            <span v-if="f.joins_community" class="adm-badge">join form</span>
           </div>
         </div>
         <div class="adm-chips">
@@ -117,6 +118,13 @@
                   {{ c.name }}
                 </option>
               </select>
+              <small v-if="membersOnlyAudience(lookups, form.community_id)"
+                >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
+              >
+            </label>
+            <label v-if="form.scope === 'community'" class="adm-check wide">
+              <input v-model="form.joins_community" type="checkbox" />
+              <span>Joins the community: approving a response adds the student to it</span>
             </label>
             <label v-if="form.scope === 'event'" class="adm-field">
               <span>Event</span>
@@ -508,6 +516,7 @@ import {
   getAvailableCohorts,
   listEvents,
   listForms,
+  membersOnlyAudience,
   reviewFormResponse,
   saveForm,
   sortResponses,
@@ -615,7 +624,7 @@ const eventStatus = (event) => {
 const scopeOf = (f) => {
   if (f.event_id) return 'Event form';
   if (f.community_id)
-    return `${props.lookups.communities.find((c) => c.id === f.community_id)?.name ?? ''} community`;
+    return `${props.lookups.communities.find((c) => c.id === f.community_id)?.name ?? ''} community${membersOnlyAudience(props.lookups, f.community_id) ? ' · members only' : ''}`;
   if (f.region_id) return props.lookups.regions.find((r) => r.id === f.region_id)?.name ?? 'Region';
   return 'House-wide';
 };
@@ -726,6 +735,7 @@ function edit(f) {
       group_label: f.group_label || '',
       group_purpose: f.group_purpose || '',
       is_open: f.is_open !== false,
+      joins_community: !!f.joins_community,
       opens: toLocal(f.opens_at),
       closes: toLocal(f.closes_at),
       scope: f.event_id ? 'event' : f.community_id ? 'community' : f.region_id ? 'region' : 'house',
@@ -741,6 +751,7 @@ function edit(f) {
       invite_url: '',
       remove_invite: false,
       is_open: true,
+      joins_community: false,
       audience_cohorts: [],
       opens: '',
       closes: '',
@@ -834,6 +845,7 @@ async function save(mode) {
       region_id: form.value.scope === 'region' ? form.value.region_id : null,
       community_id: form.value.scope === 'community' ? form.value.community_id : null,
       event_id: form.value.scope === 'event' ? form.value.event_id : null,
+      joins_community: form.value.scope === 'community' && !!form.value.joins_community,
       is_open: !!form.value.is_open,
       published_at,
       opens_at: fromLocal(form.value.opens),

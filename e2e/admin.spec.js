@@ -72,11 +72,12 @@ test('a Regional Coordinator opens the admin lounge from the Lounge', async ({ p
   await expect(account.getByText('Patna', { exact: true })).toBeVisible();
   await account.getByRole('button', { name: 'Close' }).click();
   const nav = adminSections(page);
-  for (const label of ['Overview', 'Requests', 'Students', 'Roster', 'Events', 'Forms', 'Notices'])
+  for (const label of ['Overview', 'Requests', 'Students', 'Events', 'Forms', 'Notices'])
     await expect(nav.getByRole('button', { name: new RegExp(`^${label}`) })).toBeVisible();
-  await expect(nav.getByRole('button', { name: 'Positions' })).toHaveCount(0);
-  await nav.getByRole('button', { name: 'Roster' }).click();
-  await expect(page.getByRole('heading', { name: 'Roster' })).toBeVisible();
+  for (const label of ['Positions', 'Roster'])
+    await expect(nav.getByRole('button', { name: label })).toHaveCount(0);
+  await nav.getByRole('button', { name: 'Students' }).click();
+  await expect(page.getByRole('heading', { name: 'Students', level: 1 })).toBeVisible();
   await expect(page.getByText('Loading admin data...')).toHaveCount(0);
   await page.getByRole('button', { name: 'Add students' }).click();
   const dialog = page.getByRole('dialog', { name: 'Add students' });
@@ -146,7 +147,6 @@ test('a Super Admin approves another admin’s request', async ({ page }) => {
     'Overview',
     'Requests',
     'Students',
-    'Roster',
     'Events',
     'Forms',
     'Notices',

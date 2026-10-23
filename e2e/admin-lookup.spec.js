@@ -70,13 +70,15 @@ const lookup = (args) =>
     '21f1000011@ds.study.iitm.ac.in': PENDING,
   })[args.p_email] ?? NOT_FOUND;
 
-test('a head sees the Find email tab and nothing else from the student desk', async ({ page }) => {
+test('a head sees Find email and their own students, not the rest of the desk', async ({
+  page,
+}) => {
   await mockSupabase(page, { as: 'head', data: { admin_lookup_email: lookup } });
   await page.goto('/#/admin');
   const nav = adminSections(page);
-  for (const label of ['Overview', 'Events', 'Forms', 'Find email'])
+  for (const label of ['Overview', 'Requests', 'Students', 'Events', 'Forms', 'Find email'])
     await expect(nav.getByRole('button', { name: new RegExp(`^${label}`) })).toBeVisible();
-  for (const label of ['Students', 'Roster', 'Requests', 'Positions'])
+  for (const label of ['Roster', 'Positions', 'Activity'])
     await expect(nav.getByRole('button', { name: new RegExp(`^${label}`) })).toHaveCount(0);
   await nav.getByRole('button', { name: 'Find email' }).click();
   await expect(page.getByRole('heading', { name: 'Find email' })).toBeVisible();
