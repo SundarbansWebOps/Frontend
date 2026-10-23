@@ -43,43 +43,37 @@ set local request.jwt.claims = '{"sub":"b6100000-0000-4000-8000-000000000001","r
 select is(public.add_community_members((select id from public.communities where code = 'girls'),
   array['  99F9610005@DS.study.iitm.ac.in ', '99f9610005@ds.study.iitm.ac.in', 'not-an-email', '', '   ',
         '99f9610050@ds.study.iitm.ac.in', 'outsider.person@ds.study.iitm.ac.in']),
-  '{"added":3,"already":0,"invalid":["not-an-email"],"not_in_house":["outsider.person@ds.study.iitm.ac.in"]}'::jsonb,
-  'Super Admin adds: trims, lowercases, dedupes, reports invalid and not-in-house');
+  '{"added":2,"already":0,"invalid":["not-an-email"],"not_in_house":["outsider.person@ds.study.iitm.ac.in"]}'::jsonb,
+  'Super Admin adds: trims, lowercases, dedupes, skips invalid and not-in-house');
 select is(public.add_community_members((select id from public.communities where code = 'girls'),
   array['99f9610005@ds.study.iitm.ac.in', 'outsider.person@ds.study.iitm.ac.in']),
-  '{"added":0,"already":2,"invalid":[],"not_in_house":[]}'::jsonb, 'adding again counts already-listed emails');
-select throws_ok($$select public.add_community_members((select id from public.communities where code = 'technical'), array['99f9610006@ds.study.iitm.ac.in'])$$,
-  '22023', null, 'a house-wide community has no list');
+  '{"added":0,"already":1,"invalid":[],"not_in_house":["outsider.person@ds.study.iitm.ac.in"]}'::jsonb, 'adding again counts already-listed emails');
 select throws_ok($$select public.add_community_members((select id from public.communities where code = 'girls'), array[]::text[])$$,
   '22023', null, 'an empty batch is rejected');
 select throws_ok($$select public.add_community_members((select id from public.communities where code = 'girls'),
   (select array_agg('x' || g || '@ds.study.iitm.ac.in') from generate_series(1, 2001) g))$$,
   '22023', null, 'more than 2000 emails is rejected');
-select lives_ok($$select public.remove_community_member((select id from public.communities where code = 'girls'), ' Outsider.Person@ds.study.iitm.ac.in')$$,
+select is((select r->>'kind' from jsonb_array_elements(public.list_students(p_community => (select id from public.communities where code = 'girls'))->'rows') r where r->>'email' = '99f9610050@ds.study.iitm.ac.in'), 'roster',
+  'the pending student shows in the Girls students list');
+select lives_ok($$select public.remove_community_member((select id from public.communities where code = 'girls'), ' 99F9610050@ds.study.iitm.ac.in')$$,
   'Super Admin removes an email');
-select throws_ok($$select public.remove_community_member((select id from public.communities where code = 'girls'), 'outsider.person@ds.study.iitm.ac.in')$$,
+select throws_ok($$select public.remove_community_member((select id from public.communities where code = 'girls'), '99f9610050@ds.study.iitm.ac.in')$$,
   'P0002', null, 'removing an email that is not listed is not-found');
 select throws_ok($$select public.remove_community_member((select id from public.communities where code = 'girls'), null)$$,
   '22023', null, 'removing needs an email');
-select is((select jsonb_agg(x->>'email' order by ord) from jsonb_array_elements(public.list_community_members((select id from public.communities where code = 'girls'))) with ordinality t(x, ord)),
-  '["99f9610005@ds.study.iitm.ac.in","99f9610050@ds.study.iitm.ac.in"]'::jsonb, 'Super Admin lists emails ordered by email');
-select is((select x->'member'->>'member_code' from jsonb_array_elements(public.list_community_members((select id from public.communities where code = 'girls'))) x where x->>'email' = '99f9610005@ds.study.iitm.ac.in'),
-  '99f9610005', 'signed-in list member carries basic member data');
-select is((select x - 'added_at' from jsonb_array_elements(public.list_community_members((select id from public.communities where code = 'girls'))) x where x->>'email' = '99f9610050@ds.study.iitm.ac.in'),
-  '{"email":"99f9610050@ds.study.iitm.ac.in","member":null,"on_roster":true}'::jsonb, 'pending student: no member, on roster');
 reset role;
 
-select is((select count(*)::int from public.community_members where community_id = (select id from public.communities where code = 'girls')), 2, 'two emails stored');
+select is((select count(*)::int from public.community_members where community_id = (select id from public.communities where code = 'girls')), 1, 'one email stored');
 select is((select count(*)::int from public.audit_log where action = 'community_member.add' and actor_id = 'b6100000-0000-4000-8000-000000000001'), 2, 'each add batch writes one audit row');
 select is((select new_values from public.audit_log where action = 'community_member.add' and actor_id = 'b6100000-0000-4000-8000-000000000001' order by id limit 1) - 'community_id',
-  '{"added":3,"already":0,"invalid":1,"not_in_house":1}'::jsonb, 'add audit carries counts only, no emails');
+  '{"added":2,"already":0,"invalid":1,"not_in_house":1}'::jsonb, 'add audit carries counts only, no emails');
 select is((select count(*)::int from public.audit_log where action = 'community_member.remove' and actor_id = 'b6100000-0000-4000-8000-000000000001'), 1, 'remove is audited');
 
 -- ── Girls Head reads, never writes ──────────────────────────────────────────
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"b6100000-0000-4000-8000-000000000002","role":"authenticated"}';
-select is(jsonb_array_length(public.list_community_members((select id from public.communities where code = 'girls'))), 2, 'Girls Head lists their community');
-select is((select count(*)::int from public.community_members), 2, 'Girls Head reads the list table');
+select is((public.list_students(p_community => (select id from public.communities where code = 'girls'))->>'total')::int, 1, 'Girls Head lists their community');
+select is((select count(*)::int from public.community_members), 1, 'Girls Head reads the list table');
 select throws_ok($$select public.add_community_members((select id from public.communities where code = 'girls'), array['99f9610006@ds.study.iitm.ac.in'])$$,
   '42501', null, 'Girls Head cannot add');
 select throws_ok($$select public.remove_community_member((select id from public.communities where code = 'girls'), '99f9610005@ds.study.iitm.ac.in')$$,
@@ -92,21 +86,21 @@ reset role;
 -- ── Everyone else reads nothing ─────────────────────────────────────────────
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"b6100000-0000-4000-8000-000000000003","role":"authenticated"}';
-select throws_ok($$select public.list_community_members((select id from public.communities where code = 'girls'))$$, '42501', null, 'Technical Head cannot list Girls');
+select throws_ok($$select public.list_students(p_community => (select id from public.communities where code = 'girls'))$$, '42501', null, 'Technical Head cannot list Girls');
 select is_empty($$select 1 from public.community_members$$, 'Technical Head reads no list rows');
 reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"b6100000-0000-4000-8000-000000000004","role":"authenticated"}';
-select throws_ok($$select public.list_community_members((select id from public.communities where code = 'girls'))$$, '42501', null, 'RC cannot list Girls');
+select throws_ok($$select public.list_students(p_community => (select id from public.communities where code = 'girls'))$$, '42501', null, 'RC cannot list Girls');
 select is_empty($$select 1 from public.community_members$$, 'RC reads no list rows');
 reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"b6100000-0000-4000-8000-000000000005","role":"authenticated"}';
-select throws_ok($$select public.list_community_members((select id from public.communities where code = 'girls'))$$, '42501', null, 'a listed member cannot list');
+select throws_ok($$select public.list_students(p_community => (select id from public.communities where code = 'girls'))$$, '42501', null, 'a listed member cannot list');
 select is_empty($$select 1 from public.community_members$$, 'a listed member reads no list rows');
 reset role;
 set local role anon;
-select throws_ok($$select public.list_community_members(1::smallint)$$, '42501', null, 'anon cannot call the list RPC');
+select throws_ok($$select public.list_students()$$, '42501', null, 'anon cannot call the list RPC');
 reset role;
 
 -- ── Content fixtures ────────────────────────────────────────────────────────

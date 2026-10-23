@@ -53,7 +53,7 @@ set local request.jwt.claims = '{"sub":"ad190000-0000-4000-8000-000000000005","r
 select is(public.admin_dashboard_summary()->'counts', 'null'::jsonb, 'Head receives no student counts');
 select is(jsonb_array_length(public.admin_dashboard_summary()->'regions'), 0, 'Head receives no region totals');
 select is(jsonb_array_length(public.admin_dashboard_summary()->'requests'), 0, 'Head receives no request identities');
-select throws_ok($$select public.admin_dashboard_requests()$$, '42501', 'Only a Regional Coordinator or Super Admin can read requests', 'Head cannot read the request desk');
+select is(jsonb_array_length(public.admin_dashboard_requests()->'rows'), 0, 'Head reads only their own requests');
 reset role;
 
 set local role authenticated;
