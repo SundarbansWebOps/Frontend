@@ -29,7 +29,8 @@
           <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
         </select>
       </label>
-      <label class="adm-field">
+      <!-- A Head or Co-Head sees only their own community's students, so there is nothing to filter. -->
+      <label v-if="isSuperAdmin || isRc" class="adm-field">
         <span>Community</span>
         <select v-model="communityId" class="adm-input" @change="reload">
           <option :value="null">Any community</option>

@@ -217,13 +217,12 @@ test('a Technical Head sees phone numbers and asks a Super Admin to remove a tag
   await expect(page.getByText('Students in Technical Community.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add students' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Add to a community' })).toHaveCount(0);
-  // Girls tags stay hidden from other communities' heads.
-  expect(await communityOptions(page)).toEqual([
-    'Any community',
-    'E-Sports',
-    'Technical',
-    'Cultural',
-  ]);
+  // A Head sees only their own community's students: no community filter.
+  await expect(page.getByRole('button', { name: 'Open Kavya' })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Community', exact: true })).toHaveCount(0);
+  expect(
+    JSON.parse((await callTo(calls, '/rest/v1/rpc/list_students')).body).p_community
+  ).toBeNull();
 
   await page.getByRole('button', { name: 'Open Kavya' }).click();
   const drawer = page.getByRole('dialog', { name: 'Kavya' });
@@ -249,7 +248,10 @@ test('the Girls Head sees Girls tags, publishes notices and Girls-only events', 
   await withCommunities(page);
   await page.goto('/#/admin?tab=students');
   await expect(page.getByText('Students in Girls Community.')).toBeVisible();
-  expect(await communityOptions(page)).toContain('Girls');
+  await expect(page.getByRole('combobox', { name: 'Community', exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole('row').filter({ hasText: 'Kavya' }).getByText('Girls', { exact: true })
+  ).toBeVisible();
 
   // The head's own event editor says who sees a Girls event.
   const nav = adminSections(page);
