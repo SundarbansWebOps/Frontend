@@ -45,14 +45,15 @@ select ok(exists(select 1 from jsonb_array_elements(public.list_lounge_events())
 reset role;
 
 -- ── Join forms ──────────────────────────────────────────────────────────────
+-- A Super Admin publishes them; their Head edits and reviews them from here on.
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c1200000-0000-4000-8000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"c1200000-0000-4000-8000-000000000001","role":"authenticated"}';
 select lives_ok($$select public.save_lounge_form(jsonb_build_object('id','c1200000-0000-4000-8000-0000000000f1','title','Join Technical',
   'community_id',(select id from public.communities where code = 'technical'),'published_at',now() - interval '1 minute','joins_community',true))$$,
-  'Technical Head saves a join form');
+  'Super Admin publishes a Technical join form');
 select lives_ok($$select public.save_lounge_form(jsonb_build_object('id','c1200000-0000-4000-8000-0000000000f2','title','Technical survey',
   'community_id',(select id from public.communities where code = 'technical'),'published_at',now() - interval '1 minute'))$$,
-  'Technical Head saves an ordinary form');
+  'Super Admin publishes an ordinary Technical form');
 reset role;
 select is((select joins_community from public.lounge_forms where id = 'c1200000-0000-4000-8000-0000000000f1'), true, 'the switch is stored');
 select is((select joins_community from public.lounge_forms where id = 'c1200000-0000-4000-8000-0000000000f2'), false, 'the switch defaults off');

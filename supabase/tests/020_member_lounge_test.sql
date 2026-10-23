@@ -149,7 +149,7 @@ set local role authenticated;
 set local request.jwt.claims='{"sub":"b9000000-0000-4000-8000-000000000007","role":"authenticated"}';
 select lives_ok($$update public.events set description='Technical organizers' where id=(select id from event_fx where k='community')$$,'Head edits own community event');
 select is_empty($$select * from public.events where id=(select id from event_fx where k='draftpast')$$,'community operator cannot read regional draft');
-select lives_ok($$select public.save_lounge_form(jsonb_build_object('id','f9000000-0000-4000-8000-000000000003','title','Community phone consent','community_id',(select id from public.communities where code='technical'),'published_at',now(),'fields','[{"key":"phone","label":"Phone","type":"phone"}]'::jsonb))$$,'Head manages own community application');
+select lives_ok($$select public.save_lounge_form(jsonb_build_object('id','f9000000-0000-4000-8000-000000000003','title','Community phone consent','community_id',(select id from public.communities where code='technical'),'fields','[{"key":"phone","label":"Phone","type":"phone"}]'::jsonb))$$,'Head manages own community application');
 select lives_ok($$select public.save_announcement(jsonb_build_object('title','Community notice','body','Technical announcement','community_id',(select id from public.communities where code='technical')))$$,'Head manages own community notice');
 select throws_ok($$select public.import_event_attendance((select id from event_fx where k='regional'),'[{"email":"26f3000005@ds.study.iitm.ac.in","duration_seconds":1200}]')$$,'42501',null,'Head cannot import regional attendance');
 select ok(private.manages_template_path('e9000000-0000-4000-8000-000000000003/test.png'),'Head may upload blank template for own community event');
@@ -157,6 +157,9 @@ select ok(not private.manages_template_path('e9000000-0000-4000-8000-00000000000
 select ok(not private.manages_template_path('invalid/test.png'),'storage path rejects invalid event ID');
 
 reset role;
+-- A Super Admin publishes Head forms (20261024120100); the fixture publishes it directly.
+set local request.jwt.claims='{}';
+update public.lounge_forms set published_at=now() where id='f9000000-0000-4000-8000-000000000003';
 set local role authenticated;
 set local request.jwt.claims='{"sub":"b9000000-0000-4000-8000-000000000005","role":"authenticated"}';
 select throws_ok($$select public.get_lounge_form_invite('f9000000-0000-4000-8000-000000000001')$$,'42501',null,'invite hidden before own response');

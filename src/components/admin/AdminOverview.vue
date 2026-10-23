@@ -279,7 +279,9 @@ const summary = computed(() => {
 const requestTarget = (request) =>
   request.type === 'event_publish'
     ? request.requested_change?.event_name || 'Event'
-    : nameOf(request.target || request.member || request.target_snapshot?.member);
+    : request.type === 'form_publish'
+      ? request.requested_change?.form_title || 'Form'
+      : nameOf(request.target || request.member || request.target_snapshot?.member);
 const isLive = (event) =>
   event &&
   new Date(event.starts_at).getTime() <= Date.now() &&

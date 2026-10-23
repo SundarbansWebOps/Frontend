@@ -27,6 +27,7 @@ export function requestConsequence(request) {
       position_change:
         'The position changes after approval. Admin access follows the new assignment.',
       event_publish: 'The event is published for its audience across the house.',
+      form_publish: 'The form is published and opens for its audience.',
       region:
         'The student moves to the selected region. Coordinator access follows the new region.',
       certificate: 'The new certificate name is used for future certificates.',
@@ -40,6 +41,8 @@ export function requestConsequence(request) {
 export function requestDiff(request, lookups) {
   if (request.type === 'event_publish')
     return [{ field: 'Publication', before: 'Draft', after: 'Published for the house' }];
+  if (request.type === 'form_publish')
+    return [{ field: 'Publication', before: 'Draft', after: 'Published' }];
   if (request.type === 'community_tag_removal')
     return [
       {
