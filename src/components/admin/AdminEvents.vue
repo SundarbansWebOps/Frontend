@@ -130,6 +130,9 @@
           <select v-model="form.community_id" class="adm-input">
             <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
           </select>
+          <small v-if="membersOnlyAudience(lookups, form.community_id)"
+            >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
+          >
         </label>
         <label v-else-if="isRc && !form.published_at" class="adm-field">
           <span>Scope</span>
@@ -480,6 +483,7 @@ import {
   listEventRegistrations,
   listAttendance,
   listEvents,
+  membersOnlyAudience,
   normalizeEmail,
   parseCsv,
   previewAttendance,
@@ -545,7 +549,8 @@ const lockedScope = computed(() => {
     return `This event belongs to ${name || 'your region'}.`;
   }
   const name = props.lookups.communities.find((c) => c.id === auth.dashboard?.community_id)?.name;
-  return `This event belongs to the ${name || 'your'} community.`;
+  const only = membersOnlyAudience(props.lookups, auth.dashboard?.community_id);
+  return `This event belongs to the ${name || 'your'} community.${only ? ` ${only} see it.` : ''}`;
 });
 
 const myRegionName = computed(
@@ -560,7 +565,7 @@ const posterPreview = (url) => img.thumb(url) ?? url;
 
 const scopeOf = (e) => {
   if (e.community_id)
-    return `${props.lookups.communities.find((c) => c.id === e.community_id)?.name ?? ''} community`;
+    return `${props.lookups.communities.find((c) => c.id === e.community_id)?.name ?? ''} community${membersOnlyAudience(props.lookups, e.community_id) ? ' · members only' : ''}`;
   if (e.region_id) return props.lookups.regions.find((r) => r.id === e.region_id)?.name ?? 'Region';
   return 'House-wide';
 };

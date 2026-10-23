@@ -92,9 +92,16 @@ export function fieldKeyFromLabel(label, used = []) {
 export async function loadLookups() {
   const [regions, communities] = await Promise.all([
     supabase.from('regions').select('id, code, name').order('code'),
-    supabase.from('communities').select('id, code, name').order('id'),
+    supabase.from('communities').select('id, code, name, members_only').order('id'),
   ]);
   return { regions: unwrap(regions), communities: unwrap(communities) };
+}
+
+// The audience line for an item a members-only community owns, or null for an ordinary
+// community (whose items reach every matching house member). The database enforces it.
+export function membersOnlyAudience(lookups, communityId) {
+  const community = lookups?.communities?.find((c) => c.id === communityId);
+  return community?.members_only ? `Only ${community.name} Community members` : null;
 }
 
 // Overview counts (each one already scoped by the database).
@@ -228,6 +235,52 @@ export const rosterAddMany = (rows) =>
   supabase.rpc('roster_add_many', { p_rows: rows }).then(unwrap);
 export const rosterRemove = (email) =>
   supabase.rpc('roster_remove', { p_email: email }).then(unwrap);
+
+// Members-only communities: a Super Admin keeps the email list; that community's Head and
+// Co-Head can read it. Each entry carries the member when that email has signed in.
+
+export const COMMUNITY_ADD_MAX = 2000;
+
+export const listCommunityMembers = (communityId) =>
+  supabase.rpc('list_community_members', { p_community_id: communityId }).then(unwrap).then(asList);
+export const addCommunityMembers = (communityId, emails) =>
+  supabase
+    .rpc('add_community_members', { p_community_id: communityId, p_emails: emails })
+    .then(unwrap);
+export const removeCommunityMember = (communityId, email) =>
+  supabase
+    .rpc('remove_community_member', { p_community_id: communityId, p_email: email })
+    .then(unwrap);
+
+// Every distinct address in pasted text: one per line, or separated by commas, tabs or spaces.
+// Words without an @ (a header, a name copied beside the email) are left out; the server
+// reports anything else it cannot accept.
+export function emailsFromText(text) {
+  const seen = new Set();
+  for (const token of String(text ?? '').split(/[\s,;]+/)) {
+    const email = normalizeEmail(token.replace(/^[<"']+|[>"']+$/g, ''));
+    if (email.includes('@')) seen.add(email);
+  }
+  return [...seen];
+}
+
+// A CSV with an "Email Address" column (a Google Form export) or an "Email" column.
+export function emailsFromCsv(rows) {
+  const headers = (rows[0] ?? []).map((h) => h.trim().toLowerCase());
+  const i = ['email address', ...HEADER_ALIASES.email]
+    .map((name) => headers.indexOf(name))
+    .find((index) => index >= 0);
+  if (i === undefined) return { emails: [], error: 'The CSV needs an Email Address column.' };
+  return {
+    emails: emailsFromText(
+      rows
+        .slice(1)
+        .map((r) => r[i] ?? '')
+        .join('\n')
+    ),
+    error: '',
+  };
+}
 
 function regionIdFrom(value, regions) {
   if (!value) return null;

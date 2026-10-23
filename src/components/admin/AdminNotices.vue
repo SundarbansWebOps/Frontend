@@ -84,6 +84,9 @@
           <select v-model="form.community_id" class="adm-input" :disabled="isHead">
             <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
           </select>
+          <small v-if="membersOnlyAudience(lookups, form.community_id)"
+            >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
+          >
         </label>
         <div class="wide">
           <p class="adm-kicker">Cohorts</p>
@@ -126,6 +129,7 @@ import {
   deleteNotice,
   getAvailableCohorts,
   listNoticesAdmin,
+  membersOnlyAudience,
   saveNotice,
   setNoticePublished,
 } from '../../lib/admin.js';
@@ -154,8 +158,10 @@ const dlg = ref(null);
 const regionOf = (id) => props.lookups.regions.find((r) => r.id === id)?.name ?? 'region';
 const communityOf = (id) => props.lookups.communities.find((c) => c.id === id)?.name ?? 'community';
 const scopeOf = (n) => {
-  if (n.community_id)
-    return `${communityOf(n.community_id)} publisher · all matching house members`;
+  if (n.community_id) {
+    const only = membersOnlyAudience(props.lookups, n.community_id);
+    return `${communityOf(n.community_id)} publisher · ${only || 'all matching house members'}`;
+  }
   if (n.region_id) return `${regionOf(n.region_id)} members`;
   return 'House-wide';
 };

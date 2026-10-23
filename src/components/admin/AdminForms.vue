@@ -117,6 +117,9 @@
                   {{ c.name }}
                 </option>
               </select>
+              <small v-if="membersOnlyAudience(lookups, form.community_id)"
+                >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
+              >
             </label>
             <label v-if="form.scope === 'event'" class="adm-field">
               <span>Event</span>
@@ -508,6 +511,7 @@ import {
   getAvailableCohorts,
   listEvents,
   listForms,
+  membersOnlyAudience,
   reviewFormResponse,
   saveForm,
   sortResponses,
@@ -615,7 +619,7 @@ const eventStatus = (event) => {
 const scopeOf = (f) => {
   if (f.event_id) return 'Event form';
   if (f.community_id)
-    return `${props.lookups.communities.find((c) => c.id === f.community_id)?.name ?? ''} community`;
+    return `${props.lookups.communities.find((c) => c.id === f.community_id)?.name ?? ''} community${membersOnlyAudience(props.lookups, f.community_id) ? ' · members only' : ''}`;
   if (f.region_id) return props.lookups.regions.find((r) => r.id === f.region_id)?.name ?? 'Region';
   return 'House-wide';
 };

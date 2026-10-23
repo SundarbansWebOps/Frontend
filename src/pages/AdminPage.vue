@@ -98,7 +98,7 @@
         ><div class="menu-list">
           <button @click="create('events')"><LineIcon name="cal" />New event</button
           ><button @click="create('forms')"><LineIcon name="book" />New form</button
-          ><button v-if="membersVisible" @click="create('notices')">
+          ><button v-if="noticesVisible" @click="create('notices')">
             <LineIcon name="chat" />New notice
           </button>
         </div></AdminDialog
@@ -188,6 +188,7 @@ import AdminRequests from '../components/admin/AdminRequests.vue';
 import AdminPositions from '../components/admin/AdminPositions.vue';
 import AdminAudit from '../components/admin/AdminAudit.vue';
 import AdminLookup from '../components/admin/AdminLookup.vue';
+import AdminCommunityMembers from '../components/admin/AdminCommunityMembers.vue';
 import '../components/admin/admin.css';
 import CREST from '../assets/crest.webp';
 import {
@@ -195,6 +196,7 @@ import {
   avatarFailed,
   avatarUrl,
   errorText,
+  isHead,
   isRc,
   isSuperAdmin,
   signOut,
@@ -260,8 +262,16 @@ const allTabs = [
     label: 'Notices',
     icon: 'chat',
     component: AdminNotices,
-    members: true,
+    notices: true,
     description: 'Publish notices for your audience.',
+  },
+  {
+    id: 'community',
+    label: 'Community',
+    icon: 'lock',
+    component: AdminCommunityMembers,
+    community: true,
+    description: 'Who belongs to each members-only community. Only Super Admins add or remove.',
   },
   {
     id: 'lookup',
@@ -288,8 +298,32 @@ const allTabs = [
     description: 'Every admin action: who did it, to whom, and what changed.',
   },
 ];
+// A Head or Co-Head of a members-only community reads its list; Super Admins manage every one.
+const ownCommunity = computed(() =>
+  lookups.value?.communities.find((c) => c.id === auth.dashboard?.community_id)
+);
+const membersOnlyHead = computed(() => isHead.value && !!ownCommunity.value?.members_only);
+// Other community heads publish only events and forms; a members-only community's notices reach
+// just its own list, so its Head/Co-Head may publish them too.
+const noticesVisible = computed(() => membersVisible.value || membersOnlyHead.value);
 const tabs = computed(() =>
-  allTabs.filter((t) => (!t.members || membersVisible.value) && (!t.sa || isSuperAdmin.value))
+  allTabs
+    .filter(
+      (t) =>
+        (!t.members || membersVisible.value) &&
+        (!t.notices || noticesVisible.value) &&
+        (!t.sa || isSuperAdmin.value) &&
+        (!t.community || isSuperAdmin.value || membersOnlyHead.value)
+    )
+    .map((t) =>
+      t.community && !isSuperAdmin.value
+        ? {
+            ...t,
+            label: `${ownCommunity.value.name} Community`,
+            description: `Who belongs to ${ownCommunity.value.name} Community. A Super Admin adds and removes members.`,
+          }
+        : t
+    )
 );
 const tab = computed(() =>
   tabs.value.some((t) => t.id === route.query.tab) ? route.query.tab : 'overview'
