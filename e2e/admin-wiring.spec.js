@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { test, expect } from '@playwright/test';
-import { adminSections, mockSupabase, PEOPLE, callTo } from './supabase-mock.js';
+import { adminSections, mockSupabase, PEOPLE, callTo, pick } from './supabase-mock.js';
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
@@ -87,7 +87,7 @@ test('roster accepts an email without a name and maps a CSV', async ({ page }) =
     buffer: Buffer.from('Student_Email,Allocated_Region\n21f1000100@ds.study.iitm.ac.in,Patna\n'),
   });
   await expect(dialog.getByText('1 row after de-duplicating this file.')).toBeVisible();
-  await expect(dialog.getByRole('combobox', { name: 'Email' })).toHaveValue(/0/);
+  await expect(dialog.getByRole('combobox', { name: 'Email' })).toHaveText('Student_Email');
   await dialog.getByRole('button', { name: /Import/ }).click();
   await expect(
     page.getByText('1 processed, 0 invalid. Existing identities are preserved.')
@@ -115,7 +115,7 @@ test('event editor saves a draft, publishes, and shows the Future badge on the n
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByRole('heading', { name: 'New event' })).toBeVisible();
   await dialog.getByLabel('Name').fill('House meetup');
-  await dialog.getByLabel('Year').selectOption('2027');
+  await pick(dialog, 'Year', '2027');
   await expect(dialog.getByText('Future', { exact: true })).toBeVisible();
   await dialog.getByRole('button', { name: /F1/ }).click();
   await dialog.getByRole('button', { name: 'Save draft' }).click();
@@ -145,7 +145,7 @@ test('form builder keeps field order, types, options and a post-submit invite', 
   await dialog.getByLabel('WhatsApp invite (optional)').fill('https://chat.whatsapp.com/AbC123xyz');
   await dialog.getByRole('button', { name: 'Add question' }).click();
   await dialog.getByLabel('Question', { exact: true }).fill('Which games');
-  await dialog.getByLabel('Type').selectOption('multiselect');
+  await pick(dialog, 'Answer type', 'Choose many');
   await dialog.getByLabel('Options (one per line)').fill('Valorant\nBGMI');
   await dialog.getByText('Allow “Other”').click();
   await dialog.getByRole('button', { name: 'Publish' }).click();

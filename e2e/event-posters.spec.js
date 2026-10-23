@@ -1,7 +1,7 @@
 // Event audience, posters and RC house-wide approval (spec 004). Supabase and Cloudinary are mocked.
 import { Buffer } from 'node:buffer';
 import { test, expect } from '@playwright/test';
-import { callTo, mockSupabase } from './supabase-mock.js';
+import { callTo, mockSupabase, pick } from './supabase-mock.js';
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
@@ -16,7 +16,7 @@ test('an RC asks a Super Admin to publish a house-wide event', async ({ page }) 
   await page.goto('/#/admin?tab=events');
   await page.getByRole('button', { name: 'New event' }).click();
   await page.getByLabel('Name', { exact: true }).fill('House fest');
-  await page.getByLabel('Scope').selectOption('house');
+  await pick(page, 'Scope', 'Whole house');
   await expect(page.getByText('A Super Admin approves house-wide events.')).toBeVisible();
   await page.getByLabel('Public: also list it on the public Events page').check();
   await page.getByRole('button', { name: 'Ask a Super Admin to publish' }).click();

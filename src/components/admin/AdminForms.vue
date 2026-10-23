@@ -100,20 +100,11 @@
           <div class="adm-form">
             <label class="adm-field">
               <span>Form kind</span>
-              <select v-model="form.form_kind" class="adm-input">
-                <option value="general">General form</option>
-                <option value="group">Group application</option>
-                <option value="recruitment">Recruitment</option>
-              </select>
+              <AdminSelect v-model="form.form_kind" :options="FORM_KINDS" />
             </label>
             <label class="adm-field">
               <span>Scope</span>
-              <select v-model="form.scope" class="adm-input" @change="onScope">
-                <option v-if="isSuperAdmin" value="house">Whole house</option>
-                <option v-if="isSuperAdmin || isRc" value="region">Region</option>
-                <option v-if="isSuperAdmin || isHead" value="community">Community</option>
-                <option value="event">Bound to an event</option>
-              </select>
+              <AdminSelect v-model="form.scope" :options="scopeOptions" @change="onScope" />
             </label>
             <label v-if="form.form_kind === 'group'" class="adm-field">
               <span>Group label</span>
@@ -128,17 +119,23 @@
             </label>
             <label v-if="form.scope === 'region'" class="adm-field">
               <span>Region</span>
-              <select v-model="form.region_id" class="adm-input" :disabled="isRc">
-                <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-              </select>
+              <AdminSelect
+                v-model="form.region_id"
+                :options="lookups.regions"
+                value-key="id"
+                label-key="name"
+                :disabled="isRc"
+              />
             </label>
             <label v-if="form.scope === 'community'" class="adm-field">
               <span>Community</span>
-              <select v-model="form.community_id" class="adm-input" :disabled="isHead">
-                <option v-for="c in lookups.communities" :key="c.id" :value="c.id">
-                  {{ c.name }}
-                </option>
-              </select>
+              <AdminSelect
+                v-model="form.community_id"
+                :options="lookups.communities"
+                value-key="id"
+                label-key="name"
+                :disabled="isHead"
+              />
               <small v-if="membersOnlyAudience(lookups, form.community_id)"
                 >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
               >
@@ -149,11 +146,7 @@
             </label>
             <label v-if="form.scope === 'event'" class="adm-field">
               <span>Event</span>
-              <select v-model="form.event_id" class="adm-input">
-                <option v-for="e in eventOptions" :key="e.id" :value="e.id">
-                  {{ e.name }} · {{ eventStatus(e) }}
-                </option>
-              </select>
+              <AdminSelect v-model="form.event_id" :options="eventSelectOptions" />
             </label>
           </div>
         </section>
@@ -252,11 +245,7 @@
                 </label>
                 <label class="adm-field">
                   <span>Answer type</span>
-                  <select v-model="field.type" class="adm-input">
-                    <option v-for="t in FORM_FIELD_TYPES" :key="t" :value="t">
-                      {{ TYPE_LABEL[t] ?? t }}
-                    </option>
-                  </select>
+                  <AdminSelect v-model="field.type" :options="TYPE_OPTIONS" />
                 </label>
                 <div class="checks">
                   <label class="adm-check">
@@ -287,12 +276,7 @@
                     </label>
                     <label class="adm-field">
                       <span>Prefill from profile</span>
-                      <select v-model="field.prefill" class="adm-input">
-                        <option :value="''">Nothing</option>
-                        <option v-for="p in PREFILL_KEYS" :key="p" :value="p">
-                          {{ PREFILL_LABEL[p] ?? p }}
-                        </option>
-                      </select>
+                      <AdminSelect v-model="field.prefill" :options="PREFILL_OPTIONS" />
                     </label>
                   </div>
                 </details>
@@ -374,10 +358,7 @@
         </div>
         <label class="sort">
           <span>Sort</span>
-          <select v-model="sortOrder" class="adm-input">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-          </select>
+          <AdminSelect v-model="sortOrder" :options="SORT_ORDERS" />
         </label>
       </div>
       <p v-if="respError" class="adm-msg err" role="alert">{{ respError }}</p>
@@ -521,6 +502,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref, useId } from 'vue';
 import AdminDialog from './AdminDialog.vue';
+import AdminSelect from './AdminSelect.vue';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
 import {
@@ -561,6 +543,20 @@ const TYPE_LABEL = {
   multiselect: 'Choose many',
 };
 const PREFILL_LABEL = { name: 'Preferred name', phone: 'Phone number', email: 'Email' };
+const TYPE_OPTIONS = FORM_FIELD_TYPES.map((t) => ({ value: t, label: TYPE_LABEL[t] ?? t }));
+const PREFILL_OPTIONS = [
+  { value: '', label: 'Nothing' },
+  ...PREFILL_KEYS.map((p) => ({ value: p, label: PREFILL_LABEL[p] ?? p })),
+];
+const FORM_KINDS = [
+  { value: 'general', label: 'General form' },
+  { value: 'group', label: 'Group application' },
+  { value: 'recruitment', label: 'Recruitment' },
+];
+const SORT_ORDERS = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'oldest', label: 'Oldest first' },
+];
 const editorId = useId();
 const rejectId = useId();
 const STATUS_FILTERS = [
@@ -573,6 +569,14 @@ const STATUS_TONE = { pending: '', approved: 'mari', rejected: 'verm' };
 
 const isHead = computed(
   () => auth.dashboard?.position === 'head' || auth.dashboard?.position === 'co_head'
+);
+const scopeOptions = computed(() =>
+  [
+    isSuperAdmin.value && { value: 'house', label: 'Whole house' },
+    (isSuperAdmin.value || isRc.value) && { value: 'region', label: 'Region' },
+    (isSuperAdmin.value || isHead.value) && { value: 'community', label: 'Community' },
+    { value: 'event', label: 'Bound to an event' },
+  ].filter(Boolean)
 );
 const forms = ref([]);
 const events = ref([]);
@@ -652,6 +656,9 @@ const eventStatus = (event) => {
   if (event.ends_at && new Date(event.ends_at) <= new Date()) return 'past';
   return 'upcoming';
 };
+const eventSelectOptions = computed(() =>
+  eventOptions.value.map((e) => ({ value: e.id, label: `${e.name} · ${eventStatus(e)}` }))
+);
 const scopeOf = (f) => {
   if (f.event_id) return 'Event form';
   if (f.community_id)
@@ -1225,8 +1232,8 @@ function downloadResponses() {
   font-size: 13px;
   font-weight: 600;
 }
-.sort .adm-input {
-  width: auto;
+.sort .adm-select {
+  min-width: 140px;
 }
 .serial {
   display: inline-block;

@@ -67,23 +67,27 @@
         </label>
         <label class="adm-field">
           <span>Scope</span>
-          <select v-model="form.scope" class="adm-input" @change="onScope">
-            <option v-if="isSuperAdmin" value="house">Whole house</option>
-            <option v-if="isSuperAdmin || isRc" value="region">Region</option>
-            <option v-if="isSuperAdmin || isHead" value="community">Community</option>
-          </select>
+          <AdminSelect v-model="form.scope" :options="scopeOptions" @change="onScope" />
         </label>
         <label v-if="form.scope === 'region'" class="adm-field">
           <span>Region</span>
-          <select v-model="form.region_id" class="adm-input" :disabled="isRc">
-            <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-          </select>
+          <AdminSelect
+            v-model="form.region_id"
+            :options="lookups.regions"
+            value-key="id"
+            label-key="name"
+            :disabled="isRc"
+          />
         </label>
         <label v-if="form.scope === 'community'" class="adm-field">
           <span>Community</span>
-          <select v-model="form.community_id" class="adm-input" :disabled="isHead">
-            <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
-          </select>
+          <AdminSelect
+            v-model="form.community_id"
+            :options="lookups.communities"
+            value-key="id"
+            label-key="name"
+            :disabled="isHead"
+          />
           <small v-if="membersOnlyAudience(lookups, form.community_id)"
             >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
           >
@@ -122,6 +126,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import AdminDialog from './AdminDialog.vue';
+import AdminSelect from './AdminSelect.vue';
 import { askConfirm } from '../../lib/admin-confirm.js';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
@@ -142,6 +147,13 @@ const emit = defineEmits(['changed']);
 
 const isHead = computed(
   () => auth.dashboard?.position === 'head' || auth.dashboard?.position === 'co_head'
+);
+const scopeOptions = computed(() =>
+  [
+    isSuperAdmin.value && { value: 'house', label: 'Whole house' },
+    (isSuperAdmin.value || isRc.value) && { value: 'region', label: 'Region' },
+    (isSuperAdmin.value || isHead.value) && { value: 'community', label: 'Community' },
+  ].filter(Boolean)
 );
 const rows = ref([]);
 const page = ref(0);

@@ -113,33 +113,32 @@
         </label>
         <label v-if="isSuperAdmin" class="adm-field">
           <span>Scope</span>
-          <select v-model="form.scope" class="adm-input" @change="onScope">
-            <option value="house">House (every region)</option>
-            <option value="region">A region</option>
-            <option value="community">A community</option>
-          </select>
+          <AdminSelect v-model="form.scope" :options="SA_SCOPES" @change="onScope" />
         </label>
         <label v-if="isSuperAdmin && form.scope === 'region'" class="adm-field">
           <span>Region</span>
-          <select v-model="form.region_id" class="adm-input">
-            <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-          </select>
+          <AdminSelect
+            v-model="form.region_id"
+            :options="lookups.regions"
+            value-key="id"
+            label-key="name"
+          />
         </label>
         <label v-if="isSuperAdmin && form.scope === 'community'" class="adm-field">
           <span>Community</span>
-          <select v-model="form.community_id" class="adm-input">
-            <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
-          </select>
+          <AdminSelect
+            v-model="form.community_id"
+            :options="lookups.communities"
+            value-key="id"
+            label-key="name"
+          />
           <small v-if="membersOnlyAudience(lookups, form.community_id)"
             >{{ membersOnlyAudience(lookups, form.community_id) }} see it.</small
           >
         </label>
         <label v-else-if="isRc && !form.published_at" class="adm-field">
           <span>Scope</span>
-          <select v-model="form.scope" class="adm-input">
-            <option value="region">My region ({{ myRegionName }})</option>
-            <option value="house">Whole house</option>
-          </select>
+          <AdminSelect v-model="form.scope" :options="rcScopes" />
           <small v-if="form.scope === 'house'">A Super Admin approves house-wide events.</small>
         </label>
         <p v-else-if="!isSuperAdmin" class="adm-note wide">{{ lockedScope }}</p>
@@ -236,14 +235,11 @@
         <p class="adm-kicker wide certs-h">Certificates (optional)</p>
         <label class="adm-field">
           <span>Attendance</span>
-          <select
+          <AdminSelect
             v-model="form.attendance_mode"
-            class="adm-input"
+            :options="ATTENDANCE_MODES"
             :disabled="!!form.certificates_released_at"
-          >
-            <option value="meet">Google Meet (≥20 minutes)</option>
-            <option value="reviewed">Reviewed list</option>
-          </select>
+          />
         </label>
         <label class="adm-field wide">
           <span>Certificate template URL</span>
@@ -369,10 +365,7 @@
         </div>
         <label class="adm-field">
           <span>Import behavior</span>
-          <select v-model="attendanceMode" class="adm-input">
-            <option value="merge">Merge; keep omitted rows</option>
-            <option value="replace">Replace one named source</option>
-          </select>
+          <AdminSelect v-model="attendanceMode" :options="IMPORT_MODES" />
         </label>
         <label class="adm-field">
           <span>Source name</span>
@@ -382,21 +375,11 @@
         <template v-if="attend.headers.length">
           <label class="adm-field">
             <span>Email column</span>
-            <select v-model.number="attend.mapping.email" class="adm-input">
-              <option :value="-1">Not in this file</option>
-              <option v-for="(h, i) in attend.headers" :key="`${h}-${i}`" :value="i">
-                {{ h }}
-              </option>
-            </select>
+            <AdminSelect v-model="attend.mapping.email" :options="columnOptions" />
           </label>
           <label v-if="ops.attendance_mode === 'meet'" class="adm-field">
             <span>Duration column</span>
-            <select v-model.number="attend.mapping.duration" class="adm-input">
-              <option :value="-1">Not in this file</option>
-              <option v-for="(h, i) in attend.headers" :key="`d-${h}-${i}`" :value="i">
-                {{ h }}
-              </option>
-            </select>
+            <AdminSelect v-model="attend.mapping.duration" :options="columnOptions" />
           </label>
         </template>
         <p v-if="preview" class="adm-note">
@@ -462,6 +445,7 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import LineIcon from '../site/LineIcon.vue';
 import AdminDialog from './AdminDialog.vue';
+import AdminSelect from './AdminSelect.vue';
 import { askConfirm } from '../../lib/admin-confirm.js';
 import AdminCohortSelect from './AdminCohortSelect.vue';
 import { auth, errorText, isRc, isSuperAdmin } from '../../lib/auth.js';
@@ -556,6 +540,28 @@ const lockedScope = computed(() => {
 const myRegionName = computed(
   () => props.lookups.regions.find((r) => r.id === auth.dashboard?.region_id)?.name ?? 'your region'
 );
+const SA_SCOPES = [
+  { value: 'house', label: 'House (every region)' },
+  { value: 'region', label: 'A region' },
+  { value: 'community', label: 'A community' },
+];
+const rcScopes = computed(() => [
+  { value: 'region', label: `My region (${myRegionName.value})` },
+  { value: 'house', label: 'Whole house' },
+]);
+const ATTENDANCE_MODES = [
+  { value: 'meet', label: 'Google Meet (≥20 minutes)' },
+  { value: 'reviewed', label: 'Reviewed list' },
+];
+const IMPORT_MODES = [
+  { value: 'merge', label: 'Merge; keep omitted rows' },
+  { value: 'replace', label: 'Replace one named source' },
+];
+// Which file column holds a field: -1 means the file has none.
+const columnOptions = computed(() => [
+  { value: -1, label: 'Not in this file' },
+  ...attend.headers.map((h, i) => ({ value: i, label: h })),
+]);
 // An RC publishing a house-wide event files a request instead.
 const needsApproval = computed(
   () =>

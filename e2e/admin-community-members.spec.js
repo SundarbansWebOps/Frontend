@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { test, expect } from '@playwright/test';
-import { adminSections, callTo, mockSupabase, PEOPLE } from './supabase-mock.js';
+import { adminSections, callTo, mockSupabase, PEOPLE, pick } from './supabase-mock.js';
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
@@ -97,10 +97,10 @@ async function withCommunities(page) {
 // The community filter's options, once the panel has rendered.
 async function communityOptions(page) {
   const select = page.getByRole('combobox', { name: 'Community', exact: true });
-  await expect(select).toBeVisible();
-  return select
-    .locator('option')
-    .evaluateAll((options) => options.map((o) => o.textContent.trim()));
+  await select.click();
+  const names = await page.getByRole('option').allTextContents();
+  await select.press('Escape');
+  return names.map((n) => n.trim());
 }
 
 test('a Super Admin tags many students at once from a paste and a CSV', async ({ page }) => {
@@ -112,7 +112,7 @@ test('a Super Admin tags many students at once from a paste and a CSV', async ({
 
   await page.getByRole('button', { name: 'Add to a community' }).click();
   const dialog = page.getByRole('dialog', { name: 'Add to a community' });
-  await dialog.getByLabel('Community').selectOption({ label: 'Girls' });
+  await pick(dialog, 'Community', 'Girls');
   // Duplicates and header words drop out client-side; the server reports the rest.
   await dialog
     .getByLabel('Emails')
@@ -138,7 +138,7 @@ test('a Super Admin tags many students at once from a paste and a CSV', async ({
   await expect(dialog.getByText('1 not valid')).toBeVisible();
 
   // CSV: the Email Address column is read; other columns are ignored.
-  await dialog.getByLabel('Community').selectOption({ label: 'Cultural' });
+  await pick(dialog, 'Community', 'Cultural');
   await dialog.getByRole('button', { name: 'Upload CSV' }).click();
   await dialog.getByLabel('Upload members CSV').setInputFiles({
     name: 'responses.csv',
@@ -186,7 +186,7 @@ test('a Super Admin tags and untags one roster student from the drawer', async (
   await expect(drawer.getByText('Not in any community.')).toBeVisible();
   await expect(drawer.getByText('This student has not signed in yet.')).toBeVisible();
 
-  await drawer.getByLabel('Add to').selectOption({ label: 'Technical' });
+  await pick(drawer, 'Add to', 'Technical');
   await drawer.getByRole('button', { name: 'Add', exact: true }).click();
   const add = await callTo(calls, '/rest/v1/rpc/add_community_members');
   expect(JSON.parse(add.body)).toEqual({
@@ -228,7 +228,7 @@ test('a Technical Head sees phone numbers and asks a Super Admin to remove a tag
   const drawer = page.getByRole('dialog', { name: 'Kavya' });
   await expect(drawer.getByText('+919800000020')).toBeVisible();
   await expect(drawer.getByRole('button', { name: 'Remove', exact: true })).toHaveCount(0);
-  await expect(drawer.getByLabel('Add to')).toHaveCount(0);
+  await expect(drawer.getByRole('combobox', { name: 'Add to' })).toHaveCount(0);
   await drawer.getByRole('button', { name: 'Ask to remove' }).click();
   await drawer.getByLabel('Why').fill('Left the community');
   await drawer.getByRole('button', { name: 'Ask to remove' }).click();

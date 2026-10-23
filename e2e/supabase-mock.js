@@ -233,3 +233,9 @@ export async function callTo(calls, path, method) {
 export function adminSections(page) {
   return page.getByRole('navigation', { name: 'Admin sections' });
 }
+
+// Admin dropdowns (AdminSelect) are comboboxes: open one by its label, then click an option.
+export async function pick(scope, label, option) {
+  await scope.getByRole('combobox', { name: label }).click();
+  await scope.getByRole('option', { name: option, exact: true }).click();
+}

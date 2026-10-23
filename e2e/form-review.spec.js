@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
-import { callTo, mockSupabase } from './supabase-mock.js';
+import { callTo, mockSupabase, pick } from './supabase-mock.js';
 
 test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }));
 
@@ -72,7 +72,7 @@ test('responses show arrival serials; sort and filter never renumber them', asyn
   expect(await serialsInOrder(dialog)).toEqual(['#3', '#2', '#1']);
   await expect(dialog.getByText('Asha Full')).toBeVisible();
 
-  await dialog.getByLabel('Sort').selectOption('oldest');
+  await pick(dialog, 'Sort', 'Oldest first');
   expect(await serialsInOrder(dialog)).toEqual(['#1', '#2', '#3']);
 
   await dialog.getByRole('button', { name: 'Approve 26f1000002@ds.study.iitm.ac.in' }).click();
@@ -85,7 +85,7 @@ test('responses show arrival serials; sort and filter never renumber them', asyn
   await dialog.getByRole('button', { name: /^Rejected/ }).click();
   await expect(dialog.getByText('No rejected responses.')).toBeVisible();
   await dialog.getByRole('button', { name: /^Pending/ }).click();
-  await dialog.getByLabel('Sort').selectOption('newest');
+  await pick(dialog, 'Sort', 'Newest first');
   expect(await serialsInOrder(dialog)).toEqual(['#3', '#1']);
 });
 
@@ -106,7 +106,7 @@ test('a resent response keeps its serial and place, and says when it was resent'
       .nth(2)
       .getByText(/^Resent /)
   ).toBeVisible();
-  await dialog.getByLabel('Sort').selectOption('oldest');
+  await pick(dialog, 'Sort', 'Oldest first');
   expect(await serialsInOrder(dialog)).toEqual(['#1', '#2', '#3']);
 });
 

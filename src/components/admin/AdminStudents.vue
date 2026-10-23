@@ -18,24 +18,28 @@
       </label>
       <label class="adm-field">
         <span>Status</span>
-        <select v-model="status" class="adm-input" @change="reload">
-          <option v-for="s in statuses" :key="s.id" :value="s.id">{{ s.label }}</option>
-        </select>
+        <AdminSelect v-model="status" :options="statuses" value-key="id" @change="reload" />
       </label>
       <label v-if="isSuperAdmin" class="adm-field">
         <span>Region</span>
-        <select v-model="regionId" class="adm-input" @change="reload">
-          <option :value="null">All regions</option>
-          <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-        </select>
+        <AdminSelect
+          v-model="regionId"
+          :options="[{ id: null, name: 'All regions' }, ...lookups.regions]"
+          value-key="id"
+          label-key="name"
+          @change="reload"
+        />
       </label>
       <!-- A Head or Co-Head sees only their own community's students, so there is nothing to filter. -->
       <label v-if="isSuperAdmin || isRc" class="adm-field">
         <span>Community</span>
-        <select v-model="communityId" class="adm-input" @change="reload">
-          <option :value="null">Any community</option>
-          <option v-for="c in visibleCommunities" :key="c.id" :value="c.id">{{ c.name }}</option>
-        </select>
+        <AdminSelect
+          v-model="communityId"
+          :options="[{ id: null, name: 'Any community' }, ...visibleCommunities]"
+          value-key="id"
+          label-key="name"
+          @change="reload"
+        />
       </label>
       <!-- Add students lives in the admin bar; tagging many at once is a Super Admin's. -->
       <button v-if="isSuperAdmin" type="button" class="adm-btn ghost" @click="tagging = true">
@@ -214,9 +218,12 @@
         >
           <label class="adm-field">
             <span>Add to</span>
-            <select v-model="form.tag_id" class="adm-input">
-              <option v-for="c in untagged" :key="c.id" :value="c.id">{{ c.name }}</option>
-            </select>
+            <AdminSelect
+              v-model="form.tag_id"
+              :options="untagged"
+              value-key="id"
+              label-key="name"
+            />
           </label>
           <button type="submit" class="adm-btn ghost" :disabled="busy || !form.tag_id">Add</button>
         </form>
@@ -323,9 +330,12 @@
         </label>
         <label class="adm-field">
           <span>Region</span>
-          <select v-model="form.region_id" class="adm-input">
-            <option v-for="r in lookups.regions" :key="r.id" :value="r.id">{{ r.name }}</option>
-          </select>
+          <AdminSelect
+            v-model="form.region_id"
+            :options="lookups.regions"
+            value-key="id"
+            label-key="name"
+          />
         </label>
         <label class="adm-field wide">
           <span>Why</span>
@@ -345,19 +355,16 @@
       <form v-else-if="mode === 'position'" class="adm-form" @submit.prevent="submitPosition">
         <label class="adm-field">
           <span>Position</span>
-          <select v-model="form.position" class="adm-input" required>
-            <option v-if="!internationalTarget" value="rc">
-              Regional Coordinator ({{ regionOf(detail.member.region_id) }})
-            </option>
-            <option value="head">Community Head</option>
-            <option value="co_head">Community Co-Head</option>
-          </select>
+          <AdminSelect v-model="form.position" :options="positionOptions" />
         </label>
         <label v-if="form.position !== 'rc'" class="adm-field">
           <span>Community</span>
-          <select v-model="form.community_id" class="adm-input" required>
-            <option v-for="c in lookups.communities" :key="c.id" :value="c.id">{{ c.name }}</option>
-          </select>
+          <AdminSelect
+            v-model="form.community_id"
+            :options="lookups.communities"
+            value-key="id"
+            label-key="name"
+          />
         </label>
         <label class="adm-field wide">
           <span>Why</span>
@@ -425,6 +432,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import AdminDialog from './AdminDialog.vue';
+import AdminSelect from './AdminSelect.vue';
 import AdminCommunityAdd from './AdminCommunityAdd.vue';
 import AdminRosterAdd from './AdminRosterAdd.vue';
 import LineIcon from '../site/LineIcon.vue';
@@ -588,6 +596,16 @@ const isSelf = computed(() => detail.value?.member.id === auth.profile?.id);
 const targetIsAdmin = computed(() => !!detail.value?.position);
 const internationalTarget = computed(() =>
   isInternationalRegion(props.lookups.regions.find((r) => r.id === detail.value?.member.region_id))
+);
+const positionOptions = computed(() =>
+  [
+    !internationalTarget.value && {
+      value: 'rc',
+      label: `Regional Coordinator (${regionOf(detail.value?.member.region_id)})`,
+    },
+    { value: 'head', label: 'Community Head' },
+    { value: 'co_head', label: 'Community Co-Head' },
+  ].filter(Boolean)
 );
 const canEdit = computed(
   () =>
@@ -986,7 +1004,7 @@ function startPosition() {
   gap: 8px;
   margin-top: 10px;
 }
-select.adm-input {
+.adm-select {
   min-width: 160px;
 }
 .more {
