@@ -457,7 +457,10 @@
                 aria-describedby="t-name-help"
               />
               <small id="t-name-help"
-                >It goes on your {{ objectWord }}, and it's what the house calls you.</small
+                >It goes on your {{ objectWord }}. Please use your registered name;
+                <span class="t-name-policy"
+                  >another name may lead to disciplinary action.</span
+                ></small
               >
             </label>
             <label class="f-name">
