@@ -37,7 +37,12 @@
           placeholder="The name you go by"
           aria-describedby="pe-name-help"
         />
-        <small id="pe-name-help">{{ help }}</small>
+        <small id="pe-name-help">
+          {{ help }}
+          <span v-if="!ghat" class="pe-name-policy">
+            Please use your registered name; another name may lead to disciplinary action.
+          </span>
+        </small>
       </label>
 
       <label class="pe-field">

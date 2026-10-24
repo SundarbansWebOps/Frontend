@@ -1,8 +1,10 @@
 # Sundarbans House — State
 
-> IITM BS frontend/backend · Last checkpoint: 2026-10-19 18:06 IST
+> IITM BS frontend/backend · Last checkpoint: 2026-10-24 · manual checkpoint (no `/checkpoint` command is installed)
 
 ## In progress / next
+
+- **Lounge registered-name reminder — pushed to `origin/codex/lounge-registered-name-notice` (`9cb8d1f`).** The first-login ghat prompt (`WelcomeTour`) and profile editor include the same compact reminder inline with their existing name helper text. There is no database comparison or name-verification behavior. Formatting, lint, study data, design, build, and shots pass. Route smoke: 223 passed, 1 unrelated Admin account-menu test failed once and passed on isolated rerun; full rerun was interrupted. See `sessions/2026-10-24.md`.
 
 - **Mobile navbar repair — `fix/mobile-navigation`, worktree `~/Anuraj-dev/Frontend-mobile-navigation`, based on production main `519c075`.** Lounge header now uses two mobile columns; its bottom bar/header height switch together at 760px. Admin mobile destinations stay in normal flow with readable 12px text, spaced links and 32px action buttons. Public navbar audited without source changes. User requested fix, preview server, commit and PR. **Next:** Review the PR and required CI; deployment remains outside this request. See `sessions/2026-10-19.md`.
 - **Admin Command Desk — PR #204 merged into upstream main (`519c075`).** Production art is on Cloudinary under `sundarbans/admin-command-desk/`. Throwaway admin HTML stays local and is gitignored.

@@ -1569,6 +1569,11 @@
   gap: 5px;
 }
 
+:where(html.lounge-active) .tour .t-name-policy {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 :where(html.lounge-active) .tour .f-name span,
 :where(html.lounge-active) .tour .f-k {
   font-size: 13px;
